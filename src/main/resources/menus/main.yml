@@ -1,0 +1,47 @@
+title: "<red>Main</red>"
+rows: 3
+items:
+  10:
+    material: NETHERITE_CHESTPLATE
+    name: "<blue>Backpack"
+    lore:
+      - ""
+      - "Enabled: %enabled%"
+      - "Allowed: %allowed%"
+    amount: 1
+    type: BACKPACK
+    permission: ""
+    id: netherite_backpack
+  11:
+    material: NETHERITE_HELMET
+    name: "<blue>Hat"
+    lore:
+      - ""
+      - "Enabled: %enabled%"
+      - "Allowed: %allowed%"
+    amount: 1
+    type: HAT
+    permission: ""
+    id: netherite_hat
+  12:
+    material: DIAMOND_CHESTPLATE
+    name: "<blue>Backpack"
+    lore:
+      - ""
+      - "Enabled: %enabled%"
+      - "Allowed: %allowed%"
+    amount: 1
+    type: BACKPACK
+    permission: ""
+    id: diamond_backpack
+  13:
+    material: DIAMOND_HELMET
+    name: "<blue>Hat "
+    lore:
+      - ""
+      - "Enabled: %enabled%"
+      - "Allowed: %allowed%"
+    amount: 1
+    type: HAT
+    permission: ""
+    id: diamond_hat
