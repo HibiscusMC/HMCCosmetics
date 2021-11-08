@@ -2,6 +2,8 @@ package io.github.fisher2911.hmccosmetics.user;
 
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
+import io.github.fisher2911.hmccosmetics.message.MessageHandler;
+import io.github.fisher2911.hmccosmetics.message.Messages;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
@@ -39,7 +41,14 @@ public class User {
         this.playerArmor.setBackpack(backpack);
     }
 
-    public void setOrUnsetBackpack(final ArmorItem backpack) {
+    public void setOrUnsetBackpack(final ArmorItem backpack, final MessageHandler messageHandler) {
+
+        final Player player = this.getPlayer();
+
+        if (player == null) {
+            return;
+        }
+
         if (backpack.getId().equals(this.playerArmor.getBackpack().getId())) {
             this.setBackpack(new ArmorItem(
                     new ItemStack(Material.AIR),
@@ -47,10 +56,20 @@ public class User {
                     "",
                     ArmorItem.Type.BACKPACK
             ));
+
+            messageHandler.sendMessage(
+                    player,
+                    Messages.REMOVED_BACKPACK
+            );
+
             return;
         }
 
         this.setBackpack(backpack);
+        messageHandler.sendMessage(
+                player,
+                Messages.SET_BACKPACK
+        );
     }
 
 
@@ -59,7 +78,14 @@ public class User {
         this.getPlayer().getEquipment().setHelmet(this.playerArmor.getHat().getItemStack());
     }
 
-    public void setOrUnsetHat(final ArmorItem hat) {
+    public void setOrUnsetHat(final ArmorItem hat, final MessageHandler messageHandler) {
+
+        final Player player = this.getPlayer();
+
+        if (player == null) {
+            return;
+        }
+
         if (hat.getId().equals(this.playerArmor.getHat().getId())) {
             this.setHat(new ArmorItem(
                     new ItemStack(Material.AIR),
@@ -67,10 +93,19 @@ public class User {
                     "",
                     ArmorItem.Type.HAT
             ));
+
+            messageHandler.sendMessage(
+                    player,
+                    Messages.REMOVED_HAT
+            );
             return;
         }
 
         this.setHat(hat);
+        messageHandler.sendMessage(
+                player,
+                Messages.SET_HAT
+        );
     }
 
     public void detach() {
@@ -83,12 +118,15 @@ public class User {
     // todo change to packets
     public void updateArmorStand() {
         final ArmorItem backpackArmorItem = this.playerArmor.getBackpack();
-        if (backpackArmorItem == null || backpackArmorItem.getItemStack().getType() == Material.AIR) {
+        if (backpackArmorItem == null ) {
             return;
         }
 
         final ItemStack backpackItem = backpackArmorItem.getItemStack();
 
+        if (backpackItem == null) {
+            return;
+        }
 
         final Player player = this.getPlayer();
 

@@ -75,10 +75,12 @@ public class CosmeticGui {
                         String.valueOf(id.equals(armorItem.getId())).
                                 toLowerCase(Locale.ROOT));
 
+                final String permission = armorItem.getPermission() == null ? "" : armorItem.getPermission();
+
                 placeholders.put(
                         Placeholder.ALLOWED,
                         String.valueOf(
-                                        player.hasPermission(armorItem.getPermission())).
+                                        player.hasPermission(permission)).
                                 toUpperCase(Locale.ROOT)
                 );
 
@@ -90,11 +92,7 @@ public class CosmeticGui {
                                         lorePlaceholders(placeholders).
                                         build(),
                                 event -> {
-                                    final String permission = armorItem.getPermission();
-
-                                    if (permission != null &&
-                                            !permission.isBlank() &&
-                                            !player.hasPermission(armorItem.getPermission())) {
+                                    if (!permission.isBlank() && !player.hasPermission(armorItem.getPermission())) {
                                         this.messageHandler.sendMessage(
                                                 player,
                                                 Messages.NO_PERMISSION
@@ -126,8 +124,8 @@ public class CosmeticGui {
         final ArmorItem.Type type = armorItem.getType();
 
         switch (type) {
-            case HAT -> user.setOrUnsetHat(armorItem);
-            case BACKPACK -> user.setOrUnsetBackpack(armorItem);
+            case HAT -> user.setOrUnsetHat(armorItem, this.messageHandler);
+            case BACKPACK -> user.setOrUnsetBackpack(armorItem, this.messageHandler);
         }
     }
 
@@ -147,9 +145,15 @@ public class CosmeticGui {
 
         this.gui.setDefaultClickAction(event -> {
             event.setCancelled(true);
-            this.setItems(user);
-            this.gui.update();
+            Bukkit.getScheduler().runTaskLater(
+                    this.plugin,
+                    () -> {
+                        this.setItems(user);
+                        this.gui.update();
+                    },
+                    1);
         });
+
         this.setItems(user);
 
         this.gui.open(humanEntity);

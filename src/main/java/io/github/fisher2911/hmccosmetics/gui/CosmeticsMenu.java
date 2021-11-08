@@ -53,12 +53,14 @@ public class CosmeticsMenu {
 
         if (!file.exists() ||
                 !file.isDirectory()) {
+            this.plugin.getLogger().severe("No directory found");
             return;
         }
 
         final File[] files = file.listFiles();
 
         if (files == null) {
+            this.plugin.getLogger().severe("Files are null");
             return;
         }
 
@@ -79,7 +81,7 @@ public class CosmeticsMenu {
                 final ConfigurationNode source = loader.load();
 
                 this.guiMap.put(id, source.get(CosmeticGui.class));
-
+                this.plugin.getLogger().severe("Loaded gui: " + id);
             } catch (final ConfigurateException exception) {
                 exception.printStackTrace();
             }
