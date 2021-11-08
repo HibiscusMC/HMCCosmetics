@@ -139,6 +139,7 @@ public class User {
                     ArmorStand.class,
                     armorStand -> {
                         armorStand.setVisible(false);
+                        armorStand.setMarker(true);
                         player.addPassenger(armorStand);
                     });
         }
