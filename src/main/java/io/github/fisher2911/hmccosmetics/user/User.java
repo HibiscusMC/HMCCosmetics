@@ -150,8 +150,8 @@ public class User {
 
         final EntityEquipment equipment = this.attached.getEquipment();
 
-        if (!backpackItem.equals(equipment.getChestplate())) {
-            equipment.setChestplate(backpackItem);
+        if (!backpackItem.equals(equipment.getHelmet())) {
+            equipment.setHelmet(backpackItem);
         }
 
         this.attached.
