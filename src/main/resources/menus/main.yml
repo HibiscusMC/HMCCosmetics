@@ -45,3 +45,29 @@ items:
     type: HAT
     permission: ""
     id: diamond_hat
+  14:
+    material: LEATHER_CHESTPLATE
+    name: "<blue>Backpack"
+    lore:
+      - ""
+      - "Enabled: %enabled%"
+      - "Allowed: %allowed%"
+    amount: 1
+    type: BACKPACK
+    permission: ""
+    id: leather_backpack
+  15:
+    material: LEATHER_HELMET
+    name: "<blue>Hat "
+    lore:
+      - ""
+      - "Enabled: %enabled%"
+      - "Allowed: %allowed%"
+    amount: 1
+    type: HAT
+    color:
+      red: 5
+      blue: 100
+      green: 230
+    permission: ""
+    id: leather_hat

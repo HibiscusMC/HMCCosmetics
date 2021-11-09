@@ -6,3 +6,6 @@ permissions:
   hmccosmetics.cmd.default:
     default: op
     description: Permission to execute the default command
+  hmccosmetics.cmd.dye:
+    default: op
+    description: Permission to dye armor
