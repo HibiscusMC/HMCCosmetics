@@ -38,7 +38,12 @@ public class CosmeticsMenu {
         this.openMenu(MAIN_MENU, humanEntity);
     }
 
+    public void reload() {
+        this.load();
+    }
+
     public void load() {
+        this.guiMap.clear();
         final File file = Path.of(this.plugin.getDataFolder().getPath(),
                 "menus").toFile();
 

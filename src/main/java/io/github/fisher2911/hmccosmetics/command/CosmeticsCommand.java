@@ -5,6 +5,7 @@ import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.gui.CosmeticsMenu;
 import io.github.fisher2911.hmccosmetics.gui.DyeSelectorGui;
 import io.github.fisher2911.hmccosmetics.message.MessageHandler;
+import io.github.fisher2911.hmccosmetics.message.Messages;
 import io.github.fisher2911.hmccosmetics.user.User;
 import io.github.fisher2911.hmccosmetics.user.UserManager;
 import me.mattstudios.mf.annotations.Command;
@@ -12,7 +13,9 @@ import me.mattstudios.mf.annotations.Default;
 import me.mattstudios.mf.annotations.Permission;
 import me.mattstudios.mf.annotations.SubCommand;
 import me.mattstudios.mf.base.CommandBase;
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Map;
@@ -37,6 +40,21 @@ public class CosmeticsCommand extends CommandBase {
     @Permission(io.github.fisher2911.hmccosmetics.message.Permission.DEFAULT_COMMAND)
     public void defaultCommand(final Player player) {
         this.cosmeticsMenu.openDefault(player);
+    }
+
+    @SubCommand("reload")
+    @Permission(io.github.fisher2911.hmccosmetics.message.Permission.RELOAD_COMMAND)
+    public void reloadCommand(final CommandSender sender) {
+        Bukkit.getScheduler().runTaskAsynchronously(
+                this.plugin,
+                () -> {
+                    this.cosmeticsMenu.reload();
+                    this.messageHandler.sendMessage(
+                            sender,
+                            Messages.RELOADED
+                    );
+                }
+        );
     }
 
     @SubCommand("dye")

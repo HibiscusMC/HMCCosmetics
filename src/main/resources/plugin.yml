@@ -9,3 +9,6 @@ permissions:
   hmccosmetics.cmd.dye:
     default: op
     description: Permission to dye armor
+  hmccosmetics.cmd.reload:
+    default: op
+    description: Permission to use the reload command

@@ -14,4 +14,6 @@ public class Messages {
             new Message("removed-backpack", "Removed backpack");
     public static final Message MUST_BE_PLAYER =
             new Message("must-be-player", "You must be a player to do this!");
+    public static final Message RELOADED =
+            new Message("reloaded", "Config reloaded");
 }
