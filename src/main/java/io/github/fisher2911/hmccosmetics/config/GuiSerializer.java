@@ -3,6 +3,7 @@ package io.github.fisher2911.hmccosmetics.config;
 import dev.triumphteam.gui.guis.GuiItem;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.gui.CosmeticGui;
+import io.github.fisher2911.hmccosmetics.message.Adventure;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
@@ -59,7 +60,11 @@ public class GuiSerializer implements TypeSerializer<CosmeticGui> {
             guiItemMap.put(slot, guiItem);
         }
 
-        return new CosmeticGui(plugin, titleNode.getString(), rowsNode.getInt(), guiItemMap);
+        return new CosmeticGui(plugin,
+                Adventure.SERIALIZER.serialize(
+                Adventure.MINI_MESSAGE.parse(titleNode.getString())),
+                rowsNode.getInt(),
+                guiItemMap);
     }
 
     @Override

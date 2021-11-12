@@ -99,17 +99,22 @@ public class ItemSerializer implements TypeSerializer<GuiItem> {
         final Material material = Utils.stringToEnum(Utils.replaceIfNull(materialNode.getString(), ""),
                 Material.class, Material.AIR);
         final int amount = amountNode.getInt();
-        final Component name = Adventure.MINI_MESSAGE.parse(
-                Utils.replaceIfNull(nameNode.getString(), "")
-        );
+        final Component name = StringUtils.parse(nameNode.getString());
+//                Adventure.MINI_MESSAGE.parse(
+//                Utils.replaceIfNull(nameNode.getString(), "")
+//        );
 
         final boolean unbreakable = unbreakableNode.getBoolean();
         final boolean glowing = glowingNode.getBoolean();
+
         final List<String> lore = Utils.replaceIfNull(loreNode.getList(String.class), new ArrayList<String>()).
                 stream().map(StringUtils::parseStringToString).collect(Collectors.toList());
+
         final List<String> lockedLore = Utils.replaceIfNull(lockedLoreNode.getList(String.class), new ArrayList<String>()).
                 stream().map(StringUtils::parseStringToString).collect(Collectors.toList());
+
         final int modelData = modelDataNode.getInt();
+
         final Set<ItemFlag> itemFlags = Utils.replaceIfNull(itemFlagsNode.getList(String.class), new ArrayList<String>()).
                 stream().map(flag -> {
                     try {
@@ -120,7 +125,6 @@ public class ItemSerializer implements TypeSerializer<GuiItem> {
                 }).collect(Collectors.toSet());
         final String texture = textureNode.getString();
         final String owner = ownerNode.getString();
-
 
         final boolean dyeable = dyeableNode.getBoolean();
 

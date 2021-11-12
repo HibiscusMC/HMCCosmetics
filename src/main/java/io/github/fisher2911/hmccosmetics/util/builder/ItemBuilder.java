@@ -98,11 +98,10 @@ public class ItemBuilder {
         if (this.itemMeta == null) {
             return this;
         }
+
         final String name = StringUtils.
                 applyPlaceholders(this.itemMeta.getDisplayName(), placeholders);
-        this.itemMeta.displayName(
-                Adventure.MINI_MESSAGE.parse(
-                        name));
+        this.itemMeta.setDisplayName(name);
         return this;
     }
 

@@ -4,6 +4,7 @@ import dev.triumphteam.gui.guis.GuiItem;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.gui.ColorItem;
 import io.github.fisher2911.hmccosmetics.gui.DyeSelectorGui;
+import io.github.fisher2911.hmccosmetics.message.Adventure;
 import org.bukkit.Color;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
@@ -82,7 +83,8 @@ public class DyeGuiSerializer implements TypeSerializer<DyeSelectorGui> {
 
         return new DyeSelectorGui(
                 plugin,
-                titleNode.getString(),
+                Adventure.SERIALIZER.serialize(
+                        Adventure.MINI_MESSAGE.parse(titleNode.getString())),
                 rowsNode.getInt(),
                 guiItemMap);
     }
