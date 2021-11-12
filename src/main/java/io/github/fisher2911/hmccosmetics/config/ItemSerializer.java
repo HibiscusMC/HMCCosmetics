@@ -190,6 +190,9 @@ public class ItemSerializer implements TypeSerializer<GuiItem> {
                 itemFlags(itemFlags).
                 build();
 
+        final String openMenu = openMenuNode.getString(
+                Utils.replaceIfNull(OPEN_MENU, ""));
+
         try {
             final ArmorItem.Type cosmeticType = ArmorItem.Type.valueOf(
                     Utils.replaceIfNull(
@@ -201,6 +204,10 @@ public class ItemSerializer implements TypeSerializer<GuiItem> {
 
             return new ArmorItem(
                     itemStack,
+                    event -> {
+                        final HMCCosmetics plugin = HMCCosmetics.getPlugin(HMCCosmetics.class);
+                        plugin.getCosmeticsMenu().openMenu(openMenu, event.getWhoClicked());
+                    },
                     Utils.replaceIfNull(idNode.getString(), ""),
                     lockedLore,
                     permission,
@@ -208,9 +215,6 @@ public class ItemSerializer implements TypeSerializer<GuiItem> {
                     dyeable);
 
         } catch (final IllegalArgumentException exception) {
-            final String openMenu = openMenuNode.getString(
-                    Utils.replaceIfNull(OPEN_MENU, ""));
-
             return dev.triumphteam.gui.builder.item.ItemBuilder.from(
                             itemStack).
                     asGuiItem(event -> {

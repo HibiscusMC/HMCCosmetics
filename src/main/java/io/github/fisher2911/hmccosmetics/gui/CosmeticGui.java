@@ -1,5 +1,6 @@
 package io.github.fisher2911.hmccosmetics.gui;
 
+import dev.triumphteam.gui.components.GuiAction;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
@@ -13,6 +14,7 @@ import io.github.fisher2911.hmccosmetics.util.builder.ItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -99,7 +101,7 @@ public class CosmeticGui {
                                         return;
                                     }
 
-                                    this.setUserArmor(player, user, armorItem);
+                                    this.setUserArmor(player, user, armorItem, event, armorItem.getAction());
                                 }
                         )
                 );
@@ -114,7 +116,9 @@ public class CosmeticGui {
     private void setUserArmor(
             final HumanEntity player,
             final User user,
-            final ArmorItem armorItem) {
+            final ArmorItem armorItem,
+            final InventoryClickEvent event,
+            final GuiAction<InventoryClickEvent> actionIfSet) {
 
         if (player == null) {
             return;
@@ -123,8 +127,20 @@ public class CosmeticGui {
         final ArmorItem.Type type = armorItem.getType();
 
         switch (type) {
-            case HAT -> user.setOrUnsetHat(armorItem, this.messageHandler);
-            case BACKPACK -> user.setOrUnsetBackpack(armorItem, this.messageHandler);
+            case HAT -> {
+                final boolean set = user.setOrUnsetHat(armorItem, this.messageHandler);
+                if (set) {
+                    actionIfSet.execute(event);
+                    player.sendMessage("Set");
+                }
+            }
+            case BACKPACK -> {
+                final boolean set = user.setOrUnsetBackpack(armorItem, this.messageHandler);
+                if (set) {
+                    actionIfSet.execute(event);
+                    player.sendMessage("Set");
+                }
+            }
         }
     }
 

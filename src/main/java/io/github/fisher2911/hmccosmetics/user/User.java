@@ -42,12 +42,13 @@ public class User {
         this.playerArmor.setBackpack(backpack);
     }
 
-    public void setOrUnsetBackpack(final ArmorItem backpack, final MessageHandler messageHandler) {
+    // return true if backpack was set
+    public boolean setOrUnsetBackpack(final ArmorItem backpack, final MessageHandler messageHandler) {
 
         final Player player = this.getPlayer();
 
         if (player == null) {
-            return;
+            return false;
         }
 
         if (backpack.getId().equals(this.playerArmor.getBackpack().getId())) {
@@ -64,7 +65,7 @@ public class User {
                     Messages.REMOVED_BACKPACK
             );
 
-            return;
+            return false;
         }
 
         this.setBackpack(backpack);
@@ -72,6 +73,8 @@ public class User {
                 player,
                 Messages.SET_BACKPACK
         );
+
+        return true;
     }
 
 
@@ -80,12 +83,13 @@ public class User {
         this.getPlayer().getEquipment().setHelmet(this.playerArmor.getHat().getItemStack());
     }
 
-    public void setOrUnsetHat(final ArmorItem hat, final MessageHandler messageHandler) {
+    // return true if hat was set
+    public boolean setOrUnsetHat(final ArmorItem hat, final MessageHandler messageHandler) {
 
         final Player player = this.getPlayer();
 
         if (player == null) {
-            return;
+            return false;
         }
 
         if (hat.getId().equals(this.playerArmor.getHat().getId())) {
@@ -101,7 +105,7 @@ public class User {
                     player,
                     Messages.REMOVED_HAT
             );
-            return;
+            return false;
         }
 
         this.setHat(hat);
@@ -109,6 +113,8 @@ public class User {
                 player,
                 Messages.SET_HAT
         );
+
+        return true;
     }
 
     public void detach() {

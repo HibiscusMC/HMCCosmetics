@@ -74,18 +74,18 @@ public class CosmeticsMenu {
 
         if (!Path.of(this.plugin.getDataFolder().getPath(),
                 "menus",
-                MAIN_MENU).toFile().exists()) {
+                MAIN_MENU + ".yml").toFile().exists()) {
             this.plugin.saveResource(
-                    new File("menus", MAIN_MENU).getPath(),
+                    new File("menus", MAIN_MENU + ".yml").getPath(),
                     false
             );
         }
 
         if (!Path.of(this.plugin.getDataFolder().getPath(),
         "menus",
-        DYE_MENU).toFile().exists()) {
+        DYE_MENU + ".yml").toFile().exists()) {
             this.plugin.saveResource(
-                    new File("menus", DYE_MENU).getPath(),
+                    new File("menus", DYE_MENU + ".yml").getPath(),
                     false
             );
         }
