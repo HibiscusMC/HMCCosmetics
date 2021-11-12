@@ -10,10 +10,12 @@ import io.github.fisher2911.hmccosmetics.util.builder.ColorBuilder;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Color;
 import org.bukkit.Material;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 import java.util.Map;
+import java.util.Optional;
 
 public class DyeSelectorGui extends CosmeticGui{
 
@@ -106,5 +108,11 @@ public class DyeSelectorGui extends CosmeticGui{
         });
 
         return gui;
+    }
+
+    @Override
+    public void open(final HumanEntity player) {
+        final Optional<User> optionalUser = this.plugin.getUserManager().get(player.getUniqueId());
+        optionalUser.ifPresent(user -> this.getGui(user, user.getLastSetItem()).open(player));
     }
 }

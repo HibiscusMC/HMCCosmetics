@@ -20,6 +20,7 @@ public class User {
     private final UUID uuid;
     private final PlayerArmor playerArmor;
     private ArmorStand attached;
+    private ArmorItem lastSetItem;
 
     public User(final UUID uuid, final PlayerArmor playerArmor) {
         this.uuid = uuid;
@@ -40,6 +41,7 @@ public class User {
 
     public void setBackpack(final ArmorItem backpack) {
         this.playerArmor.setBackpack(backpack);
+        this.lastSetItem = backpack;
     }
 
     // return true if backpack was set
@@ -81,6 +83,7 @@ public class User {
     public void setHat(final ArmorItem hat) {
         this.playerArmor.setHat(hat);
         this.getPlayer().getEquipment().setHelmet(this.playerArmor.getHat().getItemStack());
+        this.lastSetItem = hat;
     }
 
     // return true if hat was set
@@ -169,4 +172,7 @@ public class User {
                         player.getLocation().getPitch());
     }
 
+    public ArmorItem getLastSetItem() {
+        return lastSetItem;
+    }
 }

@@ -78,22 +78,22 @@ public class CosmeticGui {
 
                 final String permission = armorItem.getPermission() == null ? "" : armorItem.getPermission();
 
+                final boolean hasPermission = permission.isBlank() || player.hasPermission(permission);
+
                 placeholders.put(
                         Placeholder.ALLOWED,
-                        String.valueOf(
-                                        player.hasPermission(permission)).
-                                toUpperCase(Locale.ROOT)
-                );
+                        String.valueOf(hasPermission).
+                                toLowerCase(Locale.ROOT));
 
                 this.gui.setItem(slot,
                         new GuiItem(
                                 ItemBuilder.from(
-                                                armorItem.getItemStack()
+                                                armorItem.getItemStack(hasPermission)
                                         ).namePlaceholders(placeholders).
                                         lorePlaceholders(placeholders).
                                         build(),
                                 event -> {
-                                    if (!permission.isBlank() && !player.hasPermission(armorItem.getPermission())) {
+                                    if (!hasPermission) {
                                         this.messageHandler.sendMessage(
                                                 player,
                                                 Messages.NO_PERMISSION
