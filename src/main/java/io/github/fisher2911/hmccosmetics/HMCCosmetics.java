@@ -7,6 +7,7 @@ import io.github.fisher2911.hmccosmetics.command.CosmeticsCommand;
 import io.github.fisher2911.hmccosmetics.gui.CosmeticsMenu;
 import io.github.fisher2911.hmccosmetics.listener.ClickListener;
 import io.github.fisher2911.hmccosmetics.listener.JoinListener;
+import io.github.fisher2911.hmccosmetics.listener.TeleportListener;
 import io.github.fisher2911.hmccosmetics.message.MessageHandler;
 import io.github.fisher2911.hmccosmetics.message.Messages;
 import io.github.fisher2911.hmccosmetics.user.UserManager;
@@ -46,7 +47,8 @@ public class HMCCosmetics extends JavaPlugin {
 
     private void registerListeners() {
         List.of(new JoinListener(this),
-                        new ClickListener(this)).
+                        new ClickListener(this),
+                        new TeleportListener(this)).
                 forEach(listener ->
                         this.getServer().getPluginManager().registerEvents(listener, this)
                 );

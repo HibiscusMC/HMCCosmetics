@@ -137,18 +137,21 @@ public class User {
     public void updateArmorStand() {
         final ArmorItem backpackArmorItem = this.playerArmor.getBackpack();
         if (backpackArmorItem == null ) {
+            this.despawnAttached();
             return;
         }
 
         final ItemStack backpackItem = backpackArmorItem.getItemStack();
 
-        if (backpackItem == null) {
+        if (backpackItem == null || backpackItem.getType() == Material.AIR) {
+            this.despawnAttached();
             return;
         }
 
         final Player player = this.getPlayer();
 
         if (player == null) {
+            this.despawnAttached();
             return;
         }
 
@@ -168,6 +171,11 @@ public class User {
 
         final EntityEquipment equipment = this.attached.getEquipment();
 
+        if (equipment == null) {
+            this.despawnAttached();
+            return;
+        }
+
         if (!backpackItem.equals(equipment.getHelmet())) {
             equipment.setHelmet(backpackItem);
         }
@@ -176,6 +184,15 @@ public class User {
                 setRotation(
                         player.getLocation().getYaw(),
                         player.getLocation().getPitch());
+    }
+
+    public void despawnAttached() {
+        if (this.attached == null) {
+            return;
+        }
+
+        this.attached.remove();
+        this.attached = null;
     }
 
     public ArmorItem getLastSetItem() {
