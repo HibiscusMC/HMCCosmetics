@@ -9,7 +9,6 @@ import io.github.fisher2911.hmccosmetics.message.MessageHandler;
 import io.github.fisher2911.hmccosmetics.message.Messages;
 import io.github.fisher2911.hmccosmetics.message.Placeholder;
 import io.github.fisher2911.hmccosmetics.user.User;
-import io.github.fisher2911.hmccosmetics.user.UserManager;
 import io.github.fisher2911.hmccosmetics.util.builder.ItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
@@ -22,12 +21,12 @@ import java.util.Optional;
 
 public class CosmeticGui {
 
-    private final HMCCosmetics plugin;
-    private final MessageHandler messageHandler;
-    private final String title;
-    private final int rows;
-    private final Map<Integer, GuiItem> guiItemMap;
-    private Gui gui;
+    protected final HMCCosmetics plugin;
+    protected final MessageHandler messageHandler;
+    protected final String title;
+    protected final int rows;
+    protected final Map<Integer, GuiItem> guiItemMap;
+    protected Gui gui;
 
     public CosmeticGui(
             final HMCCosmetics plugin,

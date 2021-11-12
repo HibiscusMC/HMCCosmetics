@@ -3,11 +3,13 @@ package io.github.fisher2911.hmccosmetics.config;
 import dev.triumphteam.gui.guis.GuiItem;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
+import io.github.fisher2911.hmccosmetics.message.Adventure;
 import io.github.fisher2911.hmccosmetics.util.StringUtils;
 import io.github.fisher2911.hmccosmetics.util.Utils;
 import io.github.fisher2911.hmccosmetics.util.builder.ItemBuilder;
-import io.github.fisher2911.hmccosmetics.util.builder.LeatherArmorBuilder;
+import io.github.fisher2911.hmccosmetics.util.builder.ColorBuilder;
 import io.github.fisher2911.hmccosmetics.util.builder.SkullBuilder;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -41,6 +43,7 @@ public class ItemSerializer implements TypeSerializer<GuiItem> {
     private static final String UNBREAKABLE = "unbreakable";
     private static final String GLOWING = "glowing";
     private static final String LORE = "lore";
+    private static final String LOCKED_LORE = "locked-lore";
     private static final String MODEL_DATA = "model-data";
     private static final String ENCHANTS = "enchants";
     private static final String ITEM_FLAGS = "item-flags";
@@ -54,6 +57,7 @@ public class ItemSerializer implements TypeSerializer<GuiItem> {
     private static final String TYPE = "type";
     private static final String OPEN_MENU = "open-menu";
     private static final String ID = "id";
+    private static final String DYEABLE = "dyeable";
 
     private ItemSerializer() {
     }
@@ -74,6 +78,7 @@ public class ItemSerializer implements TypeSerializer<GuiItem> {
         final ConfigurationNode unbreakableNode = source.node(UNBREAKABLE);
         final ConfigurationNode glowingNode = source.node(GLOWING);
         final ConfigurationNode loreNode = source.node(LORE);
+        final ConfigurationNode lockedLoreNode = source.node(LOCKED_LORE);
         final ConfigurationNode modelDataNode = source.node(MODEL_DATA);
         final ConfigurationNode enchantsNode = source.node(ENCHANTS);
         final ConfigurationNode itemFlagsNode = source.node(ITEM_FLAGS);
@@ -87,16 +92,21 @@ public class ItemSerializer implements TypeSerializer<GuiItem> {
         final ConfigurationNode typeNode = source.node(TYPE);
         final ConfigurationNode openMenuNode = source.node(OPEN_MENU);
         final ConfigurationNode idNode = source.node(ID);
+        final ConfigurationNode dyeableNode = source.node(DYEABLE);
 
 
         final Material material = Utils.stringToEnum(Utils.replaceIfNull(materialNode.getString(), ""),
                 Material.class, Material.AIR);
         final int amount = amountNode.getInt();
-        final String name = StringUtils.parseStringToString(Utils.replaceIfNull(nameNode.getString(), ""));
+        final Component name = Adventure.MINI_MESSAGE.parse(
+                Utils.replaceIfNull(nameNode.getString(), "")
+        );
 
         final boolean unbreakable = unbreakableNode.getBoolean();
         final boolean glowing = glowingNode.getBoolean();
         final List<String> lore = Utils.replaceIfNull(loreNode.getList(String.class), new ArrayList<String>()).
+                stream().map(StringUtils::parseStringToString).collect(Collectors.toList());
+        final List<String> lockedLore = Utils.replaceIfNull(lockedLoreNode.getList(String.class), new ArrayList<String>()).
                 stream().map(StringUtils::parseStringToString).collect(Collectors.toList());
         final int modelData = modelDataNode.getInt();
         final Set<ItemFlag> itemFlags = Utils.replaceIfNull(itemFlagsNode.getList(String.class), new ArrayList<String>()).
@@ -109,7 +119,17 @@ public class ItemSerializer implements TypeSerializer<GuiItem> {
                 }).collect(Collectors.toSet());
         final String texture = textureNode.getString();
         final String owner = ownerNode.getString();
-        final Color color = Color.fromBGR(redNode.getInt(), greenNode.getInt(), blueNode.getInt());
+
+
+        final boolean dyeable = dyeableNode.getBoolean();
+
+        final Color color;
+
+        if (colorNode.virtual()) {
+            color = null;
+        } else {
+            color = Color.fromBGR(redNode.getInt(), greenNode.getInt(), blueNode.getInt());
+        }
 
         final Map<Enchantment, Integer> enchantments =
                 Utils.replaceIfNull(enchantsNode.getList(String.class),
@@ -150,10 +170,10 @@ public class ItemSerializer implements TypeSerializer<GuiItem> {
                 final OfflinePlayer player = Bukkit.getOfflinePlayer(owner);
                 ((SkullBuilder) itemBuilder).owner(player);
             }
-        } else if (LeatherArmorBuilder.isLeatherArmor(material)) {
-            itemBuilder = LeatherArmorBuilder.from(material);
+        } else if (ColorBuilder.canBeColored(material)) {
+            itemBuilder = ColorBuilder.from(material);
             if (color != null) {
-                ((LeatherArmorBuilder) itemBuilder).color(color);
+                ((ColorBuilder) itemBuilder).color(color);
             }
         } else {
             itemBuilder = ItemBuilder.from(material);
@@ -182,8 +202,10 @@ public class ItemSerializer implements TypeSerializer<GuiItem> {
             return new ArmorItem(
                     itemStack,
                     Utils.replaceIfNull(idNode.getString(), ""),
+                    lockedLore,
                     permission,
-                    cosmeticType);
+                    cosmeticType,
+                    dyeable);
 
         } catch (final IllegalArgumentException exception) {
             final String openMenu = openMenuNode.getString(

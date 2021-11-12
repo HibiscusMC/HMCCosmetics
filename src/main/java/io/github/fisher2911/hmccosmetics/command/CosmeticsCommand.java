@@ -76,11 +76,9 @@ public class CosmeticsCommand extends CommandBase {
             case BACKPACK -> user.getPlayerArmor().getBackpack();
         };
 
-        new DyeSelectorGui("test", 3, Map.of(
-                10, Color.fromRGB(1, 2, 3),
-                11, Color.fromRGB(0, 0, 255)
-        ), armorItem
-        ).getGui(user).open(player);
+        player.sendMessage("Opening dye menu");
+
+        this.cosmeticsMenu.openDyeSelectorGui(user, armorItem);
     }
 
 }

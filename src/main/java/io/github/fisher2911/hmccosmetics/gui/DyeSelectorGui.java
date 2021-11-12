@@ -2,54 +2,43 @@ package io.github.fisher2911.hmccosmetics.gui;
 
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.guis.Gui;
-import io.github.fisher2911.hmccosmetics.config.ItemSerializer;
+import dev.triumphteam.gui.guis.GuiItem;
+import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
 import io.github.fisher2911.hmccosmetics.user.User;
-import io.github.fisher2911.hmccosmetics.util.builder.LeatherArmorBuilder;
+import io.github.fisher2911.hmccosmetics.util.builder.ColorBuilder;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
-import org.checkerframework.checker.units.qual.A;
 
-import java.util.HashMap;
 import java.util.Map;
 
-public class DyeSelectorGui {
-
-    private final String title;
-    private final int rows;
-    private final Map<Integer, Color> itemColors;
-    private final ArmorItem armorItem;
+public class DyeSelectorGui extends CosmeticGui{
 
     public DyeSelectorGui(
+            final HMCCosmetics plugin,
             final String title,
             final int rows,
-            final Map<Integer, Color> itemColors,
-            final ArmorItem armorItem) {
-        this.title = title;
-        this.rows = rows;
-        this.itemColors = itemColors;
-        this.armorItem = armorItem;
+            final Map<Integer, GuiItem> guiItemMap) {
+        super(plugin, title, rows, guiItemMap);
     }
 
-    public Gui getGui(final User user) {
+    public Gui getGui(final User user, final ArmorItem armorItem) {
         final Gui gui = Gui.gui().
                 title(Component.text(this.title)).
                 rows(rows).
                 create();
 
-        for (final var entry : itemColors.entrySet()) {
-            gui.setItem(entry.getKey(), ItemBuilder.from(Material.BLACK_DYE).
-                    name(Component.text(
-                            String.valueOf(entry.getValue().asRGB()))).asGuiItem());
+        for (final var entry : this.guiItemMap.entrySet()) {
+            gui.setItem(entry.getKey(), entry.getValue());
         }
 
         gui.setDefaultClickAction(event -> {
             event.setCancelled(true);
 
-            final ArmorItem.Type type = this.armorItem.getType();
+            final ArmorItem.Type type = armorItem.getType();
 
             final PlayerArmor playerArmor = user.getPlayerArmor();
 
@@ -77,55 +66,45 @@ public class DyeSelectorGui {
             };
 
             if (itemStack == null) {
+                event.getWhoClicked().sendMessage("ItemStack null");
                 return;
             }
 
-            if (!(itemStack.getItemMeta() instanceof final LeatherArmorMeta itemMeta)) {
+            if (!armorItem.isDyeable()) {
+                event.getWhoClicked().sendMessage("Not dyeable");
                 return;
             }
 
-            final LeatherArmorBuilder leatherArmorBuilder =
-                    LeatherArmorBuilder.from(itemStack);
+            final ColorBuilder colorBuilder =
+                    ColorBuilder.from(itemStack);
 
-            final Color color = this.itemColors.get(event.getSlot());
+            final GuiItem guiItem = this.guiItemMap.get(event.getSlot());
 
-            if (color == null) {
+            if (!(guiItem instanceof final ColorItem colorItem)) {
+                event.getWhoClicked().sendMessage("Not color item");
                 return;
             }
 
-            leatherArmorBuilder.color(color);
+            final Color color = colorItem.getColor();
 
-            final ArmorItem armorItem = new ArmorItem(
-                    leatherArmorBuilder.build(),
-                    this.armorItem.getAction(),
-                    this.armorItem.getId(),
-                    this.armorItem.getPermission(),
-                    this.armorItem.getType(),
-                    this.armorItem.isDyeable()
+            colorBuilder.color(color);
+
+            final ArmorItem newArmorItem = new ArmorItem(
+                    colorBuilder.build(),
+                    armorItem.getAction(),
+                    armorItem.getId(),
+                    armorItem.getLockedLore(),
+                    armorItem.getPermission(),
+                    armorItem.getType(),
+                    armorItem.isDyeable()
             );
 
             switch (type) {
-                case HAT -> user.setHat(armorItem);
-                case BACKPACK -> user.setBackpack(armorItem);
+                case HAT -> user.setHat(newArmorItem);
+                case BACKPACK -> user.setBackpack(newArmorItem);
             }
         });
 
         return gui;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public int getRows() {
-        return rows;
-    }
-
-    public Map<Integer, Color> getItemColors() {
-        return itemColors;
-    }
-
-    public ArmorItem getArmorItem() {
-        return armorItem;
     }
 }

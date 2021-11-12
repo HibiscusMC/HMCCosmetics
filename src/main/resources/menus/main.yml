@@ -8,6 +8,8 @@ items:
       - ""
       - "Enabled: %enabled%"
       - "Allowed: %allowed%"
+    locked-lore:
+      - "Not allowed"
     amount: 1
     type: BACKPACK
     permission: ""
@@ -19,6 +21,8 @@ items:
       - ""
       - "Enabled: %enabled%"
       - "Allowed: %allowed%"
+    locked-lore:
+      - "Not allowed"
     amount: 1
     type: HAT
     permission: ""
@@ -30,6 +34,8 @@ items:
       - ""
       - "Enabled: %enabled%"
       - "Allowed: %allowed%"
+    locked-lore:
+      - "Not allowed"
     amount: 1
     type: BACKPACK
     permission: ""
@@ -41,6 +47,8 @@ items:
       - ""
       - "Enabled: %enabled%"
       - "Allowed: %allowed%"
+    locked-lore:
+      - "Not allowed"
     amount: 1
     type: HAT
     permission: ""
@@ -52,10 +60,13 @@ items:
       - ""
       - "Enabled: %enabled%"
       - "Allowed: %allowed%"
+    locked-lore:
+      - "Not allowed"
     amount: 1
     type: BACKPACK
     permission: ""
     id: leather_backpack
+    dyeable: true
   15:
     material: LEATHER_HELMET
     name: "<blue>Hat "
@@ -63,6 +74,8 @@ items:
       - ""
       - "Enabled: %enabled%"
       - "Allowed: %allowed%"
+    locked-lore:
+      - "Not allowed"
     amount: 1
     type: HAT
     color:
@@ -71,3 +84,4 @@ items:
       green: 230
     permission: ""
     id: leather_hat
+    dyeable: true

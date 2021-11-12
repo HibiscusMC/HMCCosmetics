@@ -2,9 +2,12 @@ package io.github.fisher2911.hmccosmetics.gui;
 
 import dev.triumphteam.gui.guis.GuiItem;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
+import io.github.fisher2911.hmccosmetics.config.DyeGuiSerializer;
 import io.github.fisher2911.hmccosmetics.config.GuiSerializer;
 import io.github.fisher2911.hmccosmetics.config.ItemSerializer;
+import io.github.fisher2911.hmccosmetics.user.User;
 import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.Player;
 import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
@@ -17,6 +20,7 @@ import java.util.Map;
 public class CosmeticsMenu {
 
     public static final String MAIN_MENU = "main";
+    public static final String DYE_MENU = "dye-menu";
 
     private final HMCCosmetics plugin;
 
@@ -42,6 +46,27 @@ public class CosmeticsMenu {
         this.load();
     }
 
+    public void openDyeSelectorGui(
+            final User user,
+            final ArmorItem armorItem) {
+
+        final Player player = user.getPlayer();
+
+        if (player == null) {
+            return;
+        }
+
+        final CosmeticGui gui = this.guiMap.get(DYE_MENU);
+
+        if (gui instanceof final DyeSelectorGui dyeSelectorGui) {
+            player.sendMessage("Is Dye selector");
+            dyeSelectorGui.getGui(user, armorItem).open(player);
+        } else {
+            player.sendMessage("Not dye selector");
+            player.sendMessage(gui.getClass().toString());
+        }
+    }
+
     public void load() {
         this.guiMap.clear();
         final File file = Path.of(this.plugin.getDataFolder().getPath(),
@@ -49,9 +74,18 @@ public class CosmeticsMenu {
 
         if (!Path.of(this.plugin.getDataFolder().getPath(),
                 "menus",
-                "main").toFile().exists()) {
+                MAIN_MENU).toFile().exists()) {
             this.plugin.saveResource(
-                    new File("menus", "main.yml").getPath(),
+                    new File("menus", MAIN_MENU).getPath(),
+                    false
+            );
+        }
+
+        if (!Path.of(this.plugin.getDataFolder().getPath(),
+        "menus",
+        DYE_MENU).toFile().exists()) {
+            this.plugin.saveResource(
+                    new File("menus", DYE_MENU).getPath(),
                     false
             );
         }
@@ -79,11 +113,19 @@ public class CosmeticsMenu {
                             opts.serializers(build -> {
                                 build.register(GuiItem.class, ItemSerializer.INSTANCE);
                                 build.register(CosmeticGui.class, GuiSerializer.INSTANCE);
+                                build.register(DyeSelectorGui.class, DyeGuiSerializer.INSTANCE);
                             }))
                     .build();
 
             try {
                 final ConfigurationNode source = loader.load();
+
+                if (id.equals(DYE_MENU)) {
+                    this.guiMap.put(id, DyeGuiSerializer.INSTANCE.deserialize(DyeSelectorGui.class,
+                            source));
+                    this.plugin.getLogger().severe("Loaded dye gui: " + id);
+                    continue;
+                }
 
                 this.guiMap.put(id, source.get(CosmeticGui.class));
                 this.plugin.getLogger().severe("Loaded gui: " + id);

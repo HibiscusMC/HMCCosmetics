@@ -2,6 +2,7 @@ package io.github.fisher2911.hmccosmetics.util.builder;
 
 import io.github.fisher2911.hmccosmetics.message.Adventure;
 import io.github.fisher2911.hmccosmetics.util.StringUtils;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -73,6 +74,11 @@ public class ItemBuilder {
 
     public ItemBuilder name(final String name) {
         this.itemMeta.setDisplayName(name);
+        return this;
+    }
+
+    public ItemBuilder name(final Component name) {
+        this.itemMeta.displayName(name);
         return this;
     }
 

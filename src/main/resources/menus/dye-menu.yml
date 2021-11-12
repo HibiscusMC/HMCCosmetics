@@ -1,0 +1,17 @@
+title: Set Color
+rows: 3
+items:
+  10:
+    material: BLUE_STAINED_GLASS
+    name: Set to blue
+    set-color:
+      red: 55
+      green: 49
+      blue: 181
+  11:
+    material: RED_STAINED_GLASS
+    name: Set to red
+    set-color:
+      red: 190
+      green: 20
+      blue: 20

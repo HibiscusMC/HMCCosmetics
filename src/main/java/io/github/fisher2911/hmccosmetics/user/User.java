@@ -12,6 +12,7 @@ import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 public class User {
@@ -53,6 +54,7 @@ public class User {
             this.setBackpack(new ArmorItem(
                     new ItemStack(Material.AIR),
                     "",
+                    new ArrayList<>(),
                     "",
                     ArmorItem.Type.BACKPACK
             ));
@@ -90,6 +92,7 @@ public class User {
             this.setHat(new ArmorItem(
                     new ItemStack(Material.AIR),
                     "",
+                    new ArrayList<>(),
                     "",
                     ArmorItem.Type.HAT
             ));

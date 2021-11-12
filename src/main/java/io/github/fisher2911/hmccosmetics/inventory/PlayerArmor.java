@@ -4,6 +4,8 @@ import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
+
 public class PlayerArmor {
 
     private ArmorItem hat;
@@ -19,12 +21,14 @@ public class PlayerArmor {
                 new ArmorItem(
                         new ItemStack(Material.AIR),
                         "",
+                        new ArrayList<>(),
                         "",
                         ArmorItem.Type.HAT
                 ),
                 new ArmorItem(
                         new ItemStack(Material.AIR),
                         "",
+                        new ArrayList<>(),
                         "",
                         ArmorItem.Type.BACKPACK
                 ));
