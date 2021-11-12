@@ -1,7 +1,11 @@
 package io.github.fisher2911.hmccosmetics;
 
+import com.comphenix.protocol.ProtocolLib;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
 import io.github.fisher2911.hmccosmetics.command.CosmeticsCommand;
 import io.github.fisher2911.hmccosmetics.gui.CosmeticsMenu;
+import io.github.fisher2911.hmccosmetics.listener.ClickListener;
 import io.github.fisher2911.hmccosmetics.listener.JoinListener;
 import io.github.fisher2911.hmccosmetics.message.MessageHandler;
 import io.github.fisher2911.hmccosmetics.message.Messages;
@@ -13,6 +17,7 @@ import java.util.List;
 
 public class HMCCosmetics extends JavaPlugin {
 
+    private ProtocolManager protocolManager;
     private UserManager userManager;
     private MessageHandler messageHandler;
     private CosmeticsMenu cosmeticsMenu;
@@ -20,6 +25,7 @@ public class HMCCosmetics extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        protocolManager = ProtocolLibrary.getProtocolManager();
         this.messageHandler = new MessageHandler(this);
         this.userManager = new UserManager(this);
         this.cosmeticsMenu = new CosmeticsMenu(this);
@@ -39,7 +45,8 @@ public class HMCCosmetics extends JavaPlugin {
     }
 
     private void registerListeners() {
-        List.of(new JoinListener(this)).
+        List.of(new JoinListener(this),
+                        new ClickListener(this)).
                 forEach(listener ->
                         this.getServer().getPluginManager().registerEvents(listener, this)
                 );
@@ -69,4 +76,9 @@ public class HMCCosmetics extends JavaPlugin {
     public CosmeticsMenu getCosmeticsMenu() {
         return cosmeticsMenu;
     }
+
+    public ProtocolManager getProtocolManager() {
+        return protocolManager;
+    }
 }
+

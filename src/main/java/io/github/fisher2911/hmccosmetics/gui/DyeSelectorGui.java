@@ -68,12 +68,10 @@ public class DyeSelectorGui extends CosmeticGui{
             };
 
             if (itemStack == null) {
-                event.getWhoClicked().sendMessage("ItemStack null");
                 return;
             }
 
             if (!armorItem.isDyeable()) {
-                event.getWhoClicked().sendMessage("Not dyeable");
                 return;
             }
 
@@ -83,7 +81,6 @@ public class DyeSelectorGui extends CosmeticGui{
             final GuiItem guiItem = this.guiItemMap.get(event.getSlot());
 
             if (!(guiItem instanceof final ColorItem colorItem)) {
-                event.getWhoClicked().sendMessage("Not color item");
                 return;
             }
 
@@ -102,7 +99,7 @@ public class DyeSelectorGui extends CosmeticGui{
             );
 
             switch (type) {
-                case HAT -> user.setHat(newArmorItem);
+                case HAT -> user.setHat(newArmorItem, plugin.getUserManager());
                 case BACKPACK -> user.setBackpack(newArmorItem);
             }
         });

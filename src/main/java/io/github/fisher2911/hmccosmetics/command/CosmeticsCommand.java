@@ -76,8 +76,6 @@ public class CosmeticsCommand extends CommandBase {
             case BACKPACK -> user.getPlayerArmor().getBackpack();
         };
 
-        player.sendMessage("Opening dye menu");
-
         this.cosmeticsMenu.openDyeSelectorGui(user, armorItem);
     }
 

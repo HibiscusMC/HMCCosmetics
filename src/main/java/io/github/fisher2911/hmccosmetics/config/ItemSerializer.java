@@ -4,6 +4,7 @@ import dev.triumphteam.gui.guis.GuiItem;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.message.Adventure;
+import io.github.fisher2911.hmccosmetics.util.Keys;
 import io.github.fisher2911.hmccosmetics.util.StringUtils;
 import io.github.fisher2911.hmccosmetics.util.Utils;
 import io.github.fisher2911.hmccosmetics.util.builder.ItemBuilder;
@@ -192,6 +193,8 @@ public class ItemSerializer implements TypeSerializer<GuiItem> {
 
         final String openMenu = openMenuNode.getString(
                 Utils.replaceIfNull(OPEN_MENU, ""));
+
+        Keys.setKey(itemStack);
 
         try {
             final ArmorItem.Type cosmeticType = ArmorItem.Type.valueOf(

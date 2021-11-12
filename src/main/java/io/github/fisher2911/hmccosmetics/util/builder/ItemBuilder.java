@@ -73,11 +73,17 @@ public class ItemBuilder {
      */
 
     public ItemBuilder name(final String name) {
+        if (this.itemMeta == null) {
+            return this;
+        }
         this.itemMeta.setDisplayName(name);
         return this;
     }
 
     public ItemBuilder name(final Component name) {
+        if (this.itemMeta == null) {
+            return this;
+        }
         this.itemMeta.displayName(name);
         return this;
     }
@@ -89,6 +95,9 @@ public class ItemBuilder {
      */
 
     public ItemBuilder namePlaceholders(final Map<String, String> placeholders) {
+        if (this.itemMeta == null) {
+            return this;
+        }
         final String name = StringUtils.
                 applyPlaceholders(this.itemMeta.getDisplayName(), placeholders);
         this.itemMeta.displayName(
@@ -103,6 +112,9 @@ public class ItemBuilder {
      */
 
     public ItemBuilder lore(final List<String> lore) {
+        if (this.itemMeta == null) {
+            return this;
+        }
         this.itemMeta.setLore(lore);
         return this;
     }
@@ -115,6 +127,9 @@ public class ItemBuilder {
 
 
     public ItemBuilder lorePlaceholders(final Map<String, String> placeholders) {
+        if (this.itemMeta == null) {
+            return this;
+        }
         final List<String> lore = new ArrayList<>();
 
         final List<String> previousLore = this.itemMeta.getLore();
@@ -139,11 +154,17 @@ public class ItemBuilder {
      */
 
     public ItemBuilder unbreakable(final boolean unbreakable) {
+        if (this.itemMeta == null) {
+            return this;
+        }
         this.itemMeta.setUnbreakable(unbreakable);
         return this;
     }
 
     public ItemBuilder glow(final boolean glow) {
+        if (this.itemMeta == null) {
+            return this;
+        }
         if (glow) {
             this.itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
             this.itemMeta.addEnchant(Enchantment.LUCK, 1, true);
@@ -158,6 +179,9 @@ public class ItemBuilder {
      */
 
     public ItemBuilder enchants(final Map<Enchantment, Integer> enchantments, boolean ignoreLeveLRestrictions) {
+        if (this.itemMeta == null) {
+            return this;
+        }
         enchantments.forEach((enchantment, level) -> this.itemMeta.addEnchant(enchantment, level, ignoreLeveLRestrictions));
         return this;
     }
@@ -168,6 +192,9 @@ public class ItemBuilder {
      */
 
     public ItemBuilder itemFlags(final Set<ItemFlag> itemFlags) {
+        if (this.itemMeta == null) {
+            return this;
+        }
         this.itemMeta.addItemFlags(itemFlags.toArray(new ItemFlag[0]));
         return this;
     }
@@ -178,6 +205,9 @@ public class ItemBuilder {
      */
 
     public ItemBuilder modelData(final int modelData) {
+        if (this.itemMeta == null) {
+            return this;
+        }
         this.itemMeta.setCustomModelData(modelData);
         return this;
     }

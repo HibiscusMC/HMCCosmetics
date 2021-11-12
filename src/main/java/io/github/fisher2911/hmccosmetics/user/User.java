@@ -45,7 +45,9 @@ public class User {
     }
 
     // return true if backpack was set
-    public boolean setOrUnsetBackpack(final ArmorItem backpack, final MessageHandler messageHandler) {
+    public boolean setOrUnsetBackpack(
+            final ArmorItem backpack,
+            final MessageHandler messageHandler) {
 
         final Player player = this.getPlayer();
 
@@ -80,14 +82,17 @@ public class User {
     }
 
 
-    public void setHat(final ArmorItem hat) {
+    public void setHat(final ArmorItem hat, final UserManager userManager) {
         this.playerArmor.setHat(hat);
-        this.getPlayer().getEquipment().setHelmet(this.playerArmor.getHat().getItemStack());
         this.lastSetItem = hat;
+        userManager.updateHat(this);
     }
 
     // return true if hat was set
-    public boolean setOrUnsetHat(final ArmorItem hat, final MessageHandler messageHandler) {
+    public boolean setOrUnsetHat(
+            final ArmorItem hat,
+            final MessageHandler messageHandler,
+            final UserManager userManager) {
 
         final Player player = this.getPlayer();
 
@@ -102,16 +107,18 @@ public class User {
                     new ArrayList<>(),
                     "",
                     ArmorItem.Type.HAT
-            ));
+            ),
+                    userManager);
 
             messageHandler.sendMessage(
                     player,
                     Messages.REMOVED_HAT
             );
+
             return false;
         }
 
-        this.setHat(hat);
+        this.setHat(hat, userManager);
         messageHandler.sendMessage(
                 player,
                 Messages.SET_HAT
@@ -127,7 +134,6 @@ public class User {
     }
 
     // teleports armor stand to the correct position
-    // todo change to packets
     public void updateArmorStand() {
         final ArmorItem backpackArmorItem = this.playerArmor.getBackpack();
         if (backpackArmorItem == null ) {
