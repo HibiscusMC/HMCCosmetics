@@ -5,6 +5,7 @@ import io.github.fisher2911.hmccosmetics.user.User;
 import io.github.fisher2911.hmccosmetics.user.UserManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
@@ -18,10 +19,11 @@ public class TeleportListener implements Listener {
         this.userManager = this.plugin.getUserManager();
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onPlayerTeleport(final PlayerTeleportEvent event) {
         final Player player = event.getPlayer();
 
         this.userManager.get(player.getUniqueId()).ifPresent(User::despawnAttached);
     }
+
 }

@@ -40,6 +40,10 @@ public class DyeSelectorGui extends CosmeticGui{
         gui.setDefaultClickAction(event -> {
             event.setCancelled(true);
 
+            if (armorItem == null) {
+                return;
+            }
+
             final ArmorItem.Type type = armorItem.getType();
 
             final PlayerArmor playerArmor = user.getPlayerArmor();

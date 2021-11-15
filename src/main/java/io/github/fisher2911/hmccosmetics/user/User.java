@@ -191,6 +191,12 @@ public class User {
             return;
         }
 
+        final Player player = this.getPlayer();
+
+        if (player != null) {
+            player.removePassenger(this.attached);
+        }
+
         this.attached.remove();
         this.attached = null;
     }
