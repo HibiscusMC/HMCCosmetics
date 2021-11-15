@@ -45,7 +45,7 @@ shadowJar {
 }
 
 shadowJar {
-    archiveBaseName.set('BackpackCosmetics')
+    archiveBaseName.set('HMCCosmetics')
     archiveClassifier.set('')
     archiveVersion.set('')
 }
