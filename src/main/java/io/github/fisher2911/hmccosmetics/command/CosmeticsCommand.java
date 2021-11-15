@@ -9,6 +9,7 @@ import io.github.fisher2911.hmccosmetics.message.Messages;
 import io.github.fisher2911.hmccosmetics.user.User;
 import io.github.fisher2911.hmccosmetics.user.UserManager;
 import me.mattstudios.mf.annotations.Command;
+import me.mattstudios.mf.annotations.Completion;
 import me.mattstudios.mf.annotations.Default;
 import me.mattstudios.mf.annotations.Permission;
 import me.mattstudios.mf.annotations.SubCommand;
@@ -59,7 +60,7 @@ public class CosmeticsCommand extends CommandBase {
 
     @SubCommand("dye")
     @Permission(io.github.fisher2911.hmccosmetics.message.Permission.DYE_COMMAND)
-    public void dyeArmor(final Player player, String typeString) {
+    public void dyeArmor(final Player player, @Completion("#types") String typeString) {
 
         final Optional<User> optionalUser = this.userManager.get(player.getUniqueId());
 
@@ -67,16 +68,22 @@ public class CosmeticsCommand extends CommandBase {
             return;
         }
 
-        final ArmorItem.Type type = ArmorItem.Type.valueOf(typeString);
+        try {
+            final ArmorItem.Type type = ArmorItem.Type.valueOf(typeString.toUpperCase());
 
-        final User user = optionalUser.get();
+            final User user = optionalUser.get();
 
-        final ArmorItem armorItem = switch (type) {
-            case HAT -> user.getPlayerArmor().getHat();
-            case BACKPACK -> user.getPlayerArmor().getBackpack();
-        };
+            final ArmorItem armorItem = switch (type) {
+                case HAT -> user.getPlayerArmor().getHat();
+                case BACKPACK -> user.getPlayerArmor().getBackpack();
+            };
 
-        this.cosmeticsMenu.openDyeSelectorGui(user, armorItem);
+            this.cosmeticsMenu.openDyeSelectorGui(user, armorItem);
+        } catch (final IllegalArgumentException exception) {
+            this.messageHandler.sendMessage(
+                    player,
+                    Messages.INVALID_TYPE);
+        }
     }
 
 }

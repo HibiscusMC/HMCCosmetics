@@ -4,6 +4,7 @@ import com.comphenix.protocol.ProtocolLib;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import io.github.fisher2911.hmccosmetics.command.CosmeticsCommand;
+import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.gui.CosmeticsMenu;
 import io.github.fisher2911.hmccosmetics.listener.ClickListener;
 import io.github.fisher2911.hmccosmetics.listener.JoinListener;
@@ -14,7 +15,9 @@ import io.github.fisher2911.hmccosmetics.user.UserManager;
 import me.mattstudios.mf.base.CommandManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class HMCCosmetics extends JavaPlugin {
 
@@ -64,6 +67,13 @@ public class HMCCosmetics extends JavaPlugin {
                         )
 
         );
+        this.commandManager.getCompletionHandler().register("#types",
+                resolver ->
+                    Arrays.stream(ArmorItem.Type.
+                            values()).
+                            map(ArmorItem.Type::toString).
+                            collect(Collectors.toList())
+                );
         this.commandManager.register(new CosmeticsCommand(this));
     }
 

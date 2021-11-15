@@ -16,4 +16,6 @@ public class Messages {
             new Message("must-be-player", "You must be a player to do this!");
     public static final Message RELOADED =
             new Message("reloaded", "Config reloaded");
+    public static final Message INVALID_TYPE =
+            new Message("invalid-type", "Invalid type");
 }
