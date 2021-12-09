@@ -102,12 +102,12 @@ public class User {
 
         if (hat.getId().equals(this.playerArmor.getHat().getId())) {
             this.setHat(new ArmorItem(
-                    new ItemStack(Material.AIR),
-                    "",
-                    new ArrayList<>(),
-                    "",
-                    ArmorItem.Type.HAT
-            ),
+                            new ItemStack(Material.AIR),
+                            "",
+                            new ArrayList<>(),
+                            "",
+                            ArmorItem.Type.HAT
+                    ),
                     userManager);
 
             messageHandler.sendMessage(
@@ -136,7 +136,7 @@ public class User {
     // teleports armor stand to the correct position
     public void updateArmorStand() {
         final ArmorItem backpackArmorItem = this.playerArmor.getBackpack();
-        if (backpackArmorItem == null ) {
+        if (backpackArmorItem == null) {
             this.despawnAttached();
             return;
         }

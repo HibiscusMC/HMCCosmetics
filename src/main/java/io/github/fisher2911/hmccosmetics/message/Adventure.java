@@ -20,5 +20,4 @@ public class Adventure {
                             TransformationType.COLOR
                     ).build())
             .build();
-
 }

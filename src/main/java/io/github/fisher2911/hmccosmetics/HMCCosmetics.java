@@ -1,13 +1,14 @@
 package io.github.fisher2911.hmccosmetics;
 
-import com.comphenix.protocol.ProtocolLib;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
+
 import io.github.fisher2911.hmccosmetics.command.CosmeticsCommand;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.gui.CosmeticsMenu;
 import io.github.fisher2911.hmccosmetics.listener.ClickListener;
 import io.github.fisher2911.hmccosmetics.listener.JoinListener;
+import io.github.fisher2911.hmccosmetics.listener.RespawnListener;
 import io.github.fisher2911.hmccosmetics.listener.TeleportListener;
 import io.github.fisher2911.hmccosmetics.message.MessageHandler;
 import io.github.fisher2911.hmccosmetics.message.Messages;
@@ -51,7 +52,8 @@ public class HMCCosmetics extends JavaPlugin {
     private void registerListeners() {
         List.of(new JoinListener(this),
                         new ClickListener(this),
-                        new TeleportListener(this)).
+                        new TeleportListener(this),
+                        new RespawnListener(this)).
                 forEach(listener ->
                         this.getServer().getPluginManager().registerEvents(listener, this)
                 );
