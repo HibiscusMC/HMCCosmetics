@@ -28,6 +28,7 @@ dependencies {
     implementation 'dev.triumphteam:triumph-gui:3.0.3'
     implementation 'me.mattstudios.utils:matt-framework:1.4.6'
     implementation 'org.spongepowered:configurate-yaml:4.1.2'
+    implementation 'org.bstats:bstats-bukkit:2.2.1'
 }
 
 test {
@@ -40,6 +41,7 @@ shadowJar {
     relocate 'net.kyori.adventure.text.minimessage', 'io.github.fisher2911.hmccosmetics.adventure.minimessage'
     relocate 'net.kyori.adventure.platform', 'io.github.fisher2911.hmccosmetics.adventure.platform'
     relocate 'org.spongepowered.configurate', 'io.github.fisher2911.hmccosmetics.configurate'
+    relocate 'org.bstats', 'io.github.fisher2911.hmccosmetics.bstats'
 }
 
 shadowJar {

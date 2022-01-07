@@ -15,6 +15,7 @@ public class Keys {
     }
 
     public static final NamespacedKey ITEM_KEY = new NamespacedKey(plugin, "cosmetic");
+    public static final NamespacedKey ARMOR_STAND_KEY = new NamespacedKey(plugin, "armor-stand");
 
     public static void setKey(final ItemStack itemStack) {
         final ItemMeta itemMeta = itemStack.getItemMeta();

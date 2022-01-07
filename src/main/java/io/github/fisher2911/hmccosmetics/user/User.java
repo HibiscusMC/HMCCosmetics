@@ -4,12 +4,14 @@ import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
 import io.github.fisher2911.hmccosmetics.message.MessageHandler;
 import io.github.fisher2911.hmccosmetics.message.Messages;
+import io.github.fisher2911.hmccosmetics.util.Keys;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -161,6 +163,11 @@ public class User {
                     armorStand -> {
                         armorStand.setVisible(false);
                         armorStand.setMarker(true);
+                        armorStand.getPersistentDataContainer().set(
+                                Keys.ARMOR_STAND_KEY,
+                                PersistentDataType.BYTE,
+                                (byte) 1
+                        );
                         player.addPassenger(armorStand);
                     });
         }

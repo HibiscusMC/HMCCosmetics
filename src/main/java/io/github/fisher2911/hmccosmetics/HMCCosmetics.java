@@ -14,6 +14,7 @@ import io.github.fisher2911.hmccosmetics.message.MessageHandler;
 import io.github.fisher2911.hmccosmetics.message.Messages;
 import io.github.fisher2911.hmccosmetics.user.UserManager;
 import me.mattstudios.mf.base.CommandManager;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Arrays;
@@ -30,6 +31,9 @@ public class HMCCosmetics extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        final int pluginId = 13873;
+        final Metrics metrics = new Metrics(this, pluginId);
+
         protocolManager = ProtocolLibrary.getProtocolManager();
         this.messageHandler = new MessageHandler(this);
         this.userManager = new UserManager(this);
