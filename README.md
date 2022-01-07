@@ -13,6 +13,9 @@
 HMCCosmetics is a free, open source cosmetics plugin which allows you to easily give players backpack and hat type cosmetics.
 
 
-### Installation
+### Requirements
 
-Install [ProtocolLib](https://ci.dmulloy2.net/job/ProtocolLib/lastSuccessfulBuild/), then download the latest release of HMCCosmetics.
+- Server running PaperMC (or a fork of PaperMC)
+- ProtocolLib
+
+
