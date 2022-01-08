@@ -6,7 +6,6 @@
 ## Table of Contents
 - [Description](#description)
 - [Installation](#installation)
-- [Contact Information](#contact-information)
 
 ### Description
 
