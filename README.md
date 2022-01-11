@@ -23,5 +23,7 @@ HMCCosmetics is a free, open source cosmetics plugin which allows you to easily 
 Download on the [Releases Page](https://github.com/HibiscusMC/HMCCosmetics/releases)
 
 Demo:
-https://user-images.githubusercontent.com/60053521/148890239-3c85255c-a532-48fd-afb5-79bae650337f.mp4
+![demo](https://user-images.githubusercontent.com/60053521/148890239-3c85255c-a532-48fd-afb5-79bae650337f.mp4)
+
+
 
