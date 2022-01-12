@@ -3,14 +3,14 @@ rows: 3
 items:
   10:
     material: BLUE_STAINED_GLASS
-    name: Set to blue
+    name: "<gray>Set to <blue>blue"
     set-color:
       red: 55
       green: 49
       blue: 181
   11:
     material: RED_STAINED_GLASS
-    name: Set to red
+    name: "<gray>Set to <red>red"
     set-color:
       red: 190
       green: 20
