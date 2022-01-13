@@ -121,12 +121,11 @@ public class CosmeticsMenu {
                 if (id.equals(DYE_MENU)) {
                     this.guiMap.put(id, DyeGuiSerializer.INSTANCE.deserialize(DyeSelectorGui.class,
                             source));
-                    this.plugin.getLogger().severe("Loaded dye gui: " + id);
+                    this.plugin.getLogger().info("Loaded dye gui: " + id);
                     continue;
                 }
-
                 this.guiMap.put(id, source.get(CosmeticGui.class));
-                this.plugin.getLogger().severe("Loaded gui: " + id);
+                this.plugin.getLogger().info("Loaded gui: " + id);
             } catch (final ConfigurateException exception) {
                 exception.printStackTrace();
             }
