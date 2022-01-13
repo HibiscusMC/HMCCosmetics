@@ -1,4 +1,5 @@
 no-permission: "<white> <red>No Permission!"
+no-cosmetic-permission: "<white> <red>You do not have permission for this cosmetic!"
 set-hat: "<white> <gradient:#6D9DC5:#45CDE9>Applied hat!"
 removed-hat: "<white> <gradient:#6D9DC5:#45CDE9>Removed hat!"
 set-backpack: "<white> <gradient:#6D9DC5:#45CDE9>Applied backpack!"

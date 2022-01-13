@@ -21,6 +21,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 @Command("cosmetics")
@@ -51,6 +52,7 @@ public class CosmeticsCommand extends CommandBase {
                 this.plugin,
                 () -> {
                     this.cosmeticsMenu.reload();
+                    this.plugin.getMessageHandler().load();
                     this.messageHandler.sendMessage(
                             sender,
                             Messages.RELOADED
