@@ -1,4 +1,5 @@
 no-permission: "<red>No Permission!"
+no-cosmetic-permission: "You do not have permission for this cosmetic!"
 set-hat: "<green>Set Hat!"
 removed-hat: "<green>Removed hat."
 set-backpack: "<green>Set Backpack!"

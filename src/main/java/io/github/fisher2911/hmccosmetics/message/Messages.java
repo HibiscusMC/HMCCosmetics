@@ -4,6 +4,8 @@ public class Messages {
 
     public static final Message NO_PERMISSION =
             new Message("no-permission", "You do not have permission for this!");
+    public static final Message NO_COSMETIC_PERMISSION =
+            new Message("no-cosmetic-permission", "You do not have permission for this cosmetic!");
     public static final Message SET_HAT =
             new Message("set-hat", "Set hat");
     public static final Message REMOVED_HAT =
