@@ -18,4 +18,16 @@ public class Messages {
             new Message("reloaded", "Config reloaded");
     public static final Message INVALID_TYPE =
             new Message("invalid-type", "Invalid type");
+    public static final Message HELP_COMMAND =
+            new Message("help-command", "<#6D9DC5><st>                    </st> <gradient:#40B7D6:#6D9DC5>HMCCosmetics - Help</gradient><#6D9DC5> <st>                    </st>\n" +
+                    "\n" +
+                    "\n" +
+                    "<#5AE4B5>• <#40B7D6>/cosmetics - <#6D9DC5>Opens cosmetics GUI.\n" +
+                    "\n" +
+                    "<#5AE4B5>• <#40B7D6>/cosmetics dye <gray><BACKPACK/HAT></gray> - <#6D9DC5>Opens dye menu for specified cosmetic.\n" +
+                    "\n" +
+                    "<#5AE4B5>• <#40B7D6>/cosmetics help - <#6D9DC5>Opens this menu.\n" +
+                    "\n" +
+                    "\n" +
+                    "<st>                                                                   </st>");
 }

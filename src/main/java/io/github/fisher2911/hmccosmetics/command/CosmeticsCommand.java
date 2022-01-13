@@ -4,6 +4,7 @@ import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.gui.CosmeticsMenu;
 import io.github.fisher2911.hmccosmetics.gui.DyeSelectorGui;
+import io.github.fisher2911.hmccosmetics.message.Message;
 import io.github.fisher2911.hmccosmetics.message.MessageHandler;
 import io.github.fisher2911.hmccosmetics.message.Messages;
 import io.github.fisher2911.hmccosmetics.user.User;
@@ -84,6 +85,20 @@ public class CosmeticsCommand extends CommandBase {
                     player,
                     Messages.INVALID_TYPE);
         }
+    }
+
+    @SubCommand("help") // WORK IN PROGRESS (WIP)
+    @Permission(io.github.fisher2911.hmccosmetics.message.Permission.HELP_COMMAND)
+    public void helpCommand(final CommandSender sender) {
+        Bukkit.getScheduler().runTaskAsynchronously(
+                this.plugin,
+                () -> {
+                    this.messageHandler.sendMessage(
+                            sender,
+                            Messages.HELP_COMMAND
+                    );
+                }
+        );
     }
 
 }

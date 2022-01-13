@@ -1,7 +1,7 @@
-title: "<#3066BE>Cosmetics Menu" # GUI Title
-rows: 3 # Rows in the GUI 
+title: "<white>" # GUI Title
+rows: 5 # Rows in the GUI 
 items:
-  10: # GUI Slot number
+  1: # GUI Slot number
     material: LEATHER_HORSE_ARMOR
     name: "<rainbow>Colorful Hat</rainbow>"
     lore: # Lore displayed when the player owns the item
@@ -11,7 +11,7 @@ items:
     locked-lore: # Lore displayed when the player does not have the correct permission.
       - "<red>You do not own this item!"
     amount: 1
-    model-data: 1 # CustomModelData Number
+    model-data: 2 # CustomModelData Number
     type: HAT
     dyeable: true # Enables dyeable item feature
     color: # Sets default color for item. Uses RGB format.
@@ -21,7 +21,7 @@ items:
     open-menu: dye-menu # Automatically open the dye menu when applying this cosmetic
     permission: "cosmetics.colorful_hat" # Can be anything you want.
     id: colorful_hat # Internal identifier. Can be anything you want.
-  11:
+  2:
     material: PAPER
     name: "<blue>Backpack"
     lore:
@@ -31,7 +31,25 @@ items:
     locked-lore:
       - "<red>You do not own this item!"
     amount: 1
-    model-data: 1
+    model-data: 4
     type: BACKPACK
     permission: ""
     id: backpack
+  37:
+    material: PAPER
+    name: "<#40B7D6>Previous Page"
+    amount: 1
+    model-data: 1
+    open-menu: menu-2
+  40:
+    material: PAPER
+    name: "<rainbow>Customization Menu</rainbow>"
+    amount: 1
+    model-data: 3
+    open-menu: dye-menu
+  43:
+    material: PAPER
+    name: "<#40B7D6>Next Page"
+    amount: 1
+    model-data: 2
+    open-menu: menu-2

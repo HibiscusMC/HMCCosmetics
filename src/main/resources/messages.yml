@@ -6,3 +6,14 @@ removed-backpack: "<green>Removed backpack."
 must-be-player: "You must be a player to do this!"
 reloaded: "<green>Config files reloaded!"
 invalid-type: "<red>Invalid cosmetic type, please use hat or backpack"
+help-command: "<#6D9DC5><st>                    </st> <gradient:#40B7D6:#6D9DC5>HMCCosmetics - Help</gradient><#6D9DC5> <st>                    </st>
+
+
+<#5AE4B5>• <#40B7D6>/cosmetics - <#6D9DC5>Opens cosmetics GUI.
+
+<#5AE4B5>• <#40B7D6>/cosmetics dye <gray><BACKPACK/HAT></gray> - <#6D9DC5>Opens dye menu for specified cosmetic.
+
+<#5AE4B5>• <#40B7D6>/cosmetics help - <#6D9DC5>Opens this menu.
+
+
+<st>                                                                   </st>"
