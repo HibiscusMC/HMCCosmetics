@@ -1,12 +1,12 @@
-no-permission: "<red>No Permission!"
-set-hat: "<green>Set Hat!"
-removed-hat: "<green>Removed hat."
-set-backpack: "<green>Set Backpack!"
-removed-backpack: "<green>Removed backpack."
-must-be-player: "You must be a player to do this!"
-reloaded: "<green>Config files reloaded!"
-invalid-type: "<red>Invalid cosmetic type, please use hat or backpack"
-help-command: "<#6D9DC5><st>                    </st> <gradient:#40B7D6:#6D9DC5>HMCCosmetics - Help</gradient><#6D9DC5> <st>                    </st>
+no-permission: "<white> <red>No Permission!"
+set-hat: "<white> <gradient:#6D9DC5:#45CDE9>Applied hat!"
+removed-hat: "<white> <gradient:#6D9DC5:#45CDE9>Removed hat!"
+set-backpack: "<white> <gradient:#6D9DC5:#45CDE9>Applied backpack!"
+removed-backpack: "<white> <gradient:#6D9DC5:#45CDE9>Removed backpack!"
+must-be-player: "<red>You must be a player to do this!"
+reloaded: "<white> <gradient:#00ff87:#60efff>Config files reloaded!"
+invalid-type: "<white> <red>Invalid cosmetic type, please use <u>hat</u> or <u>backpack</u>!"
+help-command: "<#6D9DC5><st>                    </st> <white>  <gradient:#40B7D6:#6D9DC5>HMCCosmetics - Help</gradient> <white> <#6D9DC5> <st>                    </st>
 
 
 <#5AE4B5>• <#40B7D6>/cosmetics - <#6D9DC5>Opens cosmetics GUI.
@@ -16,4 +16,4 @@ help-command: "<#6D9DC5><st>                    </st> <gradient:#40B7D6:#6D9DC5>
 <#5AE4B5>• <#40B7D6>/cosmetics help - <#6D9DC5>Opens this menu.
 
 
-<st>                                                                   </st>"
+<st>                                                                           </st>"
