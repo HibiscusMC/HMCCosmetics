@@ -60,8 +60,6 @@ public class CosmeticsMenu {
 
         if (gui instanceof final DyeSelectorGui dyeSelectorGui) {
             dyeSelectorGui.getGui(user, armorItem).open(player);
-        } else {
-            player.sendMessage(gui.getClass().toString());
         }
     }
 

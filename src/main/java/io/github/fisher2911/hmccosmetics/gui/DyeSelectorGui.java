@@ -1,6 +1,5 @@
 package io.github.fisher2911.hmccosmetics.gui;
 
-import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
@@ -9,10 +8,8 @@ import io.github.fisher2911.hmccosmetics.user.User;
 import io.github.fisher2911.hmccosmetics.util.builder.ColorBuilder;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Color;
-import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 import java.util.Map;
 import java.util.Optional;

@@ -4,7 +4,6 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
 import io.github.fisher2911.hmccosmetics.message.MessageHandler;
@@ -13,13 +12,11 @@ import io.github.fisher2911.hmccosmetics.util.Keys;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftWolf;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Wolf;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
@@ -55,6 +52,15 @@ public class User {
 
     public PlayerArmor getPlayerArmor() {
         return playerArmor;
+    }
+
+    public void setPlayerArmor(final PlayerArmor playerArmor) {
+        this.playerArmor.setBackpack(playerArmor.getBackpack());
+        this.playerArmor.setHat(playerArmor.getHat());
+    }
+
+    public void removeAllCosmetics() {
+        this.setPlayerArmor(PlayerArmor.empty());
     }
 
     public int getArmorStandId() {

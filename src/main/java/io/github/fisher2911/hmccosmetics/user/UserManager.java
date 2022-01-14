@@ -22,6 +22,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -51,22 +52,9 @@ public class UserManager {
     public void add(final Player player) {
         final UUID uuid = player.getUniqueId();
         final int armorStandId = this.currentArmorStandId;
-        final User user = new User(uuid, new PlayerArmor(
-                new ArmorItem(
-                        new ItemStack(Material.AIR),
-                        "",
-                        new ArrayList<>(),
-                        "",
-                        ArmorItem.Type.HAT
-                ),
-                new ArmorItem(
-                        new ItemStack(Material.AIR),
-                        "",
-                        new ArrayList<>(),
-                        "",
-                        ArmorItem.Type.BACKPACK
-                )
-        ),
+        final User user = new User(
+                uuid,
+                PlayerArmor.empty(),
                 armorStandId);
         this.userMap.put(uuid, user);
         this.armorStandIdMap.put(armorStandId, user);
@@ -86,6 +74,8 @@ public class UserManager {
 
         if (user == null) return;
 
+        user.removeAllCosmetics();
+        this.setFakeHelmet(user);
         user.despawnAttached();
 
         this.armorStandIdMap.remove(user.getArmorStandId());
@@ -134,7 +124,6 @@ public class UserManager {
                             final ItemStack hat = user.getPlayerArmor().getHat().getItemStack();
                             final ItemStack second = entry.getSecond();
 
-
                             if (hat != null && hat
                                     .getType() != Material.AIR &&
                                     second != null &&
@@ -147,74 +136,81 @@ public class UserManager {
             }
         });
 
-        protocolManager.addPacketListener(new PacketAdapter(
-                this.plugin,
-                ListenerPriority.NORMAL,
-                PacketType.Play.Server.SPAWN_ENTITY_LIVING
-        ) {
-            @Override
-            public void onPacketReceiving(PacketEvent event) {
-                if (event.getPacketType() != PacketType.Play.Server.SPAWN_ENTITY_LIVING) {
-                    return;
-                }
-
-                event.getPlayer().sendMessage("What the heck * 2");
-
-                Bukkit.broadcast(Component.text("Received spawn"));
-            }
-
-            @Override
-            public void onPacketSending(PacketEvent event) {
-                if (event.getPacketType() != PacketType.Play.Server.SPAWN_ENTITY_LIVING) {
-                    return;
-                }
-
-                event.getPlayer().sendMessage("What the heck");
-
-                PacketContainer packet = event.getPacket();
-
-                Entity entity = packet.getEntityModifier(event).read(0);
-
-                for (int i = 0; i < 100; i++) {
-                    if (entity == null) {
-                        Bukkit.broadcast(Component.text("Entity null" + packet));
-                    } else {
-                        Bukkit.broadcast(Component.text("Not null: " + entity.getEntityId()));
-                    }
-                }
-
-                final int id = entity.getEntityId();
-
-                final User user = armorStandIdMap.get(id);
-
-                if (user == null) return;
-
-                user.addArmorStandPassenger(entity);
-
-//                user.
+//        protocolManager.addPacketListener(new PacketAdapter(
+//                this.plugin,
+//                ListenerPriority.NORMAL,
+//                PacketType.Play.Server.SPAWN_ENTITY_LIVING
+//        ) {
+//            @Override
+//            public void onPacketReceiving(PacketEvent event) {
+//                if (event.getPacketType() != PacketType.Play.Server.SPAWN_ENTITY_LIVING) {
+//                    return;
+//                }
 //
-//                    WrappedDataWatcher dataWatcher = WrappedDataWatcher.getEntityWatcher(entity);
+//                event.getPlayer().sendMessage("What the heck * 2");
 //
+//                Bukkit.broadcast(Component.text("Received spawn"));
+//            }
 //
-//                    WrappedDataWatcher.Serializer chatSerializer = WrappedDataWatcher.Registry.getChatComponentSerializer(true);
+//            @Override
+//            public void onPacketSending(PacketEvent event) {
+//                if (event.getPacketType() != PacketType.Play.Server.SPAWN_ENTITY_LIVING) {
+//                    return;
+//                }
 //
-//                    dataWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(2, chatSerializer),
-//                            Optional.of(WrappedChatComponent.fromChatMessage(leveledMob.getTag() /* or name, or what you need here */)[0].getHandle()));
+//                event.getPlayer().sendMessage("What the heck");
 //
-//                    packet.getWatchableCollectionModifier().write(0, dataWatcher.getWatchableObjects());
+//                PacketContainer packet = event.getPacket();
 //
-                    event.setPacket(packet);
-            }
-        });
+//                Entity entity = packet.getEntityModifier(event).read(0);
+//
+//                for (int i = 0; i < 100; i++) {
+//                    if (entity == null) {
+//                        Bukkit.broadcast(Component.text("Entity null" + packet));
+//                    } else {
+//                        Bukkit.broadcast(Component.text("Not null: " + entity.getEntityId()));
+//                    }
+//                }
+//
+//                final int id = entity.getEntityId();
+//
+//                final User user = armorStandIdMap.get(id);
+//
+//                if (user == null) return;
+//
+//                user.addArmorStandPassenger(entity);
+//
+////                user.
+////
+////                    WrappedDataWatcher dataWatcher = WrappedDataWatcher.getEntityWatcher(entity);
+////
+////
+////                    WrappedDataWatcher.Serializer chatSerializer = WrappedDataWatcher.Registry.getChatComponentSerializer(true);
+////
+////                    dataWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(2, chatSerializer),
+////                            Optional.of(WrappedChatComponent.fromChatMessage(leveledMob.getTag() /* or name, or what you need here */)[0].getHandle()));
+////
+////                    packet.getWatchableCollectionModifier().write(0, dataWatcher.getWatchableObjects());
+////
+//                    event.setPacket(packet);
+//            }
+//        });
     }
 
     public void setFakeHelmet(final User user) {
 
-        final ItemStack hat = user.getPlayerArmor().getHat().getItemStack();
+        ItemStack hat = user.getPlayerArmor().getHat().getItemStack();
         final Player player = user.getPlayer();
 
         if (player == null || hat == null) {
             return;
+        }
+
+        if (hat.getType() == Material.AIR) {
+            final EntityEquipment equipment = player.getEquipment();
+            if (equipment != null) {
+                hat = equipment.getHelmet();
+            }
         }
 
         final List<Pair<EnumWrappers.ItemSlot, ItemStack>> equipmentList = new ArrayList<>();
@@ -233,6 +229,8 @@ public class UserManager {
 
         fake.getIntegers().write(0, player.getEntityId());
         fake.getSlotStackPairLists().write(0, equipmentList);
+
+        player.sendMessage("Set Hat");
 
         for (final Player p : Bukkit.getOnlinePlayers()) {
             try {
