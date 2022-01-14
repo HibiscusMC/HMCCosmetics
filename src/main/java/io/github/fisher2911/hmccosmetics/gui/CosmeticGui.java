@@ -96,7 +96,7 @@ public class CosmeticGui {
                                     if (!hasPermission) {
                                         this.messageHandler.sendMessage(
                                                 player,
-                                                Messages.NO_PERMISSION
+                                                Messages.NO_COSMETIC_PERMISSION
                                         );
                                         return;
                                     }

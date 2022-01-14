@@ -6,7 +6,7 @@
 ## Table of Contents
 - [Description](#description)
 - [Installation](#installation)
-- [Contact Information](#contact-information)
+- [Download](#download)
 
 ### Description
 
@@ -17,5 +17,10 @@ HMCCosmetics is a free, open source cosmetics plugin which allows you to easily 
 
 - Server running PaperMC (or a fork of PaperMC)
 - ProtocolLib
+
+### Download
+
+Download on the [Releases Page](https://github.com/HibiscusMC/HMCCosmetics/releases)
+
 
 

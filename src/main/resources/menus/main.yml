@@ -1,87 +1,55 @@
-title: "<red>Main</red>"
-rows: 3
+title: "<white>" # GUI Title
+rows: 5 # Rows in the GUI 
 items:
-  10:
-    material: NETHERITE_CHESTPLATE
-    name: "<blue>Backpack"
-    lore:
+  1: # GUI Slot number
+    material: LEATHER_HORSE_ARMOR
+    name: "<rainbow>Colorful Hat</rainbow>"
+    lore: # Lore displayed when the player owns the item
       - ""
-      - "Enabled: %enabled%"
-      - "Allowed: %allowed%"
-    locked-lore:
-      - "Not allowed"
+      - "<gray>Enabled: <#6D9DC5>%enabled%"
+      - "<gray>Allowed: <#6D9DC5>%allowed%"
+    locked-lore: # Lore displayed when the player does not have the correct permission.
+      - "<red>You do not own this item!"
     amount: 1
-    type: BACKPACK
-    permission: ""
-    id: netherite_backpack
-  11:
-    material: NETHERITE_HELMET
-    name: "<blue>Hat"
-    lore:
-      - ""
-      - "Enabled: %enabled%"
-      - "Allowed: %allowed%"
-    locked-lore:
-      - "Not allowed"
-    amount: 1
+    model-data: 2 # CustomModelData Number
     type: HAT
-    permission: ""
-    id: netherite_hat
-  12:
-    material: DIAMOND_CHESTPLATE
-    name: "<blue>Backpack"
-    lore:
-      - ""
-      - "Enabled: %enabled%"
-      - "Allowed: %allowed%"
-    locked-lore:
-      - "Not allowed"
-    amount: 1
-    type: BACKPACK
-    permission: ""
-    id: diamond_backpack
-  13:
-    material: DIAMOND_HELMET
-    name: "<blue>Hat "
-    lore:
-      - ""
-      - "Enabled: %enabled%"
-      - "Allowed: %allowed%"
-    locked-lore:
-      - "Not allowed"
-    amount: 1
-    type: HAT
-    permission: ""
-    id: diamond_hat
-  14:
-    material: LEATHER_CHESTPLATE
-    name: "<blue>Backpack"
-    lore:
-      - ""
-      - "Enabled: %enabled%"
-      - "Allowed: %allowed%"
-    locked-lore:
-      - "Not allowed"
-    amount: 1
-    type: BACKPACK
-    permission: ""
-    id: leather_backpack
-    dyeable: true
-  15:
-    material: LEATHER_HELMET
-    name: "<blue>Hat "
-    lore:
-      - ""
-      - "Enabled: %enabled%"
-      - "Allowed: %allowed%"
-    locked-lore:
-      - "Not allowed"
-    amount: 1
-    type: HAT
-    color:
+    dyeable: true # Enables dyeable item feature
+    color: # Sets default color for item. Uses RGB format.
       red: 5
-      blue: 100
       green: 230
+      blue: 100
+    open-menu: dye-menu # Automatically open the dye menu when applying this cosmetic
+    permission: "cosmetics.colorful_hat" # Can be anything you want.
+    id: colorful_hat # Internal identifier. Can be anything you want.
+  2:
+    material: PAPER
+    name: "<blue>Backpack"
+    lore:
+      - ""
+      - "<gray>Enabled: <#6D9DC5>%enabled%"
+      - "<gray>Allowed: <#6D9DC5>%allowed%"
+    locked-lore:
+      - "<red>You do not own this item!"
+    amount: 1
+    model-data: 4
+    type: BACKPACK
     permission: ""
-    id: leather_hat
-    dyeable: true
+    id: backpack
+  37:
+    material: PAPER
+    name: "<#40B7D6>Previous Page"
+    amount: 1
+    model-data: 1
+    open-menu: menu-2
+  40:
+    material: PAPER
+    name: "<rainbow>Customization Menu</rainbow>"
+    amount: 1
+    model-data: 3
+    open-menu: dye-menu
+  43:
+    material: PAPER
+    name: "<#40B7D6>Next Page"
+    amount: 1
+    model-data: 2
+    open-menu: menu-2

@@ -140,7 +140,6 @@ public class MessageHandler {
         }
 
         for (final String key : config.getKeys(false)) {
-
             final String message = Utils.replaceIfNull(config.getString(key), "", value -> {
                 if (value == null) {
                     this.logger.warning(String.format(ErrorMessages.ITEM_NOT_FOUND, "message", fileName));
@@ -148,8 +147,7 @@ public class MessageHandler {
             }).replace(Placeholder.PREFIX, prefix);
 
             final Message.Type messageType = Utils.stringToEnum(
-                    Utils.replaceIfNull(config.getString("type"), "")
-                    , Message.Type.class, Message.Type.MESSAGE
+                    Utils.replaceIfNull(config.getString("type"), ""), Message.Type.class, Message.Type.MESSAGE
             );
 
             this.messageMap.put(key, new Message(key, message, messageType));
