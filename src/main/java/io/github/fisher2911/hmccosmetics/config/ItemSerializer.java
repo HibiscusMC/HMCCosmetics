@@ -133,7 +133,7 @@ public class ItemSerializer implements TypeSerializer<GuiItem> {
         if (colorNode.virtual()) {
             color = null;
         } else {
-            color = Color.fromBGR(redNode.getInt(), greenNode.getInt(), blueNode.getInt());
+            color = Color.fromRGB(redNode.getInt(), greenNode.getInt(), blueNode.getInt());
         }
 
         final Map<Enchantment, Integer> enchantments =
