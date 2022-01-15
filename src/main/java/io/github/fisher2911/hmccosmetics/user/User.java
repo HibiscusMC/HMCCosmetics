@@ -4,12 +4,24 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.wrappers.EnumWrappers;
+import com.comphenix.protocol.wrappers.Pair;
+import com.comphenix.protocol.wrappers.WrappedChatComponent;
+import com.comphenix.protocol.wrappers.WrappedDataWatcher;
+import com.sun.jdi.InvocationException;
+import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
 import io.github.fisher2911.hmccosmetics.message.MessageHandler;
 import io.github.fisher2911.hmccosmetics.message.Messages;
+import io.github.fisher2911.hmccosmetics.message.Placeholder;
 import io.github.fisher2911.hmccosmetics.util.Keys;
+import io.github.fisher2911.hmccosmetics.util.builder.ItemBuilder;
+import net.minecraft.network.protocol.game.PacketPlayOutEntityHeadRotation;
+import net.minecraft.network.protocol.game.PacketPlayOutEntityMetadata;
+import net.minecraft.network.syncher.DataWatcher;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
@@ -24,6 +36,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 public class User {
@@ -233,6 +248,7 @@ public class User {
             return;
         }
 
+
         this.hasArmorStand = true;
 
         final Location location = player.getLocation();
@@ -244,11 +260,7 @@ public class User {
         // Entity ID
         packet.getIntegers().write(0, this.armorStandId);
         // Entity Type
-        packet.getIntegers().write(6, 78);
-        // Set optional velocity (/8000)
-        packet.getIntegers().write(1, 0);
-        packet.getIntegers().write(2, 0);
-        packet.getIntegers().write(3, 0);
+//        packet.getIntegers().write(6, 78);
         // Set yaw pitch
         packet.getIntegers().write(4, (int) location.getPitch());
         packet.getIntegers().write(5, (int) location.getYaw());
@@ -261,30 +273,17 @@ public class User {
 
         packet.getEntityTypeModifier().write(0, EntityType.ARMOR_STAND);
 
+        final PacketContainer ridingPacket = new PacketContainer(PacketType.Play.Server.MOUNT);
+        ridingPacket.
+                getIntegers().
+                write(0, player.getEntityId());
+        ridingPacket.getIntegerArrays().write(0, new int[]{this.armorStandId});
+
         for (final Player p : Bukkit.getOnlinePlayers()) {
             try {
                 protocolManager.sendServerPacket(p, packet);
+                protocolManager.sendServerPacket(p, ridingPacket);
 
-                player.sendMessage(this.armorStandId + "");
-
-                packet.getEntityModifier(player.getWorld()).read(0);
-
-                packet.getEntityModifier(player.getWorld()).getValues().forEach(
-                        e -> {
-                            if (e == null) {
-                                player.sendMessage("entity null");
-                                return;
-                            }
-                            try {
-                                player.sendMessage(String.valueOf(e.getEntityId()));
-                            } catch (final IllegalArgumentException exception) {
-                                player.sendMessage("Exception");
-                            }
-                            if (e instanceof final LivingEntity entity) {
-                                entity.getEquipment().setHelmet(this.playerArmor.getBackpack().getItemStack());
-                            }
-                        }
-                );
             } catch (InvocationTargetException e) {
                 e.printStackTrace();
             }
@@ -294,9 +293,79 @@ public class User {
     public void updatePacketArmorStand() {
         if (!this.hasArmorStand) {
             this.spawnPacketArmorstand();
-            this.getPlayer().sendMessage("Spawning armor stand");
+            return;
         }
 
+        final Player player = this.getPlayer();
+
+        if (player == null) return;
+
+        final List<Pair<EnumWrappers.ItemSlot, ItemStack>> equipmentList = new ArrayList<>();
+
+        final Map<String, String> placeholders = Map.of(Placeholder.ALLOWED, "true",
+                Placeholder.ENABLED, "true");
+
+        equipmentList.add(new Pair<>(EnumWrappers.ItemSlot.HEAD,
+                ItemBuilder.from(this.playerArmor.getBackpack().getItemStack()).
+                        namePlaceholders(placeholders).
+                        lorePlaceholders(placeholders).
+                        build()
+        ));
+
+        final PacketContainer armorPacket = new PacketContainer(PacketType.Play.Server.ENTITY_EQUIPMENT);
+        armorPacket.getIntegers().write(0, this.armorStandId);
+        armorPacket.getSlotStackPairLists().write(0, equipmentList);
+
+//        final PacketContainer rotationContainer = new PacketContainer(PacketType.Play.Server.ENTITY_LOOK);
+//        final Location location = player.getLocation();
+//        rotationContainer.
+//                getIntegers().
+//                write(0, this.armorStandId);
+//        rotationContainer.
+//                getBytes().
+//                write(0, (byte) (location.getYaw() * 256.0F / 360.0F));
+//
+//        final PacketContainer rotationContainer2 = new PacketContainer(PacketType.Play.Server.ENTITY_HEAD_ROTATION);
+//        rotationContainer2.
+//                getIntegers().
+//                write(0, this.armorStandId);
+//        rotationContainer2.
+//                getBytes().
+//                write(0, (byte) (location.getPitch() * 256.0F / 360.0F));
+
+        final PacketContainer metaContainer = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
+//        metaContainer.
+//                getBytes().
+//                write(15, (byte) 0x01);
+
+
+        WrappedChatComponent wrappedChatComponent = WrappedChatComponent.fromText(ChatColor.RED + "TEST");
+        Optional<WrappedChatComponent> opt = Optional.of(wrappedChatComponent);
+
+        WrappedDataWatcher metadata = new WrappedDataWatcher();
+        metadata.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(15, WrappedDataWatcher.Registry.get(Byte.class)), (byte) (0x01)); //isSmall, noBasePlate, set Marker
+//        metadata.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(15, WrappedDataWatcher.Registry.get(Byte.class)), (byte) (0x01)); //isSmall, noBasePlate, set Marker
+
+        metaContainer.getIntegers().write(0, this.armorStandId);
+        metaContainer.getWatchableCollectionModifier().write(0, metadata.getWatchableObjects());
+
+//        final WrappedDataWatcher dataWatcher = new WrappedDataWatcher();
+//        dataWatcher.setObject(15, (byte) 0x01);
+//
+//        metaContainer.getDataWatcherModifier().write(
+//                0, dataWatcher
+//        );
+
+        final ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
+
+        for (final Player p : Bukkit.getOnlinePlayers()) {
+            try {
+                protocolManager.sendServerPacket(p, armorPacket);
+                protocolManager.sendServerPacket(p, metaContainer);
+            } catch (final InvocationTargetException exception) {
+                exception.printStackTrace();
+            }
+        }
     }
 
     public void addArmorStandPassenger(final Entity entity) {

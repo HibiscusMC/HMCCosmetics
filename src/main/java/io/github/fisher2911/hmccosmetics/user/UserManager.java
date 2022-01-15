@@ -209,7 +209,7 @@ public class UserManager {
         if (hat.getType() == Material.AIR) {
             final EntityEquipment equipment = player.getEquipment();
             if (equipment != null) {
-                hat = equipment.getHelmet();
+                hat = equipment.getHelmet() == null ? hat : equipment.getHelmet();
             }
         }
 

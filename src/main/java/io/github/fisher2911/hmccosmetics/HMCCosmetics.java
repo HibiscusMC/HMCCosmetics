@@ -7,7 +7,7 @@ import io.github.fisher2911.hmccosmetics.command.CosmeticsCommand;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.gui.CosmeticsMenu;
 import io.github.fisher2911.hmccosmetics.listener.ClickListener;
-import io.github.fisher2911.hmccosmetics.listener.InventoryListener;
+import io.github.fisher2911.hmccosmetics.listener.HatRemoveFixListener;
 import io.github.fisher2911.hmccosmetics.listener.JoinListener;
 import io.github.fisher2911.hmccosmetics.listener.RespawnListener;
 import io.github.fisher2911.hmccosmetics.listener.TeleportListener;
@@ -16,7 +16,6 @@ import io.github.fisher2911.hmccosmetics.message.Messages;
 import io.github.fisher2911.hmccosmetics.user.UserManager;
 import me.mattstudios.mf.base.CommandManager;
 import org.bstats.bukkit.Metrics;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Arrays;
@@ -60,7 +59,7 @@ public class HMCCosmetics extends JavaPlugin {
                         new ClickListener(this),
                         new TeleportListener(this),
                         new RespawnListener(this),
-                        new InventoryListener(this)).
+                        new HatRemoveFixListener(this)).
                 forEach(listener ->
                         this.getServer().getPluginManager().registerEvents(listener, this)
                 );
