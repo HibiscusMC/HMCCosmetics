@@ -230,8 +230,6 @@ public class UserManager {
         fake.getIntegers().write(0, player.getEntityId());
         fake.getSlotStackPairLists().write(0, equipmentList);
 
-        player.sendMessage("Set Hat");
-
         for (final Player p : Bukkit.getOnlinePlayers()) {
             try {
                 this.plugin.getProtocolManager().sendServerPacket(p, fake);

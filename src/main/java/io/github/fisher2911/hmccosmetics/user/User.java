@@ -6,6 +6,7 @@ import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.Pair;
+import com.comphenix.protocol.wrappers.Vector3F;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.sun.jdi.InvocationException;
@@ -17,6 +18,7 @@ import io.github.fisher2911.hmccosmetics.message.Messages;
 import io.github.fisher2911.hmccosmetics.message.Placeholder;
 import io.github.fisher2911.hmccosmetics.util.Keys;
 import io.github.fisher2911.hmccosmetics.util.builder.ItemBuilder;
+import net.minecraft.core.Vector3f;
 import net.minecraft.network.protocol.game.PacketPlayOutEntityHeadRotation;
 import net.minecraft.network.protocol.game.PacketPlayOutEntityMetadata;
 import net.minecraft.network.syncher.DataWatcher;
@@ -32,6 +34,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.util.EulerAngle;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
@@ -316,45 +320,20 @@ public class User {
         armorPacket.getIntegers().write(0, this.armorStandId);
         armorPacket.getSlotStackPairLists().write(0, equipmentList);
 
-//        final PacketContainer rotationContainer = new PacketContainer(PacketType.Play.Server.ENTITY_LOOK);
-//        final Location location = player.getLocation();
-//        rotationContainer.
-//                getIntegers().
-//                write(0, this.armorStandId);
-//        rotationContainer.
-//                getBytes().
-//                write(0, (byte) (location.getYaw() * 256.0F / 360.0F));
-//
-//        final PacketContainer rotationContainer2 = new PacketContainer(PacketType.Play.Server.ENTITY_HEAD_ROTATION);
-//        rotationContainer2.
-//                getIntegers().
-//                write(0, this.armorStandId);
-//        rotationContainer2.
-//                getBytes().
-//                write(0, (byte) (location.getPitch() * 256.0F / 360.0F));
+        final Location location = player.getLocation();
 
         final PacketContainer metaContainer = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
-//        metaContainer.
-//                getBytes().
-//                write(15, (byte) 0x01);
-
-
-        WrappedChatComponent wrappedChatComponent = WrappedChatComponent.fromText(ChatColor.RED + "TEST");
-        Optional<WrappedChatComponent> opt = Optional.of(wrappedChatComponent);
 
         WrappedDataWatcher metadata = new WrappedDataWatcher();
-        metadata.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(15, WrappedDataWatcher.Registry.get(Byte.class)), (byte) (0x01)); //isSmall, noBasePlate, set Marker
-//        metadata.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(15, WrappedDataWatcher.Registry.get(Byte.class)), (byte) (0x01)); //isSmall, noBasePlate, set Marker
+        metadata.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(16,
+                WrappedDataWatcher.Registry.get(Vector3F.getMinecraftClass())), new Vector3f(
+                0,
+                location.getYaw(),
+                0
+        )); //isSmall, noBasePlate, set Marker
 
         metaContainer.getIntegers().write(0, this.armorStandId);
         metaContainer.getWatchableCollectionModifier().write(0, metadata.getWatchableObjects());
-
-//        final WrappedDataWatcher dataWatcher = new WrappedDataWatcher();
-//        dataWatcher.setObject(15, (byte) 0x01);
-//
-//        metaContainer.getDataWatcherModifier().write(
-//                0, dataWatcher
-//        );
 
         final ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
 
