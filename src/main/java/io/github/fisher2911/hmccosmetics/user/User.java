@@ -18,6 +18,7 @@ import io.github.fisher2911.hmccosmetics.message.Messages;
 import io.github.fisher2911.hmccosmetics.message.Placeholder;
 import io.github.fisher2911.hmccosmetics.util.Keys;
 import io.github.fisher2911.hmccosmetics.util.builder.ItemBuilder;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
 import net.minecraft.core.Vector3f;
 import net.minecraft.network.protocol.game.PacketPlayOutEntityHeadRotation;
 import net.minecraft.network.protocol.game.PacketPlayOutEntityMetadata;
@@ -26,6 +27,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftArmorStand;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -243,7 +245,7 @@ public class User {
                         player.getLocation().getPitch());
     }
 
-    public void spawnPacketArmorstand() {
+    public void spawnPacketArmorStand() {
 
         final Player player = this.getPlayer();
 
@@ -251,7 +253,6 @@ public class User {
             this.updatePacketArmorStand();
             return;
         }
-
 
         this.hasArmorStand = true;
 
@@ -269,25 +270,17 @@ public class User {
         packet.getIntegers().write(4, (int) location.getPitch());
         packet.getIntegers().write(5, (int) location.getYaw());
         // Set location
-        packet.getDoubles().write(0, location.getX());
-        packet.getDoubles().write(1, location.getY());
-        packet.getDoubles().write(2, location.getZ());
+        packet.getDoubles().write(0, 0d);
+        packet.getDoubles().write(1, -5d);
+        packet.getDoubles().write(2, 0d);
         // Set UUID
         packet.getUUIDs().write(0, UUID.randomUUID());
 
-        packet.getEntityTypeModifier().write(0, EntityType.ARMOR_STAND);
-
-        final PacketContainer ridingPacket = new PacketContainer(PacketType.Play.Server.MOUNT);
-        ridingPacket.
-                getIntegers().
-                write(0, player.getEntityId());
-        ridingPacket.getIntegerArrays().write(0, new int[]{this.armorStandId});
+        packet.getEntityTypeModifier().write(0, EntityType.ZOMBIE);
 
         for (final Player p : Bukkit.getOnlinePlayers()) {
             try {
                 protocolManager.sendServerPacket(p, packet);
-                protocolManager.sendServerPacket(p, ridingPacket);
-
             } catch (InvocationTargetException e) {
                 e.printStackTrace();
             }
@@ -296,7 +289,7 @@ public class User {
 
     public void updatePacketArmorStand() {
         if (!this.hasArmorStand) {
-            this.spawnPacketArmorstand();
+            this.spawnPacketArmorStand();
             return;
         }
 
@@ -320,32 +313,110 @@ public class User {
         armorPacket.getIntegers().write(0, this.armorStandId);
         armorPacket.getSlotStackPairLists().write(0, equipmentList);
 
+//        final PacketContainer rotationContainer = new PacketContainer(PacketType.Play.Server.ENTITY_LOOK);
         final Location location = player.getLocation();
+//        rotationContainer.
+//                getIntegers().
+//                write(0, this.armorStandId);
+//        rotationContainer.
+//                getBytes().
+//                write(0, (byte) (location.getYaw() * 256.0F / 360.0F));
+//
+//        final PacketContainer rotationContainer2 = new PacketContainer(PacketType.Play.Server.ENTITY_HEAD_ROTATION);
+//        rotationContainer2.
+//                getIntegers().
+//                write(0, this.armorStandId);
+//        rotationContainer2.
+//                getBytes().
+//                write(0, (byte) (location.getPitch() * 256.0F / 360.0F));
 
         final PacketContainer metaContainer = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
+//        metaContainer.
+//                getBytes().
+//                write(15, (byte) 0x01);
 
-        WrappedDataWatcher metadata = new WrappedDataWatcher();
-        metadata.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(16,
-                WrappedDataWatcher.Registry.get(Vector3F.getMinecraftClass())), new Vector3f(
-                0,
+
+
+        WrappedDataWatcher metaData = new WrappedDataWatcher();
+        metaData.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(0, WrappedDataWatcher.Registry.get(Byte.class)), (byte) (0x20)); //isSmall, noBasePlate, set Marker
+        metaData.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(15, WrappedDataWatcher.Registry.get(Byte.class)), (byte) (0x01)); //isSmall, noBasePlate, set Marker
+
+  /*      metadata.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(8, WrappedDataWatcher.Registry.get(Vector3F.getMinecraftClass())), new Vector3f(
+                location.getPitch(),
                 location.getYaw(),
                 0
-        )); //isSmall, noBasePlate, set Marker
+        ));*/ //isSmall, noBasePlate, set Marker
+//        metadata.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(16, WrappedDataWatcher.Registry.(), new Vector()));
+
+        final PacketContainer rotationPacket = new PacketContainer(PacketType.Play.Server.REL_ENTITY_MOVE_LOOK);
+
+        rotationPacket.getIntegers().write(0, this.armorStandId);
+        rotationPacket.
+                getShorts().
+                write(0, (short) 0).
+                write(1, (short) -5).
+                write(2, (short) 0);
+        rotationPacket.
+                getBytes().
+                write(0, (byte) (location.getYaw() * 256.0F / 360.0F)).
+                write(1, (byte) (location.getPitch() * 256.0F / 360.0F));
 
         metaContainer.getIntegers().write(0, this.armorStandId);
-        metaContainer.getWatchableCollectionModifier().write(0, metadata.getWatchableObjects());
+//        metaContainer.getWatchableCollectionModifier().write(0, metaData.getWatchableObjects());
+
+//        final WrappedDataWatcher dataWatcher = new WrappedDataWatcher();
+//        dataWatcher.setObject(15, (byte) 0x01);
+//
+//        metaContainer.getDataWatcherModifier().write(
+//                0, dataWatcher
+//        );
 
         final ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
 
+        final PacketContainer teleportPacket = new PacketContainer(PacketType.Play.Server.ENTITY_TELEPORT);
+
+        teleportPacket.getIntegers().write(0, this.armorStandId);
+        teleportPacket.getDoubles().
+                write(0, location.getX()).
+                write(1, location.getY()).
+                write(2, location.getZ());
+
+        teleportPacket.getBytes().
+                write(0, (byte) (location.getYaw() * 256.0F / 360.0F)).
+                write(1, (byte) (location.getPitch() * 256.0F / 360.0F));
+
+        final PacketContainer destroyPacket = new PacketContainer(PacketType.Play.Server.ENTITY_DESTROY);
+//        destroyPacket.getIntegerArrays().write(0, new int[]{this.armorStandId});
+        destroyPacket.getModifier().write(0, new IntArrayList(new int[]{this.armorStandId}));
+
+        final PacketContainer ridingPacket = new PacketContainer(PacketType.Play.Server.MOUNT);
+        ridingPacket.
+                getIntegers().
+                write(0, player.getEntityId());
+        ridingPacket.getIntegerArrays().write(0, new int[]{this.armorStandId});
+
         for (final Player p : Bukkit.getOnlinePlayers()) {
             try {
+//                protocolManager.sendServerPacket(p, destroyPacket);
+                if (i == 0) {
+                    i++;
+//                    protocolManager.sendServerPacket(p, ridingPacket);
+                }
                 protocolManager.sendServerPacket(p, armorPacket);
-                protocolManager.sendServerPacket(p, metaContainer);
+//                protocolManager.sendServerPacket(p, metaContainer);
+                protocolManager.sendServerPacket(p, rotationPacket);
+//                protocolManager.sendServerPacket(p, teleportPacket);
+//                protocolManager.sendServerPacket(p, rotationPacket2);
+//                protocolManager.sendServerPacket(p, removeRiderPacket);
+//                protocolManager.sendServerPacket(p, rotationPacket2);
+//                i++;
             } catch (final InvocationTargetException exception) {
                 exception.printStackTrace();
             }
         }
     }
+
+    int i = 0;
 
     public void addArmorStandPassenger(final Entity entity) {
         final Player player = this.getPlayer();
