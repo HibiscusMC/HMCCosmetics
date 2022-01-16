@@ -18,6 +18,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Map;
 import java.util.Optional;
 
 @Command("cosmetics")
@@ -99,7 +100,7 @@ public class CosmeticsCommand extends CommandBase {
 
     @SubCommand("add")
     @Permission(io.github.fisher2911.hmccosmetics.message.Permission.SET_COSMETIC_COMMAND)
-    public void setCommand(final CommandSender sender, final Player player, @Completion("#ids") final String id) {
+    public void setCommand(final CommandSender sender, @Completion("#players") final Player player, @Completion("#ids") final String id) {
         final Optional<User> userOptional = this.userManager.get(player.getUniqueId());
 
         if (userOptional.isEmpty()) {
@@ -133,7 +134,7 @@ public class CosmeticsCommand extends CommandBase {
                         sender,
                         Messages.SET_OTHER_BACKPACK,
                         Map.of(Placeholder.PLAYER, player.getName(),
-                                Placeholder.ITEM, id)
+                                Placeholder.TYPE, id)
                 );
             }
             case HAT -> {
@@ -146,10 +147,65 @@ public class CosmeticsCommand extends CommandBase {
                         sender,
                         Messages.SET_OTHER_HAT,
                         Map.of(Placeholder.PLAYER, player.getName(),
-                                Placeholder.ITEM, id)
+                                Placeholder.TYPE, id)
                 );
             }
         }
+    }
+
+    @SubCommand("remove")
+    @Permission(io.github.fisher2911.hmccosmetics.message.Permission.SET_COSMETIC_COMMAND)
+    public void removeCommand(final CommandSender sender, @Completion("#players") final Player player, @Completion("#types") String typeString) {
+        final Optional<User> userOptional = this.userManager.get(player.getUniqueId());
+
+        if (userOptional.isEmpty()) {
+            this.messageHandler.sendMessage(
+                    sender,
+                    Messages.INVALID_USER
+            );
+            return;
+        }
+
+        final User user = userOptional.get();
+
+        try {
+            final ArmorItem.Type type = ArmorItem.Type.valueOf(typeString.toUpperCase());
+
+            switch (type) {
+                case HAT -> {
+                    user.removeHat(this.userManager);
+                    this.messageHandler.sendMessage(
+                            player,
+                            Messages.REMOVED_HAT
+                    );
+                    this.messageHandler.sendMessage(
+                            sender,
+                            Messages.SET_OTHER_HAT,
+                            Map.of(Placeholder.PLAYER, player.getName(),
+                                    Placeholder.TYPE, "none")
+                    );
+                }
+                case BACKPACK -> {
+                    user.removeBackpack();
+                    this.messageHandler.sendMessage(
+                            player,
+                            Messages.REMOVED_BACKPACK
+                    );
+                    this.messageHandler.sendMessage(
+                            sender,
+                            Messages.SET_OTHER_BACKPACK,
+                            Map.of(Placeholder.PLAYER, player.getName(),
+                                    Placeholder.TYPE, "none")
+                    );
+                }
+            }
+        } catch (final IllegalArgumentException exception) {
+            this.messageHandler.sendMessage(
+                    player,
+                    Messages.INVALID_TYPE);
+        }
+
+
     }
 
 }

@@ -64,6 +64,14 @@ public class User {
         this.setPlayerArmor(PlayerArmor.empty());
     }
 
+    public void removeHat(final UserManager userManager) {
+        this.setHat(ArmorItem.empty(ArmorItem.Type.HAT), userManager);
+    }
+
+    public void removeBackpack() {
+        this.setBackpack(ArmorItem.empty(ArmorItem.Type.BACKPACK));
+    }
+
     public int getArmorStandId() {
         return armorStandId;
     }
@@ -85,13 +93,7 @@ public class User {
         }
 
         if (backpack.getId().equals(this.playerArmor.getBackpack().getId())) {
-            this.setBackpack(new ArmorItem(
-                    new ItemStack(Material.AIR),
-                    "",
-                    new ArrayList<>(),
-                    "",
-                    ArmorItem.Type.BACKPACK
-            ));
+            this.setBackpack(ArmorItem.empty(ArmorItem.Type.BACKPACK));
 
             messageHandler.sendMessage(
                     player,
@@ -130,14 +132,7 @@ public class User {
         }
 
         if (hat.getId().equals(this.playerArmor.getHat().getId())) {
-            this.setHat(new ArmorItem(
-                            new ItemStack(Material.AIR),
-                            "",
-                            new ArrayList<>(),
-                            "",
-                            ArmorItem.Type.HAT
-                    ),
-                    userManager);
+            this.setHat(ArmorItem.empty(ArmorItem.Type.BACKPACK), userManager);
 
             messageHandler.sendMessage(
                     player,

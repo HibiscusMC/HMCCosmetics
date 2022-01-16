@@ -9,6 +9,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ArmorItem extends GuiItem {
@@ -142,6 +143,16 @@ public class ArmorItem extends GuiItem {
         this.permission = permission;
         this.type = type;
         this.dyeable = dyeable;
+    }
+
+    public static ArmorItem empty(final Type type) {
+        return new ArmorItem(
+                new ItemStack(Material.AIR),
+                "",
+                new ArrayList<>(),
+                "",
+                type
+        );
     }
 
     public String getId() {
