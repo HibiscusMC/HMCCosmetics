@@ -1,6 +1,7 @@
 package io.github.fisher2911.hmccosmetics.message;
 
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
+import io.github.fisher2911.hmccosmetics.papi.PAPIHook;
 import io.github.fisher2911.hmccosmetics.util.StringUtils;
 import io.github.fisher2911.hmccosmetics.util.Utils;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
@@ -40,22 +41,23 @@ public class MessageHandler {
     }
 
     /**
-     *
-     * @param sender receiver of message
-     * @param key message key
+     * @param sender       receiver of message
+     * @param key          message key
      * @param placeholders placeholders
      */
 
     public void sendMessage(final CommandSender sender, final Message key, final Map<String, String> placeholders) {
-           final String message = StringUtils.applyPlaceholders(this.getMessage(key), placeholders);
-           final Component component = Adventure.MINI_MESSAGE.parse(message);
-           this.adventure.sender(sender).sendMessage(component);
+        final String message = this.getPapiPlaceholders(
+                sender,
+                StringUtils.applyPlaceholders(this.getMessage(key), placeholders)
+        );
+        final Component component = Adventure.MINI_MESSAGE.parse(message);
+        this.adventure.sender(sender).sendMessage(component);
     }
 
     /**
-     *
      * @param sender receiver of message
-     * @param key message key
+     * @param key    message key
      */
 
     public void sendMessage(final CommandSender sender, final Message key) {
@@ -63,22 +65,23 @@ public class MessageHandler {
     }
 
     /**
-     *
-     * @param player receiver of message
-     * @param key message key
+     * @param player       receiver of message
+     * @param key          message key
      * @param placeholders placeholders
      */
 
     public void sendActionBar(final Player player, final Message key, final Map<String, String> placeholders) {
-        final String message = StringUtils.applyPlaceholders(this.getMessage(key), placeholders);
+        final String message = this.getPapiPlaceholders(
+                player,
+                StringUtils.applyPlaceholders(this.getMessage(key), placeholders)
+        );
         Component component = Adventure.MINI_MESSAGE.parse(message);
         this.adventure.player(player).sendActionBar(component);
     }
 
     /**
-     *
      * @param player receiver of message
-     * @param key message key
+     * @param key    message key
      */
 
     public void sendActionBar(final Player player, final Message key) {
@@ -86,22 +89,23 @@ public class MessageHandler {
     }
 
     /**
-     *
-     * @param player receiver of message
-     * @param key message key
+     * @param player       receiver of message
+     * @param key          message key
      * @param placeholders placeholders
      */
 
     public void sendTitle(final Player player, final Message key, final Map<String, String> placeholders) {
-        final String message = StringUtils.applyPlaceholders(this.getMessage(key), placeholders);
+        final String message = this.getPapiPlaceholders(
+                player,
+                StringUtils.applyPlaceholders(this.getMessage(key), placeholders)
+        );
         Component component = Adventure.MINI_MESSAGE.parse(message);
         this.adventure.player(player).showTitle(Title.title(component, Component.empty()));
     }
 
     /**
-     *
      * @param player receiver of message
-     * @param key message key
+     * @param key    message key
      */
 
     public void sendTitle(final Player player, final Message key) {
@@ -109,7 +113,6 @@ public class MessageHandler {
     }
 
     /**
-     *
      * @param key message key
      * @return message, or empty string if message not found
      */
@@ -153,4 +156,12 @@ public class MessageHandler {
             this.messageMap.put(key, new Message(key, message, messageType));
         }
     }
+
+    private String getPapiPlaceholders(final CommandSender sender, final String message) {
+            if (sender instanceof final Player player) {
+                return StringUtils.applyPapiPlaceholders(player, message);
+            }
+            return StringUtils.applyPapiPlaceholders(null, message);
+        }
+
 }

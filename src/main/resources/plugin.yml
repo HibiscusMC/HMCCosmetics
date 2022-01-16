@@ -4,6 +4,7 @@ version: 1.0.3
 api-version: 1.17
 softdepend:
   - Multiverse
+  - PlaceholderAPI
 depend:
   - ProtocolLib
 permissions:

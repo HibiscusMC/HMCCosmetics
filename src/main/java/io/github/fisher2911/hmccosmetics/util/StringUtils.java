@@ -1,15 +1,25 @@
 package io.github.fisher2911.hmccosmetics.util;
 
+import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.message.Adventure;
+import io.github.fisher2911.hmccosmetics.papi.PAPIHook;
 import net.kyori.adventure.text.Component;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
 public class StringUtils {
 
+    private static final HMCCosmetics plugin;
+
+    static {
+        plugin = HMCCosmetics.getPlugin(HMCCosmetics.class);
+    }
+
     /**
-     *
-     * @param message message being translated
+     * @param message      message being translated
      * @param placeholders placeholders applied
      * @return message with placeholders applied
      */
@@ -21,9 +31,15 @@ public class StringUtils {
         return message;
     }
 
+    public static String applyPapiPlaceholders(@Nullable final Player player, final String message) {
+        if (plugin.isPapiEnabled()) {
+            return PAPIHook.parse(player, message);
+        }
+
+        return message;
+    }
 
     /**
-     *
      * @param parsed message to be parsed
      * @return MiniMessage parsed string
      */

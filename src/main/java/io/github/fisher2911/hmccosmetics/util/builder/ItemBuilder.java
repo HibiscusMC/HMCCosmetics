@@ -3,9 +3,11 @@ package io.github.fisher2911.hmccosmetics.util.builder;
 import io.github.fisher2911.hmccosmetics.message.Adventure;
 import io.github.fisher2911.hmccosmetics.util.StringUtils;
 import net.kyori.adventure.text.Component;
+import net.minecraft.network.PacketListener;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -145,6 +147,38 @@ public class ItemBuilder {
 
         this.itemMeta.setLore(lore);
         return this;
+    }
+
+    public ItemBuilder papiPlaceholders(final Player player) {
+        this.lorePapiPlaceholders(player);
+        this.namePapiPlaceholders(player);
+        return this;
+    }
+
+    private void lorePapiPlaceholders(final Player player) {
+        if (this.itemMeta == null) return;
+        final List<String> newLore = new ArrayList<>();
+
+        final List<String> lore = this.itemMeta.getLore();
+
+        if (lore == null) return;
+
+        for (final String line : this.itemMeta.getLore()) {
+            newLore.add(StringUtils.applyPapiPlaceholders(player, line));
+        }
+
+        this.itemMeta.setLore(newLore);
+    }
+
+    private void namePapiPlaceholders(final Player player) {
+        if (this.itemMeta == null) return;
+
+        this.itemMeta.setDisplayName(
+                StringUtils.applyPapiPlaceholders(
+                        player,
+                        this.itemMeta.getDisplayName()
+                )
+        );
     }
 
     /**

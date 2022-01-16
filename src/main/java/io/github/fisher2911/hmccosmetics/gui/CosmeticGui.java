@@ -10,11 +10,13 @@ import io.github.fisher2911.hmccosmetics.message.MessageHandler;
 import io.github.fisher2911.hmccosmetics.message.Messages;
 import io.github.fisher2911.hmccosmetics.message.Placeholder;
 import io.github.fisher2911.hmccosmetics.user.User;
+import io.github.fisher2911.hmccosmetics.util.StringUtils;
 import io.github.fisher2911.hmccosmetics.util.builder.ItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -27,6 +29,7 @@ public class CosmeticGui {
     protected final MessageHandler messageHandler;
     protected final String title;
     protected final int rows;
+    protected final Map<Integer, ItemStack> itemStackMap;
     protected final Map<Integer, GuiItem> guiItemMap;
     protected Gui gui;
 
@@ -40,6 +43,8 @@ public class CosmeticGui {
         this.title = title;
         this.rows = rows;
         this.guiItemMap = guiItemMap;
+        this.itemStackMap = new HashMap<>();
+        this.guiItemMap.forEach((key, value) -> itemStackMap.put(key, value.getItemStack()));
     }
 
     private void setItems(final User user) {
@@ -54,6 +59,14 @@ public class CosmeticGui {
             final int slot = entry.getKey();
 
             final GuiItem guiItem = entry.getValue();
+
+            final ItemStack itemStack = this.itemStackMap.get(slot);
+
+            if (itemStack == null) continue;
+
+            guiItem.setItemStack(
+                    ItemBuilder.from(itemStack.clone()).papiPlaceholders(player).build()
+            );
 
             if (guiItem instanceof final ArmorItem armorItem) {
 
@@ -91,6 +104,7 @@ public class CosmeticGui {
                                                 armorItem.getItemStack(hasPermission)
                                         ).namePlaceholders(placeholders).
                                         lorePlaceholders(placeholders).
+                                        papiPlaceholders(player).
                                         build(),
                                 event -> {
                                     if (!hasPermission) {
@@ -152,7 +166,7 @@ public class CosmeticGui {
         final User user = optionalUser.get();
 
         this.gui = Gui.gui().
-                title(Adventure.MINI_MESSAGE.parse(this.title)).
+                title(Adventure.MINI_MESSAGE.parse(StringUtils.applyPapiPlaceholders(user.getPlayer(), this.title))).
                 rows(this.rows).
                 create();
 

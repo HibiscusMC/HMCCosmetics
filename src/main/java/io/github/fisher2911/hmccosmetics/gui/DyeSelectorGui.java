@@ -1,23 +1,25 @@
 package io.github.fisher2911.hmccosmetics.gui;
 
-import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
 import io.github.fisher2911.hmccosmetics.user.User;
+import io.github.fisher2911.hmccosmetics.util.StringUtils;
 import io.github.fisher2911.hmccosmetics.util.builder.ColorBuilder;
+import io.github.fisher2911.hmccosmetics.util.builder.ItemBuilder;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
-import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.LeatherArmorMeta;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public class DyeSelectorGui extends CosmeticGui{
+public class DyeSelectorGui extends CosmeticGui {
 
     public DyeSelectorGui(
             final HMCCosmetics plugin,
@@ -29,12 +31,25 @@ public class DyeSelectorGui extends CosmeticGui{
 
     public Gui getGui(final User user, final ArmorItem armorItem) {
         final Gui gui = Gui.gui().
-                title(Component.text(this.title)).
+                title(Component.text(StringUtils.applyPapiPlaceholders(user.getPlayer(), this.title))).
                 rows(rows).
                 create();
 
+        final Player player = user.getPlayer();
+
         for (final var entry : this.guiItemMap.entrySet()) {
-            gui.setItem(entry.getKey(), entry.getValue());
+
+            final GuiItem guiItem = entry.getValue();
+
+            final ItemStack itemStack = this.itemStackMap.get(entry.getKey());
+
+            if (itemStack == null) continue;
+
+            guiItem.setItemStack(
+                    ItemBuilder.from(itemStack.clone()).papiPlaceholders(player).build()
+            );
+
+            gui.setItem(entry.getKey(), guiItem);
         }
 
         gui.setDefaultClickAction(event -> {

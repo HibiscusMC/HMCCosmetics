@@ -8,6 +8,7 @@ import io.github.fisher2911.hmccosmetics.cosmetic.CosmeticManager;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.gui.CosmeticsMenu;
 import io.github.fisher2911.hmccosmetics.listener.ClickListener;
+import io.github.fisher2911.hmccosmetics.listener.HatRemoveFixListener;
 import io.github.fisher2911.hmccosmetics.listener.JoinListener;
 import io.github.fisher2911.hmccosmetics.listener.RespawnListener;
 import io.github.fisher2911.hmccosmetics.listener.TeleportListener;
@@ -16,6 +17,7 @@ import io.github.fisher2911.hmccosmetics.message.Messages;
 import io.github.fisher2911.hmccosmetics.user.UserManager;
 import me.mattstudios.mf.base.CommandManager;
 import org.bstats.bukkit.Metrics;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Arrays;
@@ -31,6 +33,7 @@ public class HMCCosmetics extends JavaPlugin {
     private MessageHandler messageHandler;
     private CosmeticsMenu cosmeticsMenu;
     private CommandManager commandManager;
+    private boolean papiEnabled;
 
     @Override
     public void onEnable() {
@@ -48,6 +51,8 @@ public class HMCCosmetics extends JavaPlugin {
         this.registerListeners();
 
         this.userManager.startTeleportTask();
+
+        this.papiEnabled = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
     }
 
     @Override
@@ -61,7 +66,8 @@ public class HMCCosmetics extends JavaPlugin {
         List.of(new JoinListener(this),
                         new ClickListener(this),
                         new TeleportListener(this),
-                        new RespawnListener(this)).
+                        new RespawnListener(this),
+                        new HatRemoveFixListener(this)).
                 forEach(listener ->
                         this.getServer().getPluginManager().registerEvents(listener, this)
                 );
@@ -108,6 +114,10 @@ public class HMCCosmetics extends JavaPlugin {
 
     public ProtocolManager getProtocolManager() {
         return protocolManager;
+    }
+
+    public boolean isPapiEnabled() {
+        return papiEnabled;
     }
 }
 

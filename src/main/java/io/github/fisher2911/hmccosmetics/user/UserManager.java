@@ -6,36 +6,23 @@ import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
-import com.comphenix.protocol.events.PacketListener;
-import com.comphenix.protocol.utility.MinecraftReflection;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.Pair;
-import dev.triumphteam.gui.guis.GuiItem;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
-import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
 import io.github.fisher2911.hmccosmetics.message.Placeholder;
 import io.github.fisher2911.hmccosmetics.util.Keys;
-import io.github.fisher2911.hmccosmetics.util.builder.ColorBuilder;
 import io.github.fisher2911.hmccosmetics.util.builder.ItemBuilder;
-import net.minecraft.network.protocol.game.PacketPlayOutEntityEquipment;
-import net.minecraft.world.entity.EnumItemSlot;
-import net.minecraft.world.level.levelgen.HeightMap;
 import org.bukkit.Bukkit;
-import org.bukkit.Color;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_17_R1.inventory.CraftItemStack;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -43,9 +30,11 @@ import java.util.UUID;
 
 public class UserManager {
 
+    private int currentArmorStandId = Integer.MAX_VALUE;
     private final HMCCosmetics plugin;
 
     private final Map<UUID, User> userMap = new HashMap<>();
+    private final Map<Integer, User> armorStandIdMap = new HashMap<>();
 
     private BukkitTask teleportTask;
 
@@ -56,22 +45,14 @@ public class UserManager {
 
     public void add(final Player player) {
         final UUID uuid = player.getUniqueId();
-        this.userMap.put(uuid, new User(uuid, new PlayerArmor(
-                new ArmorItem(
-                        new ItemStack(Material.AIR),
-                        "",
-                        new ArrayList<>(),
-                        "",
-                        ArmorItem.Type.HAT
-                ),
-                new ArmorItem(
-                        new ItemStack(Material.AIR),
-                        "",
-                        new ArrayList<>(),
-                        "",
-                        ArmorItem.Type.BACKPACK
-                )
-        )));
+        final int armorStandId = this.currentArmorStandId;
+        final User user = new User(
+                uuid,
+                PlayerArmor.empty(),
+                armorStandId);
+        this.userMap.put(uuid, user);
+        this.armorStandIdMap.put(armorStandId, user);
+        this.currentArmorStandId--;
     }
 
     public Optional<User> get(final UUID uuid) {
@@ -83,8 +64,15 @@ public class UserManager {
     }
 
     public void remove(final UUID uuid) {
-        this.get(uuid).ifPresent(User::detach);
-        this.userMap.remove(uuid);
+        final User user = this.userMap.remove(uuid);
+
+        if (user == null) return;
+
+        user.removeAllCosmetics();
+        this.setFakeHelmet(user);
+        user.despawnAttached();
+
+        this.armorStandIdMap.remove(user.getArmorStandId());
     }
 
     public void startTeleportTask() {
@@ -96,9 +84,16 @@ public class UserManager {
         );
     }
 
+    public void resendCosmetics(final Player player) {
+       for (final User user : this.userMap.values()) {
+           user.spawnArmorStand(player);
+       }
+    }
+
     private void registerPacketListener() {
         final ProtocolManager protocolManager = this.plugin.getProtocolManager();
-        protocolManager.addPacketListener(new PacketAdapter(this.plugin,
+        protocolManager.addPacketListener(new PacketAdapter(
+                this.plugin,
                 ListenerPriority.NORMAL,
                 PacketType.Play.Server.ENTITY_EQUIPMENT) {
             @Override
@@ -129,7 +124,6 @@ public class UserManager {
                             final ItemStack hat = user.getPlayerArmor().getHat().getItemStack();
                             final ItemStack second = entry.getSecond();
 
-
                             if (hat != null && hat
                                     .getType() != Material.AIR &&
                                     second != null &&
@@ -145,11 +139,18 @@ public class UserManager {
 
     public void setFakeHelmet(final User user) {
 
-        final ItemStack hat = user.getPlayerArmor().getHat().getItemStack();
+        ItemStack hat = user.getPlayerArmor().getHat().getItemStack();
         final Player player = user.getPlayer();
 
         if (player == null || hat == null) {
             return;
+        }
+
+        if (hat.getType() == Material.AIR) {
+            final EntityEquipment equipment = player.getEquipment();
+            if (equipment != null) {
+                hat = equipment.getHelmet() == null ? hat : equipment.getHelmet();
+            }
         }
 
         final List<Pair<EnumWrappers.ItemSlot, ItemStack>> equipmentList = new ArrayList<>();
@@ -180,7 +181,7 @@ public class UserManager {
 
     public void removeAll() {
         for (final var user : this.userMap.values()) {
-            user.detach();
+            user.despawnAttached();
         }
 
         this.userMap.clear();

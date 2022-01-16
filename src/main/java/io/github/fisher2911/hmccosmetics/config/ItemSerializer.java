@@ -100,9 +100,6 @@ public class ItemSerializer implements TypeSerializer<GuiItem> {
                 Material.class, Material.AIR);
         final int amount = amountNode.getInt();
         final Component name = StringUtils.parse(nameNode.getString());
-//                Adventure.MINI_MESSAGE.parse(
-//                Utils.replaceIfNull(nameNode.getString(), "")
-//        );
 
         final boolean unbreakable = unbreakableNode.getBoolean();
         final boolean glowing = glowingNode.getBoolean();
