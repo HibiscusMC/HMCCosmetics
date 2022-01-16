@@ -4,6 +4,8 @@ import dev.triumphteam.gui.guis.GuiItem;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.gui.CosmeticGui;
 import io.github.fisher2911.hmccosmetics.message.Adventure;
+import io.github.fisher2911.hmccosmetics.papi.PAPIHook;
+import io.github.fisher2911.hmccosmetics.util.StringUtils;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
@@ -43,7 +45,7 @@ public class GuiSerializer implements TypeSerializer<CosmeticGui> {
         final ConfigurationNode rowsNode = this.nonVirtualNode(source, ROWS);
         final ConfigurationNode itemsNode = source.node(ITEMS);
 
-        final var childrenMap = source.node(ITEMS).childrenMap();
+        final var childrenMap = itemsNode.childrenMap();
 
         final Map<Integer, GuiItem> guiItemMap = new HashMap<>();
 
@@ -60,9 +62,13 @@ public class GuiSerializer implements TypeSerializer<CosmeticGui> {
             guiItemMap.put(slot, guiItem);
         }
 
+        String title = titleNode.getString();
+
+        if (title == null) title = "";
+
         return new CosmeticGui(plugin,
                 Adventure.SERIALIZER.serialize(
-                Adventure.MINI_MESSAGE.parse(titleNode.getString())),
+                Adventure.MINI_MESSAGE.parse(StringUtils.applyPapiPlaceholders(null, title))),
                 rowsNode.getInt(),
                 guiItemMap);
     }

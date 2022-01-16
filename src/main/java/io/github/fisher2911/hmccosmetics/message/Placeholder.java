@@ -9,4 +9,5 @@ public class Placeholder {
 
     public static final String ENABLED = "%enabled%";
     public static final String ALLOWED = "%allowed%";
+
 }
