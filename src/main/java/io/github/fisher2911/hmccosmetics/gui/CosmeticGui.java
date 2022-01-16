@@ -10,6 +10,7 @@ import io.github.fisher2911.hmccosmetics.message.MessageHandler;
 import io.github.fisher2911.hmccosmetics.message.Messages;
 import io.github.fisher2911.hmccosmetics.message.Placeholder;
 import io.github.fisher2911.hmccosmetics.user.User;
+import io.github.fisher2911.hmccosmetics.util.StringUtils;
 import io.github.fisher2911.hmccosmetics.util.builder.ItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
@@ -165,7 +166,7 @@ public class CosmeticGui {
         final User user = optionalUser.get();
 
         this.gui = Gui.gui().
-                title(Adventure.MINI_MESSAGE.parse(this.title)).
+                title(Adventure.MINI_MESSAGE.parse(StringUtils.applyPapiPlaceholders(user.getPlayer(), this.title))).
                 rows(this.rows).
                 create();
 

@@ -89,7 +89,7 @@ public class DyeGuiSerializer implements TypeSerializer<DyeSelectorGui> {
         return new DyeSelectorGui(
                 plugin,
                 Adventure.SERIALIZER.serialize(
-                        Adventure.MINI_MESSAGE.parse(StringUtils.applyPapiPlaceholders(null, title))),
+                        Adventure.MINI_MESSAGE.parse(title)),
                 rowsNode.getInt(),
                 guiItemMap);
     }
