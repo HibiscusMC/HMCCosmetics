@@ -276,7 +276,7 @@ public class User {
         // Set UUID
         packet.getUUIDs().write(0, UUID.randomUUID());
 
-        packet.getEntityTypeModifier().write(0, EntityType.ZOMBIE);
+        packet.getEntityTypeModifier().write(0, EntityType.ARMOR_STAND);
 
         for (final Player p : Bukkit.getOnlinePlayers()) {
             try {
@@ -348,18 +348,23 @@ public class User {
         ));*/ //isSmall, noBasePlate, set Marker
 //        metadata.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(16, WrappedDataWatcher.Registry.(), new Vector()));
 
-        final PacketContainer rotationPacket = new PacketContainer(PacketType.Play.Server.REL_ENTITY_MOVE_LOOK);
+//        final PacketContainer rotationPacket = new PacketContainer(PacketType.Play.Server.REL_ENTITY_MOVE_LOOK);
+//
+//        rotationPacket.getIntegers().write(0, this.armorStandId);
+//        rotationPacket.
+//                getShorts().
+//                write(0, (short) 0).
+//                write(1, (short) -5).
+//                write(2, (short) 0);
+//        rotationPacket.
+//                getBytes().
+//                write(0, (byte) (location.getYaw() * 256.0F / 360.0F)).
+//                write(1, (byte) (location.getPitch() * 256.0F / 360.0F));
+
+        final PacketContainer rotationPacket = new PacketContainer(PacketType.Play.Server.ENTITY_HEAD_ROTATION);
 
         rotationPacket.getIntegers().write(0, this.armorStandId);
-        rotationPacket.
-                getShorts().
-                write(0, (short) 0).
-                write(1, (short) -5).
-                write(2, (short) 0);
-        rotationPacket.
-                getBytes().
-                write(0, (byte) (location.getYaw() * 256.0F / 360.0F)).
-                write(1, (byte) (location.getPitch() * 256.0F / 360.0F));
+        rotationPacket.getBytes().write(0, (byte) (location.getYaw() * 256 / 360));
 
         metaContainer.getIntegers().write(0, this.armorStandId);
 //        metaContainer.getWatchableCollectionModifier().write(0, metaData.getWatchableObjects());
@@ -400,7 +405,7 @@ public class User {
 //                protocolManager.sendServerPacket(p, destroyPacket);
                 if (i == 0) {
                     i++;
-//                    protocolManager.sendServerPacket(p, ridingPacket);
+                    protocolManager.sendServerPacket(p, ridingPacket);
                 }
                 protocolManager.sendServerPacket(p, armorPacket);
 //                protocolManager.sendServerPacket(p, metaContainer);
