@@ -16,3 +16,6 @@ permissions:
   hmccosmetics.cmd.reload:
     default: op
     description: Permission to use the reload command
+  hmccosmetics.cmd.set:
+    default: op
+    description: Permission to set other users' cosmetics

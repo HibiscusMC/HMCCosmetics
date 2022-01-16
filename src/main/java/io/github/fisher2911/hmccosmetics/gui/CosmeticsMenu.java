@@ -5,6 +5,7 @@ import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.config.DyeGuiSerializer;
 import io.github.fisher2911.hmccosmetics.config.GuiSerializer;
 import io.github.fisher2911.hmccosmetics.config.ItemSerializer;
+import io.github.fisher2911.hmccosmetics.cosmetic.CosmeticManager;
 import io.github.fisher2911.hmccosmetics.user.User;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -23,11 +24,13 @@ public class CosmeticsMenu {
     public static final String DYE_MENU = "dye-menu";
 
     private final HMCCosmetics plugin;
+    private final CosmeticManager cosmeticManager;
 
     private final Map<String, CosmeticGui> guiMap = new HashMap<>();
 
     public CosmeticsMenu(final HMCCosmetics plugin) {
         this.plugin = plugin;
+        this.cosmeticManager = this.plugin.getCosmeticManager();
     }
 
     public void openMenu(final String id, final HumanEntity humanEntity) {
@@ -124,6 +127,17 @@ public class CosmeticsMenu {
                     this.plugin.getLogger().info("Loaded dye gui: " + id);
                     continue;
                 }
+
+                final CosmeticGui gui = source.get(CosmeticGui.class);
+
+                if (gui == null) continue;
+
+                for (final GuiItem guiItem : gui.guiItemMap.values()) {
+                    if (guiItem instanceof final ArmorItem item) {
+                        this.cosmeticManager.addArmorItem(item);
+                    }
+                }
+
                 this.guiMap.put(id, source.get(CosmeticGui.class));
                 this.plugin.getLogger().info("Loaded gui: " + id);
             } catch (final ConfigurateException exception) {

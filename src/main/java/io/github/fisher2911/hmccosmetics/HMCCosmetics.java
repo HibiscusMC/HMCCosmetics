@@ -4,6 +4,7 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 
 import io.github.fisher2911.hmccosmetics.command.CosmeticsCommand;
+import io.github.fisher2911.hmccosmetics.cosmetic.CosmeticManager;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.gui.CosmeticsMenu;
 import io.github.fisher2911.hmccosmetics.listener.ClickListener;
@@ -18,6 +19,7 @@ import org.bstats.bukkit.Metrics;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,6 +27,7 @@ public class HMCCosmetics extends JavaPlugin {
 
     private ProtocolManager protocolManager;
     private UserManager userManager;
+    private CosmeticManager cosmeticManager;
     private MessageHandler messageHandler;
     private CosmeticsMenu cosmeticsMenu;
     private CommandManager commandManager;
@@ -37,6 +40,7 @@ public class HMCCosmetics extends JavaPlugin {
         protocolManager = ProtocolLibrary.getProtocolManager();
         this.messageHandler = new MessageHandler(this);
         this.userManager = new UserManager(this);
+        this.cosmeticManager = new CosmeticManager(new HashMap<>());
         this.cosmeticsMenu = new CosmeticsMenu(this);
         this.messageHandler.load();
         this.cosmeticsMenu.load();
@@ -80,6 +84,9 @@ public class HMCCosmetics extends JavaPlugin {
                             map(ArmorItem.Type::toString).
                             collect(Collectors.toList())
                 );
+        this.commandManager.getCompletionHandler().register("#ids",
+                resolver ->
+                this.cosmeticManager.getAll().stream().map(ArmorItem::getId).collect(Collectors.toList()));
         this.commandManager.register(new CosmeticsCommand(this));
     }
 
@@ -89,6 +96,10 @@ public class HMCCosmetics extends JavaPlugin {
 
     public UserManager getUserManager() {
         return userManager;
+    }
+
+    public CosmeticManager getCosmeticManager() {
+        return cosmeticManager;
     }
 
     public CosmeticsMenu getCosmeticsMenu() {

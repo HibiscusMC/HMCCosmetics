@@ -7,6 +7,7 @@ import io.github.fisher2911.hmccosmetics.gui.DyeSelectorGui;
 import io.github.fisher2911.hmccosmetics.message.Message;
 import io.github.fisher2911.hmccosmetics.message.MessageHandler;
 import io.github.fisher2911.hmccosmetics.message.Messages;
+import io.github.fisher2911.hmccosmetics.message.Placeholder;
 import io.github.fisher2911.hmccosmetics.user.User;
 import io.github.fisher2911.hmccosmetics.user.UserManager;
 import me.mattstudios.mf.annotations.Command;
@@ -94,13 +95,66 @@ public class CosmeticsCommand extends CommandBase {
     public void helpCommand(final CommandSender sender) {
         Bukkit.getScheduler().runTaskAsynchronously(
                 this.plugin,
-                () -> {
-                    this.messageHandler.sendMessage(
-                            sender,
-                            Messages.HELP_COMMAND
-                    );
-                }
+                () -> this.messageHandler.sendMessage(
+                        sender,
+                        Messages.HELP_COMMAND
+                )
         );
+    }
+
+    @SubCommand("add")
+    @Permission(io.github.fisher2911.hmccosmetics.message.Permission.SET_COSMETIC_COMMAND)
+    public void setCommand(final CommandSender sender, final Player player, @Completion("#ids") final String id) {
+        final Optional<User> userOptional = this.userManager.get(player.getUniqueId());
+
+        if (userOptional.isEmpty()) {
+            this.messageHandler.sendMessage(
+                    sender,
+                    Messages.INVALID_USER
+            );
+            return;
+        }
+
+        final User user = userOptional.get();
+
+        final ArmorItem armorItem = this.plugin.getCosmeticManager().getArmorItem(id);
+
+        if (armorItem == null) {
+            this.messageHandler.sendMessage(
+                    sender,
+                    Messages.ITEM_NOT_FOUND
+            );
+            return;
+        }
+
+        switch (armorItem.getType()) {
+            case BACKPACK -> {
+                user.setBackpack(armorItem);
+                this.messageHandler.sendMessage(
+                        player,
+                        Messages.SET_BACKPACK
+                );
+                this.messageHandler.sendMessage(
+                        sender,
+                        Messages.SET_OTHER_BACKPACK,
+                        Map.of(Placeholder.PLAYER, player.getName(),
+                                Placeholder.ITEM, id)
+                );
+            }
+            case HAT -> {
+                user.setHat(armorItem, this.userManager);
+                this.messageHandler.sendMessage(
+                        player,
+                        Messages.SET_HAT
+                );
+                this.messageHandler.sendMessage(
+                        sender,
+                        Messages.SET_OTHER_HAT,
+                        Map.of(Placeholder.PLAYER, player.getName(),
+                                Placeholder.ITEM, id)
+                );
+            }
+        }
     }
 
 }

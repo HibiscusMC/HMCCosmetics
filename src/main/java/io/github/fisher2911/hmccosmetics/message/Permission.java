@@ -6,5 +6,6 @@ public class Permission {
     public static final String DYE_COMMAND = "hmccosmetics.cmd.dye";
     public static final String RELOAD_COMMAND = "hmccosmetics.cmd.reload";
     public static final String HELP_COMMAND = "hmccosmetics.cmd.help";
+    public static final String SET_COSMETIC_COMMAND = "hmccosmetics.cmd.set";
 
 }
