@@ -12,7 +12,6 @@
 
 HMCCosmetics is an intuitive, easy-to-use cosmetics plugin, designed for servers using resource packs.
 
-
 ### Requirements
 
 - Server running PaperMC (or a fork of PaperMC)
@@ -20,7 +19,7 @@ HMCCosmetics is an intuitive, easy-to-use cosmetics plugin, designed for servers
 
 ### Download
 
-Download on the [Releases Page](https://github.com/HibiscusMC/HMCCosmetics/releases)
+If you would like to support the development of our plugin, please purchase it on [Polymart](https://polymart.org/resource/hmccosmetics.1879)
 
 
 
