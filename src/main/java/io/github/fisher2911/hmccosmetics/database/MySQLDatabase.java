@@ -14,8 +14,8 @@ public class MySQLDatabase extends Database {
                     PLAYER_UUID_COLUMN + ", " +
                     BACKPACK_COLUMN + ", " +
                     HAT_COLUMN + ", " +
-                    DYE_COLOR_COLUMN + ", " +
-                    "VALUES (?,?,?) " +
+                    DYE_COLOR_COLUMN + ") " +
+                    "VALUES (?,?,?,?) " +
                     "ON DUPLICATE KEY UPDATE " +
                     BACKPACK_COLUMN + "=?, " +
                     HAT_COLUMN + "=?, " +
@@ -25,7 +25,7 @@ public class MySQLDatabase extends Database {
             "SELECT " +
                     BACKPACK_COLUMN + ", " +
                     HAT_COLUMN + ", " +
-                    DYE_COLOR_COLUMN + ", " +
+                    DYE_COLOR_COLUMN + " " +
                     "FROM " + TABLE_NAME + " " +
                     "WHERE " +
                     PLAYER_UUID_COLUMN + "=?";

@@ -25,9 +25,9 @@ public abstract class Database {
     String CREATE_TABLE_STATEMENT =
             "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" +
                     PLAYER_UUID_COLUMN + " CHAR(36), " +
-                    BACKPACK_COLUMN + " VARCHAR, " +
-                    HAT_COLUMN + " VARCHAR, " +
-                    DYE_COLOR_COLUMN + " SMALLINT, " +
+                    BACKPACK_COLUMN + " CHAR(50), " +
+                    HAT_COLUMN + " CHAR(50), " +
+                    DYE_COLOR_COLUMN + " INT, " +
                     "UNIQUE (" +
                     PLAYER_UUID_COLUMN +
                     "))";
