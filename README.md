@@ -10,7 +10,7 @@
 
 ### Description
 
-HMCCosmetics is a free, open source cosmetics plugin which allows you to easily give players backpack and hat type cosmetics.
+HMCCosmetics is an intuitive, easy-to-use cosmetics plugin, designed for servers using resource packs.
 
 
 ### Requirements
