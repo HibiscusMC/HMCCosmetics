@@ -1,7 +1,6 @@
 package io.github.fisher2911.hmccosmetics.message;
 
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
-import io.github.fisher2911.hmccosmetics.papi.PAPIHook;
 import io.github.fisher2911.hmccosmetics.util.StringUtils;
 import io.github.fisher2911.hmccosmetics.util.Utils;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;

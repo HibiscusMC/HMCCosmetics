@@ -35,7 +35,6 @@ public class HMCCosmetics extends JavaPlugin {
     private MessageHandler messageHandler;
     private CosmeticsMenu cosmeticsMenu;
     private CommandManager commandManager;
-    private boolean papiEnabled;
     private Database database;
 
     @Override
@@ -55,8 +54,6 @@ public class HMCCosmetics extends JavaPlugin {
 
         this.database = DatabaseFactory.create(this);
         this.database.load();
-
-        this.papiEnabled = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
 
         this.registerCommands();
         this.registerListeners();
@@ -125,10 +122,6 @@ public class HMCCosmetics extends JavaPlugin {
 
     public Database getDatabase() {
         return database;
-    }
-
-    public boolean isPapiEnabled() {
-        return papiEnabled;
     }
 }
 

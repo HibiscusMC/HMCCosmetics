@@ -5,6 +5,7 @@ import io.github.fisher2911.hmccosmetics.cosmetic.CosmeticManager;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
 import io.github.fisher2911.hmccosmetics.user.User;
+import org.bukkit.Bukkit;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -49,6 +50,7 @@ public abstract class Database {
     }
 
     public void saveUser(final User user) {
+
         try (final PreparedStatement statement = this.getConnection().prepareStatement(this.getSaveStatement())) {
             final PlayerArmor playerArmor = user.getPlayerArmor();
             final String hat = playerArmor.getHat().getId();

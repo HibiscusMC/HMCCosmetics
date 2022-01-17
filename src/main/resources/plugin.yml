@@ -5,6 +5,7 @@ api-version: 1.17
 softdepend:
   - Multiverse
   - PlaceholderAPI
+  - Oraxen
 depend:
   - ProtocolLib
 permissions:

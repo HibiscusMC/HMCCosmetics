@@ -1,10 +1,10 @@
 package io.github.fisher2911.hmccosmetics.util;
 
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
+import io.github.fisher2911.hmccosmetics.hook.HookManager;
 import io.github.fisher2911.hmccosmetics.message.Adventure;
-import io.github.fisher2911.hmccosmetics.papi.PAPIHook;
+import io.github.fisher2911.hmccosmetics.hook.PAPIHook;
 import net.kyori.adventure.text.Component;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,8 +32,8 @@ public class StringUtils {
     }
 
     public static String applyPapiPlaceholders(@Nullable final Player player, final String message) {
-        if (plugin.isPapiEnabled()) {
-            return PAPIHook.parse(player, message);
+        if (HookManager.getInstance().isEnabled(PAPIHook.class)) {
+            return HookManager.getInstance().getPapiHook().parse(player, message);
         }
 
         return message;
