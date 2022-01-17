@@ -281,6 +281,7 @@ public class User {
         for (final Player p : Bukkit.getOnlinePlayers()) {
             try {
                 protocolManager.sendServerPacket(p, destroyPacket);
+                this.hasArmorStand = false;
             } catch (final InvocationTargetException exception) {
                 exception.printStackTrace();
             }
