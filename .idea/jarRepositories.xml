@@ -51,5 +51,10 @@
       <option name="name" value="maven7" />
       <option name="url" value="https://repo.dmulloy2.net/repository/public/" />
     </remote-repository>
+    <remote-repository>
+      <option name="id" value="maven6" />
+      <option name="name" value="maven6" />
+      <option name="url" value="https://mvnrepository.com/artifact/com.zaxxer/HikariCP" />
+    </remote-repository>
   </component>
 </project>

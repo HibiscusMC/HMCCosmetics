@@ -30,11 +30,9 @@ import java.util.UUID;
 
 public class UserManager {
 
-    private int currentArmorStandId = Integer.MAX_VALUE;
     private final HMCCosmetics plugin;
 
     private final Map<UUID, User> userMap = new HashMap<>();
-    private final Map<Integer, User> armorStandIdMap = new HashMap<>();
 
     private BukkitTask teleportTask;
 
@@ -43,16 +41,9 @@ public class UserManager {
         this.registerPacketListener();
     }
 
-    public void add(final Player player) {
-        final UUID uuid = player.getUniqueId();
-        final int armorStandId = this.currentArmorStandId;
-        final User user = new User(
-                uuid,
-                PlayerArmor.empty(),
-                armorStandId);
-        this.userMap.put(uuid, user);
-        this.armorStandIdMap.put(armorStandId, user);
-        this.currentArmorStandId--;
+    public void add(final User user) {
+        this.userMap.put(user.getUuid(), user);
+        this.setFakeHelmet(user);
     }
 
     public Optional<User> get(final UUID uuid) {
@@ -71,8 +62,6 @@ public class UserManager {
         user.removeAllCosmetics();
         this.setFakeHelmet(user);
         user.despawnAttached();
-
-        this.armorStandIdMap.remove(user.getArmorStandId());
     }
 
     public void startTeleportTask() {

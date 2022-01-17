@@ -125,7 +125,7 @@ public class CosmeticsCommand extends CommandBase {
 
         switch (armorItem.getType()) {
             case BACKPACK -> {
-                user.setBackpack(armorItem);
+                user.setBackpack(armorItem, this.plugin);
                 this.messageHandler.sendMessage(
                         player,
                         Messages.SET_BACKPACK
@@ -138,7 +138,7 @@ public class CosmeticsCommand extends CommandBase {
                 );
             }
             case HAT -> {
-                user.setHat(armorItem, this.userManager);
+                user.setHat(armorItem, this.plugin);
                 this.messageHandler.sendMessage(
                         player,
                         Messages.SET_HAT
@@ -173,7 +173,7 @@ public class CosmeticsCommand extends CommandBase {
 
             switch (type) {
                 case HAT -> {
-                    user.removeHat(this.userManager);
+                    user.removeHat(this.plugin);
                     this.messageHandler.sendMessage(
                             player,
                             Messages.REMOVED_HAT
@@ -186,7 +186,7 @@ public class CosmeticsCommand extends CommandBase {
                     );
                 }
                 case BACKPACK -> {
-                    user.removeBackpack();
+                    user.removeBackpack(this.plugin);
                     this.messageHandler.sendMessage(
                             player,
                             Messages.REMOVED_BACKPACK

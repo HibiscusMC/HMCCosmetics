@@ -94,9 +94,6 @@ public class DyeSelectorGui extends CosmeticGui {
                 return;
             }
 
-            final ColorBuilder colorBuilder =
-                    ColorBuilder.from(itemStack);
-
             final GuiItem guiItem = this.guiItemMap.get(event.getSlot());
 
             if (!(guiItem instanceof final ColorItem colorItem)) {
@@ -104,22 +101,11 @@ public class DyeSelectorGui extends CosmeticGui {
             }
 
             final Color color = colorItem.getColor();
-
-            colorBuilder.color(color);
-
-            final ArmorItem newArmorItem = new ArmorItem(
-                    colorBuilder.build(),
-                    armorItem.getAction(),
-                    armorItem.getId(),
-                    armorItem.getLockedLore(),
-                    armorItem.getPermission(),
-                    armorItem.getType(),
-                    armorItem.isDyeable()
-            );
+            user.setDye(color.asRGB());
 
             switch (type) {
-                case HAT -> user.setHat(newArmorItem, plugin.getUserManager());
-                case BACKPACK -> user.setBackpack(newArmorItem);
+                case HAT -> user.setHat(armorItem, this.plugin);
+                case BACKPACK -> user.setBackpack(armorItem, this.plugin);
             }
         });
 

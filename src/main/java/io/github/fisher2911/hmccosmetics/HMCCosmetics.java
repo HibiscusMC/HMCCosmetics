@@ -5,6 +5,8 @@ import com.comphenix.protocol.ProtocolManager;
 
 import io.github.fisher2911.hmccosmetics.command.CosmeticsCommand;
 import io.github.fisher2911.hmccosmetics.cosmetic.CosmeticManager;
+import io.github.fisher2911.hmccosmetics.database.Database;
+import io.github.fisher2911.hmccosmetics.database.DatabaseFactory;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.gui.CosmeticsMenu;
 import io.github.fisher2911.hmccosmetics.listener.ClickListener;
@@ -34,6 +36,7 @@ public class HMCCosmetics extends JavaPlugin {
     private CosmeticsMenu cosmeticsMenu;
     private CommandManager commandManager;
     private boolean papiEnabled;
+    private Database database;
 
     @Override
     public void onEnable() {
@@ -47,12 +50,16 @@ public class HMCCosmetics extends JavaPlugin {
         this.cosmeticsMenu = new CosmeticsMenu(this);
         this.messageHandler.load();
         this.cosmeticsMenu.load();
-        this.registerCommands();
-        this.registerListeners();
 
         this.userManager.startTeleportTask();
 
+        this.database = DatabaseFactory.create(this);
+        this.database.load();
+
         this.papiEnabled = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
+
+        this.registerCommands();
+        this.registerListeners();
     }
 
     @Override
@@ -114,6 +121,10 @@ public class HMCCosmetics extends JavaPlugin {
 
     public ProtocolManager getProtocolManager() {
         return protocolManager;
+    }
+
+    public Database getDatabase() {
+        return database;
     }
 
     public boolean isPapiEnabled() {

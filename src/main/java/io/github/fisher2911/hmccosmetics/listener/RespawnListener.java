@@ -27,7 +27,7 @@ public class RespawnListener implements Listener {
             final Player player = event.getPlayer();
             final Optional<User> optionalUser = this.userManager.get(player.getUniqueId());
 
-            optionalUser.ifPresent(user -> user.setHat(user.getPlayerArmor().getHat(), this.userManager));
+            optionalUser.ifPresent(user -> user.setHat(user.getPlayerArmor().getHat(), this.plugin));
         }, 1);
     }
 }

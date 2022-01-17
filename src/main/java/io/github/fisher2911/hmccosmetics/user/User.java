@@ -7,14 +7,17 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.Pair;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
+import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
 import io.github.fisher2911.hmccosmetics.message.MessageHandler;
 import io.github.fisher2911.hmccosmetics.message.Messages;
 import io.github.fisher2911.hmccosmetics.message.Placeholder;
+import io.github.fisher2911.hmccosmetics.util.builder.ColorBuilder;
 import io.github.fisher2911.hmccosmetics.util.builder.ItemBuilder;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import org.bukkit.Bukkit;
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
@@ -41,6 +44,7 @@ public class User {
         this.uuid = uuid;
         this.playerArmor = playerArmor;
         this.armorStandId = armorStandId;
+        this.lastSetItem = playerArmor.getHat();
     }
 
     public @Nullable Player getPlayer() {
@@ -64,27 +68,30 @@ public class User {
         this.setPlayerArmor(PlayerArmor.empty());
     }
 
-    public void removeHat(final UserManager userManager) {
-        this.setHat(ArmorItem.empty(ArmorItem.Type.HAT), userManager);
+    public void removeHat(final HMCCosmetics plugin) {
+        this.setHat(ArmorItem.empty(ArmorItem.Type.HAT), plugin);
     }
 
-    public void removeBackpack() {
-        this.setBackpack(ArmorItem.empty(ArmorItem.Type.BACKPACK));
+    public void removeBackpack(final HMCCosmetics plugin) {
+        this.setBackpack(ArmorItem.empty(ArmorItem.Type.BACKPACK), plugin);
     }
 
     public int getArmorStandId() {
         return armorStandId;
     }
 
-    public void setBackpack(final ArmorItem backpack) {
+    public void setBackpack(final ArmorItem backpack, final HMCCosmetics plugin) {
         this.playerArmor.setBackpack(backpack);
         this.lastSetItem = backpack;
+        Bukkit.getScheduler().runTaskAsynchronously(plugin,
+                () -> plugin.getDatabase().saveUser(this));
     }
 
     // return true if backpack was set
     public boolean setOrUnsetBackpack(
             final ArmorItem backpack,
-            final MessageHandler messageHandler) {
+            final MessageHandler messageHandler,
+            final HMCCosmetics plugin) {
 
         final Player player = this.getPlayer();
 
@@ -93,7 +100,7 @@ public class User {
         }
 
         if (backpack.getId().equals(this.playerArmor.getBackpack().getId())) {
-            this.setBackpack(ArmorItem.empty(ArmorItem.Type.BACKPACK));
+            this.setBackpack(ArmorItem.empty(ArmorItem.Type.BACKPACK), plugin);
 
             messageHandler.sendMessage(
                     player,
@@ -103,7 +110,7 @@ public class User {
             return false;
         }
 
-        this.setBackpack(backpack);
+        this.setBackpack(backpack, plugin);
         messageHandler.sendMessage(
                 player,
                 Messages.SET_BACKPACK
@@ -113,17 +120,19 @@ public class User {
     }
 
 
-    public void setHat(final ArmorItem hat, final UserManager userManager) {
+    public void setHat(ArmorItem hat, final HMCCosmetics plugin) {
         this.playerArmor.setHat(hat);
         this.lastSetItem = hat;
-        userManager.updateHat(this);
+        plugin.getUserManager().updateHat(this);
+        Bukkit.getScheduler().runTaskAsynchronously(plugin,
+                () -> plugin.getDatabase().saveUser(this));
     }
 
     // return true if hat was set
     public boolean setOrUnsetHat(
             final ArmorItem hat,
             final MessageHandler messageHandler,
-            final UserManager userManager) {
+            final HMCCosmetics plugin) {
 
         final Player player = this.getPlayer();
 
@@ -132,7 +141,7 @@ public class User {
         }
 
         if (hat.getId().equals(this.playerArmor.getHat().getId())) {
-            this.setHat(ArmorItem.empty(ArmorItem.Type.BACKPACK), userManager);
+            this.setHat(ArmorItem.empty(ArmorItem.Type.BACKPACK), plugin);
 
             messageHandler.sendMessage(
                     player,
@@ -142,7 +151,7 @@ public class User {
             return false;
         }
 
-        this.setHat(hat, userManager);
+        this.setHat(hat, plugin);
         messageHandler.sendMessage(
                 player,
                 Messages.SET_HAT
@@ -290,5 +299,13 @@ public class User {
 
     public ArmorItem getLastSetItem() {
         return lastSetItem;
+    }
+
+    public int getDye() {
+        return this.playerArmor.getDye();
+    }
+
+    public void setDye(final int dye) {
+        this.playerArmor.setDye(dye);
     }
 }

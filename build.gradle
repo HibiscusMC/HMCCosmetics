@@ -14,6 +14,7 @@ repositories {
     maven { url = 'https://jitpack.io' }
     maven { url = 'https://repo.dmulloy2.net/repository/public/' }
     maven { url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
+    maven { url = 'https://mvnrepository.com/artifact/com.zaxxer/HikariCP' }
 }
 
 dependencies {
@@ -30,6 +31,7 @@ dependencies {
     implementation 'me.mattstudios.utils:matt-framework:1.4.6'
     implementation 'org.spongepowered:configurate-yaml:4.1.2'
     implementation 'org.bstats:bstats-bukkit:2.2.1'
+    implementation 'com.zaxxer:HikariCP:5.0.0'
 }
 
 test {
@@ -43,6 +45,7 @@ shadowJar {
     relocate 'net.kyori.adventure.platform', 'io.github.fisher2911.hmccosmetics.adventure.platform'
     relocate 'org.spongepowered.configurate', 'io.github.fisher2911.hmccosmetics.configurate'
     relocate 'org.bstats', 'io.github.fisher2911.hmccosmetics.bstats'
+    relocate 'com.zaxxer.hikaricp', 'io.github.fisher2911.hmccosmetics.hikaricp'
 }
 
 shadowJar {

@@ -142,13 +142,13 @@ public class CosmeticGui {
 
         switch (type) {
             case HAT -> {
-                final boolean set = user.setOrUnsetHat(armorItem, this.messageHandler, this.plugin.getUserManager());
+                final boolean set = user.setOrUnsetHat(armorItem, this.messageHandler, this.plugin);
                 if (set) {
                     actionIfSet.execute(event);
                 }
             }
             case BACKPACK -> {
-                final boolean set = user.setOrUnsetBackpack(armorItem, this.messageHandler);
+                final boolean set = user.setOrUnsetBackpack(armorItem, this.messageHandler, this.plugin);
                 if (set) {
                     actionIfSet.execute(event);
                 }

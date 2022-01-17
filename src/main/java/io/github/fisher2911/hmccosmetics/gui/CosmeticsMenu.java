@@ -120,8 +120,7 @@ public class CosmeticsMenu {
                 final ConfigurationNode source = loader.load();
 
                 if (id.equals(DYE_MENU)) {
-                    this.guiMap.put(id, DyeGuiSerializer.INSTANCE.deserialize(DyeSelectorGui.class,
-                            source));
+                    this.guiMap.put(id, DyeGuiSerializer.INSTANCE.deserialize(DyeSelectorGui.class, source));
                     this.plugin.getLogger().info("Loaded dye gui: " + id);
                     continue;
                 }
