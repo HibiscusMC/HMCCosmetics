@@ -3,6 +3,7 @@ package io.github.fisher2911.hmccosmetics.hook;
 import io.github.fisher2911.hmccosmetics.hook.item.ItemHook;
 import io.github.fisher2911.hmccosmetics.hook.item.ItemHooks;
 import io.github.fisher2911.hmccosmetics.hook.item.OraxenHook;
+import io.github.fisher2911.hmccosmetics.hook.item.ItemAdderHook;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.jetbrains.annotations.Nullable;
@@ -40,7 +41,9 @@ public class HookManager {
 
         final Map<String, ItemHook> itemHookMap = new HashMap<>();
         final OraxenHook oraxenHook = new OraxenHook();
+        final ItemAdderHook = new ItemAdderHook();
         if (pluginManager.getPlugin("Oraxen") != null) itemHookMap.put(oraxenHook.getIdentifier(), oraxenHook);
+        if (pluginManager.getPlugin("ItemAdder") != null) itemHookMap.put(itemAdderHook.getIdentifier(), itemAdderHook);
         this.itemHooks = new ItemHooks(itemHookMap);
 
         itemHookMap.values().forEach(hook -> this.registerHook(hook.getClass()));
