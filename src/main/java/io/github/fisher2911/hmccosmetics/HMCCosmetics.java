@@ -64,6 +64,7 @@ public class HMCCosmetics extends JavaPlugin {
         this.messageHandler.close();
         this.userManager.cancelTeleportTask();
         this.userManager.removeAll();
+        this.database.close();
     }
 
     private void registerListeners() {

@@ -179,9 +179,9 @@ public class User {
         packet.getIntegers().write(4, (int) location.getPitch());
         packet.getIntegers().write(5, (int) location.getYaw());
         // Set location
-        packet.getDoubles().write(0, 0d);
-        packet.getDoubles().write(1, -5d);
-        packet.getDoubles().write(2, 0d);
+        packet.getDoubles().write(0, location.getX());
+        packet.getDoubles().write(1, location.getY());
+        packet.getDoubles().write(2, location.getZ());
         // Set UUID
         packet.getUUIDs().write(0, UUID.randomUUID());
 
@@ -308,4 +308,9 @@ public class User {
     public void setDye(final int dye) {
         this.playerArmor.setDye(dye);
     }
+
+    public boolean hasArmorStand() {
+        return hasArmorStand;
+    }
+
 }

@@ -33,6 +33,7 @@ public class UserManager {
     private final HMCCosmetics plugin;
 
     private final Map<UUID, User> userMap = new HashMap<>();
+    private final Map<Integer, User> armorStandIdMap = new HashMap<>();
 
     private BukkitTask teleportTask;
 
@@ -43,6 +44,7 @@ public class UserManager {
 
     public void add(final User user) {
         this.userMap.put(user.getUuid(), user);
+        this.armorStandIdMap.put(user.getArmorStandId(), user);
         this.setFakeHelmet(user);
     }
 
@@ -58,6 +60,8 @@ public class UserManager {
         final User user = this.userMap.remove(uuid);
 
         if (user == null) return;
+
+        this.armorStandIdMap.remove(user.getArmorStandId());
 
         user.removeAllCosmetics();
         this.setFakeHelmet(user);
@@ -124,6 +128,32 @@ public class UserManager {
                 }
             }
         });
+
+        // not sure if this fixes anything, removed for now
+//        protocolManager.addPacketListener(new PacketAdapter(
+//                this.plugin,
+//                ListenerPriority.NORMAL,
+//                PacketType.Play.Server.ENTITY_DESTROY) {
+//            @Override
+//            public void onPacketReceiving(PacketEvent event) {
+//
+//            }
+//
+//            @Override
+//            public void onPacketSending(final PacketEvent event) {
+//                if (event.getPacketType() == PacketType.Play.Server.ENTITY_DESTROY) {
+//                    final int id = event.getPacket().getIntegers().read(0);
+//
+//                    final User user = armorStandIdMap.get(id);
+//
+//                    if (user == null) return;
+//
+//                    if (!user.hasArmorStand()) return;
+//
+//                    user.spawnArmorStand();
+//                }
+//            }
+//        });
     }
 
     public void setFakeHelmet(final User user) {
