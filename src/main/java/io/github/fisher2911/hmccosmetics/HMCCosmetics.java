@@ -65,7 +65,8 @@ public class HMCCosmetics extends JavaPlugin {
     }
 
     private void registerListeners() {
-        List.of(new JoinListener(this),
+        List.of(new ItemsAdderListener(this),
+                        new JoinListener(this),
                         new ClickListener(this),
                         new TeleportListener(this),
                         new RespawnListener(this),
