@@ -2,7 +2,7 @@ title: "<white>" # GUI Title
 rows: 5 # Rows in the GUI 
 items:
   1: # GUI Slot number
-    material: LEATHER_HORSE_ARMOR
+    material: LEATHER_HORSE_ARMOR # Also supports Oraxen items! Format: "oraxen:item_name"
     name: "<rainbow>Colorful Hat</rainbow>"
     lore: # Lore displayed when the player owns the item
       - ""
