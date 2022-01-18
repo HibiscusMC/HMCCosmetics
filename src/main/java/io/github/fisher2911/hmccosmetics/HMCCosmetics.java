@@ -47,13 +47,10 @@ public class HMCCosmetics extends JavaPlugin {
         this.userManager = new UserManager(this);
         this.cosmeticManager = new CosmeticManager(new HashMap<>());
         this.cosmeticsMenu = new CosmeticsMenu(this);
-        this.messageHandler.load();
-        this.cosmeticsMenu.load();
 
         this.userManager.startTeleportTask();
 
         this.database = DatabaseFactory.create(this);
-        this.database.load();
 
         this.registerCommands();
         this.registerListeners();
@@ -99,6 +96,12 @@ public class HMCCosmetics extends JavaPlugin {
                 resolver ->
                 this.cosmeticManager.getAll().stream().map(ArmorItem::getId).collect(Collectors.toList()));
         this.commandManager.register(new CosmeticsCommand(this));
+    }
+    
+    public void load() {
+        this.messageHandler.load();
+        this.cosmeticsMenu.load();
+        this.database.load();
     }
 
     public MessageHandler getMessageHandler() {
