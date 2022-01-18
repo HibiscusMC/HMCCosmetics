@@ -1,9 +1,8 @@
   package io.github.fisher2911.hmccosmetics.hook.item;
 
+import dev.lone.itemsadder.api.CustomStack;
 import io.github.fisher2911.hmccosmetics.hook.Hook;
-import io.th0rgal.oraxen.items.ItemBuilder;
 import org.bukkit.inventory.ItemStack;
-import dev.lone.itemsadder.api.CustomItem;
 
 public class ItemAdderHook implements ItemHook {
 
@@ -22,8 +21,8 @@ public class ItemAdderHook implements ItemHook {
 
     @Override
     public ItemStack getItem(final String id) {
-        final CustomItem customItem = CustomItem.getInstance("id);
-        if (customItem == null) return null;
-        return customItem.getItemStack();
+        final CustomStack stack = CustomStack.getInstance(id);
+        if ( stack == null ) return null;
+        return stack.getItemStack();
     }
 }

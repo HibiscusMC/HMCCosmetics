@@ -41,7 +41,7 @@ public class HookManager {
 
         final Map<String, ItemHook> itemHookMap = new HashMap<>();
         final OraxenHook oraxenHook = new OraxenHook();
-        final ItemAdderHook = new ItemAdderHook();
+        final ItemAdderHook itemAdderHook = new ItemAdderHook();
         if (pluginManager.getPlugin("Oraxen") != null) itemHookMap.put(oraxenHook.getIdentifier(), oraxenHook);
         if (pluginManager.getPlugin("ItemAdder") != null) itemHookMap.put(itemAdderHook.getIdentifier(), itemAdderHook);
         this.itemHooks = new ItemHooks(itemHookMap);

@@ -1,7 +1,10 @@
 package io.github.fisher2911.hmccosmetics.listener;
 
+import dev.lone.itemsadder.api.Events.ItemsAdderLoadDataEvent;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.database.Database;
+import io.github.fisher2911.hmccosmetics.hook.HookManager;
+import io.github.fisher2911.hmccosmetics.hook.item.ItemAdderHook;
 import io.github.fisher2911.hmccosmetics.user.User;
 import io.github.fisher2911.hmccosmetics.user.UserManager;
 import net.kyori.adventure.text.Component;
@@ -18,24 +21,25 @@ public class ItemsAdderListener implements Listener {
     private boolean enabled;
     private boolean loaded;
 
-    public JoinListener(final HMCCosmetics plugin) {
+    public ItemsAdderListener(final HMCCosmetics plugin) {
         this.plugin = plugin;
         enabled = HookManager.getInstance().isEnabled(ItemAdderHook.class);
         if (!this.enabled) {
-           this.plugin.load();
-          this.loaded = true;
-          return;
-        }    
+            this.plugin.load();
+            this.loaded = true;
+            return;
+        }
     }
 
     @EventHandler
     public void onJoin(final ItemsAdderLoadDataEvent event) {
         this.load();
     }
-  
+
     private void load() {
-      if (this.enabled) {
-        this.plugin.load();
-        this.loaded = true;
+        if (this.enabled) {
+            this.plugin.load();
+            this.loaded = true;
+        }
     }
 }
