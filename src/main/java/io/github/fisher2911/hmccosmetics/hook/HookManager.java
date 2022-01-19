@@ -3,10 +3,10 @@ package io.github.fisher2911.hmccosmetics.hook;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.hook.item.ItemHook;
 import io.github.fisher2911.hmccosmetics.hook.item.ItemHooks;
-import io.github.fisher2911.hmccosmetics.hook.item.OraxenHook;
 import io.github.fisher2911.hmccosmetics.hook.item.ItemsAdderHook;
-import io.github.fisher2911.hmccosmetics.hook.listener.ItemsAdderListener;
+import io.github.fisher2911.hmccosmetics.hook.item.OraxenHook;
 import org.bukkit.Bukkit;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,10 +32,12 @@ public class HookManager {
     private final ItemHooks itemHooks;
     private final PAPIHook papiHook;
     private final Set<Class<? extends Hook>> registeredHooks;
+    private final Set<Listener> listeners;
 
     private HookManager(final HMCCosmetics plugin) {
         this.plugin = plugin;
         this.registeredHooks = new HashSet<>();
+        this.listeners = new HashSet<>();
         final PluginManager pluginManager = Bukkit.getPluginManager();
         if (pluginManager.getPlugin("PlaceholderApi") != null) {
             this.registeredHooks.add(PAPIHook.class);
@@ -50,7 +52,7 @@ public class HookManager {
         if (pluginManager.getPlugin("Oraxen") != null) itemHookMap.put(oraxenHook.getIdentifier(), oraxenHook);
         if (pluginManager.getPlugin("ItemsAdder") != null) {
             itemHookMap.put(itemsAdderHook.getIdentifier(), itemsAdderHook);
-            this.plugin.getServer().getPluginManager().registerEvents(new ItemsAdderListener(this.plugin), this.plugin);
+            this.listeners.add(itemsAdderHook);
         }
 
         this.itemHooks = new ItemHooks(itemHookMap);
@@ -63,6 +65,12 @@ public class HookManager {
 
     public boolean isEnabled(final Class<? extends Hook> hook) {
         return this.registeredHooks.contains(hook);
+    }
+
+    public void registerListeners(final HMCCosmetics plugin) {
+        for (final Listener listener : this.listeners) {
+            plugin.getServer().getPluginManager().registerEvents(listener, plugin);
+        }
     }
 
     @Nullable

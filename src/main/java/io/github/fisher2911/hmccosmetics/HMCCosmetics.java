@@ -55,6 +55,8 @@ public class HMCCosmetics extends JavaPlugin {
         if (!HookManager.getInstance().isEnabled(ItemsAdderHook.class)) {
             this.load();
         }
+
+        HookManager.getInstance().registerListeners(this);
     }
 
     @Override
