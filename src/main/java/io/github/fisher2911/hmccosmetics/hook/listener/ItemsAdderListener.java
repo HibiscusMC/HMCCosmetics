@@ -15,7 +15,7 @@ public class ItemsAdderListener implements Listener {
     }
 
     @EventHandler
-    public void onItemAdderLoad(final ItemsAdderLoadDataEvent event) {
+    public void onItemsAdderLoad(final ItemsAdderLoadDataEvent event) {
         if (this.loaded) return;
         this.plugin.load();
         this.loaded = true;
