@@ -9,13 +9,15 @@ import io.github.fisher2911.hmccosmetics.database.Database;
 import io.github.fisher2911.hmccosmetics.database.DatabaseFactory;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.gui.CosmeticsMenu;
+import io.github.fisher2911.hmccosmetics.hook.HookManager;
+import io.github.fisher2911.hmccosmetics.hook.item.ItemAdderHook;
+import io.github.fisher2911.hmccosmetics.hook.listener.ItemsAdderListener;
 import io.github.fisher2911.hmccosmetics.listener.*;
 import io.github.fisher2911.hmccosmetics.message.MessageHandler;
 import io.github.fisher2911.hmccosmetics.message.Messages;
 import io.github.fisher2911.hmccosmetics.user.UserManager;
 import me.mattstudios.mf.base.CommandManager;
 import org.bstats.bukkit.Metrics;
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Arrays;
@@ -50,6 +52,10 @@ public class HMCCosmetics extends JavaPlugin {
 
         this.registerCommands();
         this.registerListeners();
+
+        if (!HookManager.getInstance().isEnabled(ItemAdderHook.class)) {
+            this.load();
+        }
     }
 
     @Override
@@ -61,12 +67,13 @@ public class HMCCosmetics extends JavaPlugin {
     }
 
     private void registerListeners() {
-        List.of(new ItemsAdderListener(this),
+        List.of(
                         new JoinListener(this),
                         new ClickListener(this),
                         new TeleportListener(this),
                         new RespawnListener(this),
-                        new HatRemoveFixListener(this)).
+                        new HatRemoveFixListener(this)
+                ).
                 forEach(listener ->
                         this.getServer().getPluginManager().registerEvents(listener, this)
                 );
@@ -84,17 +91,17 @@ public class HMCCosmetics extends JavaPlugin {
         );
         this.commandManager.getCompletionHandler().register("#types",
                 resolver ->
-                    Arrays.stream(ArmorItem.Type.
-                            values()).
-                            map(ArmorItem.Type::toString).
-                            collect(Collectors.toList())
-                );
+                        Arrays.stream(ArmorItem.Type.
+                                        values()).
+                                map(ArmorItem.Type::toString).
+                                collect(Collectors.toList())
+        );
         this.commandManager.getCompletionHandler().register("#ids",
                 resolver ->
-                this.cosmeticManager.getAll().stream().map(ArmorItem::getId).collect(Collectors.toList()));
+                        this.cosmeticManager.getAll().stream().map(ArmorItem::getId).collect(Collectors.toList()));
         this.commandManager.register(new CosmeticsCommand(this));
     }
-    
+
     public void load() {
         this.messageHandler.load();
         this.cosmeticsMenu.load();

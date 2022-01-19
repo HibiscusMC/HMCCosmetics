@@ -1,10 +1,9 @@
   package io.github.fisher2911.hmccosmetics.hook.item;
 
-import dev.lone.itemsadder.api.CustomStack;
-import io.github.fisher2911.hmccosmetics.hook.Hook;
-import org.bukkit.inventory.ItemStack;
+  import dev.lone.itemsadder.api.CustomStack;
+  import org.bukkit.inventory.ItemStack;
 
-public class ItemAdderHook implements ItemHook {
+  public class ItemAdderHook implements ItemHook {
 
     public static final String ID = "ITEM_ADDER";
     private static final String IDENTIFIER = "itemadder";
