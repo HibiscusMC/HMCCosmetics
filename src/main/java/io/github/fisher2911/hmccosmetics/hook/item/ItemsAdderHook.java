@@ -16,9 +16,11 @@ public class ItemsAdderHook implements ItemHook, Listener {
 
     @EventHandler
     public void onItemsAdderLoad(final ItemsAdderLoadDataEvent event) {
-        if (this.loaded) return;
-        HMCCosmetics.getPlugin(HMCCosmetics.class).load();
-        this.loaded = true;
+     // this is a test, will be removed later      
+     System.out.println("ItemsAdder Loaded");
+//         if (this.loaded) return;
+//         HMCCosmetics.getPlugin(HMCCosmetics.class).load();
+//         this.loaded = true;
     }
 
     @Override
