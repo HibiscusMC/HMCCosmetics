@@ -68,16 +68,17 @@ public class HMCCosmetics extends JavaPlugin {
     }
 
     private void registerListeners() {
-        List.of(
+        final List<Listener> listeners = List.of(
                         new JoinListener(this),
                         new ClickListener(this),
                         new TeleportListener(this),
                         new RespawnListener(this),
                         new HatRemoveFixListener(this)
-                ).
-                forEach(listener ->
-                        this.getServer().getPluginManager().registerEvents(listener, this)
                 );
+        for (final Listener : listener) {
+            this.getLogger().info("Loading listener: " + listener.class);
+            this.getServer().getPluginManager().registerEvents(listener, this);
+        }
     }
 
     private void registerCommands() {
