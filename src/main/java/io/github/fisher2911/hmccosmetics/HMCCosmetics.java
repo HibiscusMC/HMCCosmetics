@@ -10,8 +10,7 @@ import io.github.fisher2911.hmccosmetics.database.DatabaseFactory;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.gui.CosmeticsMenu;
 import io.github.fisher2911.hmccosmetics.hook.HookManager;
-import io.github.fisher2911.hmccosmetics.hook.item.ItemAdderHook;
-import io.github.fisher2911.hmccosmetics.hook.listener.ItemsAdderListener;
+import io.github.fisher2911.hmccosmetics.hook.item.ItemsAdderHook;
 import io.github.fisher2911.hmccosmetics.listener.*;
 import io.github.fisher2911.hmccosmetics.message.MessageHandler;
 import io.github.fisher2911.hmccosmetics.message.Messages;
@@ -53,7 +52,7 @@ public class HMCCosmetics extends JavaPlugin {
         this.registerCommands();
         this.registerListeners();
 
-        if (!HookManager.getInstance().isEnabled(ItemAdderHook.class)) {
+        if (!HookManager.getInstance().isEnabled(ItemsAdderHook.class)) {
             this.load();
         }
     }

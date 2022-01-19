@@ -4,7 +4,7 @@ import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.hook.item.ItemHook;
 import io.github.fisher2911.hmccosmetics.hook.item.ItemHooks;
 import io.github.fisher2911.hmccosmetics.hook.item.OraxenHook;
-import io.github.fisher2911.hmccosmetics.hook.item.ItemAdderHook;
+import io.github.fisher2911.hmccosmetics.hook.item.ItemsAdderHook;
 import io.github.fisher2911.hmccosmetics.hook.listener.ItemsAdderListener;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
@@ -46,7 +46,7 @@ public class HookManager {
 
         final Map<String, ItemHook> itemHookMap = new HashMap<>();
         final OraxenHook oraxenHook = new OraxenHook();
-        final ItemAdderHook itemAdderHook = new ItemAdderHook();
+        final ItemsAdderHook itemAdderHook = new ItemsAdderHook();
         if (pluginManager.getPlugin("Oraxen") != null) itemHookMap.put(oraxenHook.getIdentifier(), oraxenHook);
         if (pluginManager.getPlugin("ItemAdder") != null) {
             itemHookMap.put(itemAdderHook.getIdentifier(), itemAdderHook);

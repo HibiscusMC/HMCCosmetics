@@ -3,7 +3,7 @@
   import dev.lone.itemsadder.api.CustomStack;
   import org.bukkit.inventory.ItemStack;
 
-  public class ItemAdderHook implements ItemHook {
+  public class ItemsAdderHook implements ItemHook {
 
     public static final String ID = "ITEM_ADDER";
     private static final String IDENTIFIER = "itemsadder";
