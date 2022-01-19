@@ -141,7 +141,7 @@ public class User {
         }
 
         if (hat.getId().equals(this.playerArmor.getHat().getId())) {
-            this.setHat(ArmorItem.empty(ArmorItem.Type.BACKPACK), plugin);
+            this.setHat(ArmorItem.empty(ArmorItem.Type.HAT), plugin);
 
             messageHandler.sendMessage(
                     player,

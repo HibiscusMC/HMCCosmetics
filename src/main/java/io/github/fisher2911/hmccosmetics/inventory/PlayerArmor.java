@@ -44,23 +44,7 @@ public class PlayerArmor {
     }
 
     public void setHat(final ArmorItem hat) {
-        if (dye == -1 || !ColorBuilder.canBeColored(hat.getItemStack())) {
-            this.hat = hat;
-            return;
-        }
-
-        final ColorBuilder colorBuilder =
-                ColorBuilder.from(hat.getItemStack()).
-                        color(Color.fromRGB(this.dye));
-        this.hat = new ArmorItem(
-                colorBuilder.build(),
-                hat.getAction(),
-                hat.getId(),
-                hat.getLockedLore(),
-                hat.getPermission(),
-                hat.getType(),
-                hat.isDyeable()
-        );
+        this.hat = this.color(hat);
     }
 
     public ArmorItem getBackpack() {
@@ -68,7 +52,26 @@ public class PlayerArmor {
     }
 
     public void setBackpack(final ArmorItem backpack) {
-        this.backpack = backpack;
+        this.backpack = this.color(backpack);
+    }
+
+    private ArmorItem color(final ArmorItem armorItem) {
+        if (this.dye == -1 || !ColorBuilder.canBeColored(armorItem.getItemStack())) {
+            return armorItem;
+        }
+
+        final ColorBuilder colorBuilder =
+                ColorBuilder.from(armorItem.getItemStack()).
+                        color(Color.fromRGB(this.dye));
+        return new ArmorItem(
+                colorBuilder.build(),
+                armorItem.getAction(),
+                armorItem.getId(),
+                armorItem.getLockedLore(),
+                armorItem.getPermission(),
+                armorItem.getType(),
+                armorItem.isDyeable()
+        );
     }
 
     public int getDye() {
