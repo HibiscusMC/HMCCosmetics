@@ -6,7 +6,7 @@
   public class ItemAdderHook implements ItemHook {
 
     public static final String ID = "ITEM_ADDER";
-    private static final String IDENTIFIER = "itemadder";
+    private static final String IDENTIFIER = "itemsadder";
 
     @Override
     public String getId() {

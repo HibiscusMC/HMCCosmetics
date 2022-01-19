@@ -20,7 +20,7 @@ public class ItemHooks {
     public ItemStack getItemStack(final String item) {
         final String[] parts = item.split(":");
 
-        if (parts.length != 2) return null;
+        if (parts.length < 2) return null;
 
         final String identifier = parts[0];
         final String itemId = parts[1];
