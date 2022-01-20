@@ -201,6 +201,10 @@ public class ArmorItem extends GuiItem {
         return dyeable;
     }
 
+    public int getDye() {
+        return dye;
+    }
+
     @Override
     public ItemStack getItemStack() {
         return this.color(super.getItemStack());
