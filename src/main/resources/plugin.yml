@@ -6,6 +6,7 @@ softdepend:
   - Multiverse
   - PlaceholderAPI
   - Oraxen
+  - ItemsAdder
 depend:
   - ProtocolLib
 permissions:

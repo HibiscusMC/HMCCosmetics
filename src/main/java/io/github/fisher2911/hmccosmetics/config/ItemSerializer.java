@@ -19,6 +19,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Registry;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -192,13 +193,16 @@ public class ItemSerializer implements TypeSerializer<GuiItem> {
             itemBuilder = ItemBuilder.from(itemStack);
         }
 
+        if (itemStack.getItemMeta() != null && !itemStack.getItemMeta().hasCustomModelData()) {
+            itemBuilder.modelData(modelData);
+        }
+
         itemStack = itemBuilder.
                 amount(amount).
                 name(name).
                 unbreakable(unbreakable).
                 glow(glowing).
                 lore(lore).
-                modelData(modelData).
                 enchants(enchantments, true).
                 itemFlags(itemFlags).
                 build();
