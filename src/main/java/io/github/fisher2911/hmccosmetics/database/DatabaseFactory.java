@@ -33,6 +33,7 @@ public class DatabaseFactory {
         final Logger logger = plugin.getLogger();
 
         if (type == null) {
+            logger.severe("Database type was null, disabling plugin.");
             Bukkit.getPluginManager().disablePlugin(plugin);
             throw new NullPointerException();
         }
