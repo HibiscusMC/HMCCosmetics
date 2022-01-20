@@ -9,11 +9,9 @@ import io.github.fisher2911.hmccosmetics.database.Database;
 import io.github.fisher2911.hmccosmetics.database.DatabaseFactory;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.gui.CosmeticsMenu;
-import io.github.fisher2911.hmccosmetics.listener.ClickListener;
-import io.github.fisher2911.hmccosmetics.listener.HatRemoveFixListener;
-import io.github.fisher2911.hmccosmetics.listener.JoinListener;
-import io.github.fisher2911.hmccosmetics.listener.RespawnListener;
-import io.github.fisher2911.hmccosmetics.listener.TeleportListener;
+import io.github.fisher2911.hmccosmetics.hook.HookManager;
+import io.github.fisher2911.hmccosmetics.hook.item.ItemsAdderHook;
+import io.github.fisher2911.hmccosmetics.listener.*;
 import io.github.fisher2911.hmccosmetics.message.MessageHandler;
 import io.github.fisher2911.hmccosmetics.message.Messages;
 import io.github.fisher2911.hmccosmetics.user.UserManager;
@@ -22,6 +20,7 @@ import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.BufferedReader;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -47,16 +46,19 @@ public class HMCCosmetics extends JavaPlugin {
         this.userManager = new UserManager(this);
         this.cosmeticManager = new CosmeticManager(new HashMap<>());
         this.cosmeticsMenu = new CosmeticsMenu(this);
-        this.messageHandler.load();
-        this.cosmeticsMenu.load();
 
         this.userManager.startTeleportTask();
 
         this.database = DatabaseFactory.create(this);
-        this.database.load();
 
         this.registerCommands();
         this.registerListeners();
+
+        if (!HookManager.getInstance().isEnabled(ItemsAdderHook.class)) {
+            this.load();
+        }
+
+        HookManager.getInstance().registerListeners(this);
     }
 
     @Override
@@ -68,13 +70,15 @@ public class HMCCosmetics extends JavaPlugin {
     }
 
     private void registerListeners() {
-        List.of(new JoinListener(this),
+        List.of(
+                        new JoinListener(this),
                         new ClickListener(this),
                         new TeleportListener(this),
                         new RespawnListener(this),
-                        new HatRemoveFixListener(this)).
-                forEach(listener ->
-                        this.getServer().getPluginManager().registerEvents(listener, this)
+                        new HatRemoveFixListener(this)
+                ).
+                forEach(
+                        listener -> this.getServer().getPluginManager().registerEvents(listener, this)
                 );
     }
 
@@ -90,15 +94,21 @@ public class HMCCosmetics extends JavaPlugin {
         );
         this.commandManager.getCompletionHandler().register("#types",
                 resolver ->
-                    Arrays.stream(ArmorItem.Type.
-                            values()).
-                            map(ArmorItem.Type::toString).
-                            collect(Collectors.toList())
-                );
+                        Arrays.stream(ArmorItem.Type.
+                                        values()).
+                                map(ArmorItem.Type::toString).
+                                collect(Collectors.toList())
+        );
         this.commandManager.getCompletionHandler().register("#ids",
                 resolver ->
-                this.cosmeticManager.getAll().stream().map(ArmorItem::getId).collect(Collectors.toList()));
+                        this.cosmeticManager.getAll().stream().map(ArmorItem::getId).collect(Collectors.toList()));
         this.commandManager.register(new CosmeticsCommand(this));
+    }
+
+    public void load() {
+        this.messageHandler.load();
+        this.cosmeticsMenu.load();
+        this.database.load();
     }
 
     public MessageHandler getMessageHandler() {
