@@ -4,12 +4,11 @@ import dev.triumphteam.gui.guis.GuiItem;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.hook.HookManager;
-import io.github.fisher2911.hmccosmetics.message.Adventure;
 import io.github.fisher2911.hmccosmetics.util.Keys;
 import io.github.fisher2911.hmccosmetics.util.StringUtils;
 import io.github.fisher2911.hmccosmetics.util.Utils;
-import io.github.fisher2911.hmccosmetics.util.builder.ItemBuilder;
 import io.github.fisher2911.hmccosmetics.util.builder.ColorBuilder;
+import io.github.fisher2911.hmccosmetics.util.builder.ItemBuilder;
 import io.github.fisher2911.hmccosmetics.util.builder.SkullBuilder;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -19,7 +18,6 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Registry;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -231,7 +229,9 @@ public class ItemSerializer implements TypeSerializer<GuiItem> {
                     lockedLore,
                     permission,
                     cosmeticType,
-                    dyeable);
+                    dyeable,
+                    -1
+            );
 
         } catch (final IllegalArgumentException exception) {
             return dev.triumphteam.gui.builder.item.ItemBuilder.from(

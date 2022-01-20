@@ -3,6 +3,7 @@ package io.github.fisher2911.hmccosmetics.command;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.gui.CosmeticsMenu;
+import io.github.fisher2911.hmccosmetics.message.Message;
 import io.github.fisher2911.hmccosmetics.message.MessageHandler;
 import io.github.fisher2911.hmccosmetics.message.Messages;
 import io.github.fisher2911.hmccosmetics.message.Placeholder;
@@ -76,6 +77,7 @@ public class CosmeticsCommand extends CommandBase {
             final ArmorItem armorItem = switch (type) {
                 case HAT -> user.getPlayerArmor().getHat();
                 case BACKPACK -> user.getPlayerArmor().getBackpack();
+                case OFF_HAND -> user.getPlayerArmor().getOffHand();
             };
 
             this.cosmeticsMenu.openDyeSelectorGui(user, armorItem);
@@ -123,34 +125,19 @@ public class CosmeticsCommand extends CommandBase {
             return;
         }
 
-        switch (armorItem.getType()) {
-            case BACKPACK -> {
-                user.setBackpack(armorItem, this.plugin);
-                this.messageHandler.sendMessage(
-                        player,
-                        Messages.SET_BACKPACK
-                );
-                this.messageHandler.sendMessage(
-                        sender,
-                        Messages.SET_OTHER_BACKPACK,
-                        Map.of(Placeholder.PLAYER, player.getName(),
-                                Placeholder.TYPE, id)
-                );
-            }
-            case HAT -> {
-                user.setHat(armorItem, this.plugin);
-                this.messageHandler.sendMessage(
-                        player,
-                        Messages.SET_HAT
-                );
-                this.messageHandler.sendMessage(
-                        sender,
-                        Messages.SET_OTHER_HAT,
-                        Map.of(Placeholder.PLAYER, player.getName(),
-                                Placeholder.TYPE, id)
-                );
-            }
-        }
+        final Message setMessage = Messages.getSetMessage(armorItem.getType());
+        final Message setOtherMessage = Messages.getSetOtherMessage(armorItem.getType());
+        this.userManager.setItem(user, armorItem);
+        this.messageHandler.sendMessage(
+                player,
+                setMessage
+        );
+        this.messageHandler.sendMessage(
+                sender,
+                setOtherMessage,
+                Map.of(Placeholder.PLAYER, player.getName(),
+                        Placeholder.TYPE, id)
+        );
     }
 
     @SubCommand("remove")
@@ -171,34 +158,19 @@ public class CosmeticsCommand extends CommandBase {
         try {
             final ArmorItem.Type type = ArmorItem.Type.valueOf(typeString.toUpperCase());
 
-            switch (type) {
-                case HAT -> {
-                    user.removeHat(this.plugin);
-                    this.messageHandler.sendMessage(
-                            player,
-                            Messages.REMOVED_HAT
-                    );
-                    this.messageHandler.sendMessage(
-                            sender,
-                            Messages.SET_OTHER_HAT,
-                            Map.of(Placeholder.PLAYER, player.getName(),
-                                    Placeholder.TYPE, "none")
-                    );
-                }
-                case BACKPACK -> {
-                    user.removeBackpack(this.plugin);
-                    this.messageHandler.sendMessage(
-                            player,
-                            Messages.REMOVED_BACKPACK
-                    );
-                    this.messageHandler.sendMessage(
-                            sender,
-                            Messages.SET_OTHER_BACKPACK,
-                            Map.of(Placeholder.PLAYER, player.getName(),
-                                    Placeholder.TYPE, "none")
-                    );
-                }
-            }
+            final Message setMessage = Messages.getSetMessage(type);
+            final Message setOtherMessage = Messages.getSetOtherMessage(type);
+            this.userManager.removeItem(user, type);
+            this.messageHandler.sendMessage(
+                    player,
+                    setMessage
+            );
+            this.messageHandler.sendMessage(
+                    sender,
+                    setOtherMessage,
+                    Map.of(Placeholder.PLAYER, player.getName(),
+                            Placeholder.TYPE, "none")
+            );
         } catch (final IllegalArgumentException exception) {
             this.messageHandler.sendMessage(
                     player,

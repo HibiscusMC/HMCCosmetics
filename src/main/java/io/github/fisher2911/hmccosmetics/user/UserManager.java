@@ -8,8 +8,13 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.Pair;
+import com.google.common.xml.XmlEscapers;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
+import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
+import io.github.fisher2911.hmccosmetics.message.Message;
+import io.github.fisher2911.hmccosmetics.message.MessageHandler;
+import io.github.fisher2911.hmccosmetics.message.Messages;
 import io.github.fisher2911.hmccosmetics.message.Placeholder;
 import io.github.fisher2911.hmccosmetics.util.Keys;
 import io.github.fisher2911.hmccosmetics.util.builder.ItemBuilder;
@@ -31,6 +36,7 @@ import java.util.UUID;
 public class UserManager {
 
     private final HMCCosmetics plugin;
+    private final MessageHandler messageHandler;
 
     private final Map<UUID, User> userMap = new HashMap<>();
     private final Map<Integer, User> armorStandIdMap = new HashMap<>();
@@ -39,6 +45,7 @@ public class UserManager {
 
     public UserManager(final HMCCosmetics plugin) {
         this.plugin = plugin;
+        this.messageHandler = this.plugin.getMessageHandler();
         this.registerPacketListener();
     }
 
@@ -128,32 +135,6 @@ public class UserManager {
                 }
             }
         });
-
-        // not sure if this fixes anything, removed for now
-//        protocolManager.addPacketListener(new PacketAdapter(
-//                this.plugin,
-//                ListenerPriority.NORMAL,
-//                PacketType.Play.Server.ENTITY_DESTROY) {
-//            @Override
-//            public void onPacketReceiving(PacketEvent event) {
-//
-//            }
-//
-//            @Override
-//            public void onPacketSending(final PacketEvent event) {
-//                if (event.getPacketType() == PacketType.Play.Server.ENTITY_DESTROY) {
-//                    final int id = event.getPacket().getIntegers().read(0);
-//
-//                    final User user = armorStandIdMap.get(id);
-//
-//                    if (user == null) return;
-//
-//                    if (!user.hasArmorStand()) return;
-//
-//                    user.spawnArmorStand();
-//                }
-//            }
-//        });
     }
 
     public void setFakeHelmet(final User user) {
@@ -196,6 +177,55 @@ public class UserManager {
                 e.printStackTrace();
             }
         }
+    }
+
+    public void setItem(final User user, final ArmorItem armorItem) {
+        user.setItem(armorItem);
+        switch (armorItem.getType()) {
+            case HAT -> this.setFakeHelmet(user);
+            case OFF_HAND -> /* todo */ {}
+        }
+    }
+
+    public void removeItem(final User user, final ArmorItem.Type type) {
+        this.setItem(user, ArmorItem.empty(type));
+    }
+
+    // returns set item
+    public ArmorItem setOrUnset(
+            final User user,
+            final ArmorItem armorItem,
+            final Message removeMessage,
+            final Message setMessage) {
+        final Player player = user.getPlayer();
+
+        final ArmorItem empty = ArmorItem.empty(armorItem.getType());
+
+        if (player == null) {
+            return empty;
+        }
+
+        final ArmorItem check = user.getPlayerArmor().getItem(armorItem.getType());
+
+        final ArmorItem.Type type = armorItem.getType();
+
+        if (armorItem.getId().equals(check.getId())) {
+            user.setItem(ArmorItem.empty(type));
+
+            messageHandler.sendMessage(
+                    player,
+                    removeMessage
+            );
+
+            return empty;
+        }
+
+        user.setItem(armorItem);
+        messageHandler.sendMessage(
+                player,
+                setMessage
+        );
+        return armorItem;
     }
 
     public void removeAll() {

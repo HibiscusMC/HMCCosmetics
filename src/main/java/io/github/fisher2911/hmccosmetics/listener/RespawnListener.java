@@ -26,8 +26,7 @@ public class RespawnListener implements Listener {
         Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
             final Player player = event.getPlayer();
             final Optional<User> optionalUser = this.userManager.get(player.getUniqueId());
-
-            optionalUser.ifPresent(user -> user.setHat(user.getPlayerArmor().getHat(), this.plugin));
+            optionalUser.ifPresent(user -> this.userManager.setItem(user, user.getPlayerArmor().getHat()));
         }, 1);
     }
 }

@@ -4,9 +4,14 @@ set-hat: "<white> <gradient:#6D9DC5:#45CDE9>Applied hat!"
 removed-hat: "<white> <gradient:#6D9DC5:#45CDE9>Removed hat!"
 set-backpack: "<white> <gradient:#6D9DC5:#45CDE9>Applied backpack!"
 removed-backpack: "<white> <gradient:#6D9DC5:#45CDE9>Removed backpack!"
+set-off-hand: "<white> <gradient:#6D9DC5:#45CDE9>Applied offhand!"
+removed-off-hand: "<white> <gradient:#6D9DC5:#45CDE9>Removed offhand!"
 must-be-player: "<red>You must be a player to do this!"
 reloaded: "<white> <gradient:#00ff87:#60efff>Config files reloaded!"
-invalid-type: "<white> <red>Invalid cosmetic type, please use <u>hat</u> or <u>backpack</u>!"
+invalid-type: "<white> <red>Invalid cosmetic type, please use <u>hat</u>, <u>backpack</u> or <u>off_hand</u>!"
+set-other-backpack: "<white><gradient:#6D9DC5:#45CDE9>You have set the backpack of %player% to %type%"
+set-other-hat: "<white><gradient:#6D9DC5:#45CDE9>You have set the hat of %player% to %type%"
+set-other-off-hand: "<white><gradient:#6D9DC5:#45CDE9>You have set the off hand of %player% to %type%"
 help-command: "<#6D9DC5><st>                  </st> <white>  <gradient:#40B7D6:#6D9DC5>HMCCosmetics - Help</gradient> <white> <#6D9DC5> <st>                  </st>
 
 

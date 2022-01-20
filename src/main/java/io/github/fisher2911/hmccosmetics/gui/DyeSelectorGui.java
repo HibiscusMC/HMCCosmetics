@@ -67,24 +67,7 @@ public class DyeSelectorGui extends CosmeticGui {
                 return;
             }
 
-            final ItemStack itemStack = switch (type) {
-                case HAT -> {
-                    final ArmorItem hatItem = playerArmor.getHat();
-
-                    if (hatItem == null) {
-                        yield null;
-                    }
-                    yield hatItem.getItemStack();
-                }
-                case BACKPACK -> {
-                    final ArmorItem backpackItem = playerArmor.getBackpack();
-
-                    if (backpackItem == null) {
-                        yield null;
-                    }
-                    yield backpackItem.getItemStack();
-                }
-            };
+            final ItemStack itemStack = playerArmor.getItem(type).getItemStack();
 
             if (itemStack == null) {
                 return;
@@ -96,17 +79,11 @@ public class DyeSelectorGui extends CosmeticGui {
 
             final GuiItem guiItem = this.guiItemMap.get(event.getSlot());
 
-            if (!(guiItem instanceof final ColorItem colorItem)) {
+            if (!(guiItem instanceof ColorItem)) {
                 return;
             }
 
-            final Color color = colorItem.getColor();
-            user.setDye(color.asRGB());
-
-            switch (type) {
-                case HAT -> user.setHat(armorItem, this.plugin);
-                case BACKPACK -> user.setBackpack(armorItem, this.plugin);
-            }
+            this.userManager.setItem(user, armorItem);
         });
 
         return gui;
@@ -115,6 +92,7 @@ public class DyeSelectorGui extends CosmeticGui {
     @Override
     public void open(final HumanEntity player) {
         final Optional<User> optionalUser = this.plugin.getUserManager().get(player.getUniqueId());
-        optionalUser.ifPresent(user -> this.getGui(user, user.getLastSetItem()).open(player));
+        // todo
+//        optionalUser.ifPresent(user -> this.getGui(user, user.getLastSetItem()).open(player));
     }
 }

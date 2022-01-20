@@ -7,78 +7,57 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.Map;
 
 public class PlayerArmor {
 
-    private ArmorItem hat;
-    private ArmorItem backpack;
-    private int dye;
+    private final Map<ArmorItem.Type, ArmorItem> armorItems;
 
-    public PlayerArmor(ArmorItem hat, final ArmorItem backpack, final int dye) {
-        this.dye = dye;
-        this.setHat(hat);
-        this.backpack = backpack;
+    public PlayerArmor(ArmorItem hat, final ArmorItem backpack, final ArmorItem offHand) {
+        this.armorItems = new EnumMap<>(ArmorItem.Type.class);
+        this.armorItems.put(hat.getType(), hat);
+        this.armorItems.put(backpack.getType(), hat);
+        this.armorItems.put(offHand.getType(), offHand);
     }
 
     public static PlayerArmor empty() {
         return new PlayerArmor(
-                new ArmorItem(
-                        new ItemStack(Material.AIR),
-                        "",
-                        new ArrayList<>(),
-                        "",
-                        ArmorItem.Type.HAT
-                ),
-                new ArmorItem(
-                        new ItemStack(Material.AIR),
-                        "",
-                        new ArrayList<>(),
-                        "",
-                        ArmorItem.Type.BACKPACK
-                ),
-                -1);
-    }
-
-    public ArmorItem getHat() {
-        return hat;
-    }
-
-    public void setHat(final ArmorItem hat) {
-        this.hat = this.color(hat);
-    }
-
-    public ArmorItem getBackpack() {
-        return backpack;
-    }
-
-    public void setBackpack(final ArmorItem backpack) {
-        this.backpack = this.color(backpack);
-    }
-
-    private ArmorItem color(final ArmorItem armorItem) {
-        if (this.dye == -1 || !ColorBuilder.canBeColored(armorItem.getItemStack())) {
-            return armorItem;
-        }
-
-        final ColorBuilder colorBuilder =
-                ColorBuilder.from(armorItem.getItemStack()).
-                        color(Color.fromRGB(this.dye));
-        return new ArmorItem(
-                colorBuilder.build(),
-                armorItem.getAction(),
-                armorItem.getId(),
-                armorItem.getLockedLore(),
-                armorItem.getPermission(),
-                armorItem.getType(),
-                armorItem.isDyeable()
+                ArmorItem.empty(ArmorItem.Type.HAT),
+                ArmorItem.empty(ArmorItem.Type.BACKPACK),
+                ArmorItem.empty(ArmorItem.Type.OFF_HAND)
         );
     }
 
-    public int getDye() {
-        return this.dye;
+    public ArmorItem getHat() {
+        return this.armorItems.get(ArmorItem.Type.HAT);
     }
 
-    public void setDye(final int dye) {
-        this.dye = dye;
+    public void setHat(final ArmorItem hat) {
+        this.armorItems.put(ArmorItem.Type.HAT, hat);
+    }
+
+    public ArmorItem getBackpack() {
+        return this.armorItems.get(ArmorItem.Type.BACKPACK);
+    }
+
+    public void setBackpack(final ArmorItem backpack) {
+        this.armorItems.put(ArmorItem.Type.BACKPACK, backpack);
+    }
+
+    public ArmorItem getOffHand() {
+        return this.armorItems.get(ArmorItem.Type.OFF_HAND);
+    }
+
+    public void setOffHand(final ArmorItem offHand) {
+        this.armorItems.put(ArmorItem.Type.OFF_HAND, offHand);
+    }
+
+    public ArmorItem getItem(final ArmorItem.Type type) {
+        return this.armorItems.get(type);
+    }
+
+    public ArmorItem setItem(final ArmorItem armorItem) {
+        return this.armorItems.put(armorItem.getType(), armorItem);
     }
 }

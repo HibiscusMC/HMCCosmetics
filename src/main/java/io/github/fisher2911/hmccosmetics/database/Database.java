@@ -56,15 +56,11 @@ public abstract class Database {
             final String hat = playerArmor.getHat().getId();
             final String backpack = playerArmor.getBackpack().getId();
 
-            final int dye = user.getDye();
-
             statement.setString(1, user.getUuid().toString());
             statement.setString(2, backpack);
             statement.setString(3, hat);
-            statement.setInt(4, dye);
             statement.setString(5, backpack);
             statement.setString(6, hat);
-            statement.setInt(7, dye);
 
             statement.executeUpdate();
         } catch (final SQLException exception) {
@@ -108,7 +104,8 @@ public abstract class Database {
                     new PlayerArmor(
                             hat,
                             backpack,
-                            dye
+                            // todo
+                            null
                     ),
                     armorStandId
             );

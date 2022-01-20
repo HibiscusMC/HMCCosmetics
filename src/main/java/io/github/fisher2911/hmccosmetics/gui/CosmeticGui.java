@@ -10,6 +10,7 @@ import io.github.fisher2911.hmccosmetics.message.MessageHandler;
 import io.github.fisher2911.hmccosmetics.message.Messages;
 import io.github.fisher2911.hmccosmetics.message.Placeholder;
 import io.github.fisher2911.hmccosmetics.user.User;
+import io.github.fisher2911.hmccosmetics.user.UserManager;
 import io.github.fisher2911.hmccosmetics.util.StringUtils;
 import io.github.fisher2911.hmccosmetics.util.builder.ItemBuilder;
 import org.bukkit.Bukkit;
@@ -26,6 +27,7 @@ import java.util.Optional;
 public class CosmeticGui {
 
     protected final HMCCosmetics plugin;
+    protected final UserManager userManager;
     protected final MessageHandler messageHandler;
     protected final String title;
     protected final int rows;
@@ -39,6 +41,7 @@ public class CosmeticGui {
             final int rows,
             final Map<Integer, GuiItem> guiItemMap) {
         this.plugin = plugin;
+        this.userManager = this.plugin.getUserManager();
         this.messageHandler = this.plugin.getMessageHandler();
         this.title = title;
         this.rows = rows;
@@ -76,12 +79,14 @@ public class CosmeticGui {
 
                 final ArmorItem hat = playerArmor.getHat();
                 final ArmorItem backpack = playerArmor.getBackpack();
+                final ArmorItem offHand = playerArmor.getOffHand();
 
                 final ArmorItem.Type type = armorItem.getType();
 
                 final String id = switch (type) {
                     case HAT -> hat.getId();
                     case BACKPACK -> backpack.getId();
+                    case OFF_HAND -> offHand.getId();
                 };
 
                 placeholders.put(
@@ -140,20 +145,13 @@ public class CosmeticGui {
 
         final ArmorItem.Type type = armorItem.getType();
 
-        switch (type) {
-            case HAT -> {
-                final boolean set = user.setOrUnsetHat(armorItem, this.messageHandler, this.plugin);
-                if (set) {
-                    actionIfSet.execute(event);
-                }
-            }
-            case BACKPACK -> {
-                final boolean set = user.setOrUnsetBackpack(armorItem, this.messageHandler, this.plugin);
-                if (set) {
-                    actionIfSet.execute(event);
-                }
-            }
-        }
+        final ArmorItem setTo = this.userManager.setOrUnset(
+                user,
+                armorItem,
+                Messages.getSetMessage(type),
+                Messages.getRemovedMessage(type));
+        if (setTo.isEmpty()) return;
+        actionIfSet.execute(event);
     }
 
     public void open(final HumanEntity humanEntity) {

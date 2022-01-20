@@ -36,6 +36,8 @@ dependencies {
     implementation 'org.spongepowered:configurate-yaml:4.1.2'
     implementation 'org.bstats:bstats-bukkit:2.2.1'
     implementation 'com.zaxxer:HikariCP:5.0.0'
+    implementation 'com.j256.ormlite:ormlite-jdbc:6.1'
+    implementation 'com.j256.ormlite:ormlite-core:6.1'
 }
 
 test {
@@ -50,6 +52,7 @@ shadowJar {
     relocate 'org.spongepowered.configurate', 'io.github.fisher2911.hmccosmetics.configurate'
     relocate 'org.bstats', 'io.github.fisher2911.hmccosmetics.bstats'
     relocate 'com.zaxxer.hikaricp', 'io.github.fisher2911.hmccosmetics.hikaricp'
+    relocate 'com.j256.ormlite', 'io.github.fisher2911.databasetest.ormlite'
 }
 
 shadowJar {
