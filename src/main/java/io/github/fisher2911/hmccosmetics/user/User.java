@@ -177,15 +177,9 @@ public class User {
 
         final ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
 
-        for (final Player p : Bukkit.getOnlinePlayers()) {
-            try {
-                protocolManager.sendServerPacket(p, armorPacket);
-                protocolManager.sendServerPacket(p, metaContainer);
-                protocolManager.sendServerPacket(p, rotationPacket);
-            } catch (final InvocationTargetException exception) {
-                exception.printStackTrace();
-            }
-        }
+        protocolManager.broadcastServerPacket(armorPacket);
+        protocolManager.broadcastServerPacket(metaContainer);
+        protocolManager.broadcastServerPacket(rotationPacket);
     }
 
     public void despawnAttached() {
