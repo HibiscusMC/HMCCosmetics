@@ -174,18 +174,6 @@ public class User {
 
         final ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
 
-        final PacketContainer teleportPacket = new PacketContainer(PacketType.Play.Server.ENTITY_TELEPORT);
-
-        teleportPacket.getIntegers().write(0, this.armorStandId);
-        teleportPacket.getDoubles().
-                write(0, location.getX()).
-                write(1, location.getY()).
-                write(2, location.getZ());
-
-        teleportPacket.getBytes().
-                write(0, (byte) (location.getYaw() * 256.0F / 360.0F)).
-                write(1, (byte) (location.getPitch() * 256.0F / 360.0F));
-
         for (final Player p : Bukkit.getOnlinePlayers()) {
             try {
                 protocolManager.sendServerPacket(p, armorPacket);

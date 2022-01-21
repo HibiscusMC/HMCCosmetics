@@ -39,7 +39,7 @@ public class MySQLDatabase extends Database {
             final String password,
             final String ip,
             final String port) {
-        super(plugin);
+        super(plugin, null);
         final HikariConfig config = new HikariConfig();
 
         config.setJdbcUrl("jdbc:mysql://" + ip + ":" + port + "/" + name);

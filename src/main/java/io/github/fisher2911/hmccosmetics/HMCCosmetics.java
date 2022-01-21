@@ -21,6 +21,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.BufferedReader;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -49,7 +50,11 @@ public class HMCCosmetics extends JavaPlugin {
 
         this.userManager.startTeleportTask();
 
-        this.database = DatabaseFactory.create(this);
+        try {
+            this.database = DatabaseFactory.create(this);
+        } catch (final SQLException exception) {
+            exception.printStackTrace();
+        }
 
         this.registerCommands();
         this.registerListeners();

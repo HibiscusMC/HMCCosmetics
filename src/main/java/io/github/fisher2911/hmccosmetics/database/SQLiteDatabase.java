@@ -1,5 +1,7 @@
 package io.github.fisher2911.hmccosmetics.database;
 
+import com.j256.ormlite.jdbc.JdbcConnectionSource;
+import com.j256.ormlite.jdbc.JdbcPooledConnectionSource;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
 import io.github.fisher2911.hmccosmetics.user.User;
@@ -15,8 +17,12 @@ public class SQLiteDatabase extends Database {
 
     private Connection conn;
 
-    public SQLiteDatabase(final HMCCosmetics plugin) {
-        super(plugin);
+    public SQLiteDatabase(final HMCCosmetics plugin) throws SQLException {
+        super(plugin, new JdbcPooledConnectionSource("jdbc:sqlite:" + Path.of(
+                plugin.getDataFolder().getPath(),
+                "database",
+                "users.db"
+        ).toFile().getPath()));
     }
 
     String SAVE_STATEMENT =

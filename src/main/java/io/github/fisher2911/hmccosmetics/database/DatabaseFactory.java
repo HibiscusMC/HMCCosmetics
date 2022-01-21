@@ -7,6 +7,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.sql.SQLException;
 import java.util.logging.Logger;
 
 public class DatabaseFactory {
@@ -19,7 +20,7 @@ public class DatabaseFactory {
     private static final String IP_PATH = "ip";
     private static final String PORT_PATH = "port";
 
-    public static Database create(final HMCCosmetics plugin) {
+    public static Database create(final HMCCosmetics plugin) throws SQLException {
         final File file = Path.of(plugin.getDataFolder().getPath(), FILE_NAME).toFile();
 
         if (!file.exists()) {

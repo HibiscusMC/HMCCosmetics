@@ -7,6 +7,7 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -59,5 +60,9 @@ public class PlayerArmor {
 
     public ArmorItem setItem(final ArmorItem armorItem) {
         return this.armorItems.put(armorItem.getType(), armorItem);
+    }
+
+    public Collection<ArmorItem> getArmorItems() {
+        return this.armorItems.values();
     }
 }

@@ -70,6 +70,9 @@ public class UserManager {
 
         this.armorStandIdMap.remove(user.getArmorStandId());
 
+        // todo - remove
+        this.plugin.getDatabase().saveUser(user);
+
         user.removeAllCosmetics();
         this.setFakeHelmet(user);
         user.despawnAttached();
