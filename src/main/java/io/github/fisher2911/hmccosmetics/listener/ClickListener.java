@@ -72,7 +72,7 @@ public class ClickListener implements Listener {
 
         final ItemStack mainHand = event.getPlayer().getInventory().getItemInMainHand();
 
-        if (mainHand.getType().isBlock() && mainHand.getAmount() > 0) return;
+        if (mainHand.getType().isBlock() && mainHand.getAmount() > 0)
 
         this.userManager.updateCosmetics(player.getUniqueId(), true);
     }

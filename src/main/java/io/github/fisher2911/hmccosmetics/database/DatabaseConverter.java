@@ -5,9 +5,7 @@ import io.github.fisher2911.hmccosmetics.cosmetic.CosmeticManager;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
 import io.github.fisher2911.hmccosmetics.user.User;
-import io.th0rgal.oraxen.shaded.curl.CUrl;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
