@@ -263,5 +263,6 @@ public class ArmorItem extends GuiItem {
         BACKPACK,
 
         OFF_HAND
+
     }
 }

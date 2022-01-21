@@ -62,7 +62,11 @@ public class DatabaseFactory {
 
                 final HikariDataSource source = new HikariDataSource(hikari);
 
-                yield new Database(plugin, new DataSourceConnectionSource(source, jdbcUrl));
+                yield new Database(
+                        plugin,
+                        new DataSourceConnectionSource(source, jdbcUrl),
+                        DatabaseType.MYSQL
+                );
             }
             case "sqlite" -> {
                 final File folder = new File(plugin.getDataFolder().getPath(), "database");
@@ -70,7 +74,9 @@ public class DatabaseFactory {
                 yield new Database(plugin, new JdbcPooledConnectionSource("jdbc:sqlite:" + new File(
                         folder.getPath(),
                         "users.db"
-                ).getPath()));
+                ).getPath()),
+                        DatabaseType.SQLITE
+                );
             }
             default -> null;
         };

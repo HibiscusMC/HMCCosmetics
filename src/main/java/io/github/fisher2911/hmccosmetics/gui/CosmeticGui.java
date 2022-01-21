@@ -67,13 +67,13 @@ public class CosmeticGui {
     }
 
     private void setUserArmor(
-            final HumanEntity player,
+            final HumanEntity human,
             final User user,
             final ArmorItem armorItem,
             final InventoryClickEvent event,
             final GuiAction<InventoryClickEvent> actionIfSet) {
 
-        if (player == null) {
+        if (!(human instanceof final Player player)) {
             return;
         }
 
@@ -82,10 +82,21 @@ public class CosmeticGui {
         final ArmorItem setTo = this.plugin.getUserManager().setOrUnset(
                 user,
                 armorItem,
-                Messages.getSetMessage(type),
-                Messages.getRemovedMessage(type));
-        if (setTo.isEmpty()) return;
-        actionIfSet.execute(event);
+                Messages.getRemovedMessage(type),
+                Messages.getSetMessage(type)
+        );
+
+        if (!setTo.isEmpty()) {
+            actionIfSet.execute(event);
+        }
+
+        final int slot = event.getSlot();
+
+        final GuiItem guiItem = this.getGuiItem(user, player, slot);
+
+        if (guiItem == null) return;
+
+        this.gui.updateItem(slot, guiItem);
     }
 
     public void open(final HumanEntity humanEntity) {
@@ -102,9 +113,7 @@ public class CosmeticGui {
                 rows(this.rows).
                 create();
 
-        this.gui.setDefaultClickAction(event -> {
-            event.setCancelled(true);
-        });
+        this.gui.setDefaultClickAction(event -> event.setCancelled(true));
 
         this.setItems(user);
 

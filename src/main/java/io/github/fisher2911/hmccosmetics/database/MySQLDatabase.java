@@ -1,11 +1,9 @@
 package io.github.fisher2911.hmccosmetics.database;
 
 import com.j256.ormlite.support.ConnectionSource;
-import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 
 public class MySQLDatabase extends Database {
@@ -34,10 +32,14 @@ public class MySQLDatabase extends Database {
     private final HikariDataSource dataSource;
 
     public MySQLDatabase(final HMCCosmetics plugin, final ConnectionSource dataSource, final String SAVE_STATEMENT, final String LOAD_STATEMENT, final HikariDataSource dataSource1) throws SQLException {
-        super(plugin, dataSource);
+        super(plugin, dataSource, DatabaseType.MYSQL);
         this.SAVE_STATEMENT = SAVE_STATEMENT;
         this.LOAD_STATEMENT = LOAD_STATEMENT;
         this.dataSource = dataSource1;
+    }
+
+    public void getAll() {
+
     }
 
     @Override

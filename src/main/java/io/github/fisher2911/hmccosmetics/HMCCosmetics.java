@@ -20,7 +20,6 @@ import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.BufferedReader;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -80,7 +79,7 @@ public class HMCCosmetics extends JavaPlugin {
                         new ClickListener(this),
                         new TeleportListener(this),
                         new RespawnListener(this),
-                        new HatRemoveFixListener(this)
+                        new CosmeticFixListener(this)
                 ).
                 forEach(
                         listener -> this.getServer().getPluginManager().registerEvents(listener, this)

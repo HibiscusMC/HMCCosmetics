@@ -47,7 +47,6 @@ public class DyeSelectorGui extends CosmeticGui {
                 create();
 
         final Player player = user.getPlayer();
-        player.sendMessage("Getting Gui");
 
         if (type != null) {
             final Integer selected = this.cosmeticsSlots.inverse().get(type);

@@ -43,17 +43,24 @@ public class Database {
     protected final HMCCosmetics plugin;
     private final ConnectionSource dataSource;
 
+    private final DatabaseType databaseType;
+
     final Dao<UserDAO, UUID> userDao;
     final Dao<ArmorItemDAO, UserDAO> armorItemDao;
 
-    public Database(final HMCCosmetics plugin, final ConnectionSource dataSource) throws SQLException {
+    public Database(
+            final HMCCosmetics plugin,
+            final ConnectionSource dataSource,
+            final DatabaseType databaseType) throws SQLException {
         this.plugin = plugin;
         this.dataSource = dataSource;
         this.userDao = DaoManager.createDao(this.dataSource, UserDAO.class);
         this.armorItemDao = DaoManager.createDao(this.dataSource, ArmorItemDAO.class);
+        this.databaseType = databaseType;
     }
 
     public void load() {
+        new DatabaseConverter(this.plugin, this).convert();
         this.createTables();
     }
 
@@ -100,6 +107,7 @@ public class Database {
         try {
             final UserDAO userDAO = new UserDAO(user.getUuid());
             this.userDao.assignEmptyForeignCollection(userDAO, "armorItems");
+
             for (final ArmorItem armorItem : user.getPlayerArmor().getArmorItems()) {
                 final ArmorItemDAO dao = ArmorItemDAO.fromArmorItem(armorItem);
                 dao.setUser(userDAO);
@@ -124,7 +132,23 @@ public class Database {
         }
     }
 
-//    public abstract void close();
+    protected ConnectionSource getDataSource() {
+        return dataSource;
+    }
+
+    public DatabaseType getDatabaseType() {
+        return databaseType;
+    }
+
+    public Dao<UserDAO, UUID> getUserDao() {
+        return userDao;
+    }
+
+    public Dao<ArmorItemDAO, UserDAO> getArmorItemDao() {
+        return armorItemDao;
+    }
+
+    //    public abstract void close();
 //
 //    public abstract String getSaveStatement();
 //

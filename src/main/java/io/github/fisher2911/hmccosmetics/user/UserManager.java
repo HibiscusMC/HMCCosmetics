@@ -21,11 +21,14 @@ import io.github.fisher2911.hmccosmetics.util.Keys;
 import io.github.fisher2911.hmccosmetics.util.builder.ItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.craftbukkit.v1_17_R1.inventory.CraftEntityEquipment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.awt.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -54,15 +57,11 @@ public class UserManager {
     public void add(final User user) {
         this.userMap.put(user.getUuid(), user);
         this.armorStandIdMap.put(user.getArmorStandId(), user);
-        this.setFakeHelmet(user);
+        this.updateCosmetics(user);
     }
 
     public Optional<User> get(final UUID uuid) {
         return Optional.ofNullable(this.userMap.get(uuid));
-    }
-
-    public void updateHat(final User user) {
-        this.setFakeHelmet(user);
     }
 
     public void remove(final UUID uuid) {
@@ -72,11 +71,8 @@ public class UserManager {
 
         this.armorStandIdMap.remove(user.getArmorStandId());
 
-        // todo - remove
-        this.plugin.getDatabase().saveUser(user);
-
         user.removeAllCosmetics();
-        this.setFakeHelmet(user);
+        this.updateCosmetics(user);
         user.despawnAttached();
     }
 
@@ -90,9 +86,9 @@ public class UserManager {
     }
 
     public void resendCosmetics(final Player player) {
-       for (final User user : this.userMap.values()) {
-           user.spawnArmorStand(player);
-       }
+        for (final User user : this.userMap.values()) {
+            user.spawnArmorStand(player);
+        }
     }
 
     private void registerPacketListener() {
@@ -142,33 +138,35 @@ public class UserManager {
         });
     }
 
-    public void setFakeHelmet(final User user) {
+    public void updateCosmetics(final UUID uuid, final boolean ignoreRestrictions) {
+        this.get(uuid).ifPresent(user -> this.updateCosmetics(user, ignoreRestrictions));
 
-        ItemStack hat = user.getPlayerArmor().getHat().getColored();
+    }
+
+    public void updateCosmetics(final UUID uuid) {
+        this.updateCosmetics(uuid, false);
+    }
+
+    public void updateCosmetics(final User user) {
+        this.updateCosmetics(user, false);
+    }
+
+    public void updateCosmetics(final User user, final boolean ignoreRestrictions) {
         final Player player = user.getPlayer();
 
-        if (player == null || hat == null) {
+        if (player == null) {
             return;
         }
-
-        if (hat.getType() == Material.AIR) {
-            final EntityEquipment equipment = player.getEquipment();
-            if (equipment != null) {
-                hat = equipment.getHelmet() == null ? hat : equipment.getHelmet();
-            }
-        }
+        final PlayerArmor playerArmor = user.getPlayerArmor();
 
         final List<Pair<EnumWrappers.ItemSlot, ItemStack>> equipmentList = new ArrayList<>();
 
-        final Map<String, String> placeholders = Map.of(Placeholder.ALLOWED, "true",
-                Placeholder.ENABLED, "true");
-
-        equipmentList.add(new Pair<>(EnumWrappers.ItemSlot.HEAD,
-                ItemBuilder.from(hat).
-                        namePlaceholders(placeholders).
-                        lorePlaceholders(placeholders).
-                        build()
-        ));
+        equipmentList.add(
+                new Pair<>(EnumWrappers.ItemSlot.HEAD, this.getCosmeticItem(player, playerArmor.getHat(), EquipmentSlot.HEAD, ignoreRestrictions))
+        );
+        equipmentList.add(
+                new Pair<>(EnumWrappers.ItemSlot.OFFHAND, this.getCosmeticItem(player, playerArmor.getOffHand(), EquipmentSlot.OFF_HAND, ignoreRestrictions))
+        );
 
         final PacketContainer fake = new PacketContainer(PacketType.Play.Server.ENTITY_EQUIPMENT);
 
@@ -184,19 +182,53 @@ public class UserManager {
         }
     }
 
+    private ItemStack getCosmeticItem(
+            final Player player,
+            final ArmorItem armorItem,
+            final EquipmentSlot slot,
+            final boolean ignoreRestrictions) {
+        final EntityEquipment equipment = player.getEquipment();
+
+        final Map<String, String> placeholders = Map.of(Placeholder.ALLOWED, "true",
+                Placeholder.ENABLED, "true");
+
+        ItemStack itemStack = ItemBuilder.from(armorItem.getColored()).
+                namePlaceholders(placeholders).
+                lorePlaceholders(placeholders).
+                build();
+
+        if (itemStack.getType() != Material.AIR &&
+                (slot != EquipmentSlot.OFF_HAND || ignoreRestrictions)) return itemStack;
+
+        if (equipment == null) return itemStack;
+
+        final ItemStack equipped = equipment.getItem(slot);
+
+        if (equipped != null && equipped.getType() != Material.AIR) return equipped;
+
+        return itemStack;
+    }
+
     public void setItem(final User user, final ArmorItem armorItem) {
         user.setItem(armorItem);
         switch (armorItem.getType()) {
-            case HAT -> this.setFakeHelmet(user);
-            case OFF_HAND -> /* todo */ {}
+            case HAT, OFF_HAND -> this.updateCosmetics(user);
         }
+        Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () -> this.plugin.getDatabase().saveUser(user));
     }
 
     public void removeItem(final User user, final ArmorItem.Type type) {
         this.setItem(user, ArmorItem.empty(type));
     }
 
-    // returns set item
+    /**
+     *
+     * @param user
+     * @param armorItem
+     * @param removeMessage
+     * @param setMessage
+     * @return the item that was set
+     */
     public ArmorItem setOrUnset(
             final User user,
             final ArmorItem armorItem,
@@ -204,18 +236,18 @@ public class UserManager {
             final Message setMessage) {
         final Player player = user.getPlayer();
 
-        final ArmorItem empty = ArmorItem.empty(armorItem.getType());
+        final ArmorItem.Type type = armorItem.getType();
+
+        final ArmorItem empty = ArmorItem.empty(type);
 
         if (player == null) {
             return empty;
         }
 
-        final ArmorItem check = user.getPlayerArmor().getItem(armorItem.getType());
-
-        final ArmorItem.Type type = armorItem.getType();
+        final ArmorItem check = user.getPlayerArmor().getItem(type);
 
         if (armorItem.getId().equals(check.getId())) {
-            user.setItem(ArmorItem.empty(type));
+            this.setItem(user, ArmorItem.empty(type));
 
             messageHandler.sendMessage(
                     player,
@@ -225,7 +257,7 @@ public class UserManager {
             return empty;
         }
 
-        user.setItem(armorItem);
+        this.setItem(user, armorItem);
         messageHandler.sendMessage(
                 player,
                 setMessage
