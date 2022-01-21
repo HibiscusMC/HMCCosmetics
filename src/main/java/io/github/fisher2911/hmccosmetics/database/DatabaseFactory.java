@@ -1,5 +1,9 @@
 package io.github.fisher2911.hmccosmetics.database;
 
+import com.j256.ormlite.jdbc.DataSourceConnectionSource;
+import com.j256.ormlite.jdbc.JdbcPooledConnectionSource;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -47,21 +51,32 @@ public class DatabaseFactory {
                 final String ip = config.getString(IP_PATH);
                 final String port = config.getString(PORT_PATH);
 
-                yield new MySQLDatabase(
-                        plugin,
-                        name,
-                        username,
-                        password,
-                        ip,
-                        port
-                );
+                final HikariConfig hikari = new HikariConfig();
+
+                final String jdbcUrl = "jdbc:mysql://" + ip + ":" + port + "/" + name;
+
+                hikari.setJdbcUrl(jdbcUrl);
+                hikari.setUsername(username);
+                hikari.setPassword(password);
+                hikari.setConnectionTimeout(1000000000);
+
+                final HikariDataSource source = new HikariDataSource(hikari);
+
+                yield new Database(plugin, new DataSourceConnectionSource(source, jdbcUrl));
             }
-            case "sqlite" -> new SQLiteDatabase(plugin);
+            case "sqlite" -> {
+                final File folder = new File(plugin.getDataFolder().getPath(), "database");
+                folder.mkdirs();
+                yield new Database(plugin, new JdbcPooledConnectionSource("jdbc:sqlite:" + new File(
+                        folder.getPath(),
+                        "users.db"
+                ).getPath()));
+            }
             default -> null;
         };
 
         if (database == null) {
-            logger.severe("Error loading database, type " + type + " is invalid!");
+            logger.severe("Error loading database, type " + type + " is invalid! Disabling plugin.");
             Bukkit.getPluginManager().disablePlugin(plugin);
         }
 

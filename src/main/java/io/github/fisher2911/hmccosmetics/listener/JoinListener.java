@@ -2,10 +2,7 @@ package io.github.fisher2911.hmccosmetics.listener;
 
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.database.Database;
-import io.github.fisher2911.hmccosmetics.user.User;
 import io.github.fisher2911.hmccosmetics.user.UserManager;
-import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -27,17 +24,18 @@ public class JoinListener implements Listener {
     @EventHandler
     public void onJoin(final PlayerJoinEvent event) {
         final Player player = event.getPlayer();
-        Bukkit.getScheduler().runTaskAsynchronously(this.plugin,
-                () -> {
-                    final User user = this.database.loadUser(player.getUniqueId());
-                    Bukkit.getScheduler().runTask(this.plugin,
-                            () -> this.userManager.add(user));
-                });
+        this.database.loadUser(player.getUniqueId());
+
         this.userManager.resendCosmetics(player);
     }
 
     @EventHandler
     public void onQuit(final PlayerQuitEvent event) {
+
         this.userManager.remove(event.getPlayer().getUniqueId());
+        this.userManager.get(event.getPlayer().getUniqueId()).
+                ifPresent(
+                        this.database::saveUser
+                );
     }
 }

@@ -10,6 +10,7 @@ import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.Pair;
 import com.google.common.xml.XmlEscapers;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
+import io.github.fisher2911.hmccosmetics.database.dao.UserDAO;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
 import io.github.fisher2911.hmccosmetics.message.Message;
@@ -32,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public class UserManager {
 
@@ -142,7 +144,7 @@ public class UserManager {
 
     public void setFakeHelmet(final User user) {
 
-        ItemStack hat = user.getPlayerArmor().getHat().getItemStack();
+        ItemStack hat = user.getPlayerArmor().getHat().getColored();
         final Player player = user.getPlayer();
 
         if (player == null || hat == null) {

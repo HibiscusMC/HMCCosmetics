@@ -74,13 +74,7 @@ public class CosmeticsCommand extends CommandBase {
 
             final User user = optionalUser.get();
 
-            final ArmorItem armorItem = switch (type) {
-                case HAT -> user.getPlayerArmor().getHat();
-                case BACKPACK -> user.getPlayerArmor().getBackpack();
-                case OFF_HAND -> user.getPlayerArmor().getOffHand();
-            };
-
-            this.cosmeticsMenu.openDyeSelectorGui(user, armorItem);
+            this.cosmeticsMenu.openDyeSelectorGui(user, type);
         } catch (final IllegalArgumentException exception) {
             this.messageHandler.sendMessage(
                     player,

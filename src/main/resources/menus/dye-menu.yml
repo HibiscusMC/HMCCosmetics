@@ -1,5 +1,9 @@
 title: "<white>"
 rows: 4
+cosmetics-slots:
+  15: BACKPACK
+  16: HAT
+  17: OFF_HAND
 items:
   10:
     material: LEATHER_HORSE_ARMOR

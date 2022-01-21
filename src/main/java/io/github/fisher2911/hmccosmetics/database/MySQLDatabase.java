@@ -1,5 +1,6 @@
 package io.github.fisher2911.hmccosmetics.database;
 
+import com.j256.ormlite.support.ConnectionSource;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
@@ -32,45 +33,15 @@ public class MySQLDatabase extends Database {
 
     private final HikariDataSource dataSource;
 
-    MySQLDatabase(
-            final HMCCosmetics plugin,
-            final String name,
-            final String username,
-            final String password,
-            final String ip,
-            final String port) {
-        super(plugin, null);
-        final HikariConfig config = new HikariConfig();
-
-        config.setJdbcUrl("jdbc:mysql://" + ip + ":" + port + "/" + name);
-        config.setUsername(username);
-        config.setPassword(password);
-        config.setConnectionTimeout(1000000000);
-
-        this.dataSource = new HikariDataSource(config);
-    }
-
-    @Override
-    public Connection getConnection() {
-        try {
-            return this.dataSource.getConnection();
-        } catch (final SQLException exception) {
-            return null;
-        }
+    public MySQLDatabase(final HMCCosmetics plugin, final ConnectionSource dataSource, final String SAVE_STATEMENT, final String LOAD_STATEMENT, final HikariDataSource dataSource1) throws SQLException {
+        super(plugin, dataSource);
+        this.SAVE_STATEMENT = SAVE_STATEMENT;
+        this.LOAD_STATEMENT = LOAD_STATEMENT;
+        this.dataSource = dataSource1;
     }
 
     @Override
     public void close() {
         this.dataSource.close();
-    }
-
-    @Override
-    public String getSaveStatement() {
-        return SAVE_STATEMENT;
-    }
-
-    @Override
-    public String getLoadStatement() {
-        return LOAD_STATEMENT;
     }
 }

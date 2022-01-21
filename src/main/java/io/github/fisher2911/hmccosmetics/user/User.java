@@ -30,6 +30,8 @@ public class User {
     private final UUID uuid;
     private final PlayerArmor playerArmor;
 
+    private ArmorItem lastSetItem = ArmorItem.empty(ArmorItem.Type.HAT);
+
     private boolean hasArmorStand;
     private final int armorStandId;
 
@@ -52,8 +54,8 @@ public class User {
     }
 
     protected void setPlayerArmor(final PlayerArmor playerArmor) {
-        this.playerArmor.setBackpack(playerArmor.getBackpack());
-        this.playerArmor.setHat(playerArmor.getHat());
+        this.playerArmor.setItem(playerArmor.getBackpack());
+        this.playerArmor.setItem(playerArmor.getHat());
     }
 
     protected void removeAllCosmetics() {
@@ -67,6 +69,7 @@ public class User {
     }
 
     protected ArmorItem setItem(final ArmorItem armorItem) {
+        this.lastSetItem = armorItem;
         return this.playerArmor.setItem(armorItem);
     }
 
@@ -205,4 +208,7 @@ public class User {
         return hasArmorStand;
     }
 
+    public ArmorItem getLastSetItem() {
+        return lastSetItem;
+    }
 }

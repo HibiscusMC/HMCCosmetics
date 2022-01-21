@@ -51,7 +51,7 @@ public class CosmeticsMenu {
 
     public void openDyeSelectorGui(
             final User user,
-            final ArmorItem armorItem) {
+            final ArmorItem.Type type) {
 
         final Player player = user.getPlayer();
 
@@ -62,7 +62,7 @@ public class CosmeticsMenu {
         final CosmeticGui gui = this.guiMap.get(DYE_MENU);
 
         if (gui instanceof final DyeSelectorGui dyeSelectorGui) {
-            dyeSelectorGui.getGui(user, armorItem).open(player);
+            dyeSelectorGui.getGui(user, type).open(player);
         }
     }
 

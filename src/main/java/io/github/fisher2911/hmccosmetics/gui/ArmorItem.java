@@ -1,5 +1,6 @@
 package io.github.fisher2911.hmccosmetics.gui;
 
+import com.j256.ormlite.table.DatabaseTable;
 import dev.triumphteam.gui.components.GuiAction;
 import dev.triumphteam.gui.guis.GuiItem;
 import io.github.fisher2911.hmccosmetics.util.builder.ColorBuilder;
@@ -13,8 +14,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+@DatabaseTable(tableName = "armor_item")
 public class ArmorItem extends GuiItem {
 
     private final String id;
@@ -23,7 +26,7 @@ public class ArmorItem extends GuiItem {
     private final String permission;
     private final Type type;
     private boolean dyeable;
-    private final int dye;
+    private int dye;
 
     public ArmorItem(
             @NotNull final ItemStack itemStack,
@@ -177,6 +180,18 @@ public class ArmorItem extends GuiItem {
         );
     }
 
+    public ArmorItem(final ArmorItem armorItem) {
+        super(armorItem.getItemStack(), armorItem.getAction());
+        this.id = armorItem.getId();
+        this.lockedLore = new ArrayList<>();
+        Collections.copy(armorItem.getLockedLore(), this.lockedLore);
+        this.action = armorItem.getAction();
+        this.permission = armorItem.getPermission();
+        this.type = armorItem.getType();
+        this.dyeable = armorItem.isDyeable();
+        this.dye = armorItem.getDye();
+    }
+
     public String getId() {
         return id;
     }
@@ -205,8 +220,11 @@ public class ArmorItem extends GuiItem {
         return dye;
     }
 
-    @Override
-    public ItemStack getItemStack() {
+    public void setDye(final int dye) {
+        this.dye = dye;
+    }
+
+    public ItemStack getColored() {
         return this.color(super.getItemStack());
     }
 

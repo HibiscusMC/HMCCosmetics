@@ -1,25 +1,27 @@
 package io.github.fisher2911.hmccosmetics.database;
 
+import com.j256.ormlite.dao.BaseForeignCollection;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
-import io.github.fisher2911.hmccosmetics.cosmetic.CosmeticManager;
 import io.github.fisher2911.hmccosmetics.database.dao.ArmorItemDAO;
 import io.github.fisher2911.hmccosmetics.database.dao.UserDAO;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
 import io.github.fisher2911.hmccosmetics.user.User;
+import org.bukkit.Bukkit;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
-public abstract class Database {
+public class Database {
 
     AtomicInteger ARMOR_STAND_ID = new AtomicInteger(Integer.MAX_VALUE);
 
@@ -41,17 +43,20 @@ public abstract class Database {
     protected final HMCCosmetics plugin;
     private final ConnectionSource dataSource;
 
-    public Database(final HMCCosmetics plugin, final ConnectionSource dataSource) {
+    final Dao<UserDAO, UUID> userDao;
+    final Dao<ArmorItemDAO, UserDAO> armorItemDao;
+
+    public Database(final HMCCosmetics plugin, final ConnectionSource dataSource) throws SQLException {
         this.plugin = plugin;
         this.dataSource = dataSource;
+        this.userDao = DaoManager.createDao(this.dataSource, UserDAO.class);
+        this.armorItemDao = DaoManager.createDao(this.dataSource, ArmorItemDAO.class);
     }
-
-    public abstract Connection getConnection();
 
     public void load() {
         this.createTables();
     }
-    
+
     private void createTables() {
         try {
             TableUtils.createTableIfNotExists(this.dataSource, ArmorItemDAO.class);
@@ -61,92 +66,67 @@ public abstract class Database {
         }
     }
 
-    public void saveUser(final User u) {
-        try {
-            final UserDAO user = new UserDAO(u.getUuid());
+    public void loadUser(final UUID uuid) {
+        final int armorStandId = ARMOR_STAND_ID.getAndDecrement();
+        Bukkit.getScheduler().runTaskAsynchronously(this.plugin,
+                () -> {
+                    try {
+                        UserDAO user = this.userDao.queryForId(uuid);
 
-            final Dao<UserDAO, UUID> userDao = DaoManager.createDao(this.dataSource, UserDAO.class);
-            userDao.assignEmptyForeignCollection(user, "armorItems");
-            for (final ArmorItem armorItem : u.getPlayerArmor().getArmorItems()) {
-                user.getArmorItems().add(ArmorItemDAO.fromArmorItem(armorItem));
-            }
-            userDao.createOrUpdate(user);
-    } catch (final SQLException exception) {
-            exception.printStackTrace();
-        }
+                        if (user == null) {
+                            user = this.userDao.createIfNotExists(new UserDAO(uuid));
+                            this.plugin.getLogger().severe("Created New: " + user);
+                            this.userDao.assignEmptyForeignCollection(user, "armorItems");
+                            this.plugin.getLogger().severe("Initializing Collection: " + user);
+                        }
+
+                        final UserDAO finalUser = user;
+                        Bukkit.getScheduler().runTask(this.plugin,
+                                () -> this.plugin.getUserManager().add(
+                                        finalUser.toUser(this.plugin.getCosmeticManager(), armorStandId)
+                                )
+                        );
+
+                    } catch (final SQLException exception) {
+                        exception.printStackTrace();
+                    }
+                });
+
+        this.plugin.getUserManager().add(new User(uuid, PlayerArmor.empty(), armorStandId));
+
     }
 
-//    public void saveUser(final User user) {
-//
-//        try (final PreparedStatement statement = this.getConnection().prepareStatement(this.getSaveStatement())) {
-//            final PlayerArmor playerArmor = user.getPlayerArmor();
-//            final String hat = playerArmor.getHat().getId();
-//            final String backpack = playerArmor.getBackpack().getId();
-//
-//            statement.setString(1, user.getUuid().toString());
-//            statement.setString(2, backpack);
-//            statement.setString(3, hat);
-//            statement.setString(5, backpack);
-//            statement.setString(6, hat);
-//
-//            statement.executeUpdate();
-//        } catch (final SQLException exception) {
-//            this.plugin.getLogger().severe("There was in issue saving the player!");
-//            exception.printStackTrace();
-//        }
-//    }
-//
-    public User loadUser(final UUID uuid) {
-        final int armorStandId = ARMOR_STAND_ID.getAndDecrement();
-
-        final User blankUser = new User(
-                uuid,
-                PlayerArmor.empty(),
-                armorStandId
-        );
-
-        try (final PreparedStatement statement = this.getConnection().prepareStatement(this.getLoadStatement())) {
-            statement.setString(1, uuid.toString());
-
-            final ResultSet results = statement.executeQuery();
-
-            if (!results.next()) {
-                return blankUser;
+    public void saveUser(final User user) {
+        try {
+            final UserDAO userDAO = new UserDAO(user.getUuid());
+            this.userDao.assignEmptyForeignCollection(userDAO, "armorItems");
+            for (final ArmorItem armorItem : user.getPlayerArmor().getArmorItems()) {
+                final ArmorItemDAO dao = ArmorItemDAO.fromArmorItem(armorItem);
+                dao.setUser(userDAO);
+                final ForeignCollection<ArmorItemDAO> armorItems = userDAO.getArmorItems();
+                if (armorItems.contains(dao)) {
+                    armorItems.update(dao);
+                } else {
+                    armorItems.add(dao);
+                }
             }
-
-            final String backpackId = results.getString(1);
-            final String hatId = results.getString(2);
-            final int dye = results.getInt(3);
-
-            final CosmeticManager manager = this.plugin.getCosmeticManager();
-
-            ArmorItem backpack = manager.getArmorItem(backpackId);
-            ArmorItem hat = manager.getArmorItem(hatId);
-
-            if (backpack == null) backpack = ArmorItem.empty(ArmorItem.Type.BACKPACK);
-            if (hat == null) hat = ArmorItem.empty(ArmorItem.Type.HAT);
-
-            return new User(
-                    uuid,
-                    new PlayerArmor(
-                            hat,
-                            backpack,
-                            // todo
-                            null
-                    ),
-                    armorStandId
-            );
-
+            this.userDao.createOrUpdate(userDAO);
         } catch (final SQLException exception) {
             exception.printStackTrace();
-            return blankUser;
         }
     }
 
+    public void close() {
+        try {
+            this.dataSource.close();
+        } catch (final Exception exception) {
+            exception.printStackTrace();
+        }
+    }
 
-    public abstract void close();
-
-    public abstract String getSaveStatement();
-
-    public abstract String getLoadStatement();
+//    public abstract void close();
+//
+//    public abstract String getSaveStatement();
+//
+//    public abstract String getLoadStatement();
 }

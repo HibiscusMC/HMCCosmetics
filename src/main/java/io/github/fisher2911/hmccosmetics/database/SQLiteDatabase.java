@@ -1,28 +1,23 @@
 package io.github.fisher2911.hmccosmetics.database;
 
-import com.j256.ormlite.jdbc.JdbcConnectionSource;
+import com.j256.ormlite.jdbc.DataSourceConnectionSource;
 import com.j256.ormlite.jdbc.JdbcPooledConnectionSource;
+import com.j256.ormlite.support.ConnectionSource;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
-import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
-import io.github.fisher2911.hmccosmetics.user.User;
 
+import javax.sql.DataSource;
 import java.io.File;
 import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class SQLiteDatabase extends Database {
 
     private Connection conn;
 
-    public SQLiteDatabase(final HMCCosmetics plugin) throws SQLException {
-        super(plugin, new JdbcPooledConnectionSource("jdbc:sqlite:" + Path.of(
-                plugin.getDataFolder().getPath(),
-                "database",
-                "users.db"
-        ).toFile().getPath()));
+    public SQLiteDatabase(final HMCCosmetics plugin, final ConnectionSource connectionSource) throws SQLException {
+        super(plugin, connectionSource);
     }
 
     String SAVE_STATEMENT =
@@ -50,48 +45,11 @@ public class SQLiteDatabase extends Database {
                     PLAYER_UUID_COLUMN + "=? ";
 
     @Override
-    public Connection getConnection() {
-        if (this.conn != null) {
-            return this.conn;
-        }
-        try {
-            final File folder = Path.of(
-                    this.plugin.getDataFolder().getPath(),
-                    "database"
-            ).toFile();
-
-            folder.mkdirs();
-
-            final File file = Path.of(
-                    folder.getPath(),
-                    "users.db"
-            ).toFile();
-
-            this.conn = DriverManager.getConnection("jdbc:sqlite:" +
-                    file.getPath());
-            return this.conn;
-        } catch (final SQLException exception) {
-            exception.printStackTrace();
-        }
-        return null;
-    }
-
-    @Override
     public void close() {
         try {
             this.conn.close();
         } catch (final SQLException exception) {
             exception.printStackTrace();
         }
-    }
-
-    @Override
-    public String getSaveStatement() {
-        return SAVE_STATEMENT;
-    }
-
-    @Override
-    public String getLoadStatement() {
-        return LOAD_STATEMENT;
     }
 }

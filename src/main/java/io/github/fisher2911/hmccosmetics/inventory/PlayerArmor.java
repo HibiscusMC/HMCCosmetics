@@ -1,12 +1,7 @@
 package io.github.fisher2911.hmccosmetics.inventory;
 
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
-import io.github.fisher2911.hmccosmetics.util.builder.ColorBuilder;
-import org.bukkit.Color;
-import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
@@ -34,24 +29,12 @@ public class PlayerArmor {
         return this.armorItems.get(ArmorItem.Type.HAT);
     }
 
-    public void setHat(final ArmorItem hat) {
-        this.armorItems.put(ArmorItem.Type.HAT, hat);
-    }
-
     public ArmorItem getBackpack() {
         return this.armorItems.get(ArmorItem.Type.BACKPACK);
     }
 
-    public void setBackpack(final ArmorItem backpack) {
-        this.armorItems.put(ArmorItem.Type.BACKPACK, backpack);
-    }
-
     public ArmorItem getOffHand() {
         return this.armorItems.get(ArmorItem.Type.OFF_HAND);
-    }
-
-    public void setOffHand(final ArmorItem offHand) {
-        this.armorItems.put(ArmorItem.Type.OFF_HAND, offHand);
     }
 
     public ArmorItem getItem(final ArmorItem.Type type) {

@@ -50,7 +50,7 @@ public class CosmeticGui {
         this.guiItemMap.forEach((key, value) -> itemStackMap.put(key, value.getItemStack()));
     }
 
-    private void setItems(final User user) {
+    protected void setItems(final User user) {
 
         final Player player = user.getPlayer();
 
