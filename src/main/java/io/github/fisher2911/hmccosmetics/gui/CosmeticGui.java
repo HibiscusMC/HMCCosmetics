@@ -10,7 +10,6 @@ import io.github.fisher2911.hmccosmetics.message.MessageHandler;
 import io.github.fisher2911.hmccosmetics.message.Messages;
 import io.github.fisher2911.hmccosmetics.message.Placeholder;
 import io.github.fisher2911.hmccosmetics.user.User;
-import io.github.fisher2911.hmccosmetics.user.UserManager;
 import io.github.fisher2911.hmccosmetics.util.StringUtils;
 import io.github.fisher2911.hmccosmetics.util.builder.ItemBuilder;
 import org.bukkit.Bukkit;
@@ -18,6 +17,7 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -27,7 +27,6 @@ import java.util.Optional;
 public class CosmeticGui {
 
     protected final HMCCosmetics plugin;
-    protected final UserManager userManager;
     protected final MessageHandler messageHandler;
     protected final String title;
     protected final int rows;
@@ -41,7 +40,6 @@ public class CosmeticGui {
             final int rows,
             final Map<Integer, GuiItem> guiItemMap) {
         this.plugin = plugin;
-        this.userManager = this.plugin.getUserManager();
         this.messageHandler = this.plugin.getMessageHandler();
         this.title = title;
         this.rows = rows;
@@ -50,7 +48,7 @@ public class CosmeticGui {
         this.guiItemMap.forEach((key, value) -> itemStackMap.put(key, value.getItemStack()));
     }
 
-    protected void setItems(final User user) {
+    private void setItems(final User user) {
 
         final Player player = user.getPlayer();
 
@@ -61,72 +59,8 @@ public class CosmeticGui {
         for (final var entry : guiItemMap.entrySet()) {
             final int slot = entry.getKey();
 
-            final GuiItem guiItem = entry.getValue();
-
-            final ItemStack itemStack = this.itemStackMap.get(slot);
-
-            if (itemStack == null) continue;
-
-            guiItem.setItemStack(
-                    ItemBuilder.from(itemStack.clone()).papiPlaceholders(player).build()
-            );
-
-            if (guiItem instanceof final ArmorItem armorItem) {
-
-                final Map<String, String> placeholders = new HashMap<>();
-
-                final PlayerArmor playerArmor = user.getPlayerArmor();
-
-                final ArmorItem hat = playerArmor.getHat();
-                final ArmorItem backpack = playerArmor.getBackpack();
-                final ArmorItem offHand = playerArmor.getOffHand();
-
-                final ArmorItem.Type type = armorItem.getType();
-
-                final String id = switch (type) {
-                    case HAT -> hat.getId();
-                    case BACKPACK -> backpack.getId();
-                    case OFF_HAND -> offHand.getId();
-                };
-
-                placeholders.put(
-                        Placeholder.ENABLED,
-                        String.valueOf(id.equals(armorItem.getId())).
-                                toLowerCase(Locale.ROOT));
-
-                final String permission = armorItem.getPermission() == null ? "" : armorItem.getPermission();
-
-                final boolean hasPermission = permission.isBlank() || player.hasPermission(permission);
-
-                placeholders.put(
-                        Placeholder.ALLOWED,
-                        String.valueOf(hasPermission).
-                                toLowerCase(Locale.ROOT));
-
-                this.gui.setItem(slot,
-                        new GuiItem(
-                                ItemBuilder.from(
-                                                armorItem.getItemStack(hasPermission)
-                                        ).namePlaceholders(placeholders).
-                                        lorePlaceholders(placeholders).
-                                        papiPlaceholders(player).
-                                        build(),
-                                event -> {
-                                    if (!hasPermission) {
-                                        this.messageHandler.sendMessage(
-                                                player,
-                                                Messages.NO_COSMETIC_PERMISSION
-                                        );
-                                        return;
-                                    }
-
-                                    this.setUserArmor(player, user, armorItem, event, armorItem.getAction());
-                                }
-                        )
-                );
-
-                continue;
-            }
+            final GuiItem guiItem = this.getGuiItem(user, player, slot);
+            if (guiItem == null) continue;
 
             this.gui.setItem(slot, guiItem);
         }
@@ -145,7 +79,7 @@ public class CosmeticGui {
 
         final ArmorItem.Type type = armorItem.getType();
 
-        final ArmorItem setTo = this.userManager.setOrUnset(
+        final ArmorItem setTo = this.plugin.getUserManager().setOrUnset(
                 user,
                 armorItem,
                 Messages.getSetMessage(type),
@@ -170,17 +104,72 @@ public class CosmeticGui {
 
         this.gui.setDefaultClickAction(event -> {
             event.setCancelled(true);
-            Bukkit.getScheduler().runTaskLater(
-                    this.plugin,
-                    () -> {
-                        this.setItems(user);
-                        this.gui.update();
-                    },
-                    1);
         });
 
         this.setItems(user);
 
         this.gui.open(humanEntity);
+    }
+
+    @Nullable
+    private GuiItem getGuiItem(final User user, final Player player, final int slot) {
+        final GuiItem guiItem = this.guiItemMap.get(slot);
+
+        if (guiItem == null) return null;
+
+        final ItemStack itemStack = this.itemStackMap.get(slot);
+
+        if (itemStack == null) return null;
+
+        guiItem.setItemStack(
+                ItemBuilder.from(itemStack.clone()).papiPlaceholders(player).build()
+        );
+
+        if (guiItem instanceof final ArmorItem armorItem) {
+
+            final Map<String, String> placeholders = new HashMap<>();
+
+            final PlayerArmor playerArmor = user.getPlayerArmor();
+
+            final ArmorItem.Type type = armorItem.getType();
+
+            final String id = playerArmor.getItem(type).getId();
+
+            placeholders.put(
+                    Placeholder.ENABLED,
+                    String.valueOf(id.equals(armorItem.getId())).
+                            toLowerCase(Locale.ROOT));
+
+            final String permission = armorItem.getPermission() == null ? "" : armorItem.getPermission();
+
+            final boolean hasPermission = permission.isBlank() || player.hasPermission(permission);
+
+            placeholders.put(
+                    Placeholder.ALLOWED,
+                    String.valueOf(hasPermission).
+                            toLowerCase(Locale.ROOT));
+
+            return new GuiItem(
+                    ItemBuilder.from(
+                                    armorItem.getItemStack(hasPermission)
+                            ).namePlaceholders(placeholders).
+                            lorePlaceholders(placeholders).
+                            papiPlaceholders(player).
+                            build(),
+                    event -> {
+                        if (!hasPermission) {
+                            this.messageHandler.sendMessage(
+                                    player,
+                                    Messages.NO_COSMETIC_PERMISSION
+                            );
+                            return;
+                        }
+
+                        this.setUserArmor(player, user, armorItem, event, armorItem.getAction());
+                    }
+            );
+        }
+
+        return guiItem;
     }
 }

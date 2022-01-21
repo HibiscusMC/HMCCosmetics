@@ -115,7 +115,7 @@ public class DyeSelectorGui extends CosmeticGui {
 
             armorItem.setDye(colorItem.getColor().asRGB());
 
-            this.userManager.setItem(user, armorItem);
+            this.plugin.getUserManager().setItem(user, armorItem);
         });
 
         return gui;
