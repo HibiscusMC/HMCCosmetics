@@ -60,7 +60,7 @@ public class Database {
     }
 
     public void load() {
-        new DatabaseConverter(this.plugin, this).convert();
+        Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () -> new DatabaseConverter(this.plugin, this).convert());
     }
 
     protected void createTables() {
