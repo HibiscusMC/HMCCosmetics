@@ -106,9 +106,12 @@ public class HMCCosmetics extends JavaPlugin {
     }
 
     public void load() {
-        this.messageHandler.load();
-        this.cosmeticsMenu.load();
-        this.database.load();
+        Bukkit.getScheduler().runTaskAsynchronously(this,
+                () -> {
+                    this.messageHandler.load();
+                    this.cosmeticsMenu.load();
+                    this.database.load();
+                });
     }
 
     public MessageHandler getMessageHandler() {
