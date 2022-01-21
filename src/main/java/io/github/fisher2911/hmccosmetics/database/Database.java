@@ -61,10 +61,9 @@ public class Database {
 
     public void load() {
         new DatabaseConverter(this.plugin, this).convert();
-        this.createTables();
     }
 
-    private void createTables() {
+    protected void createTables() {
         try {
             TableUtils.createTableIfNotExists(this.dataSource, ArmorItemDAO.class);
             TableUtils.createTableIfNotExists(this.dataSource, UserDAO.class);
