@@ -85,12 +85,9 @@ public class CosmeticsCommand extends CommandBase {
     @SubCommand("help") // WORK IN PROGRESS (WIP)
     @Permission(io.github.fisher2911.hmccosmetics.message.Permission.HELP_COMMAND)
     public void helpCommand(final CommandSender sender) {
-        Bukkit.getScheduler().runTaskAsynchronously(
-                this.plugin,
-                () -> this.messageHandler.sendMessage(
-                        sender,
-                        Messages.HELP_COMMAND
-                )
+        this.messageHandler.sendMessage(
+                sender,
+                Messages.HELP_COMMAND
         );
     }
 

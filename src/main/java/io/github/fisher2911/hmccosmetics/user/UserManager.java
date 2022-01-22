@@ -10,6 +10,7 @@ import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.Pair;
 import com.google.common.xml.XmlEscapers;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
+import io.github.fisher2911.hmccosmetics.concurrent.Threads;
 import io.github.fisher2911.hmccosmetics.database.dao.UserDAO;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
@@ -71,9 +72,15 @@ public class UserManager {
 
         this.armorStandIdMap.remove(user.getArmorStandId());
 
+        final PlayerArmor copy = user.getPlayerArmor().copy();
+
         user.removeAllCosmetics();
         this.updateCosmetics(user);
         user.despawnAttached();
+
+        user.setPlayerArmor(copy);
+
+        Threads.getInstance().submit(() -> this.plugin.getDatabase().saveUser(user));
     }
 
     public void startTeleportTask() {
@@ -214,7 +221,6 @@ public class UserManager {
         switch (armorItem.getType()) {
             case HAT, OFF_HAND -> this.updateCosmetics(user);
         }
-        Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () -> this.plugin.getDatabase().saveUser(user));
     }
 
     public void removeItem(final User user, final ArmorItem.Type type) {

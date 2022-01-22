@@ -54,8 +54,9 @@ public class User {
     }
 
     protected void setPlayerArmor(final PlayerArmor playerArmor) {
-        this.playerArmor.setItem(playerArmor.getBackpack());
-        this.playerArmor.setItem(playerArmor.getHat());
+        for (final ArmorItem armorItem : playerArmor.getArmorItems()) {
+            this.playerArmor.setItem(armorItem);
+        }
     }
 
     protected void removeAllCosmetics() {
@@ -115,8 +116,8 @@ public class User {
         try {
             protocolManager.sendServerPacket(other, packet);
             protocolManager.sendServerPacket(other, ridingPacket);
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
+        } catch (final InvocationTargetException exception) {
+            exception.printStackTrace();
         }
     }
 
@@ -177,9 +178,15 @@ public class User {
 
         final ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
 
-        protocolManager.broadcastServerPacket(armorPacket);
-        protocolManager.broadcastServerPacket(metaContainer);
-        protocolManager.broadcastServerPacket(rotationPacket);
+        try {
+            for (final Player p : Bukkit.getOnlinePlayers()) {
+                protocolManager.sendServerPacket(p, armorPacket);
+                protocolManager.sendServerPacket(p, metaContainer);
+                protocolManager.sendServerPacket(p, rotationPacket);
+            }
+        } catch (final InvocationTargetException exception) {
+            exception.printStackTrace();
+        }
     }
 
     public void despawnAttached() {

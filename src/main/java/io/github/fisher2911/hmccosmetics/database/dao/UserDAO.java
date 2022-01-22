@@ -11,6 +11,7 @@ import io.github.fisher2911.hmccosmetics.user.User;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -19,9 +20,6 @@ public class UserDAO {
 
     @DatabaseField(id = true)
     private UUID uuid;
-
-    @ForeignCollectionField(eager = true)
-    private ForeignCollection<ArmorItemDAO> armorItems;
 
     public UserDAO() {
     }
@@ -34,18 +32,10 @@ public class UserDAO {
         this.uuid = uuid;
     }
 
-    public ForeignCollection<ArmorItemDAO> getArmorItems() {
-        return armorItems;
-    }
-
-    public void setArmorItems(final ForeignCollection<ArmorItemDAO> armorItems) {
-        this.armorItems = armorItems;
-    }
-
-    public User toUser(final CosmeticManager cosmeticManager, final int armorStandId) {
+    public User toUser(final CosmeticManager cosmeticManager, final List<ArmorItemDAO> armorItems, final int armorStandId) {
         final PlayerArmor playerArmor = PlayerArmor.empty();
 
-        for (final ArmorItemDAO armorItemDao : this.armorItems) {
+        for (final ArmorItemDAO armorItemDao : armorItems) {
             final ArmorItem armorItem = armorItemDao.toArmorItem(cosmeticManager);
             if (armorItem == null) continue;
             playerArmor.setItem(armorItem);
@@ -58,7 +48,6 @@ public class UserDAO {
     public String toString() {
         return "UserDAO{" +
                 "uuid=" + uuid +
-                ", armorItems=" + armorItems +
                 '}';
     }
 

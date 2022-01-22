@@ -8,16 +8,19 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-@DatabaseTable(tableName = "armor_item")
+@DatabaseTable(tableName = "armor_items")
 public class ArmorItemDAO {
 
-    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "user", uniqueCombo = true)
-    private UserDAO user;
+    @DatabaseField(columnName = "uuid", useGetSet = true, uniqueCombo = true)
+    private String uuid;
 
     @DatabaseField
     private String id;
 
-    @DatabaseField(id = true, uniqueCombo = true)
+    @DatabaseField(id = true, useGetSet = true, columnName = "artificial_id")
+    private String artificialId;
+
+    @DatabaseField(uniqueCombo = true)
     private String type;
 
     @DatabaseField(columnName = "color")
@@ -25,6 +28,7 @@ public class ArmorItemDAO {
 
     public ArmorItemDAO(final String id, final String type, final int rgbDye) {
         this.id = id;
+        this.artificialId = this.getArtificialId();
         this.type = type;
         this.rgbDye = rgbDye;
     }
@@ -45,16 +49,24 @@ public class ArmorItemDAO {
     public ArmorItemDAO() {
     }
 
-    public UserDAO getUser() {
-        return user;
+    public String getUuid() {
+        return uuid;
     }
 
-    public void setUser(final UserDAO user) {
-        this.user = user;
+    public void setUuid(final String uuid) {
+        this.uuid = uuid;
     }
 
-    public String getId() {
-        return id;
+    /**
+     * ORMLite does not allow more than one primary key (WHYYYY???????????)
+     * @return
+     */
+    public String getArtificialId() {
+        return this.uuid + "-" + this.type;
+    }
+
+    public void setArtificialId(final String artificialId) {
+        this.artificialId = artificialId;
     }
 
     public void setId(final String id) {
@@ -82,11 +94,21 @@ public class ArmorItemDAO {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         final ArmorItemDAO that = (ArmorItemDAO) o;
-        return Objects.equals(getUser(), that.getUser()) && Objects.equals(getType(), that.getType());
+        return Objects.equals(getUuid(), that.getUuid()) && Objects.equals(getType(), that.getType());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getUser(), getType());
+        return Objects.hash(getUuid(), getType());
+    }
+
+    @Override
+    public String toString() {
+        return "ArmorItemDAO{" +
+                "uuid='" + uuid + '\'' +
+                ", id='" + id + '\'' +
+                ", type='" + type + '\'' +
+                ", rgbDye=" + rgbDye +
+                '}';
     }
 }

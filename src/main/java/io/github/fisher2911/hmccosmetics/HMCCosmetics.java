@@ -4,6 +4,7 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 
 import io.github.fisher2911.hmccosmetics.command.CosmeticsCommand;
+import io.github.fisher2911.hmccosmetics.concurrent.Threads;
 import io.github.fisher2911.hmccosmetics.cosmetic.CosmeticManager;
 import io.github.fisher2911.hmccosmetics.database.Database;
 import io.github.fisher2911.hmccosmetics.database.DatabaseFactory;
@@ -18,7 +19,9 @@ import io.github.fisher2911.hmccosmetics.user.UserManager;
 import me.mattstudios.mf.base.CommandManager;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -35,6 +38,8 @@ public class HMCCosmetics extends JavaPlugin {
     private CosmeticsMenu cosmeticsMenu;
     private CommandManager commandManager;
     private Database database;
+
+    private BukkitTask saveTask;
 
     @Override
     public void onEnable() {
@@ -63,13 +68,29 @@ public class HMCCosmetics extends JavaPlugin {
         }
 
         HookManager.getInstance().registerListeners(this);
+
+        this.saveTask = Bukkit.getScheduler().runTaskTimerAsynchronously(
+                this,
+                () -> {
+                    for (final Player player : Bukkit.getOnlinePlayers()) {
+                        this.userManager.get(player.getUniqueId()).ifPresent(
+                                this.database::saveUser
+                        );
+                    }
+                },
+                20,
+                20 * 60
+        );
     }
 
     @Override
     public void onDisable() {
+        this.saveTask.cancel();
+        this.database.saveAll();
         this.messageHandler.close();
         this.userManager.cancelTeleportTask();
         this.userManager.removeAll();
+        Threads.getInstance().onDisable();
         this.database.close();
     }
 

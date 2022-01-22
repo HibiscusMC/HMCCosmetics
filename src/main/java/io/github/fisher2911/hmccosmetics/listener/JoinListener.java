@@ -32,10 +32,7 @@ public class JoinListener implements Listener {
     @EventHandler
     public void onQuit(final PlayerQuitEvent event) {
 
-        this.userManager.remove(event.getPlayer().getUniqueId());
-        this.userManager.get(event.getPlayer().getUniqueId()).
-                ifPresent(
-                        this.database::saveUser
-                );
+        final Player player = event.getPlayer();
+        this.userManager.remove(player.getUniqueId());
     }
 }

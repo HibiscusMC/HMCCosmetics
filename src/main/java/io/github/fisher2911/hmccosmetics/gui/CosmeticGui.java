@@ -174,7 +174,7 @@ public class CosmeticGui {
                             return;
                         }
 
-                        this.setUserArmor(player, user, armorItem, event, armorItem.getAction());
+                        this.setUserArmor(player, user, new ArmorItem(armorItem), event, armorItem.getAction());
                     }
             );
         }

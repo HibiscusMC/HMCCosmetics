@@ -4,19 +4,28 @@ import com.j256.ormlite.dao.BaseForeignCollection;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.dao.ForeignCollection;
+import com.j256.ormlite.logger.ConsoleLogBackend;
+import com.j256.ormlite.logger.Level;
+import com.j256.ormlite.logger.Logger;
+import com.j256.ormlite.stmt.UpdateBuilder;
+import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
+import io.github.fisher2911.hmccosmetics.concurrent.Threads;
 import io.github.fisher2911.hmccosmetics.database.dao.ArmorItemDAO;
 import io.github.fisher2911.hmccosmetics.database.dao.UserDAO;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
 import io.github.fisher2911.hmccosmetics.user.User;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
@@ -46,7 +55,7 @@ public class Database {
     private final DatabaseType databaseType;
 
     final Dao<UserDAO, UUID> userDao;
-    final Dao<ArmorItemDAO, UserDAO> armorItemDao;
+    final Dao<ArmorItemDAO, UUID> armorItemDao;
 
     public Database(
             final HMCCosmetics plugin,
@@ -57,6 +66,8 @@ public class Database {
         this.userDao = DaoManager.createDao(this.dataSource, UserDAO.class);
         this.armorItemDao = DaoManager.createDao(this.dataSource, ArmorItemDAO.class);
         this.databaseType = databaseType;
+        Logger.setGlobalLogLevel(Level.DEBUG);
+
     }
 
     public void load() {
@@ -74,22 +85,21 @@ public class Database {
 
     public void loadUser(final UUID uuid) {
         final int armorStandId = ARMOR_STAND_ID.getAndDecrement();
-        Bukkit.getScheduler().runTaskAsynchronously(this.plugin,
+        Threads.getInstance().submit(
                 () -> {
                     try {
                         UserDAO user = this.userDao.queryForId(uuid);
 
                         if (user == null) {
                             user = this.userDao.createIfNotExists(new UserDAO(uuid));
-                            this.plugin.getLogger().severe("Created New: " + user);
-                            this.userDao.assignEmptyForeignCollection(user, "armorItems");
-                            this.plugin.getLogger().severe("Initializing Collection: " + user);
                         }
+
+                        final List<ArmorItemDAO> armorItems = this.armorItemDao.queryForEq("uuid", uuid.toString());
 
                         final UserDAO finalUser = user;
                         Bukkit.getScheduler().runTask(this.plugin,
                                 () -> this.plugin.getUserManager().add(
-                                        finalUser.toUser(this.plugin.getCosmeticManager(), armorStandId)
+                                        finalUser.toUser(this.plugin.getCosmeticManager(), armorItems, armorStandId)
                                 )
                         );
 
@@ -105,21 +115,25 @@ public class Database {
     public void saveUser(final User user) {
         try {
             final UserDAO userDAO = new UserDAO(user.getUuid());
-            this.userDao.assignEmptyForeignCollection(userDAO, "armorItems");
+            this.userDao.createOrUpdate(userDAO);
 
+            final String uuid = user.getUuid().toString();
             for (final ArmorItem armorItem : user.getPlayerArmor().getArmorItems()) {
                 final ArmorItemDAO dao = ArmorItemDAO.fromArmorItem(armorItem);
-                dao.setUser(userDAO);
-                final ForeignCollection<ArmorItemDAO> armorItems = userDAO.getArmorItems();
-                if (armorItems.contains(dao)) {
-                    armorItems.update(dao);
-                } else {
-                    armorItems.add(dao);
-                }
+                dao.setUuid(uuid);
+                this.armorItemDao.createOrUpdate(dao);
             }
-            this.userDao.createOrUpdate(userDAO);
+
         } catch (final SQLException exception) {
             exception.printStackTrace();
+        }
+    }
+
+    public void saveAll() {
+        for (final Player player : Bukkit.getOnlinePlayers()) {
+            this.plugin.getUserManager().get(player.getUniqueId()).ifPresent(
+                    this::saveUser
+            );
         }
     }
 
@@ -143,7 +157,7 @@ public class Database {
         return userDao;
     }
 
-    public Dao<ArmorItemDAO, UserDAO> getArmorItemDao() {
+    public Dao<ArmorItemDAO, UUID> getArmorItemDao() {
         return armorItemDao;
     }
 
