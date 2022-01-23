@@ -1,6 +1,7 @@
 package io.github.fisher2911.hmccosmetics.gui;
 
 import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
@@ -16,6 +17,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -179,5 +181,16 @@ public class DyeSelectorGui extends CosmeticGui {
     @Override
     protected Object clone() throws CloneNotSupportedException {
         return super.clone();
+    }
+
+    public DyeSelectorGui copy() {
+        return new DyeSelectorGui(
+                this.plugin,
+                super.title,
+                super.rows,
+                new HashMap<>(super.guiItemMap),
+                HashBiMap.create(this.cosmeticsSlots),
+                this.selectedCosmetic
+        );
     }
 }

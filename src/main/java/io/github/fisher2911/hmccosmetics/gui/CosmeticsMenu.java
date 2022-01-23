@@ -9,6 +9,7 @@ import io.github.fisher2911.hmccosmetics.cosmetic.CosmeticManager;
 import io.github.fisher2911.hmccosmetics.user.User;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
@@ -17,6 +18,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 public class CosmeticsMenu {
 
@@ -34,7 +36,7 @@ public class CosmeticsMenu {
     }
 
     public void openMenu(final String id, final HumanEntity humanEntity) {
-        final CosmeticGui cosmeticGui = this.guiMap.get(id);
+        final CosmeticGui cosmeticGui = this.getGui(id);
 
         if (cosmeticGui != null) {
             cosmeticGui.open(humanEntity);
@@ -59,11 +61,18 @@ public class CosmeticsMenu {
             return;
         }
 
-        final CosmeticGui gui = this.guiMap.get(DYE_MENU);
+        final CosmeticGui gui = this.getGui(DYE_MENU);
 
         if (gui instanceof final DyeSelectorGui dyeSelectorGui) {
             dyeSelectorGui.getGui(user, type).open(player);
         }
+    }
+
+    @Nullable
+    private CosmeticGui getGui(final String id) {
+        final CosmeticGui gui = this.guiMap.get(id);
+        if (gui == null) return null;
+        return gui.copy();
     }
 
     public void load() {

@@ -226,9 +226,11 @@ public class UserManager {
 
     public void setItem(final User user, final ArmorItem armorItem) {
         user.setItem(armorItem);
-        switch (armorItem.getType()) {
-            case HAT, OFF_HAND -> this.updateCosmetics(user);
-        }
+        Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () -> {
+            switch (armorItem.getType()) {
+                case HAT, OFF_HAND -> this.updateCosmetics(user);
+            }
+        });
     }
 
     public void removeItem(final User user, final ArmorItem.Type type) {

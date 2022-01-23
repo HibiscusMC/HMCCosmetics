@@ -33,6 +33,10 @@ public class CosmeticGui {
     protected final Map<Integer, GuiItem> guiItemMap;
     protected Gui gui;
 
+    private long lastClicked;
+
+    private static final float COOL_DOWN = 0.5f;
+
     public CosmeticGui(
             final HMCCosmetics plugin,
             final String title,
@@ -71,6 +75,10 @@ public class CosmeticGui {
             final ArmorItem armorItem,
             final InventoryClickEvent event,
             final GuiAction<InventoryClickEvent> actionIfSet) {
+
+        final long current = System.currentTimeMillis();
+        if ((current - this.lastClicked) / 1000. < COOL_DOWN) return;
+        this.lastClicked = current;
 
         if (!(human instanceof final Player player)) {
             return;
@@ -129,10 +137,6 @@ public class CosmeticGui {
 
         if (itemStack == null) return null;
 
-        guiItem.setItemStack(
-                ItemBuilder.from(itemStack.clone()).papiPlaceholders(player).build()
-        );
-
         if (guiItem instanceof final ArmorItem armorItem) {
 
             final String permission = armorItem.getPermission() == null ? "" : armorItem.getPermission();
@@ -158,6 +162,10 @@ public class CosmeticGui {
                     }
             );
         }
+
+        guiItem.setItemStack(
+                ItemBuilder.from(itemStack.clone()).papiPlaceholders(player).build()
+        );
 
         return guiItem;
     }
@@ -195,5 +203,14 @@ public class CosmeticGui {
                 lorePlaceholders(placeholders).
                 papiPlaceholders(player).
                 build();
+    }
+
+    public CosmeticGui copy() {
+        return new CosmeticGui(
+                this.plugin,
+                this.title,
+                this.rows,
+                new HashMap<>(this.guiItemMap)
+        );
     }
 }
