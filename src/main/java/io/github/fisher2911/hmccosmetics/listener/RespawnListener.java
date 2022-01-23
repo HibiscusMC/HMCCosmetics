@@ -23,7 +23,7 @@ public class RespawnListener implements Listener {
 
     @EventHandler
     public void onPlayerRespawn(final PlayerRespawnEvent event) {
-        Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
+        Bukkit.getScheduler().runTaskLaterAsynchronously(this.plugin, () -> {
             final Player player = event.getPlayer();
             final Optional<User> optionalUser = this.userManager.get(player.getUniqueId());
             optionalUser.ifPresent(user -> {

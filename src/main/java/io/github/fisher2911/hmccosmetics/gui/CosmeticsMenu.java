@@ -131,7 +131,9 @@ public class CosmeticsMenu {
 
                 for (final GuiItem guiItem : gui.guiItemMap.values()) {
                     if (guiItem instanceof final ArmorItem item) {
-                        this.cosmeticManager.addArmorItem(item);
+                        final ArmorItem copy = new ArmorItem(item);
+                        copy.setAction(null);
+                        this.cosmeticManager.addArmorItem(copy);
                     }
                 }
 

@@ -16,20 +16,13 @@ public class Threads {
     }
 
     private final ExecutorService service;
-    private boolean running;
 
     private Threads() {
-        this.service = Executors.newCachedThreadPool();
+        this.service = Executors.newFixedThreadPool(1);
     }
 
-    public void submit(final Runnable runnable) {
-        this.service.submit(() -> {
-            try {
-                runnable.run();
-            } catch (final Exception exception) {
-                exception.printStackTrace();
-            }
-        });
+    public void execute(final Runnable runnable) {
+        this.service.execute(runnable);
     }
 
     public void onDisable() {

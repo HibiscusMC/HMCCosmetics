@@ -1,5 +1,6 @@
 package io.github.fisher2911.hmccosmetics.listener;
 
+import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.user.User;
@@ -65,18 +66,6 @@ public class ClickListener implements Listener {
         this.doRunnable(optionalUser.get());
     }
 
-    @EventHandler
-    public void onRightClick(final PlayerInteractEvent event) {
-        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
-        final Player player = event.getPlayer();
-
-        final ItemStack mainHand = event.getPlayer().getInventory().getItemInMainHand();
-
-        if (mainHand.getType().isBlock() && mainHand.getAmount() > 0)
-
-        this.userManager.updateCosmetics(player.getUniqueId(), true);
-    }
-
     private void fixInventory(final Player player, final Set<Integer> slotsClicked, final Inventory inventory) {
         final Optional<User> optionalUser = this.userManager.get(player.getUniqueId());
 
@@ -95,7 +84,7 @@ public class ClickListener implements Listener {
     }
 
     private void doRunnable(final User user) {
-        Bukkit.getScheduler().runTaskLater(
+        Bukkit.getScheduler().runTaskLaterAsynchronously(
                 this.plugin, () -> this.userManager.updateCosmetics(user),
                 1);
     }

@@ -19,6 +19,7 @@ import io.github.fisher2911.hmccosmetics.user.UserManager;
 import me.mattstudios.mf.base.CommandManager;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
+import org.bukkit.Color;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
@@ -71,14 +72,10 @@ public class HMCCosmetics extends JavaPlugin {
 
         this.saveTask = Bukkit.getScheduler().runTaskTimerAsynchronously(
                 this,
-                () -> {
-                    for (final Player player : Bukkit.getOnlinePlayers()) {
-                        this.userManager.get(player.getUniqueId()).ifPresent(
-                                this.database::saveUser
-                        );
-                    }
-                },
-                20,
+                () -> Threads.getInstance().execute(
+                        () -> this.database.saveAll()
+                ),
+                20 * 60,
                 20 * 60
         );
     }

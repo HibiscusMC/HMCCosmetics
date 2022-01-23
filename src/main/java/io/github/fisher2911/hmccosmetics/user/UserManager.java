@@ -1,6 +1,7 @@
 package io.github.fisher2911.hmccosmetics.user;
 
 import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
@@ -8,36 +9,32 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.Pair;
-import com.google.common.xml.XmlEscapers;
+import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.concurrent.Threads;
-import io.github.fisher2911.hmccosmetics.database.dao.UserDAO;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
 import io.github.fisher2911.hmccosmetics.message.Message;
 import io.github.fisher2911.hmccosmetics.message.MessageHandler;
-import io.github.fisher2911.hmccosmetics.message.Messages;
 import io.github.fisher2911.hmccosmetics.message.Placeholder;
 import io.github.fisher2911.hmccosmetics.util.Keys;
 import io.github.fisher2911.hmccosmetics.util.builder.ItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_17_R1.inventory.CraftEntityEquipment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.awt.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Consumer;
 
 public class UserManager {
 
@@ -65,6 +62,10 @@ public class UserManager {
         return Optional.ofNullable(this.userMap.get(uuid));
     }
 
+    public Collection<User> getAll() {
+        return this.userMap.values();
+    }
+
     public void remove(final UUID uuid) {
         final User user = this.userMap.remove(uuid);
 
@@ -80,11 +81,13 @@ public class UserManager {
 
         user.setPlayerArmor(copy);
 
-        Threads.getInstance().submit(() -> this.plugin.getDatabase().saveUser(user));
+        Threads.getInstance().execute(() -> this.plugin.getDatabase().saveUser(user));
     }
 
     public void startTeleportTask() {
-        this.teleportTask = Bukkit.getScheduler().runTaskTimer(
+        // throws an error on first load of registry if this isn't here
+        WrappedDataWatcher.Registry.get(Byte.class);
+        this.teleportTask = Bukkit.getScheduler().runTaskTimerAsynchronously(
                 this.plugin,
                 () -> this.userMap.values().forEach(User::updateArmorStand),
                 1,
@@ -95,6 +98,7 @@ public class UserManager {
     public void resendCosmetics(final Player player) {
         for (final User user : this.userMap.values()) {
             user.spawnArmorStand(player);
+            this.updateCosmetics(user, false, player);
         }
     }
 
@@ -159,6 +163,12 @@ public class UserManager {
     }
 
     public void updateCosmetics(final User user, final boolean ignoreRestrictions) {
+        for (final Player player : Bukkit.getOnlinePlayers()) {
+            this.updateCosmetics(user, ignoreRestrictions, player);
+        }
+    }
+
+    public void updateCosmetics(final User user, final boolean ignoreRestrictions, final Player other) {
         final Player player = user.getPlayer();
 
         if (player == null) {
@@ -180,12 +190,10 @@ public class UserManager {
         fake.getIntegers().write(0, player.getEntityId());
         fake.getSlotStackPairLists().write(0, equipmentList);
 
-        for (final Player p : Bukkit.getOnlinePlayers()) {
-            try {
-                this.plugin.getProtocolManager().sendServerPacket(p, fake);
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            }
+        try {
+            this.plugin.getProtocolManager().sendServerPacket(other, fake);
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
         }
     }
 
@@ -228,7 +236,6 @@ public class UserManager {
     }
 
     /**
-     *
      * @param user
      * @param armorItem
      * @param removeMessage

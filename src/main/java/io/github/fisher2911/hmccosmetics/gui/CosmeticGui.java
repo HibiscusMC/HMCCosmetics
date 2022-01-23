@@ -12,7 +12,6 @@ import io.github.fisher2911.hmccosmetics.message.Placeholder;
 import io.github.fisher2911.hmccosmetics.user.User;
 import io.github.fisher2911.hmccosmetics.util.StringUtils;
 import io.github.fisher2911.hmccosmetics.util.builder.ItemBuilder;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -136,35 +135,12 @@ public class CosmeticGui {
 
         if (guiItem instanceof final ArmorItem armorItem) {
 
-            final Map<String, String> placeholders = new HashMap<>();
-
-            final PlayerArmor playerArmor = user.getPlayerArmor();
-
-            final ArmorItem.Type type = armorItem.getType();
-
-            final String id = playerArmor.getItem(type).getId();
-
-            placeholders.put(
-                    Placeholder.ENABLED,
-                    String.valueOf(id.equals(armorItem.getId())).
-                            toLowerCase(Locale.ROOT));
-
             final String permission = armorItem.getPermission() == null ? "" : armorItem.getPermission();
 
             final boolean hasPermission = permission.isBlank() || player.hasPermission(permission);
 
-            placeholders.put(
-                    Placeholder.ALLOWED,
-                    String.valueOf(hasPermission).
-                            toLowerCase(Locale.ROOT));
-
             return new GuiItem(
-                    ItemBuilder.from(
-                                    armorItem.getItemStack(hasPermission)
-                            ).namePlaceholders(placeholders).
-                            lorePlaceholders(placeholders).
-                            papiPlaceholders(player).
-                            build(),
+                    this.applyPlaceholders(user, player, armorItem, hasPermission),
                     event -> {
                         if (!hasPermission) {
                             this.messageHandler.sendMessage(
@@ -174,11 +150,50 @@ public class CosmeticGui {
                             return;
                         }
 
-                        this.setUserArmor(player, user, new ArmorItem(armorItem), event, armorItem.getAction());
+                        final ArmorItem cosmeticItem = this.plugin.getCosmeticManager().getArmorItem(armorItem.getId());
+
+                        if (cosmeticItem == null) return;
+
+                        this.setUserArmor(player, user, cosmeticItem, event, armorItem.getAction());
                     }
             );
         }
 
         return guiItem;
+    }
+
+    protected ItemStack applyPlaceholders(final User user, final Player player, final ArmorItem armorItem, final boolean hasPermission) {
+        final Map<String, String> placeholders = new HashMap<>();
+
+        final PlayerArmor playerArmor = user.getPlayerArmor();
+
+        final ArmorItem.Type type = armorItem.getType();
+
+        final String id = playerArmor.getItem(type).getId();
+
+        placeholders.put(
+                Placeholder.ENABLED,
+                String.valueOf(id.equals(armorItem.getId())).
+                        toLowerCase(Locale.ROOT));
+
+        placeholders.put(
+                Placeholder.ALLOWED,
+                String.valueOf(hasPermission).
+                        toLowerCase(Locale.ROOT));
+
+        final ItemStack itemStack;
+
+        if (!hasPermission) {
+            itemStack = armorItem.getItemStack(false);
+        } else {
+            itemStack = armorItem.getColored();
+        }
+
+        return ItemBuilder.from(
+                        itemStack
+                ).namePlaceholders(placeholders).
+                lorePlaceholders(placeholders).
+                papiPlaceholders(player).
+                build();
     }
 }

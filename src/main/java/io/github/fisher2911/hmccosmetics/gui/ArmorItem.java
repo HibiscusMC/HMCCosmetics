@@ -1,6 +1,5 @@
 package io.github.fisher2911.hmccosmetics.gui;
 
-import com.j256.ormlite.table.DatabaseTable;
 import dev.triumphteam.gui.components.GuiAction;
 import dev.triumphteam.gui.guis.GuiItem;
 import io.github.fisher2911.hmccosmetics.util.builder.ColorBuilder;
@@ -8,7 +7,6 @@ import io.github.fisher2911.hmccosmetics.util.builder.ItemBuilder;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,12 +15,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-@DatabaseTable(tableName = "armor_item")
 public class ArmorItem extends GuiItem {
 
     private final String id;
     private final List<String> lockedLore;
-    private final GuiAction<InventoryClickEvent> action;
+    private GuiAction<InventoryClickEvent> action;
     private final String permission;
     private final Type type;
     private boolean dyeable;
@@ -254,6 +251,12 @@ public class ArmorItem extends GuiItem {
 
     public boolean isEmpty() {
         return this.getItemStack().getType() == Material.AIR;
+    }
+
+    @Override
+    public void setAction(final GuiAction<InventoryClickEvent> action) {
+        super.setAction(action);
+        this.action = action;
     }
 
     public enum Type {

@@ -3,6 +3,7 @@ package io.github.fisher2911.hmccosmetics.listener;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.database.Database;
 import io.github.fisher2911.hmccosmetics.user.UserManager;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -26,12 +27,12 @@ public class JoinListener implements Listener {
         final Player player = event.getPlayer();
         this.database.loadUser(player.getUniqueId());
 
-        this.userManager.resendCosmetics(player);
+        Bukkit.getScheduler().runTaskAsynchronously(this.plugin,
+                () -> this.userManager.resendCosmetics(player));
     }
 
     @EventHandler
     public void onQuit(final PlayerQuitEvent event) {
-
         final Player player = event.getPlayer();
         this.userManager.remove(player.getUniqueId());
     }

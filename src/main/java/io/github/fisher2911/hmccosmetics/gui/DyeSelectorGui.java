@@ -10,6 +10,7 @@ import io.github.fisher2911.hmccosmetics.user.User;
 import io.github.fisher2911.hmccosmetics.util.StringUtils;
 import io.github.fisher2911.hmccosmetics.util.builder.ItemBuilder;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -54,7 +55,17 @@ public class DyeSelectorGui extends CosmeticGui {
         }
 
         for (final var entry : this.cosmeticsSlots.entrySet()) {
-            gui.setItem(entry.getKey(), user.getPlayerArmor().getItem(entry.getValue()));
+            gui.setItem(
+                    entry.getKey(),
+                    new GuiItem(
+                            this.applyPlaceholders(
+                                    user,
+                                    player,
+                                    user.getPlayerArmor().getItem(entry.getValue()),
+                                    true
+                            )
+                    )
+            );
         }
 
         for (final var entry : this.guiItemMap.entrySet()) {
@@ -74,14 +85,14 @@ public class DyeSelectorGui extends CosmeticGui {
 
         final PlayerArmor playerArmor = user.getPlayerArmor();
 
-        final ArmorItem armorItem = playerArmor.getItem(
-                this.cosmeticsSlots.get(this.selectedCosmetic)
-        );
-
-        this.select(this.selectedCosmetic);
+        this.select(this.selectedCosmetic, user, player);
 
         gui.setDefaultClickAction(event -> {
             event.setCancelled(true);
+
+            final ArmorItem armorItem = playerArmor.getItem(
+                    this.cosmeticsSlots.get(this.selectedCosmetic)
+            );
 
             if (armorItem == null) {
                 return;
@@ -93,16 +104,16 @@ public class DyeSelectorGui extends CosmeticGui {
                 return;
             }
 
-            if (!armorItem.isDyeable()) {
-                return;
-            }
-
             final int slot = event.getSlot();
 
             final ArmorItem.Type clickedType = this.cosmeticsSlots.get(slot);
 
             if (clickedType != null) {
-                this.select(slot);
+                this.select(slot, user, player);
+                return;
+            }
+
+            if (!armorItem.isDyeable()) {
                 return;
             }
 
@@ -115,30 +126,48 @@ public class DyeSelectorGui extends CosmeticGui {
             armorItem.setDye(colorItem.getColor().asRGB());
 
             this.plugin.getUserManager().setItem(user, armorItem);
+            this.updateSelected(user, player);
         });
 
         return gui;
     }
 
-    private void select(final int slot) {
-        ItemStack itemStack = this.itemStackMap.get(slot);
-        ItemStack previous = this.itemStackMap.get(this.selectedCosmetic);
+    private void select(final int slot, final User user, final Player player) {
 
-        if (itemStack == null) return;
+        final PlayerArmor playerArmor = user.getPlayerArmor();
 
-        itemStack =
-                dev.triumphteam.gui.builder.item.ItemBuilder.from(
-                        itemStack).glow().build();
+        final ItemStack previous = this.applyPlaceholders(
+                user,
+                player,
+                playerArmor.getItem(this.cosmeticsSlots.get(this.selectedCosmetic)),
+                true
+        );
 
-        if (previous != null && this.selectedCosmetic != slot) {
-            previous = dev.triumphteam.gui.builder.item.ItemBuilder.from(
-                    previous).glow(false).build();
-            this.gui.updateItem(this.selectedCosmetic, previous);
+        if (previous != null && previous.getType() != Material.AIR) {
+            final ItemStack previousItem = dev.triumphteam.gui.builder.item.ItemBuilder.from(
+                    previous
+            ).glow(false).build();
+
+            this.gui.updateItem(this.selectedCosmetic, previousItem);
         }
 
-        this.gui.updateItem(slot, itemStack);
-
         this.selectedCosmetic = slot;
+
+        this.updateSelected(user, player);
+    }
+
+    private void updateSelected(final User user, final Player player) {
+        final ArmorItem.Type type = this.cosmeticsSlots.get(this.selectedCosmetic);
+
+        if (type == null) return;
+
+        this.gui.updateItem(this.selectedCosmetic,
+
+                ItemBuilder.from(
+                        this.applyPlaceholders(
+                                user, player, user.getPlayerArmor().getItem(type), true
+                        )
+                ).glow(true).build());
     }
 
     @Override

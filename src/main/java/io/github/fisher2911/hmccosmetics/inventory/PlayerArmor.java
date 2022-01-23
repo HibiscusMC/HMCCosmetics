@@ -32,19 +32,24 @@ public class PlayerArmor {
     }
 
     public ArmorItem getHat() {
-        return this.armorItems.get(ArmorItem.Type.HAT);
+        return this.getItem(ArmorItem.Type.HAT);
     }
 
     public ArmorItem getBackpack() {
-        return this.armorItems.get(ArmorItem.Type.BACKPACK);
+        return this.getItem(ArmorItem.Type.BACKPACK);
     }
 
     public ArmorItem getOffHand() {
-        return this.armorItems.get(ArmorItem.Type.OFF_HAND);
+        return this.getItem(ArmorItem.Type.OFF_HAND);
     }
 
     public ArmorItem getItem(final ArmorItem.Type type) {
-        return this.armorItems.get(type);
+        ArmorItem armorItem = this.armorItems.get(type);
+        if (armorItem == null) {
+            armorItem = ArmorItem.empty(type);
+            this.armorItems.put(type, armorItem);
+        }
+        return armorItem;
     }
 
     public ArmorItem setItem(final ArmorItem armorItem) {

@@ -27,4 +27,8 @@ public class CosmeticManager {
     public Collection<ArmorItem> getAll() {
         return this.armorItemMap.values();
     }
+
+    public Map<String, ArmorItem> getArmorItemMap() {
+        return armorItemMap;
+    }
 }

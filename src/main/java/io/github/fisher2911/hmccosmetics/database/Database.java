@@ -1,14 +1,7 @@
 package io.github.fisher2911.hmccosmetics.database;
 
-import com.j256.ormlite.dao.BaseForeignCollection;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.dao.ForeignCollection;
-import com.j256.ormlite.logger.ConsoleLogBackend;
-import com.j256.ormlite.logger.Level;
-import com.j256.ormlite.logger.Logger;
-import com.j256.ormlite.stmt.UpdateBuilder;
-import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
@@ -21,14 +14,10 @@ import io.github.fisher2911.hmccosmetics.user.User;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
 
 public class Database {
 
@@ -66,12 +55,11 @@ public class Database {
         this.userDao = DaoManager.createDao(this.dataSource, UserDAO.class);
         this.armorItemDao = DaoManager.createDao(this.dataSource, ArmorItemDAO.class);
         this.databaseType = databaseType;
-        Logger.setGlobalLogLevel(Level.DEBUG);
 
     }
 
     public void load() {
-        Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () -> new DatabaseConverter(this.plugin, this).convert());
+        Threads.getInstance().execute(() -> new DatabaseConverter(this.plugin, this).convert());
     }
 
     protected void createTables() {
@@ -85,7 +73,7 @@ public class Database {
 
     public void loadUser(final UUID uuid) {
         final int armorStandId = ARMOR_STAND_ID.getAndDecrement();
-        Threads.getInstance().submit(
+        Threads.getInstance().execute(
                 () -> {
                     try {
                         UserDAO user = this.userDao.queryForId(uuid);
@@ -130,10 +118,8 @@ public class Database {
     }
 
     public void saveAll() {
-        for (final Player player : Bukkit.getOnlinePlayers()) {
-            this.plugin.getUserManager().get(player.getUniqueId()).ifPresent(
-                    this::saveUser
-            );
+        for (final User user : this.plugin.getUserManager().getAll()) {
+            this.saveUser(user);
         }
     }
 
@@ -160,10 +146,4 @@ public class Database {
     public Dao<ArmorItemDAO, UUID> getArmorItemDao() {
         return armorItemDao;
     }
-
-    //    public abstract void close();
-//
-//    public abstract String getSaveStatement();
-//
-//    public abstract String getLoadStatement();
 }

@@ -7,10 +7,9 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.Pair;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
+import com.comphenix.protocol.wrappers.WrappedDataWatcher.Serializer;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
-import io.github.fisher2911.hmccosmetics.message.Placeholder;
-import io.github.fisher2911.hmccosmetics.util.builder.ItemBuilder;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -22,7 +21,6 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 public class User {
@@ -107,15 +105,8 @@ public class User {
 
         packet.getEntityTypeModifier().write(0, EntityType.ARMOR_STAND);
 
-        final PacketContainer ridingPacket = new PacketContainer(PacketType.Play.Server.MOUNT);
-        ridingPacket.
-                getIntegers().
-                write(0, player.getEntityId());
-        ridingPacket.getIntegerArrays().write(0, new int[]{this.armorStandId});
-
         try {
             protocolManager.sendServerPacket(other, packet);
-            protocolManager.sendServerPacket(other, ridingPacket);
         } catch (final InvocationTargetException exception) {
             exception.printStackTrace();
         }
@@ -146,14 +137,8 @@ public class User {
 
         final List<Pair<EnumWrappers.ItemSlot, ItemStack>> equipmentList = new ArrayList<>();
 
-        final Map<String, String> placeholders = Map.of(Placeholder.ALLOWED, "true",
-                Placeholder.ENABLED, "true");
-
         equipmentList.add(new Pair<>(EnumWrappers.ItemSlot.HEAD,
-                ItemBuilder.from(this.playerArmor.getBackpack().getItemStack()).
-                        namePlaceholders(placeholders).
-                        lorePlaceholders(placeholders).
-                        build()
+                this.playerArmor.getBackpack().getColored()
         ));
 
         final PacketContainer armorPacket = new PacketContainer(PacketType.Play.Server.ENTITY_EQUIPMENT);
@@ -165,8 +150,11 @@ public class User {
         final PacketContainer metaContainer = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
 
         WrappedDataWatcher metaData = new WrappedDataWatcher();
-        metaData.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(0, WrappedDataWatcher.Registry.get(Byte.class)), (byte) (0x20));
-        metaData.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(15, WrappedDataWatcher.Registry.get(Byte.class)), (byte) (0x10));
+
+        final Serializer byteSerializer = WrappedDataWatcher.Registry.get(Byte.class);
+
+        metaData.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(0, byteSerializer), (byte) (0x20));
+        metaData.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(15, byteSerializer), (byte) (0x10));
 
         final PacketContainer rotationPacket = new PacketContainer(PacketType.Play.Server.ENTITY_HEAD_ROTATION);
 
@@ -176,6 +164,12 @@ public class User {
         metaContainer.getIntegers().write(0, this.armorStandId);
         metaContainer.getWatchableCollectionModifier().write(0, metaData.getWatchableObjects());
 
+        final PacketContainer ridingPacket = new PacketContainer(PacketType.Play.Server.MOUNT);
+        ridingPacket.
+                getIntegers().
+                write(0, player.getEntityId());
+        ridingPacket.getIntegerArrays().write(0, new int[]{this.armorStandId});
+
         final ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
 
         try {
@@ -183,6 +177,7 @@ public class User {
                 protocolManager.sendServerPacket(p, armorPacket);
                 protocolManager.sendServerPacket(p, metaContainer);
                 protocolManager.sendServerPacket(p, rotationPacket);
+                protocolManager.sendServerPacket(p, ridingPacket);
             }
         } catch (final InvocationTargetException exception) {
             exception.printStackTrace();

@@ -8,9 +8,13 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.spigotmc.event.entity.EntityMountEvent;
@@ -38,8 +42,29 @@ public class CosmeticFixListener implements Listener {
         this.fixCosmetics(event.getPlayer());
     }
 
+    @EventHandler
+    public void onRightClick(final PlayerInteractEvent event) {
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK && event.getHand() != EquipmentSlot.OFF_HAND) return;
+        final Player player = event.getPlayer();
+
+        final ItemStack mainHand = event.getPlayer().getInventory().getItemInMainHand();
+
+        if (mainHand.getType().isBlock() && mainHand.getAmount() > 0) return;
+        this.userManager.updateCosmetics(player.getUniqueId(), true);
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onBlockPlace(final BlockPlaceEvent event) {
+        if (event.getHand() != EquipmentSlot.OFF_HAND) return;
+        final ItemStack itemStack = event.getItemInHand();
+
+        if (itemStack.getAmount() > 1) return;
+
+        this.fixCosmetics(event.getPlayer());
+    }
+
     private void fixCosmetics(final Player player) {
-        Bukkit.getScheduler().runTaskLater(this.plugin,
+        Bukkit.getScheduler().runTaskLaterAsynchronously(this.plugin,
                 () -> this.userManager.updateCosmetics(player.getUniqueId(), true), 2);
     }
 }
