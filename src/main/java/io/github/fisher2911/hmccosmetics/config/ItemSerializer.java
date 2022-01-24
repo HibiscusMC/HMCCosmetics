@@ -36,6 +36,12 @@ import java.util.stream.Collectors;
 
 public class ItemSerializer implements TypeSerializer<GuiItem> {
 
+    private static final HMCCosmetics plugin;
+
+    static {
+        plugin = HMCCosmetics.getPlugin(HMCCosmetics.class);
+    }
+
     public static final ItemSerializer INSTANCE = new ItemSerializer();
 
     private static final String MATERIAL = "material";
@@ -221,10 +227,7 @@ public class ItemSerializer implements TypeSerializer<GuiItem> {
 
             return new ArmorItem(
                     itemStack,
-                    event -> {
-                        final HMCCosmetics plugin = HMCCosmetics.getPlugin(HMCCosmetics.class);
-                        plugin.getCosmeticsMenu().openMenu(openMenu, event.getWhoClicked());
-                    },
+                    event -> plugin.getCosmeticsMenu().openMenu(openMenu, event.getWhoClicked()),
                     Utils.replaceIfNull(idNode.getString(), ""),
                     lockedLore,
                     permission,
@@ -237,7 +240,6 @@ public class ItemSerializer implements TypeSerializer<GuiItem> {
             return dev.triumphteam.gui.builder.item.ItemBuilder.from(
                             itemStack).
                     asGuiItem(event -> {
-                        final HMCCosmetics plugin = HMCCosmetics.getPlugin(HMCCosmetics.class);
                         plugin.getCosmeticsMenu().openMenu(openMenu, event.getWhoClicked());
                     });
         }

@@ -1,5 +1,6 @@
 package io.github.fisher2911.hmccosmetics.gui;
 
+import com.comphenix.net.bytebuddy.jar.asm.Type;
 import dev.triumphteam.gui.components.GuiAction;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;

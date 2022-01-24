@@ -149,7 +149,7 @@ public class CosmeticsCommand extends CommandBase {
         try {
             final ArmorItem.Type type = ArmorItem.Type.valueOf(typeString.toUpperCase());
 
-            final Message setMessage = Messages.getSetMessage(type);
+            final Message setMessage = Messages.getRemovedMessage(type);
             final Message setOtherMessage = Messages.getSetOtherMessage(type);
             this.userManager.removeItem(user, type);
             this.messageHandler.sendMessage(

@@ -14,6 +14,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -66,6 +67,12 @@ public class ClickListener implements Listener {
         this.doRunnable(optionalUser.get());
     }
 
+    @EventHandler
+    public void onInventoryClose(final InventoryCloseEvent event) {
+        final HumanEntity player = event.getPlayer();
+        this.userManager.get(player.getUniqueId()).ifPresent(this::doRunnable);
+    }
+
     private void fixInventory(final Player player, final Set<Integer> slotsClicked, final Inventory inventory) {
         final Optional<User> optionalUser = this.userManager.get(player.getUniqueId());
 
@@ -78,6 +85,7 @@ public class ClickListener implements Listener {
             for (int i : slotsClicked) {
                 if (this.equipmentSlots.contains(i)) {
                     this.doRunnable(user);
+                    break;
                 }
             }
         }

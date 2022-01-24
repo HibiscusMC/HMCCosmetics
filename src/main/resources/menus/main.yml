@@ -37,7 +37,7 @@ items:
     id: backpack
   3:
     material: END_ROD
-    name: "<blue>Backpack"
+    name: "<blue>Off Hand"
     lore:
       - ""
       - "<gray>Enabled: <#6D9DC5>%enabled%"
