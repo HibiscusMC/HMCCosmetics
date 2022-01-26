@@ -145,6 +145,7 @@ public class CosmeticsMenu {
                         final ArmorItem copy = new ArmorItem(item);
                         copy.setAction(null);
                         this.cosmeticManager.addArmorItem(copy);
+                        if (copy.getPermission().isBlank()) continue;
                         Bukkit.getPluginManager().addPermission(new Permission(copy.getPermission()));
                     }
                 }
