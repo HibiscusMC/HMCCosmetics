@@ -21,6 +21,8 @@ public class Messages {
             new Message("set-off-hand", "Set off hand");
     public static final Message REMOVED_OFF_HAND =
             new Message("removed-off-hand", "Removed off hand");
+    public static final Message SET_DYE_COLOR =
+            new Message("set-dye-color", "Set dye color of " + Placeholder.ITEM);
     public static final Message MUST_BE_PLAYER =
             new Message("must-be-player", "You must be a player to do this!");
     public static final Message RELOADED =

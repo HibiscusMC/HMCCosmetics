@@ -9,6 +9,7 @@ import io.github.fisher2911.hmccosmetics.message.Messages;
 import io.github.fisher2911.hmccosmetics.message.Placeholder;
 import io.github.fisher2911.hmccosmetics.user.User;
 import io.github.fisher2911.hmccosmetics.user.UserManager;
+import io.github.fisher2911.hmccosmetics.util.StringUtils;
 import me.mattstudios.mf.annotations.Command;
 import me.mattstudios.mf.annotations.Completion;
 import me.mattstudios.mf.annotations.Default;
@@ -16,6 +17,7 @@ import me.mattstudios.mf.annotations.Permission;
 import me.mattstudios.mf.annotations.SubCommand;
 import me.mattstudios.mf.base.CommandBase;
 import org.bukkit.Bukkit;
+import org.bukkit.Color;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -61,7 +63,7 @@ public class CosmeticsCommand extends CommandBase {
 
     @SubCommand("dye")
     @Permission(io.github.fisher2911.hmccosmetics.message.Permission.DYE_COMMAND)
-    public void dyeArmor(final Player player, @Completion("#types") String typeString) {
+    public void dyeArmor(final Player player, @Completion("#types") String typeString, final @me.mattstudios.mf.annotations.Optional String dyeColor) {
 
         final Optional<User> optionalUser = this.userManager.get(player.getUniqueId());
 
@@ -74,7 +76,26 @@ public class CosmeticsCommand extends CommandBase {
 
             final User user = optionalUser.get();
 
-            this.cosmeticsMenu.openDyeSelectorGui(user, type);
+            if (dyeColor == null) {
+                this.cosmeticsMenu.openDyeSelectorGui(user, type);
+                return;
+            }
+
+            final java.awt.Color awtColor = java.awt.Color.decode(dyeColor);
+            Color color = Color.fromRGB(awtColor.getRed(), awtColor.getGreen(), awtColor.getBlue());
+
+            final ArmorItem armorItem = user.getPlayerArmor().getItem(type);
+
+            armorItem.setDye(color.asRGB());
+
+            this.userManager.setItem(user, armorItem);
+
+            this.messageHandler.sendMessage(
+                    player,
+                    Messages.SET_DYE_COLOR,
+                    Map.of(Placeholder.ITEM, StringUtils.formatArmorItemType(typeString))
+            );
+
         } catch (final IllegalArgumentException exception) {
             this.messageHandler.sendMessage(
                     player,
