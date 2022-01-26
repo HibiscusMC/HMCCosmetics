@@ -7,8 +7,10 @@ import io.github.fisher2911.hmccosmetics.config.GuiSerializer;
 import io.github.fisher2911.hmccosmetics.config.ItemSerializer;
 import io.github.fisher2911.hmccosmetics.cosmetic.CosmeticManager;
 import io.github.fisher2911.hmccosmetics.user.User;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permission;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.ConfigurationNode;
@@ -143,6 +145,7 @@ public class CosmeticsMenu {
                         final ArmorItem copy = new ArmorItem(item);
                         copy.setAction(null);
                         this.cosmeticManager.addArmorItem(copy);
+                        Bukkit.getPluginManager().addPermission(new Permission(copy.getPermission()));
                     }
                 }
 
