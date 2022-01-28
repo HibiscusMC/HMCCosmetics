@@ -49,6 +49,20 @@ items:
     type: OFF_HAND
     permission: ""
     id: lantern_cosmetic
+  4:
+    material: PAPER
+    name: "<blue>Baseball Hat"
+    lore:
+      - ""
+      - "<gray>Enabled: <#6D9DC5>%enabled%"
+      - "<gray>Allowed: <#6D9DC5>%allowed%"
+    locked-lore:
+      - "<red>You do not own this item!"
+    amount: 1
+    model-data: 6
+    type: HAT
+    permission: ""
+    id: baseball_hat
   37:
     material: PAPER
     name: "<#40B7D6>Previous Page"
