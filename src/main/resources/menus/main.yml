@@ -36,8 +36,8 @@ items:
     permission: ""
     id: backpack
   3:
-    material: END_ROD
-    name: "<blue>Offhand Cosmetic"
+    material: PAPER
+    name: "<blue>Lantern Cosmetic"
     lore:
       - ""
       - "<gray>Enabled: <#6D9DC5>%enabled%"
@@ -45,9 +45,10 @@ items:
     locked-lore:
       - "<red>You do not own this item!"
     amount: 1
+    model-data: 5
     type: OFF_HAND
     permission: ""
-    id: off_hand
+    id: lantern_cosmetic
   37:
     material: PAPER
     name: "<#40B7D6>Previous Page"
