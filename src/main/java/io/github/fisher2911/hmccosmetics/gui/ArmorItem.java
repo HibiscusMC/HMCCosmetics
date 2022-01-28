@@ -259,6 +259,10 @@ public class ArmorItem extends GuiItem {
         this.action = action;
     }
 
+    public ArmorItem copy() {
+        return new ArmorItem(this);
+    }
+
     public enum Type {
 
         HAT,

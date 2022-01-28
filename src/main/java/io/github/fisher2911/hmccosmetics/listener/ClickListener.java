@@ -3,10 +3,16 @@ package io.github.fisher2911.hmccosmetics.listener;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
+import io.github.fisher2911.hmccosmetics.api.CosmeticItem;
+import io.github.fisher2911.hmccosmetics.api.event.CosmeticChangeEvent;
+import io.github.fisher2911.hmccosmetics.api.event.CosmeticItemEvent;
+import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.user.User;
 import io.github.fisher2911.hmccosmetics.user.UserManager;
+import io.github.fisher2911.hmccosmetics.util.builder.ItemBuilder;
 import io.th0rgal.oraxen.utils.armorequipevent.ArmorEquipEvent;
 import org.bukkit.Bukkit;
+import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.CreatureSpawner;
@@ -27,6 +33,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.spigotmc.event.entity.EntityMountEvent;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -73,6 +80,21 @@ public class ClickListener implements Listener {
     public void onInventoryClose(final InventoryCloseEvent event) {
         final HumanEntity player = event.getPlayer();
         this.userManager.get(player.getUniqueId()).ifPresent(this::doRunnable);
+    }
+
+    // todo - REMOVE!!!
+    @EventHandler
+    public void onCosmeticEquip(final CosmeticChangeEvent event) {
+        final CosmeticItem previous = event.getCosmeticItem();
+        event.setCosmeticItem(
+                new CosmeticItem(
+                        ItemBuilder.from(Material.DIAMOND_BLOCK).build(),
+                        "random-id",
+                        previous.getType(),
+                        true,
+                        Color.fromRGB(50, 100, 150).asRGB()
+                )
+        );
     }
 
     private void fixInventory(final Player player, final Set<Integer> slotsClicked, final Inventory inventory) {

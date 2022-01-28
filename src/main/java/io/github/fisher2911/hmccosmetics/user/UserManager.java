@@ -4,6 +4,8 @@ import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.Pair;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
+import io.github.fisher2911.hmccosmetics.api.CosmeticItem;
+import io.github.fisher2911.hmccosmetics.api.event.CosmeticChangeEvent;
 import io.github.fisher2911.hmccosmetics.concurrent.Threads;
 import io.github.fisher2911.hmccosmetics.config.CosmeticSettings;
 import io.github.fisher2911.hmccosmetics.config.Settings;
@@ -179,7 +181,14 @@ public class UserManager {
     }
 
     public void setItem(final User user, final ArmorItem armorItem) {
-        user.setItem(armorItem);
+        ArmorItem previous = user.getPlayerArmor().getItem(armorItem.getType());
+
+        final CosmeticChangeEvent event =
+                new CosmeticChangeEvent(new CosmeticItem(armorItem.copy()), new CosmeticItem(previous.copy()), user);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) return;
+
+        user.setItem(event.getCosmeticItem().getArmorItem());
         Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () -> {
             switch (armorItem.getType()) {
                 case HAT, OFF_HAND -> this.updateCosmetics(user);

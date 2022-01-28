@@ -1,10 +1,7 @@
 package io.github.fisher2911.hmccosmetics.util.builder;
 
-import io.github.fisher2911.hmccosmetics.message.Adventure;
 import io.github.fisher2911.hmccosmetics.message.Placeholder;
-import io.github.fisher2911.hmccosmetics.util.StringUtils;
 import net.kyori.adventure.text.Component;
-import net.minecraft.network.PacketListener;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
