@@ -9,26 +9,25 @@ version '1.5.0'
 repositories {
     mavenCentral()
     mavenLocal()
-    maven { url = 'https://papermc.io/repo/repository/maven-public/' }
     maven { url = 'https://repo.mattstudios.me/artifactory/public/' }
     maven { url = 'https://jitpack.io' }
     maven { url = 'https://repo.dmulloy2.net/repository/public/' }
     maven { url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
     maven { url = 'https://mvnrepository.com/artifact/com.zaxxer/HikariCP' }
     maven { url = 'https://repo.jeff-media.de/maven2/' }
-//    maven { url = 'https://maven.pkg.github.com/LoneDev6/API-ItemsAdder' }
+    maven { url = 'https://oss.sonatype.org/content/repositories/snapshots/' }
 }
 
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
-    compileOnly 'io.papermc.paper:paper:1.17.1-R0.1-SNAPSHOT'
+    compileOnly 'org.spigotmc:spigot:1.17-R0.1-SNAPSHOT'
     compileOnly 'org.jetbrains:annotations:22.0.0'
     compileOnly 'com.comphenix.protocol:ProtocolLib:4.7.0'
-    compileOnly 'net.kyori:adventure-api:4.9.3'
     compileOnly 'me.clip:placeholderapi:2.11.1'
     compileOnly 'com.github.oraxen:oraxen:-SNAPSHOT'
     compileOnly 'com.github.LoneDev6:API-ItemsAdder:2.5.4'
+    implementation 'net.kyori:adventure-api:4.9.3'
     implementation 'net.kyori:adventure-text-minimessage:4.2.0-SNAPSHOT'
     implementation 'net.kyori:adventure-platform-bukkit:4.0.0'
     implementation 'dev.triumphteam:triumph-gui:3.0.3'
@@ -47,6 +46,7 @@ test {
 shadowJar {
     relocate 'dev.triumphteam.gui', 'io.github.fisher2911.hmccosmetics.gui'
     relocate 'me.mattstudios.mf', 'io.github.fisher2911.hmccosmetics.mf'
+    relocate 'net.kyori.adventure.api', 'io.github.fisher2911.hmccosmetics.adventure.api'
     relocate 'net.kyori.adventure.text.minimessage', 'io.github.fisher2911.hmccosmetics.adventure.minimessage'
     relocate 'net.kyori.adventure.platform', 'io.github.fisher2911.hmccosmetics.adventure.platform'
     relocate 'org.spongepowered.configurate', 'io.github.fisher2911.hmccosmetics.configurate'

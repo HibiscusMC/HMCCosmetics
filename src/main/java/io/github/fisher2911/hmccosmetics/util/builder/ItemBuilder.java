@@ -80,14 +80,6 @@ public class ItemBuilder {
         return this;
     }
 
-    public ItemBuilder name(final Component name) {
-        if (this.itemMeta == null) {
-            return this;
-        }
-        this.itemMeta.displayName(name);
-        return this;
-    }
-
     /**
      * Sets placeholders to the item's name
      *
