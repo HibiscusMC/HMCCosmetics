@@ -1,6 +1,6 @@
 name: HMCCosmetics
 main: io.github.fisher2911.hmccosmetics.HMCCosmetics
-version: 1.5.0
+version: 1.6.0
 api-version: 1.17
 softdepend:
   - Multiverse
