@@ -82,21 +82,6 @@ public class ClickListener implements Listener {
         this.userManager.get(player.getUniqueId()).ifPresent(this::doRunnable);
     }
 
-    // todo - REMOVE!!!
-    @EventHandler
-    public void onCosmeticEquip(final CosmeticChangeEvent event) {
-        final CosmeticItem previous = event.getCosmeticItem();
-        event.setCosmeticItem(
-                new CosmeticItem(
-                        ItemBuilder.from(Material.DIAMOND_BLOCK).build(),
-                        "random-id",
-                        previous.getType(),
-                        true,
-                        Color.fromRGB(50, 100, 150).asRGB()
-                )
-        );
-    }
-
     private void fixInventory(final Player player, final Set<Integer> slotsClicked, final Inventory inventory) {
         final Optional<User> optionalUser = this.userManager.get(player.getUniqueId());
 
