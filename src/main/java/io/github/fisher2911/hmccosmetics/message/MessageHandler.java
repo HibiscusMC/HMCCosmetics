@@ -48,7 +48,7 @@ public class MessageHandler {
     public void sendMessage(final CommandSender sender, final Message key, final Map<String, String> placeholders) {
         final String message = this.getPapiPlaceholders(
                 sender,
-                StringUtils.applyPlaceholders(this.getMessage(key), placeholders)
+                Placeholder.applyPlaceholders(this.getMessage(key), placeholders)
         );
         final Component component = Adventure.MINI_MESSAGE.parse(message);
         this.adventure.sender(sender).sendMessage(component);
@@ -72,7 +72,7 @@ public class MessageHandler {
     public void sendActionBar(final Player player, final Message key, final Map<String, String> placeholders) {
         final String message = this.getPapiPlaceholders(
                 player,
-                StringUtils.applyPlaceholders(this.getMessage(key), placeholders)
+                Placeholder.applyPlaceholders(this.getMessage(key), placeholders)
         );
         Component component = Adventure.MINI_MESSAGE.parse(message);
         this.adventure.player(player).sendActionBar(component);
@@ -96,7 +96,7 @@ public class MessageHandler {
     public void sendTitle(final Player player, final Message key, final Map<String, String> placeholders) {
         final String message = this.getPapiPlaceholders(
                 player,
-                StringUtils.applyPlaceholders(this.getMessage(key), placeholders)
+                Placeholder.applyPlaceholders(this.getMessage(key), placeholders)
         );
         Component component = Adventure.MINI_MESSAGE.parse(message);
         this.adventure.player(player).showTitle(Title.title(component, Component.empty()));
@@ -158,9 +158,9 @@ public class MessageHandler {
 
     private String getPapiPlaceholders(final CommandSender sender, final String message) {
             if (sender instanceof final Player player) {
-                return StringUtils.applyPapiPlaceholders(player, message);
+                return Placeholder.applyPapiPlaceholders(player, message);
             }
-            return StringUtils.applyPapiPlaceholders(null, message);
+            return Placeholder.applyPapiPlaceholders(null, message);
         }
 
 }

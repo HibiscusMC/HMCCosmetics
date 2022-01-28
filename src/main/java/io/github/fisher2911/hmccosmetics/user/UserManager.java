@@ -1,23 +1,18 @@
 package io.github.fisher2911.hmccosmetics.user;
 
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.ProtocolManager;
-import com.comphenix.protocol.events.ListenerPriority;
-import com.comphenix.protocol.events.PacketAdapter;
-import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.Pair;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.concurrent.Threads;
+import io.github.fisher2911.hmccosmetics.config.CosmeticSettings;
+import io.github.fisher2911.hmccosmetics.config.Settings;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
 import io.github.fisher2911.hmccosmetics.message.Message;
 import io.github.fisher2911.hmccosmetics.message.MessageHandler;
 import io.github.fisher2911.hmccosmetics.message.Placeholder;
-import io.github.fisher2911.hmccosmetics.util.Keys;
+import io.github.fisher2911.hmccosmetics.packet.PacketManager;
 import io.github.fisher2911.hmccosmetics.util.builder.ItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -27,7 +22,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -35,21 +29,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class UserManager {
 
     private final HMCCosmetics plugin;
+    private final Settings settings;
     private final MessageHandler messageHandler;
 
-    private final Map<UUID, User> userMap = new HashMap<>();
+    private final Map<UUID, User> userMap = new ConcurrentHashMap<>();
     private final Map<Integer, User> armorStandIdMap = new HashMap<>();
 
     private BukkitTask teleportTask;
 
     public UserManager(final HMCCosmetics plugin) {
         this.plugin = plugin;
+        this.settings = this.plugin.getSettings();
         this.messageHandler = this.plugin.getMessageHandler();
-        this.registerPacketListener();
     }
 
     public void add(final User user) {
@@ -89,7 +85,11 @@ public class UserManager {
         WrappedDataWatcher.Registry.get(Byte.class);
         this.teleportTask = Bukkit.getScheduler().runTaskTimerAsynchronously(
                 this.plugin,
-                () -> this.userMap.values().forEach(User::updateArmorStand),
+                () -> {
+                    for (final User user : this.userMap.values()) {
+                        user.updateArmorStand();
+                    }
+                },
                 1,
                 1
         );
@@ -100,53 +100,6 @@ public class UserManager {
             user.spawnArmorStand(player);
             this.updateCosmetics(user, false, player);
         }
-    }
-
-    private void registerPacketListener() {
-        final ProtocolManager protocolManager = this.plugin.getProtocolManager();
-        protocolManager.addPacketListener(new PacketAdapter(
-                this.plugin,
-                ListenerPriority.NORMAL,
-                PacketType.Play.Server.ENTITY_EQUIPMENT) {
-            @Override
-            public void onPacketReceiving(PacketEvent event) {
-
-            }
-
-            @Override
-            public void onPacketSending(final PacketEvent event) {
-                if (event.getPacketType() == PacketType.Play.Server.ENTITY_EQUIPMENT) {
-                    final int id = event.getPacket().getIntegers().read(0);
-
-                    for (final var entry : event.getPacket().getSlotStackPairLists().getValues().get(0)) {
-                        if (entry.getFirst() != EnumWrappers.ItemSlot.HEAD) {
-                            continue;
-                        }
-                        for (final Player p : Bukkit.getOnlinePlayers()) {
-                            if (p.getEntityId() != id) {
-                                continue;
-                            }
-
-                            final User user = userMap.get(p.getUniqueId());
-
-                            if (user == null) {
-                                break;
-                            }
-
-                            final ItemStack hat = user.getPlayerArmor().getHat().getItemStack();
-                            final ItemStack second = entry.getSecond();
-
-                            if (hat != null && hat
-                                    .getType() != Material.AIR &&
-                                    second != null &&
-                                    !Keys.hasKey(second)) {
-                                event.setCancelled(true);
-                            }
-                        }
-                    }
-                }
-            }
-        });
     }
 
     public void updateCosmetics(final UUID uuid, final boolean ignoreRestrictions) {
@@ -185,16 +138,13 @@ public class UserManager {
                 new Pair<>(EnumWrappers.ItemSlot.OFFHAND, this.getCosmeticItem(player, playerArmor.getOffHand(), EquipmentSlot.OFF_HAND, ignoreRestrictions))
         );
 
-        final PacketContainer fake = new PacketContainer(PacketType.Play.Server.ENTITY_EQUIPMENT);
-
-        fake.getIntegers().write(0, player.getEntityId());
-        fake.getSlotStackPairLists().write(0, equipmentList);
-
-        try {
-            this.plugin.getProtocolManager().sendServerPacket(other, fake);
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
+        PacketManager.sendPacket(
+                other,
+                PacketManager.getEquipmentPacket(
+                        equipmentList,
+                        player.getEntityId()
+                )
+        );
     }
 
     private ItemStack getCosmeticItem(
@@ -202,6 +152,7 @@ public class UserManager {
             final ArmorItem armorItem,
             final EquipmentSlot slot,
             final boolean ignoreRestrictions) {
+        final CosmeticSettings cosmeticSettings = this.settings.getCosmeticSettings();
         final EntityEquipment equipment = player.getEquipment();
 
         final Map<String, String> placeholders = Map.of(Placeholder.ALLOWED, "true",
@@ -212,8 +163,11 @@ public class UserManager {
                 lorePlaceholders(placeholders).
                 build();
 
-        if (itemStack.getType() != Material.AIR &&
-                (slot != EquipmentSlot.OFF_HAND || ignoreRestrictions)) return itemStack;
+        final boolean isAir = itemStack.getType().isAir();
+        final boolean requireEmpty = cosmeticSettings.requireEmpty(slot);
+
+        if (!isAir && (!requireEmpty || ignoreRestrictions)) return itemStack;
+
 
         if (equipment == null) return itemStack;
 

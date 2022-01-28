@@ -20,27 +20,6 @@ public class StringUtils {
     }
 
     /**
-     * @param message      message being translated
-     * @param placeholders placeholders applied
-     * @return message with placeholders applied
-     */
-
-    public static String applyPlaceholders(String message, final Map<String, String> placeholders) {
-        for (final Map.Entry<String, String> entry : placeholders.entrySet()) {
-            message = message.replace(entry.getKey(), entry.getValue());
-        }
-        return message;
-    }
-
-    public static String applyPapiPlaceholders(@Nullable final Player player, final String message) {
-        if (HookManager.getInstance().isEnabled(PAPIHook.class)) {
-            return HookManager.getInstance().getPapiHook().parse(player, message);
-        }
-
-        return message;
-    }
-
-    /**
      * @param parsed message to be parsed
      * @return MiniMessage parsed string
      */

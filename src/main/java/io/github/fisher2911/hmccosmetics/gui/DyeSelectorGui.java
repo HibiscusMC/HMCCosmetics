@@ -7,6 +7,7 @@ import dev.triumphteam.gui.guis.GuiItem;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.database.dao.ArmorItemDAO;
 import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
+import io.github.fisher2911.hmccosmetics.message.Placeholder;
 import io.github.fisher2911.hmccosmetics.user.User;
 import io.github.fisher2911.hmccosmetics.util.StringUtils;
 import io.github.fisher2911.hmccosmetics.util.builder.ItemBuilder;
@@ -45,7 +46,7 @@ public class DyeSelectorGui extends CosmeticGui {
 
     public Gui getGui(final User user, @Nullable final ArmorItem.Type type) {
         this.gui = Gui.gui().
-                title(Component.text(StringUtils.applyPapiPlaceholders(user.getPlayer(), this.title))).
+                title(Component.text(Placeholder.applyPapiPlaceholders(user.getPlayer(), this.title))).
                 rows(rows).
                 create();
 

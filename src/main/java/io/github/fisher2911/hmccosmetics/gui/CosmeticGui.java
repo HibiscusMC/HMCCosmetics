@@ -117,7 +117,7 @@ public class CosmeticGui {
         final User user = optionalUser.get();
 
         this.gui = Gui.gui().
-                title(Adventure.MINI_MESSAGE.parse(StringUtils.applyPapiPlaceholders(user.getPlayer(), this.title))).
+                title(Adventure.MINI_MESSAGE.parse(Placeholder.applyPapiPlaceholders(user.getPlayer(), this.title))).
                 rows(this.rows).
                 create();
 

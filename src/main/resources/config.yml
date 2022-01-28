@@ -1,0 +1,3 @@
+cosmetic-settings:
+  require-empty-helmet: false
+  require-empty-off-hand: true

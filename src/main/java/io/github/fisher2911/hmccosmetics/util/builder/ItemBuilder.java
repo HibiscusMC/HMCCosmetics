@@ -1,6 +1,7 @@
 package io.github.fisher2911.hmccosmetics.util.builder;
 
 import io.github.fisher2911.hmccosmetics.message.Adventure;
+import io.github.fisher2911.hmccosmetics.message.Placeholder;
 import io.github.fisher2911.hmccosmetics.util.StringUtils;
 import net.kyori.adventure.text.Component;
 import net.minecraft.network.PacketListener;
@@ -101,7 +102,7 @@ public class ItemBuilder {
             return this;
         }
 
-        final String name = StringUtils.
+        final String name = Placeholder.
                 applyPlaceholders(this.itemMeta.getDisplayName(), placeholders);
         this.itemMeta.setDisplayName(name);
         return this;
@@ -140,7 +141,7 @@ public class ItemBuilder {
         }
 
         for (final String line : previousLore) {
-            lore.add(StringUtils.applyPlaceholders(
+            lore.add(Placeholder.applyPlaceholders(
                     line, placeholders
             ));
         }
@@ -164,7 +165,7 @@ public class ItemBuilder {
         if (lore == null) return;
 
         for (final String line : this.itemMeta.getLore()) {
-            newLore.add(StringUtils.applyPapiPlaceholders(player, line));
+            newLore.add(Placeholder.applyPapiPlaceholders(player, line));
         }
 
         this.itemMeta.setLore(newLore);
@@ -174,7 +175,7 @@ public class ItemBuilder {
         if (this.itemMeta == null) return;
 
         this.itemMeta.setDisplayName(
-                StringUtils.applyPapiPlaceholders(
+                Placeholder.applyPapiPlaceholders(
                         player,
                         this.itemMeta.getDisplayName()
                 )

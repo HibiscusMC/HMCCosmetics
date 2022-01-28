@@ -5,6 +5,7 @@ import com.comphenix.protocol.ProtocolManager;
 
 import io.github.fisher2911.hmccosmetics.command.CosmeticsCommand;
 import io.github.fisher2911.hmccosmetics.concurrent.Threads;
+import io.github.fisher2911.hmccosmetics.config.Settings;
 import io.github.fisher2911.hmccosmetics.cosmetic.CosmeticManager;
 import io.github.fisher2911.hmccosmetics.database.Database;
 import io.github.fisher2911.hmccosmetics.database.DatabaseFactory;
@@ -15,6 +16,7 @@ import io.github.fisher2911.hmccosmetics.hook.item.ItemsAdderHook;
 import io.github.fisher2911.hmccosmetics.listener.*;
 import io.github.fisher2911.hmccosmetics.message.MessageHandler;
 import io.github.fisher2911.hmccosmetics.message.Messages;
+import io.github.fisher2911.hmccosmetics.message.Translation;
 import io.github.fisher2911.hmccosmetics.user.UserManager;
 import me.mattstudios.mf.base.CommandManager;
 import org.bstats.bukkit.Metrics;
@@ -28,11 +30,13 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class HMCCosmetics extends JavaPlugin {
 
     private ProtocolManager protocolManager;
+    private Settings settings;
     private UserManager userManager;
     private CosmeticManager cosmeticManager;
     private MessageHandler messageHandler;
@@ -48,6 +52,7 @@ public class HMCCosmetics extends JavaPlugin {
         final Metrics metrics = new Metrics(this, pluginId);
 
         protocolManager = ProtocolLibrary.getProtocolManager();
+        this.settings = new Settings(this);
         this.messageHandler = new MessageHandler(this);
         this.userManager = new UserManager(this);
         this.cosmeticManager = new CosmeticManager(new HashMap<>());
@@ -130,10 +135,26 @@ public class HMCCosmetics extends JavaPlugin {
     public void load() {
         Bukkit.getScheduler().runTaskAsynchronously(this,
                 () -> {
+                    this.settings.load();
                     this.messageHandler.load();
                     this.cosmeticsMenu.load();
+                    Translation.getInstance().load();
                     this.database.load();
                 });
+    }
+
+    public void reload() {
+        Bukkit.getScheduler().runTaskAsynchronously(this,
+                () -> {
+                    this.settings.load();
+                    this.messageHandler.load();
+                    this.cosmeticsMenu.reload();
+                    Translation.getInstance().load();
+                });
+    }
+
+    public Settings getSettings() {
+        return settings;
     }
 
     public MessageHandler getMessageHandler() {

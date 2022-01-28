@@ -50,6 +50,9 @@ public class CosmeticsMenu {
     }
 
     public void reload() {
+        for (final ArmorItem armorItem : this.cosmeticManager.getAll()) {
+            Bukkit.getPluginManager().removePermission(new Permission(armorItem.getPermission()));
+        }
         this.load();
     }
 

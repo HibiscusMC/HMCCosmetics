@@ -51,8 +51,7 @@ public class CosmeticsCommand extends CommandBase {
         Bukkit.getScheduler().runTaskAsynchronously(
                 this.plugin,
                 () -> {
-                    this.cosmeticsMenu.reload();
-                    this.plugin.getMessageHandler().load();
+                    this.plugin.reload();
                     this.messageHandler.sendMessage(
                             sender,
                             Messages.RELOADED

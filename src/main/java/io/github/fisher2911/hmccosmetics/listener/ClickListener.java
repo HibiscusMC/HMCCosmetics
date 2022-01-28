@@ -8,6 +8,8 @@ import io.github.fisher2911.hmccosmetics.user.UserManager;
 import io.th0rgal.oraxen.utils.armorequipevent.ArmorEquipEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.CreatureSpawner;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
