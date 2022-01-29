@@ -6,12 +6,13 @@ import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.Pair;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Serializer;
-import io.github.fisher2911.hmccosmetics.HMCCosmetics;
+import io.github.fisher2911.hmccosmetics.config.Settings;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
 import io.github.fisher2911.hmccosmetics.packet.PacketManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -86,9 +87,9 @@ public class User {
         PacketManager.sendPacket(other, packet);
     }
 
-    public void spawnArmorStand() {
+    public void spawnArmorStand(final Settings settings) {
         if (this.hasArmorStand) {
-            this.updateArmorStand();
+            this.updateArmorStand(settings);
             return;
         }
 
@@ -99,10 +100,9 @@ public class User {
         this.hasArmorStand = true;
     }
 
-    public void updateArmorStand() {
+    public void updateArmorStand(final Settings settings) {
         if (!this.hasArmorStand) {
-            this.spawnArmorStand();
-//            return;
+            this.spawnArmorStand(settings);
         }
 
         final Player player = this.getPlayer();
@@ -133,6 +133,21 @@ public class User {
         metaContainer.getWatchableCollectionModifier().write(0, metaData.getWatchableObjects());
 
         PacketManager.sendPacketToOnline(armorPacket, metaContainer, rotationPacket, ridingPacket);
+
+        final int lookDownPitch = settings.getCosmeticSettings().getLookDownPitch();
+
+        if (lookDownPitch != -1 &&
+                this.isFacingDown(location, lookDownPitch)) {
+            equipmentList.set(0, new Pair<>(EnumWrappers.ItemSlot.HEAD,
+                    new ItemStack(Material.AIR)
+            ));
+
+            PacketManager.sendPacket(player, PacketManager.getEquipmentPacket(equipmentList, this.armorStandId));
+        }
+    }
+
+    private boolean isFacingDown(final Location location, final int pitchLimit) {
+        return location.getPitch() > pitchLimit;
     }
 
     public void despawnAttached() {

@@ -88,7 +88,7 @@ public class UserManager {
                 this.plugin,
                 () -> {
                     for (final User user : this.userMap.values()) {
-                        user.updateArmorStand();
+                        user.updateArmorStand(this.plugin.getSettings());
                     }
                 },
                 1,
