@@ -25,10 +25,9 @@ public class JoinListener implements Listener {
     @EventHandler
     public void onJoin(final PlayerJoinEvent event) {
         final Player player = event.getPlayer();
-        this.database.loadUser(player.getUniqueId());
-
-        Bukkit.getScheduler().runTaskAsynchronously(this.plugin,
-                () -> this.userManager.resendCosmetics(player));
+        this.database.loadUser(player.getUniqueId(),
+                user -> Bukkit.getScheduler().runTaskAsynchronously(this.plugin,
+                () -> this.userManager.resendCosmetics(player)));
     }
 
     @EventHandler

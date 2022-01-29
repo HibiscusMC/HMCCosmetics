@@ -6,6 +6,7 @@ import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.Pair;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Serializer;
+import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
 import io.github.fisher2911.hmccosmetics.packet.PacketManager;
@@ -82,7 +83,7 @@ public class User {
 
         final PacketContainer packet = PacketManager.getEntitySpawnPacket(location, this.armorStandId, EntityType.ARMOR_STAND);
 
-        PacketManager.sendPacket(player, packet);
+        PacketManager.sendPacket(other, packet);
     }
 
     public void spawnArmorStand() {
@@ -101,7 +102,7 @@ public class User {
     public void updateArmorStand() {
         if (!this.hasArmorStand) {
             this.spawnArmorStand();
-            return;
+//            return;
         }
 
         final Player player = this.getPlayer();
@@ -136,6 +137,7 @@ public class User {
 
     public void despawnAttached() {
         PacketManager.sendPacketToOnline(PacketManager.getEntityDestroyPacket(this.armorStandId));
+        this.hasArmorStand = false;
     }
 
     public boolean hasArmorStand() {

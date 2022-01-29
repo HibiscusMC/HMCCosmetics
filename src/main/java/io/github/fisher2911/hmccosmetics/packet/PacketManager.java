@@ -20,15 +20,7 @@ import java.util.UUID;
 
 public class PacketManager {
 
-    private static final ProtocolManager protocolManager;
-
-    static {
-        protocolManager = ProtocolLibrary.getProtocolManager();
-    }
-
     public static PacketContainer getEntitySpawnPacket(final Location location, final int entityId, final EntityType entityType) {
-        final ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
-
         final PacketContainer packet = new PacketContainer(PacketType.Play.Server.SPAWN_ENTITY);
 
         // Entity ID
@@ -89,6 +81,7 @@ public class PacketManager {
     }
 
     public static void sendPacket(final Player to, final PacketContainer... packets) {
+        final ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
         try {
             for (final PacketContainer packet : packets) {
                 protocolManager.sendServerPacket(to, packet);

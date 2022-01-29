@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class UserManager {
 
@@ -39,7 +38,7 @@ public class UserManager {
     private final Settings settings;
     private final MessageHandler messageHandler;
 
-    private final Map<UUID, User> userMap = new ConcurrentHashMap<>();
+    private final Map<UUID, User> userMap = new HashMap<>();
     private final Map<Integer, User> armorStandIdMap = new HashMap<>();
 
     private BukkitTask teleportTask;
@@ -129,6 +128,7 @@ public class UserManager {
         if (player == null) {
             return;
         }
+
         final PlayerArmor playerArmor = user.getPlayerArmor();
 
         final List<Pair<EnumWrappers.ItemSlot, ItemStack>> equipmentList = new ArrayList<>();

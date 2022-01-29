@@ -4,6 +4,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
+import com.sun.tools.jconsole.JConsoleContext;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.concurrent.Threads;
 import io.github.fisher2911.hmccosmetics.database.dao.ArmorItemDAO;
@@ -18,6 +19,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 public class Database {
 
@@ -71,7 +73,7 @@ public class Database {
         }
     }
 
-    public void loadUser(final UUID uuid) {
+    public void loadUser(final UUID uuid, final Consumer<User> onComplete) {
         final int armorStandId = ARMOR_STAND_ID.getAndDecrement();
         Threads.getInstance().execute(
                 () -> {
@@ -84,11 +86,14 @@ public class Database {
 
                         final List<ArmorItemDAO> armorItems = this.armorItemDao.queryForEq("uuid", uuid.toString());
 
-                        final UserDAO finalUser = user;
+                        final User actualUser = user.toUser(this.plugin.getCosmeticManager(), armorItems, armorStandId);
                         Bukkit.getScheduler().runTask(this.plugin,
-                                () -> this.plugin.getUserManager().add(
-                                        finalUser.toUser(this.plugin.getCosmeticManager(), armorItems, armorStandId)
-                                )
+                                () -> {
+                                    this.plugin.getUserManager().add(
+                                            actualUser
+                                    );
+                                    onComplete.accept(actualUser);
+                                }
                         );
 
                     } catch (final SQLException exception) {
@@ -96,7 +101,9 @@ public class Database {
                     }
                 });
 
-        this.plugin.getUserManager().add(new User(uuid, PlayerArmor.empty(), armorStandId));
+        final User user = new User(uuid, PlayerArmor.empty(), armorStandId);
+        this.plugin.getUserManager().add(user);
+        onComplete.accept(user);
 
     }
 
