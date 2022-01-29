@@ -1,14 +1,9 @@
 package io.github.fisher2911.hmccosmetics.database;
 
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
-import io.github.fisher2911.hmccosmetics.cosmetic.CosmeticManager;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
 import io.github.fisher2911.hmccosmetics.user.User;
-import org.bukkit.Bukkit;
-import org.bukkit.Color;
-import org.bukkit.configuration.file.YamlConfiguration;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -21,19 +16,19 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 public class DatabaseConverter {
 
+    private static final int CURRENT_VERSION = 2;
+    private static final String FILE_NAME = "info.yml";
     private final HMCCosmetics plugin;
     private final Database database;
-    private static final int CURRENT_VERSION = 2;
 
     public DatabaseConverter(final HMCCosmetics plugin, final Database database) {
         this.database = database;
         this.plugin = plugin;
     }
-
-    private static final String FILE_NAME = "info.yml";
 
     public void convert() {
         final File folder = new File(this.plugin.getDataFolder(), "database");
@@ -65,7 +60,9 @@ public class DatabaseConverter {
 
         this.database.createTables();
 
-        for (final User user : users) database.saveUser(user);
+        for (final User user : users) {
+            database.saveUser(user);
+        }
     }
 
     private void convert(final int version, final Consumer<User> consumer) {
@@ -77,12 +74,14 @@ public class DatabaseConverter {
     private void convertVersionOne(final Consumer<User> consumer) {
         final String query = "SELECT * from user";
 
-        try (final PreparedStatement statement = this.database.getDataSource().getReadOnlyConnection("user").
+        try (final PreparedStatement statement = this.database.getDataSource()
+                .getReadOnlyConnection("user").
                 getUnderlyingConnection().prepareStatement(query)) {
             final ResultSet results = statement.executeQuery();
             try {
 
-                final Map<String, ArmorItem> armorItems = new ConcurrentHashMap<>(this.plugin.getCosmeticManager().getArmorItemMap());
+                final Map<String, ArmorItem> armorItems = new ConcurrentHashMap<>(
+                        this.plugin.getCosmeticManager().getArmorItemMap());
 
                 while (results.next()) {
                     final PlayerArmor playerArmor = PlayerArmor.empty();
@@ -97,7 +96,9 @@ public class DatabaseConverter {
 
                     final ArmorItem backpack = armorItems.get(backpackId);
                     final ArmorItem hat = armorItems.get(hatId);
-                    if (backpack != null) playerArmor.setItem(backpack);
+                    if (backpack != null) {
+                        playerArmor.setItem(backpack);
+                    }
                     if (hat != null) {
                         hat.setDye(hatDye);
                         playerArmor.setItem(hat);
@@ -112,11 +113,13 @@ public class DatabaseConverter {
             exception.printStackTrace();
         }
 
-        try (final PreparedStatement dropStatement = this.database.getDataSource().getReadWriteConnection("user").
+        try (final PreparedStatement dropStatement = this.database.getDataSource()
+                .getReadWriteConnection("user").
                 getUnderlyingConnection().prepareStatement("DROP TABLE user")) {
             dropStatement.executeUpdate();
         } catch (final SQLException exception) {
             exception.printStackTrace();
         }
     }
+
 }

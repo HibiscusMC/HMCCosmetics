@@ -16,14 +16,6 @@ import io.github.fisher2911.hmccosmetics.message.MessageHandler;
 import io.github.fisher2911.hmccosmetics.message.Placeholder;
 import io.github.fisher2911.hmccosmetics.packet.PacketManager;
 import io.github.fisher2911.hmccosmetics.util.builder.ItemBuilder;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.EntityEquipment;
-import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitTask;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -31,6 +23,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.EntityEquipment;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitTask;
 
 public class UserManager {
 
@@ -66,7 +65,9 @@ public class UserManager {
     public void remove(final UUID uuid) {
         final User user = this.userMap.remove(uuid);
 
-        if (user == null) return;
+        if (user == null) {
+            return;
+        }
 
         this.armorStandIdMap.remove(user.getArmorStandId());
 
@@ -105,7 +106,6 @@ public class UserManager {
 
     public void updateCosmetics(final UUID uuid, final boolean ignoreRestrictions) {
         this.get(uuid).ifPresent(user -> this.updateCosmetics(user, ignoreRestrictions));
-
     }
 
     public void updateCosmetics(final UUID uuid) {
@@ -122,7 +122,8 @@ public class UserManager {
         }
     }
 
-    public void updateCosmetics(final User user, final boolean ignoreRestrictions, final Player other) {
+    public void updateCosmetics(final User user, final boolean ignoreRestrictions,
+            final Player other) {
         final Player player = user.getPlayer();
 
         if (player == null) {
@@ -134,10 +135,15 @@ public class UserManager {
         final List<Pair<EnumWrappers.ItemSlot, ItemStack>> equipmentList = new ArrayList<>();
 
         equipmentList.add(
-                new Pair<>(EnumWrappers.ItemSlot.HEAD, this.getCosmeticItem(player, playerArmor.getHat(), EquipmentSlot.HEAD, ignoreRestrictions))
+                new Pair<>(EnumWrappers.ItemSlot.HEAD,
+                        this.getCosmeticItem(player, playerArmor.getHat(), EquipmentSlot.HEAD,
+                                ignoreRestrictions))
         );
         equipmentList.add(
-                new Pair<>(EnumWrappers.ItemSlot.OFFHAND, this.getCosmeticItem(player, playerArmor.getOffHand(), EquipmentSlot.OFF_HAND, ignoreRestrictions))
+                new Pair<>(EnumWrappers.ItemSlot.OFFHAND,
+                        this.getCosmeticItem(player, playerArmor.getOffHand(),
+                                EquipmentSlot.OFF_HAND,
+                                ignoreRestrictions))
         );
 
         PacketManager.sendPacket(
@@ -168,14 +174,19 @@ public class UserManager {
         final boolean isAir = itemStack.getType().isAir();
         final boolean requireEmpty = cosmeticSettings.requireEmpty(slot);
 
-        if (!isAir && (!requireEmpty || ignoreRestrictions)) return itemStack;
+        if (!isAir && (!requireEmpty || ignoreRestrictions)) {
+            return itemStack;
+        }
 
-
-        if (equipment == null) return itemStack;
+        if (equipment == null) {
+            return itemStack;
+        }
 
         final ItemStack equipped = equipment.getItem(slot);
 
-        if (equipped != null && equipped.getType() != Material.AIR) return equipped;
+        if (equipped != null && equipped.getType() != Material.AIR) {
+            return equipped;
+        }
 
         return itemStack;
     }
@@ -184,9 +195,12 @@ public class UserManager {
         ArmorItem previous = user.getPlayerArmor().getItem(armorItem.getType());
 
         final CosmeticChangeEvent event =
-                new CosmeticChangeEvent(new CosmeticItem(armorItem.copy()), new CosmeticItem(previous.copy()), user);
+                new CosmeticChangeEvent(new CosmeticItem(armorItem.copy()),
+                        new CosmeticItem(previous.copy()), user);
         Bukkit.getPluginManager().callEvent(event);
-        if (event.isCancelled()) return;
+        if (event.isCancelled()) {
+            return;
+        }
 
         user.setItem(event.getCosmeticItem().getArmorItem());
         Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () -> {
@@ -254,4 +268,5 @@ public class UserManager {
     public void cancelTeleportTask() {
         this.teleportTask.cancel();
     }
+
 }

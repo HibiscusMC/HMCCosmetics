@@ -6,7 +6,9 @@ import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.Pair;
-
+import java.lang.reflect.InvocationTargetException;
+import java.util.List;
+import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.libs.it.unimi.dsi.fastutil.ints.IntArrayList;
@@ -14,13 +16,10 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.List;
-import java.util.UUID;
-
 public class PacketManager {
 
-    public static PacketContainer getEntitySpawnPacket(final Location location, final int entityId, final EntityType entityType) {
+    public static PacketContainer getEntitySpawnPacket(final Location location, final int entityId,
+            final EntityType entityType) {
         final PacketContainer packet = new PacketContainer(PacketType.Play.Server.SPAWN_ENTITY);
 
         // Entity ID
@@ -45,9 +44,10 @@ public class PacketManager {
     public static PacketContainer getEquipmentPacket(
             final List<Pair<EnumWrappers.ItemSlot, ItemStack>> equipmentList,
             final int entityId
-            ) {
+    ) {
 
-        final PacketContainer armorPacket = new PacketContainer(PacketType.Play.Server.ENTITY_EQUIPMENT);
+        final PacketContainer armorPacket = new PacketContainer(
+                PacketType.Play.Server.ENTITY_EQUIPMENT);
         armorPacket.getIntegers().write(0, entityId);
         armorPacket.getSlotStackPairLists().write(0, equipmentList);
 
@@ -55,7 +55,8 @@ public class PacketManager {
     }
 
     public static PacketContainer getRotationPacket(final int entityId, final Location location) {
-        final PacketContainer rotationPacket = new PacketContainer(PacketType.Play.Server.ENTITY_HEAD_ROTATION);
+        final PacketContainer rotationPacket = new PacketContainer(
+                PacketType.Play.Server.ENTITY_HEAD_ROTATION);
 
         rotationPacket.getIntegers().write(0, entityId);
         rotationPacket.getBytes().write(0, (byte) (location.getYaw() * 256 / 360));
@@ -74,7 +75,8 @@ public class PacketManager {
     }
 
     public static PacketContainer getEntityDestroyPacket(final int entityId) {
-        final PacketContainer destroyPacket = new PacketContainer(PacketType.Play.Server.ENTITY_DESTROY);
+        final PacketContainer destroyPacket = new PacketContainer(
+                PacketType.Play.Server.ENTITY_DESTROY);
         destroyPacket.getModifier().write(0, new IntArrayList(new int[]{entityId}));
 
         return destroyPacket;
@@ -96,4 +98,5 @@ public class PacketManager {
             sendPacket(player, packets);
         }
     }
+
 }

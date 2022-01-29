@@ -5,15 +5,14 @@ import io.github.fisher2911.hmccosmetics.hook.item.ItemHook;
 import io.github.fisher2911.hmccosmetics.hook.item.ItemHooks;
 import io.github.fisher2911.hmccosmetics.hook.item.ItemsAdderHook;
 import io.github.fisher2911.hmccosmetics.hook.item.OraxenHook;
-import org.bukkit.Bukkit;
-import org.bukkit.event.Listener;
-import org.bukkit.plugin.PluginManager;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import org.bukkit.Bukkit;
+import org.bukkit.event.Listener;
+import org.bukkit.plugin.PluginManager;
+import org.jetbrains.annotations.Nullable;
 
 public class HookManager {
 
@@ -23,12 +22,7 @@ public class HookManager {
         INSTANCE = new HookManager(HMCCosmetics.getPlugin(HMCCosmetics.class));
     }
 
-    public static HookManager getInstance() {
-        return INSTANCE;
-    }
-
     private final HMCCosmetics plugin;
-
     private final ItemHooks itemHooks;
     private final PAPIHook papiHook;
     private final Set<Class<? extends Hook>> registeredHooks;
@@ -49,7 +43,9 @@ public class HookManager {
         final Map<String, ItemHook> itemHookMap = new HashMap<>();
         final OraxenHook oraxenHook = new OraxenHook();
         final ItemsAdderHook itemsAdderHook = new ItemsAdderHook();
-        if (pluginManager.getPlugin("Oraxen") != null) itemHookMap.put(oraxenHook.getIdentifier(), oraxenHook);
+        if (pluginManager.getPlugin("Oraxen") != null) {
+            itemHookMap.put(oraxenHook.getIdentifier(), oraxenHook);
+        }
         if (pluginManager.getPlugin("ItemsAdder") != null) {
             itemHookMap.put(itemsAdderHook.getIdentifier(), itemsAdderHook);
             this.listeners.add(itemsAdderHook);
@@ -57,6 +53,10 @@ public class HookManager {
 
         this.itemHooks = new ItemHooks(itemHookMap);
         itemHookMap.values().forEach(hook -> this.registerHook(hook.getClass()));
+    }
+
+    public static HookManager getInstance() {
+        return INSTANCE;
     }
 
     protected void registerHook(final Class<? extends Hook> hook) {
@@ -81,4 +81,5 @@ public class HookManager {
     public ItemHooks getItemHooks() {
         return itemHooks;
     }
+
 }

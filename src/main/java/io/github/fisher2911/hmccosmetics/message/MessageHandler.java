@@ -1,21 +1,21 @@
 package io.github.fisher2911.hmccosmetics.message;
 
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
-import io.github.fisher2911.hmccosmetics.util.StringUtils;
 import io.github.fisher2911.hmccosmetics.util.Utils;
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.title.Title;
-import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
-
 import java.io.File;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
+import net.kyori.adventure.title.Title;
+import net.md_5.bungee.api.ChatMessageType;
+import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 
 public class MessageHandler {
 
@@ -40,23 +40,24 @@ public class MessageHandler {
     }
 
     /**
-     * @param sender       receiver of message
-     * @param key          message key
+     * @param sender receiver of message
+     * @param key message key
      * @param placeholders placeholders
      */
 
-    public void sendMessage(final CommandSender sender, final Message key, final Map<String, String> placeholders) {
+    public void sendMessage(final CommandSender sender, final Message key,
+            final Map<String, String> placeholders) {
         final String message = this.getPapiPlaceholders(
                 sender,
                 Placeholder.applyPlaceholders(this.getMessage(key), placeholders)
         );
-        final Component component = Adventure.MINI_MESSAGE.parse(message);
-        this.adventure.sender(sender).sendMessage(component);
+        final Component component = Adventure.MINI_MESSAGE.deserialize(message);
+        sender.spigot().sendMessage(BungeeComponentSerializer.get().serialize(component));
     }
 
     /**
      * @param sender receiver of message
-     * @param key    message key
+     * @param key message key
      */
 
     public void sendMessage(final CommandSender sender, final Message key) {
@@ -64,23 +65,24 @@ public class MessageHandler {
     }
 
     /**
-     * @param player       receiver of message
-     * @param key          message key
+     * @param player receiver of message
+     * @param key message key
      * @param placeholders placeholders
      */
 
-    public void sendActionBar(final Player player, final Message key, final Map<String, String> placeholders) {
+    public void sendActionBar(final Player player, final Message key,
+            final Map<String, String> placeholders) {
         final String message = this.getPapiPlaceholders(
                 player,
                 Placeholder.applyPlaceholders(this.getMessage(key), placeholders)
         );
-        Component component = Adventure.MINI_MESSAGE.parse(message);
-        this.adventure.player(player).sendActionBar(component);
+        Component component = Adventure.MINI_MESSAGE.deserialize(message);
+        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, BungeeComponentSerializer.get().serialize(component));
     }
 
     /**
      * @param player receiver of message
-     * @param key    message key
+     * @param key message key
      */
 
     public void sendActionBar(final Player player, final Message key) {
@@ -88,23 +90,24 @@ public class MessageHandler {
     }
 
     /**
-     * @param player       receiver of message
-     * @param key          message key
+     * @param player receiver of message
+     * @param key message key
      * @param placeholders placeholders
      */
 
-    public void sendTitle(final Player player, final Message key, final Map<String, String> placeholders) {
+    public void sendTitle(final Player player, final Message key,
+            final Map<String, String> placeholders) {
         final String message = this.getPapiPlaceholders(
                 player,
                 Placeholder.applyPlaceholders(this.getMessage(key), placeholders)
         );
-        Component component = Adventure.MINI_MESSAGE.parse(message);
+        Component component = Adventure.MINI_MESSAGE.deserialize(message);
         this.adventure.player(player).showTitle(Title.title(component, Component.empty()));
     }
 
     /**
      * @param player receiver of message
-     * @param key    message key
+     * @param key message key
      */
 
     public void sendTitle(final Player player, final Message key) {
@@ -144,12 +147,14 @@ public class MessageHandler {
         for (final String key : config.getKeys(false)) {
             final String message = Utils.replaceIfNull(config.getString(key), "", value -> {
                 if (value == null) {
-                    this.logger.warning(String.format(ErrorMessages.ITEM_NOT_FOUND, "message", fileName));
+                    this.logger.warning(
+                            String.format(ErrorMessages.ITEM_NOT_FOUND, "message", fileName));
                 }
             }).replace(Placeholder.PREFIX, prefix);
 
             final Message.Type messageType = Utils.stringToEnum(
-                    Utils.replaceIfNull(config.getString("type"), ""), Message.Type.class, Message.Type.MESSAGE
+                    Utils.replaceIfNull(config.getString("type"), ""), Message.Type.class,
+                    Message.Type.MESSAGE
             );
 
             this.messageMap.put(key, new Message(key, message, messageType));
@@ -157,10 +162,10 @@ public class MessageHandler {
     }
 
     private String getPapiPlaceholders(final CommandSender sender, final String message) {
-            if (sender instanceof final Player player) {
-                return Placeholder.applyPapiPlaceholders(player, message);
-            }
-            return Placeholder.applyPapiPlaceholders(null, message);
+        if (sender instanceof final Player player) {
+            return Placeholder.applyPapiPlaceholders(player, message);
         }
+        return Placeholder.applyPapiPlaceholders(null, message);
+    }
 
 }

@@ -10,6 +10,8 @@ import io.github.fisher2911.hmccosmetics.message.Placeholder;
 import io.github.fisher2911.hmccosmetics.user.User;
 import io.github.fisher2911.hmccosmetics.user.UserManager;
 import io.github.fisher2911.hmccosmetics.util.StringUtils;
+import java.util.Map;
+import java.util.Optional;
 import me.mattstudios.mf.annotations.Command;
 import me.mattstudios.mf.annotations.Completion;
 import me.mattstudios.mf.annotations.Default;
@@ -20,9 +22,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import java.util.Map;
-import java.util.Optional;
 
 @Command("cosmetics")
 public class CosmeticsCommand extends CommandBase {
@@ -62,7 +61,8 @@ public class CosmeticsCommand extends CommandBase {
 
     @SubCommand("dye")
     @Permission(io.github.fisher2911.hmccosmetics.message.Permission.DYE_COMMAND)
-    public void dyeArmor(final Player player, @Completion("#types") String typeString, final @me.mattstudios.mf.annotations.Optional String dyeColor) {
+    public void dyeArmor(final Player player, @Completion("#types") String typeString,
+            final @me.mattstudios.mf.annotations.Optional String dyeColor) {
 
         final Optional<User> optionalUser = this.userManager.get(player.getUniqueId());
 
@@ -113,7 +113,8 @@ public class CosmeticsCommand extends CommandBase {
 
     @SubCommand("add")
     @Permission(io.github.fisher2911.hmccosmetics.message.Permission.SET_COSMETIC_COMMAND)
-    public void setCommand(final CommandSender sender, @Completion("#players") final Player player, @Completion("#ids") final String id) {
+    public void setCommand(final CommandSender sender, @Completion("#players") final Player player,
+            @Completion("#ids") final String id) {
         final Optional<User> userOptional = this.userManager.get(player.getUniqueId());
 
         if (userOptional.isEmpty()) {
@@ -153,7 +154,8 @@ public class CosmeticsCommand extends CommandBase {
 
     @SubCommand("remove")
     @Permission(io.github.fisher2911.hmccosmetics.message.Permission.SET_COSMETIC_COMMAND)
-    public void removeCommand(final CommandSender sender, @Completion("#players") final Player player, @Completion("#types") String typeString) {
+    public void removeCommand(final CommandSender sender,
+            @Completion("#players") final Player player, @Completion("#types") String typeString) {
         final Optional<User> userOptional = this.userManager.get(player.getUniqueId());
 
         if (userOptional.isEmpty()) {
@@ -169,13 +171,8 @@ public class CosmeticsCommand extends CommandBase {
         try {
             final ArmorItem.Type type = ArmorItem.Type.valueOf(typeString.toUpperCase());
 
-            final Message setMessage = Messages.getRemovedMessage(type);
             final Message setOtherMessage = Messages.getSetOtherMessage(type);
             this.userManager.removeItem(user, type);
-            this.messageHandler.sendMessage(
-                    player,
-                    setMessage
-            );
             this.messageHandler.sendMessage(
                     sender,
                     setOtherMessage,

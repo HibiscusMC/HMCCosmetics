@@ -4,9 +4,8 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import io.github.fisher2911.hmccosmetics.cosmetic.CosmeticManager;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.Objects;
+import org.jetbrains.annotations.Nullable;
 
 @DatabaseTable(tableName = "armor_items")
 public class ArmorItemDAO {
@@ -33,20 +32,23 @@ public class ArmorItemDAO {
         this.rgbDye = rgbDye;
     }
 
+    public ArmorItemDAO() {
+    }
+
     public static ArmorItemDAO fromArmorItem(final ArmorItem armorItem) {
-        return new ArmorItemDAO(armorItem.getId(), armorItem.getType().toString(), armorItem.getDye());
+        return new ArmorItemDAO(armorItem.getId(), armorItem.getType().toString(),
+                armorItem.getDye());
     }
 
     @Nullable
     public ArmorItem toArmorItem(final CosmeticManager cosmeticManager) {
         final ArmorItem armorItem = cosmeticManager.getArmorItem(this.id);
-        if (armorItem == null) return null;
+        if (armorItem == null) {
+            return null;
+        }
         final ArmorItem copy = new ArmorItem(armorItem);
         copy.setDye(this.rgbDye);
         return copy;
-    }
-
-    public ArmorItemDAO() {
     }
 
     public String getUuid() {
@@ -59,6 +61,7 @@ public class ArmorItemDAO {
 
     /**
      * ORMLite does not allow more than one primary key (WHYYYY???????????)
+     *
      * @return
      */
     public String getArtificialId() {
@@ -91,10 +94,15 @@ public class ArmorItemDAO {
 
     @Override
     public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         final ArmorItemDAO that = (ArmorItemDAO) o;
-        return Objects.equals(getUuid(), that.getUuid()) && Objects.equals(getType(), that.getType());
+        return Objects.equals(getUuid(), that.getUuid()) && Objects.equals(getType(),
+                that.getType());
     }
 
     @Override
@@ -111,4 +119,5 @@ public class ArmorItemDAO {
                 ", rgbDye=" + rgbDye +
                 '}';
     }
+
 }

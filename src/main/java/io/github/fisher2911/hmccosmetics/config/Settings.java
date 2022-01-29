@@ -1,7 +1,6 @@
 package io.github.fisher2911.hmccosmetics.config;
 
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
-import org.bukkit.Bukkit;
 
 public class Settings {
 
@@ -22,4 +21,5 @@ public class Settings {
     public CosmeticSettings getCosmeticSettings() {
         return settings;
     }
+
 }

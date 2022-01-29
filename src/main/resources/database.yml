@@ -1,4 +1,4 @@
- # SQLite or MySQL (case-insensitive)
+# SQLite or MySQL (case-insensitive)
 type: "sqlite"
 # The rest of these are only required for MySQL
 name: "name"

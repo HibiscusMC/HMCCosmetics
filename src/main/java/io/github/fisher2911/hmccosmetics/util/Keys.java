@@ -8,12 +8,7 @@ import org.bukkit.persistence.PersistentDataType;
 
 public class Keys {
 
-    static HMCCosmetics plugin;
-
-    static {
-        plugin = HMCCosmetics.getPlugin(HMCCosmetics.class);
-    }
-
+    static HMCCosmetics plugin = HMCCosmetics.getPlugin(HMCCosmetics.class);
     public static final NamespacedKey ITEM_KEY = new NamespacedKey(plugin, "cosmetic");
     public static final NamespacedKey ARMOR_STAND_KEY = new NamespacedKey(plugin, "armor-stand");
 

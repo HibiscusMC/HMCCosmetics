@@ -34,17 +34,19 @@ public class Messages {
     public static final Message ITEM_NOT_FOUND =
             new Message("item-not-found", ChatColor.RED + "That item could not be found!");
     public static final Message HELP_COMMAND =
-            new Message("help-command", "<#6D9DC5><st>                    </st> <gradient:#40B7D6:#6D9DC5>HMCCosmetics - Help</gradient><#6D9DC5> <st>                    </st>\n" +
-                    "\n" +
-                    "\n" +
-                    "<#5AE4B5>• <#40B7D6>/cosmetics - <#6D9DC5>Opens cosmetics GUI.\n" +
-                    "\n" +
-                    "<#5AE4B5>• <#40B7D6>/cosmetics dye <gray><BACKPACK/HAT></gray> - <#6D9DC5>Opens dye menu for specified cosmetic.\n" +
-                    "\n" +
-                    "<#5AE4B5>• <#40B7D6>/cosmetics help - <#6D9DC5>Opens this menu.\n" +
-                    "\n" +
-                    "\n" +
-                    "<st>                                                                   </st>");
+            new Message("help-command",
+                    """
+                            <#6D9DC5><st>                    </st> <gradient:#40B7D6:#6D9DC5>HMCCosmetics - Help</gradient><#6D9DC5> <st>                    </st>
+
+
+                            <#5AE4B5>• <#40B7D6>/cosmetics - <#6D9DC5>Opens cosmetics GUI.
+
+                            <#5AE4B5>• <#40B7D6>/cosmetics dye <gray><BACKPACK/HAT></gray> - <#6D9DC5>Opens dye menu for specified cosmetic.
+
+                            <#5AE4B5>• <#40B7D6>/cosmetics help - <#6D9DC5>Opens this menu.
+
+
+                            <st>                                                                   </st>""");
 
     public static final Message SET_OTHER_BACKPACK = new Message(
             "set-other-backpack", ChatColor.GREEN + "You have set the backpack of " +

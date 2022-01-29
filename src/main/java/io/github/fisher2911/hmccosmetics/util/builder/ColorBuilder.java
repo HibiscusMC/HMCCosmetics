@@ -7,13 +7,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 
-import java.util.EnumSet;
-import java.util.Set;
-
-public class ColorBuilder extends ItemBuilder{
+public class ColorBuilder extends ItemBuilder {
 
     /**
-     *
      * @param material ItemStack material
      */
 
@@ -22,7 +18,6 @@ public class ColorBuilder extends ItemBuilder{
     }
 
     /**
-     *
      * @param itemStack ItemStack
      */
 
@@ -31,7 +26,6 @@ public class ColorBuilder extends ItemBuilder{
     }
 
     /**
-     *
      * @param material ItemStack material
      * @return this
      * @throws IllegalArgumentException thrown if itemStack's type can not change color
@@ -45,7 +39,6 @@ public class ColorBuilder extends ItemBuilder{
     }
 
     /**
-     *
      * @param itemStack ItemStack
      * @return this
      * @throws IllegalArgumentException thrown if itemStack's type can not change color
@@ -59,8 +52,18 @@ public class ColorBuilder extends ItemBuilder{
         return new ColorBuilder(itemStack);
     }
 
+    public static boolean canBeColored(final Material material) {
+        return canBeColored(new ItemStack(material));
+    }
+
+    public static boolean canBeColored(final ItemStack itemStack) {
+        final ItemMeta itemMeta = itemStack.getItemMeta();
+
+        return (itemMeta instanceof LeatherArmorMeta ||
+                itemMeta instanceof PotionMeta);
+    }
+
     /**
-     *
      * @param color armor color
      * @return this
      */
@@ -75,14 +78,4 @@ public class ColorBuilder extends ItemBuilder{
         return this;
     }
 
-    public static boolean canBeColored(final Material material) {
-        return canBeColored(new ItemStack(material));
-    }
-
-    public static boolean canBeColored(final ItemStack itemStack) {
-        final ItemMeta itemMeta = itemStack.getItemMeta();
-
-        return (itemMeta instanceof LeatherArmorMeta ||
-                itemMeta instanceof PotionMeta);
-    }
 }

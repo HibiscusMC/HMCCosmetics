@@ -8,10 +8,11 @@ import io.github.fisher2911.hmccosmetics.user.User;
  */
 public class CosmeticChangeEvent extends CosmeticItemEvent {
 
-    private CosmeticItem removed;
     private final User user;
+    private CosmeticItem removed;
 
-    public CosmeticChangeEvent(final CosmeticItem cosmeticItem, final CosmeticItem removed, final User user) {
+    public CosmeticChangeEvent(final CosmeticItem cosmeticItem, final CosmeticItem removed,
+            final User user) {
         super(cosmeticItem);
         this.removed = removed;
         this.user = user;
@@ -28,4 +29,5 @@ public class CosmeticChangeEvent extends CosmeticItemEvent {
     public void setRemoved(final CosmeticItem removed) {
         this.removed = removed;
     }
+
 }

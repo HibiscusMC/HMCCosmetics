@@ -8,34 +8,20 @@ import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.gui.ColorItem;
 import io.github.fisher2911.hmccosmetics.gui.DyeSelectorGui;
 import io.github.fisher2911.hmccosmetics.message.Adventure;
-import io.github.fisher2911.hmccosmetics.util.StringUtils;
-import io.th0rgal.oraxen.utils.armorequipevent.ArmorType;
+import java.lang.reflect.Type;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import org.bukkit.Color;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 import org.spongepowered.configurate.serialize.TypeSerializer;
 
-import java.lang.reflect.Type;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Map;
-
 public class DyeGuiSerializer implements TypeSerializer<DyeSelectorGui> {
 
-    private static final HMCCosmetics plugin;
-
-    static {
-        plugin = HMCCosmetics.getPlugin(HMCCosmetics.class);
-    }
-
     public static final DyeGuiSerializer INSTANCE = new DyeGuiSerializer();
-
-    private DyeGuiSerializer() {}
-
+    private static final HMCCosmetics plugin;
     private static final String TITLE = "title";
     private static final String ROWS = "rows";
     private static final String ITEMS = "items";
@@ -45,20 +31,29 @@ public class DyeGuiSerializer implements TypeSerializer<DyeSelectorGui> {
     private static final String GREEN = "green";
     private static final String BLUE = "blue";
 
-    private ConfigurationNode nonVirtualNode(final ConfigurationNode source, final Object... path) throws SerializationException {
+    static {
+        plugin = HMCCosmetics.getPlugin(HMCCosmetics.class);
+    }
+
+    private DyeGuiSerializer() {
+    }
+
+    private ConfigurationNode nonVirtualNode(final ConfigurationNode source, final Object... path)
+            throws SerializationException {
         if (!source.hasChild(path)) {
-            throw new SerializationException("Required field " + Arrays.toString(path) + " was not present in node");
+            throw new SerializationException(
+                    "Required field " + Arrays.toString(path) + " was not present in node");
         }
         return source.node(path);
     }
 
     @Override
-    public DyeSelectorGui deserialize(final Type type, final ConfigurationNode source) throws SerializationException {
+    public DyeSelectorGui deserialize(final Type type, final ConfigurationNode source)
+            throws SerializationException {
         final ConfigurationNode titleNode = this.nonVirtualNode(source, TITLE);
         final ConfigurationNode rowsNode = this.nonVirtualNode(source, ROWS);
         final ConfigurationNode itemsNode = source.node(ITEMS);
         final ConfigurationNode cosmeticSlotsNode = source.node(COSMETICS_SLOTS);
-
 
         final Map<Integer, GuiItem> guiItemMap = new HashMap<>();
 
@@ -88,7 +83,8 @@ public class DyeGuiSerializer implements TypeSerializer<DyeSelectorGui> {
             final int green = colorNode.node(GREEN).getInt();
             final int blue = colorNode.node(BLUE).getInt();
 
-            guiItemMap.put(slot, new ColorItem(guiItem.getItemStack(), Color.fromRGB(red, green, blue)));
+            guiItemMap.put(slot,
+                    new ColorItem(guiItem.getItemStack(), Color.fromRGB(red, green, blue)));
         }
 
         final BiMap<Integer, ArmorItem.Type> cosmeticSlots = HashBiMap.create();
@@ -114,12 +110,14 @@ public class DyeGuiSerializer implements TypeSerializer<DyeSelectorGui> {
 
         String title = titleNode.getString();
 
-        if (title == null) title = "";
+        if (title == null) {
+            title = "";
+        }
 
         return new DyeSelectorGui(
                 plugin,
                 Adventure.SERIALIZER.serialize(
-                        Adventure.MINI_MESSAGE.parse(title)),
+                        Adventure.MINI_MESSAGE.deserialize(title)),
                 rowsNode.getInt(),
                 guiItemMap,
                 cosmeticSlots,
@@ -127,7 +125,9 @@ public class DyeGuiSerializer implements TypeSerializer<DyeSelectorGui> {
     }
 
     @Override
-    public void serialize(final Type type, @Nullable final DyeSelectorGui obj, final ConfigurationNode node) throws SerializationException {
+    public void serialize(final Type type, @Nullable final DyeSelectorGui obj,
+            final ConfigurationNode node) throws SerializationException {
 
     }
+
 }

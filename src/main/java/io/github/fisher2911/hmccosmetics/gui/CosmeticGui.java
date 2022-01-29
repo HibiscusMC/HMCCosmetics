@@ -1,6 +1,5 @@
 package io.github.fisher2911.hmccosmetics.gui;
 
-import com.comphenix.net.bytebuddy.jar.asm.Type;
 import dev.triumphteam.gui.components.GuiAction;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
@@ -11,21 +10,20 @@ import io.github.fisher2911.hmccosmetics.message.MessageHandler;
 import io.github.fisher2911.hmccosmetics.message.Messages;
 import io.github.fisher2911.hmccosmetics.message.Placeholder;
 import io.github.fisher2911.hmccosmetics.user.User;
-import io.github.fisher2911.hmccosmetics.util.StringUtils;
 import io.github.fisher2911.hmccosmetics.util.builder.ItemBuilder;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-
 public class CosmeticGui {
 
+    private static final float COOL_DOWN = 0.5f;
     protected final HMCCosmetics plugin;
     protected final MessageHandler messageHandler;
     protected final String title;
@@ -33,10 +31,7 @@ public class CosmeticGui {
     protected final Map<Integer, ItemStack> itemStackMap;
     protected final Map<Integer, GuiItem> guiItemMap;
     protected Gui gui;
-
     private long lastClicked;
-
-    private static final float COOL_DOWN = 0.5f;
 
     public CosmeticGui(
             final HMCCosmetics plugin,
@@ -53,7 +48,6 @@ public class CosmeticGui {
     }
 
     private void setItems(final User user) {
-
         final Player player = user.getPlayer();
 
         if (player == null) {
@@ -64,7 +58,9 @@ public class CosmeticGui {
             final int slot = entry.getKey();
 
             final GuiItem guiItem = this.getGuiItem(user, player, slot);
-            if (guiItem == null) continue;
+            if (guiItem == null) {
+                continue;
+            }
 
             this.gui.setItem(slot, guiItem);
         }
@@ -78,7 +74,9 @@ public class CosmeticGui {
             final GuiAction<InventoryClickEvent> actionIfSet) {
 
         final long current = System.currentTimeMillis();
-        if ((current - this.lastClicked) / 1000. < COOL_DOWN) return;
+        if ((current - this.lastClicked) / 1000. < COOL_DOWN) {
+            return;
+        }
         this.lastClicked = current;
 
         if (!(human instanceof final Player player)) {
@@ -102,13 +100,16 @@ public class CosmeticGui {
 
         final GuiItem guiItem = this.getGuiItem(user, player, slot);
 
-        if (guiItem == null) return;
+        if (guiItem == null) {
+            return;
+        }
 
         this.gui.updateItem(slot, guiItem);
     }
 
     public void open(final HumanEntity humanEntity) {
-        final Optional<User> optionalUser = this.plugin.getUserManager().get(humanEntity.getUniqueId());
+        final Optional<User> optionalUser = this.plugin.getUserManager()
+                .get(humanEntity.getUniqueId());
 
         if (optionalUser.isEmpty()) {
             return;
@@ -117,7 +118,8 @@ public class CosmeticGui {
         final User user = optionalUser.get();
 
         this.gui = Gui.gui().
-                title(Adventure.MINI_MESSAGE.parse(Placeholder.applyPapiPlaceholders(user.getPlayer(), this.title))).
+                title(Adventure.MINI_MESSAGE.deserialize(
+                        Placeholder.applyPapiPlaceholders(user.getPlayer(), this.title))).
                 rows(this.rows).
                 create();
 
@@ -132,15 +134,19 @@ public class CosmeticGui {
     private GuiItem getGuiItem(final User user, final Player player, final int slot) {
         final GuiItem guiItem = this.guiItemMap.get(slot);
 
-        if (guiItem == null) return null;
+        if (guiItem == null) {
+            return null;
+        }
 
         final ItemStack itemStack = this.itemStackMap.get(slot);
 
-        if (itemStack == null) return null;
+        if (itemStack == null) {
+            return null;
+        }
 
         if (guiItem instanceof final ArmorItem armorItem) {
-
-            final String permission = armorItem.getPermission() == null ? "" : armorItem.getPermission();
+            final String permission =
+                    armorItem.getPermission() == null ? "" : armorItem.getPermission();
 
             final boolean hasPermission = permission.isBlank() || player.hasPermission(permission);
 
@@ -155,9 +161,12 @@ public class CosmeticGui {
                             return;
                         }
 
-                        final ArmorItem cosmeticItem = this.plugin.getCosmeticManager().getArmorItem(armorItem.getId());
+                        final ArmorItem cosmeticItem = this.plugin.getCosmeticManager()
+                                .getArmorItem(armorItem.getId());
 
-                        if (cosmeticItem == null) return;
+                        if (cosmeticItem == null) {
+                            return;
+                        }
 
                         this.setUserArmor(player, user, cosmeticItem, event, armorItem.getAction());
                     }
@@ -171,7 +180,8 @@ public class CosmeticGui {
         return guiItem;
     }
 
-    protected ItemStack applyPlaceholders(final User user, final Player player, final ArmorItem armorItem, final boolean hasPermission) {
+    protected ItemStack applyPlaceholders(final User user, final Player player,
+            final ArmorItem armorItem, final boolean hasPermission) {
         final Map<String, String> placeholders = new HashMap<>();
 
         final PlayerArmor playerArmor = user.getPlayerArmor();
@@ -214,4 +224,5 @@ public class CosmeticGui {
                 new HashMap<>(this.guiItemMap)
         );
     }
+
 }

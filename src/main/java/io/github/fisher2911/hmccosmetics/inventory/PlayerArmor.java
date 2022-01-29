@@ -1,9 +1,7 @@
 package io.github.fisher2911.hmccosmetics.inventory;
 
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
-
 import java.util.Collection;
-import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,16 +17,16 @@ public class PlayerArmor {
         this.armorItems.put(offHand.getType(), offHand);
     }
 
+    public PlayerArmor(final Map<ArmorItem.Type, ArmorItem> armorItems) {
+        this.armorItems = armorItems;
+    }
+
     public static PlayerArmor empty() {
         return new PlayerArmor(
                 ArmorItem.empty(ArmorItem.Type.HAT),
                 ArmorItem.empty(ArmorItem.Type.BACKPACK),
                 ArmorItem.empty(ArmorItem.Type.OFF_HAND)
         );
-    }
-
-    public PlayerArmor(final Map<ArmorItem.Type, ArmorItem> armorItems) {
-        this.armorItems = armorItems;
     }
 
     public ArmorItem getHat() {
@@ -63,4 +61,5 @@ public class PlayerArmor {
     public PlayerArmor copy() {
         return new PlayerArmor(new HashMap<>(this.armorItems));
     }
+
 }

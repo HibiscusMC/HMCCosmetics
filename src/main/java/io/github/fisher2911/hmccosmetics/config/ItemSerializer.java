@@ -10,7 +10,14 @@ import io.github.fisher2911.hmccosmetics.util.Utils;
 import io.github.fisher2911.hmccosmetics.util.builder.ColorBuilder;
 import io.github.fisher2911.hmccosmetics.util.builder.ItemBuilder;
 import io.github.fisher2911.hmccosmetics.util.builder.SkullBuilder;
-import net.kyori.adventure.text.Component;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -25,25 +32,10 @@ import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 import org.spongepowered.configurate.serialize.TypeSerializer;
 
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 public class ItemSerializer implements TypeSerializer<GuiItem> {
 
-    private static final HMCCosmetics plugin;
-
-    static {
-        plugin = HMCCosmetics.getPlugin(HMCCosmetics.class);
-    }
-
     public static final ItemSerializer INSTANCE = new ItemSerializer();
-
+    private static final HMCCosmetics plugin;
     private static final String MATERIAL = "material";
     private static final String AMOUNT = "amount";
     private static final String NAME = "name";
@@ -66,19 +58,26 @@ public class ItemSerializer implements TypeSerializer<GuiItem> {
     private static final String ID = "id";
     private static final String DYEABLE = "dyeable";
 
+    static {
+        plugin = HMCCosmetics.getPlugin(HMCCosmetics.class);
+    }
+
     private ItemSerializer() {
     }
 
-    private ConfigurationNode nonVirtualNode(final ConfigurationNode source, final Object... path) throws SerializationException {
+    private ConfigurationNode nonVirtualNode(final ConfigurationNode source, final Object... path)
+            throws SerializationException {
         if (!source.hasChild(path)) {
-            throw new SerializationException("Required field " + Arrays.toString(path) + " was not present in node");
+            throw new SerializationException(
+                    "Required field " + Arrays.toString(path) + " was not present in node");
         }
 
         return source.node(path);
     }
 
     @Override
-    public GuiItem deserialize(final Type type, final ConfigurationNode source) throws SerializationException {
+    public GuiItem deserialize(final Type type, final ConfigurationNode source)
+            throws SerializationException {
         final ConfigurationNode materialNode = this.nonVirtualNode(source, MATERIAL);
         final ConfigurationNode amountNode = source.node(AMOUNT);
         final ConfigurationNode nameNode = source.node(NAME);
@@ -101,7 +100,6 @@ public class ItemSerializer implements TypeSerializer<GuiItem> {
         final ConfigurationNode idNode = source.node(ID);
         final ConfigurationNode dyeableNode = source.node(DYEABLE);
 
-
         final String materialString = Utils.replaceIfNull(materialNode.getString(), "");
         final int amount = amountNode.getInt();
 
@@ -111,24 +109,28 @@ public class ItemSerializer implements TypeSerializer<GuiItem> {
             itemStack = new ItemStack(Material.valueOf(materialString), amount);
         } catch (final IllegalArgumentException exception) {
             itemStack = HookManager.getInstance().getItemHooks().getItemStack(materialString);
-            if (itemStack == null) itemStack = new ItemStack(Material.AIR);
+            if (itemStack == null) {
+                itemStack = new ItemStack(Material.AIR);
+            }
         }
-
 
         final String name = StringUtils.parseStringToString(nameNode.getString());
 
         final boolean unbreakable = unbreakableNode.getBoolean();
         final boolean glowing = glowingNode.getBoolean();
 
-        final List<String> lore = Utils.replaceIfNull(loreNode.getList(String.class), new ArrayList<String>()).
+        final List<String> lore = Utils.replaceIfNull(loreNode.getList(String.class),
+                        new ArrayList<String>()).
                 stream().map(StringUtils::parseStringToString).collect(Collectors.toList());
 
-        final List<String> lockedLore = Utils.replaceIfNull(lockedLoreNode.getList(String.class), new ArrayList<String>()).
+        final List<String> lockedLore = Utils.replaceIfNull(lockedLoreNode.getList(String.class),
+                        new ArrayList<String>()).
                 stream().map(StringUtils::parseStringToString).collect(Collectors.toList());
 
         final int modelData = modelDataNode.getInt();
 
-        final Set<ItemFlag> itemFlags = Utils.replaceIfNull(itemFlagsNode.getList(String.class), new ArrayList<String>()).
+        final Set<ItemFlag> itemFlags = Utils.replaceIfNull(itemFlagsNode.getList(String.class),
+                        new ArrayList<String>()).
                 stream().map(flag -> {
                     try {
                         return ItemFlag.valueOf(flag.toUpperCase());
@@ -159,9 +161,10 @@ public class ItemSerializer implements TypeSerializer<GuiItem> {
                                 return null;
                             }
 
-                            final NamespacedKey namespacedKey = NamespacedKey.minecraft(enchantmentString.
-                                    split(":")[0].
-                                    toLowerCase());
+                            final NamespacedKey namespacedKey = NamespacedKey.minecraft(
+                                    enchantmentString.
+                                            split(":")[0].
+                                            toLowerCase());
                             return Registry.ENCHANTMENT.get(namespacedKey);
 
                         }, enchantmentString -> {
@@ -174,7 +177,6 @@ public class ItemSerializer implements TypeSerializer<GuiItem> {
                                 return 0;
                             }
                         }));
-
 
         final ItemBuilder itemBuilder;
 
@@ -239,14 +241,14 @@ public class ItemSerializer implements TypeSerializer<GuiItem> {
         } catch (final IllegalArgumentException exception) {
             return dev.triumphteam.gui.builder.item.ItemBuilder.from(
                             itemStack).
-                    asGuiItem(event -> {
-                        plugin.getCosmeticsMenu().openMenu(openMenu, event.getWhoClicked());
-                    });
+                    asGuiItem(event -> plugin.getCosmeticsMenu().openMenu(openMenu, event.getWhoClicked()));
         }
     }
 
     @Override
-    public void serialize(final Type type, @Nullable final GuiItem obj, final ConfigurationNode node) throws SerializationException {
+    public void serialize(final Type type, @Nullable final GuiItem obj,
+            final ConfigurationNode node) throws SerializationException {
 
     }
+
 }

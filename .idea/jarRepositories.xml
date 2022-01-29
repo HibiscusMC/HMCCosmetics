@@ -71,5 +71,25 @@
       <option name="name" value="maven7" />
       <option name="url" value="https://oss.sonatype.org/content/repositories/snapshots/" />
     </remote-repository>
+    <remote-repository>
+      <option name="id" value="maven11" />
+      <option name="name" value="maven11" />
+      <option name="url" value="https://libraries.minecraft.net/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="paperweightDecompilerRepository" />
+      <option name="name" value="paperweightDecompilerRepository" />
+      <option name="url" value="https://files.minecraftforge.net/maven/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="paperweightParamMappingsRepository" />
+      <option name="name" value="paperweightParamMappingsRepository" />
+      <option name="url" value="https://maven.fabricmc.net/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="maven8" />
+      <option name="name" value="maven8" />
+      <option name="url" value="https://oss.sonatype.org/content/repositories/snapshots" />
+    </remote-repository>
   </component>
 </project>

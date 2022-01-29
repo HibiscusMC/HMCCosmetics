@@ -4,7 +4,6 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
-import com.sun.tools.jconsole.JConsoleContext;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.concurrent.Threads;
 import io.github.fisher2911.hmccosmetics.database.dao.ArmorItemDAO;
@@ -12,19 +11,21 @@ import io.github.fisher2911.hmccosmetics.database.dao.UserDAO;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
 import io.github.fisher2911.hmccosmetics.user.User;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-
 import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
+import org.bukkit.Bukkit;
 
 public class Database {
 
+    protected final HMCCosmetics plugin;
+    final Dao<UserDAO, UUID> userDao;
+    final Dao<ArmorItemDAO, UUID> armorItemDao;
+    private final ConnectionSource dataSource;
+    private final DatabaseType databaseType;
     AtomicInteger ARMOR_STAND_ID = new AtomicInteger(Integer.MAX_VALUE);
-
     String TABLE_NAME = "user";
     String PLAYER_UUID_COLUMN = "uuid";
     String BACKPACK_COLUMN = "backpack";
@@ -39,14 +40,6 @@ public class Database {
                     "UNIQUE (" +
                     PLAYER_UUID_COLUMN +
                     "))";
-
-    protected final HMCCosmetics plugin;
-    private final ConnectionSource dataSource;
-
-    private final DatabaseType databaseType;
-
-    final Dao<UserDAO, UUID> userDao;
-    final Dao<ArmorItemDAO, UUID> armorItemDao;
 
     public Database(
             final HMCCosmetics plugin,
@@ -84,9 +77,11 @@ public class Database {
                             user = this.userDao.createIfNotExists(new UserDAO(uuid));
                         }
 
-                        final List<ArmorItemDAO> armorItems = this.armorItemDao.queryForEq("uuid", uuid.toString());
+                        final List<ArmorItemDAO> armorItems = this.armorItemDao.queryForEq("uuid",
+                                uuid.toString());
 
-                        final User actualUser = user.toUser(this.plugin.getCosmeticManager(), armorItems, armorStandId);
+                        final User actualUser = user.toUser(this.plugin.getCosmeticManager(),
+                                armorItems, armorStandId);
                         Bukkit.getScheduler().runTask(this.plugin,
                                 () -> {
                                     this.plugin.getUserManager().add(
@@ -153,4 +148,5 @@ public class Database {
     public Dao<ArmorItemDAO, UUID> getArmorItemDao() {
         return armorItemDao;
     }
+
 }

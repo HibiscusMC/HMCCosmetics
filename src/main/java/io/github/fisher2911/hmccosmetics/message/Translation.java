@@ -1,24 +1,21 @@
 package io.github.fisher2911.hmccosmetics.message;
 
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-
 public class Translation {
 
     private static final Translation INSTANCE;
+    private static final String FILE_NAME = "translations.yml";
+    private static final String TRANSLATION_PATH = "translations";
 
     static {
         INSTANCE = new Translation(HMCCosmetics.getPlugin(HMCCosmetics.class));
-    }
-
-    public static Translation getInstance() {
-        return INSTANCE;
     }
 
     private final HMCCosmetics plugin;
@@ -29,8 +26,13 @@ public class Translation {
         this.plugin = plugin;
     }
 
-    private static final String FILE_NAME = "translations.yml";
-    private static final String TRANSLATION_PATH = "translations";
+    public static Translation getInstance() {
+        return INSTANCE;
+    }
+
+    public static String translate(final String key) {
+        return INSTANCE.translations.getOrDefault(key, key);
+    }
 
     public void load() {
         final File file = new File(this.plugin.getDataFolder(), FILE_NAME);
@@ -42,15 +44,13 @@ public class Translation {
 
         final ConfigurationSection section = config.getConfigurationSection(TRANSLATION_PATH);
 
-        if (section == null) return;
+        if (section == null) {
+            return;
+        }
 
         for (final String key : section.getKeys(false)) {
             this.translations.put(key, section.getString(key));
         }
-    }
-
-    public static String translate(final String key) {
-        return INSTANCE.translations.getOrDefault(key, key);
     }
 
 }

@@ -7,6 +7,10 @@ import io.github.fisher2911.hmccosmetics.config.GuiSerializer;
 import io.github.fisher2911.hmccosmetics.config.ItemSerializer;
 import io.github.fisher2911.hmccosmetics.cosmetic.CosmeticManager;
 import io.github.fisher2911.hmccosmetics.user.User;
+import java.io.File;
+import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -15,12 +19,6 @@ import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
-
-import java.io.File;
-import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Supplier;
 
 public class CosmeticsMenu {
 
@@ -76,7 +74,9 @@ public class CosmeticsMenu {
     @Nullable
     private CosmeticGui getGui(final String id) {
         final CosmeticGui gui = this.guiMap.get(id);
-        if (gui == null) return null;
+        if (gui == null) {
+            return null;
+        }
         return gui.copy();
     }
 
@@ -95,8 +95,8 @@ public class CosmeticsMenu {
         }
 
         if (!Path.of(this.plugin.getDataFolder().getPath(),
-        "menus",
-        DYE_MENU + ".yml").toFile().exists()) {
+                "menus",
+                DYE_MENU + ".yml").toFile().exists()) {
             this.plugin.saveResource(
                     new File("menus", DYE_MENU + ".yml").getPath(),
                     false
@@ -134,22 +134,28 @@ public class CosmeticsMenu {
                 final ConfigurationNode source = loader.load();
 
                 if (id.equals(DYE_MENU)) {
-                    this.guiMap.put(id, DyeGuiSerializer.INSTANCE.deserialize(DyeSelectorGui.class, source));
+                    this.guiMap.put(id,
+                            DyeGuiSerializer.INSTANCE.deserialize(DyeSelectorGui.class, source));
                     this.plugin.getLogger().info("Loaded dye gui: " + id);
                     continue;
                 }
 
                 final CosmeticGui gui = source.get(CosmeticGui.class);
 
-                if (gui == null) continue;
+                if (gui == null) {
+                    continue;
+                }
 
                 for (final GuiItem guiItem : gui.guiItemMap.values()) {
                     if (guiItem instanceof final ArmorItem item) {
                         final ArmorItem copy = new ArmorItem(item);
                         copy.setAction(null);
                         this.cosmeticManager.addArmorItem(copy);
-                        if (copy.getPermission().isBlank()) continue;
-                        Bukkit.getPluginManager().addPermission(new Permission(copy.getPermission()));
+                        if (copy.getPermission().isBlank()) {
+                            continue;
+                        }
+                        Bukkit.getPluginManager()
+                                .addPermission(new Permission(copy.getPermission()));
                     }
                 }
 
@@ -161,4 +167,5 @@ public class CosmeticsMenu {
 
         }
     }
+
 }

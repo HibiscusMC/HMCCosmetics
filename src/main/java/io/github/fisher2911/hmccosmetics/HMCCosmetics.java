@@ -2,7 +2,6 @@ package io.github.fisher2911.hmccosmetics;
 
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
-
 import io.github.fisher2911.hmccosmetics.command.CosmeticsCommand;
 import io.github.fisher2911.hmccosmetics.concurrent.Threads;
 import io.github.fisher2911.hmccosmetics.config.Settings;
@@ -13,27 +12,31 @@ import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.gui.CosmeticsMenu;
 import io.github.fisher2911.hmccosmetics.hook.HookManager;
 import io.github.fisher2911.hmccosmetics.hook.item.ItemsAdderHook;
-import io.github.fisher2911.hmccosmetics.listener.*;
+import io.github.fisher2911.hmccosmetics.listener.ClickListener;
+import io.github.fisher2911.hmccosmetics.listener.CosmeticFixListener;
+import io.github.fisher2911.hmccosmetics.listener.JoinListener;
+import io.github.fisher2911.hmccosmetics.listener.RespawnListener;
+import io.github.fisher2911.hmccosmetics.listener.TeleportListener;
 import io.github.fisher2911.hmccosmetics.message.MessageHandler;
 import io.github.fisher2911.hmccosmetics.message.Messages;
 import io.github.fisher2911.hmccosmetics.message.Translation;
 import io.github.fisher2911.hmccosmetics.user.UserManager;
-import me.mattstudios.mf.base.CommandManager;
-import org.bstats.bukkit.Metrics;
-import org.bukkit.Bukkit;
-import org.bukkit.Color;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitTask;
-
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
+import me.mattstudios.mf.base.CommandManager;
+import org.bstats.bukkit.Metrics;
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 
 public class HMCCosmetics extends JavaPlugin {
+
+    public static final Path PLUGIN_FOLDER = Paths.get("plugins", "HMCCosmetics");
 
     private ProtocolManager protocolManager;
     private Settings settings;
@@ -105,7 +108,8 @@ public class HMCCosmetics extends JavaPlugin {
                         new CosmeticFixListener(this)
                 ).
                 forEach(
-                        listener -> this.getServer().getPluginManager().registerEvents(listener, this)
+                        listener -> this.getServer().getPluginManager()
+                                .registerEvents(listener, this)
                 );
     }
 
@@ -117,7 +121,6 @@ public class HMCCosmetics extends JavaPlugin {
                                 player,
                                 Messages.MUST_BE_PLAYER
                         )
-
         );
         this.commandManager.getCompletionHandler().register("#types",
                 resolver ->
@@ -128,7 +131,8 @@ public class HMCCosmetics extends JavaPlugin {
         );
         this.commandManager.getCompletionHandler().register("#ids",
                 resolver ->
-                        this.cosmeticManager.getAll().stream().map(ArmorItem::getId).collect(Collectors.toList()));
+                        this.cosmeticManager.getAll().stream().map(ArmorItem::getId)
+                                .collect(Collectors.toList()));
         this.commandManager.register(new CosmeticsCommand(this));
     }
 
@@ -180,5 +184,6 @@ public class HMCCosmetics extends JavaPlugin {
     public Database getDatabase() {
         return database;
     }
+
 }
 
