@@ -265,9 +265,7 @@ public class ArmorItem extends GuiItem {
     public enum Type {
 
         HAT,
-
         BACKPACK,
-
         OFF_HAND
 
     }

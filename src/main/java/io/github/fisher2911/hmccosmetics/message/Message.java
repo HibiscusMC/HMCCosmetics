@@ -52,9 +52,7 @@ public class Message {
     public enum Type {
 
         MESSAGE,
-
         ACTION_BAR,
-
         TITLE
 
     }

@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "io.github.fisher2911"
-version = "1.6.1"
+version = "1.6.2"
 description = "The ultimate cosmetic plugin for your server."
 
 repositories {

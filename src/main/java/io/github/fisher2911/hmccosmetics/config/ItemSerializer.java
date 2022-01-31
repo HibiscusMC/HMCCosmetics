@@ -246,8 +246,7 @@ public class ItemSerializer implements TypeSerializer<GuiItem> {
     }
 
     @Override
-    public void serialize(final Type type, @Nullable final GuiItem obj,
-            final ConfigurationNode node) throws SerializationException {
+    public void serialize(final Type type, @Nullable final GuiItem obj, final ConfigurationNode node) throws SerializationException {
 
     }
 

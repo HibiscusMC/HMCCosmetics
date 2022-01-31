@@ -180,12 +180,8 @@ public class CosmeticsCommand extends CommandBase {
                             Placeholder.TYPE, "none")
             );
         } catch (final IllegalArgumentException exception) {
-            this.messageHandler.sendMessage(
-                    player,
-                    Messages.INVALID_TYPE);
+            this.messageHandler.sendMessage(player, Messages.INVALID_TYPE);
         }
-
-
     }
 
 }

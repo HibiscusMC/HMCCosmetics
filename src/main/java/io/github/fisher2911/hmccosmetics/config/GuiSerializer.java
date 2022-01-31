@@ -75,8 +75,7 @@ public class GuiSerializer implements TypeSerializer<CosmeticGui> {
     }
 
     @Override
-    public void serialize(final Type type, @Nullable final CosmeticGui obj,
-            final ConfigurationNode node) throws SerializationException {
+    public void serialize(final Type type, @Nullable final CosmeticGui obj, final ConfigurationNode node) throws SerializationException {
 
     }
 

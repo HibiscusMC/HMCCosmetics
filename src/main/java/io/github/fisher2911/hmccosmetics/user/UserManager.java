@@ -89,7 +89,7 @@ public class UserManager {
                 this.plugin,
                 () -> {
                     for (final User user : this.userMap.values()) {
-                        user.updateArmorStand();
+                        user.updateArmorStand(this.plugin.getSettings());
                     }
                 },
                 1,
@@ -227,9 +227,7 @@ public class UserManager {
             final Message removeMessage,
             final Message setMessage) {
         final Player player = user.getPlayer();
-
         final ArmorItem.Type type = armorItem.getType();
-
         final ArmorItem empty = ArmorItem.empty(type);
 
         if (player == null) {

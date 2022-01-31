@@ -125,8 +125,7 @@ public class DyeGuiSerializer implements TypeSerializer<DyeSelectorGui> {
     }
 
     @Override
-    public void serialize(final Type type, @Nullable final DyeSelectorGui obj,
-            final ConfigurationNode node) throws SerializationException {
+    public void serialize(final Type type, @Nullable final DyeSelectorGui obj, final ConfigurationNode node) throws SerializationException {
 
     }
 
