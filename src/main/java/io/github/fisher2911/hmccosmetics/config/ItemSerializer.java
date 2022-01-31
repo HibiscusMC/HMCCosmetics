@@ -181,8 +181,7 @@ public class ItemSerializer implements TypeSerializer<GuiItem> {
         final ItemBuilder itemBuilder;
 
         if (itemStack.getType() == Material.PLAYER_HEAD) {
-            itemBuilder = SkullBuilder.
-                    create();
+            itemBuilder = SkullBuilder.create();
 
             if (texture != null) {
                 ((SkullBuilder) itemBuilder).texture(texture);
