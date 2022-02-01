@@ -1,11 +1,9 @@
 package io.github.fisher2911.hmccosmetics.cosmetic;
 
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
+import org.jetbrains.annotations.Nullable;
 
 public class CosmeticManager {
 
@@ -31,4 +29,5 @@ public class CosmeticManager {
     public Map<String, ArmorItem> getArmorItemMap() {
         return armorItemMap;
     }
+
 }

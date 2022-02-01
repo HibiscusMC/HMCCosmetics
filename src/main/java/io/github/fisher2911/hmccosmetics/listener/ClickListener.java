@@ -3,6 +3,8 @@ package io.github.fisher2911.hmccosmetics.listener;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.user.User;
 import io.github.fisher2911.hmccosmetics.user.UserManager;
+import java.util.List;
+import java.util.Optional;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -11,9 +13,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
-
-import java.util.List;
-import java.util.Optional;
 
 public class ClickListener implements Listener {
 
@@ -30,14 +29,18 @@ public class ClickListener implements Listener {
     @EventHandler
     public void onCosmeticClick(final InventoryClickEvent event) {
         final HumanEntity player = event.getWhoClicked();
-        if (!(player instanceof Player)) return;
+        if (!(player instanceof Player)) {
+            return;
+        }
         this.fixInventory((Player) player);
     }
 
     @EventHandler
     public void onCosmeticClick(final InventoryDragEvent event) {
         final HumanEntity player = event.getWhoClicked();
-        if (!(player instanceof Player)) return;
+        if (!(player instanceof Player)) {
+            return;
+        }
         this.fixInventory((Player) player);
     }
 

@@ -4,43 +4,42 @@ import dev.triumphteam.gui.guis.GuiItem;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.gui.CosmeticGui;
 import io.github.fisher2911.hmccosmetics.message.Adventure;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
+import java.lang.reflect.Type;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 import org.spongepowered.configurate.serialize.TypeSerializer;
 
-import java.lang.reflect.Type;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
 public class GuiSerializer implements TypeSerializer<CosmeticGui> {
 
+    public static final GuiSerializer INSTANCE = new GuiSerializer();
     private static final HMCCosmetics plugin;
+    private static final String TITLE = "title";
+    private static final String ROWS = "rows";
+    private static final String ITEMS = "items";
 
     static {
         plugin = HMCCosmetics.getPlugin(HMCCosmetics.class);
     }
 
-    public static final GuiSerializer INSTANCE = new GuiSerializer();
+    private GuiSerializer() {
+    }
 
-    private GuiSerializer() {}
-
-    private static final String TITLE = "title";
-    private static final String ROWS = "rows";
-    private static final String ITEMS = "items";
-
-    private ConfigurationNode nonVirtualNode(final ConfigurationNode source, final Object... path) throws SerializationException {
+    private ConfigurationNode nonVirtualNode(final ConfigurationNode source, final Object... path)
+            throws SerializationException {
         if (!source.hasChild(path)) {
-            throw new SerializationException("Required field " + Arrays.toString(path) + " was not present in node");
+            throw new SerializationException(
+                    "Required field " + Arrays.toString(path) + " was not present in node");
         }
         return source.node(path);
     }
 
     @Override
-    public CosmeticGui deserialize(final Type type, final ConfigurationNode source) throws SerializationException {
+    public CosmeticGui deserialize(final Type type, final ConfigurationNode source)
+            throws SerializationException {
         final ConfigurationNode titleNode = this.nonVirtualNode(source, TITLE);
         final ConfigurationNode rowsNode = this.nonVirtualNode(source, ROWS);
         final ConfigurationNode itemsNode = source.node(ITEMS);
@@ -64,11 +63,13 @@ public class GuiSerializer implements TypeSerializer<CosmeticGui> {
 
         String title = titleNode.getString();
 
-        if (title == null) title = "";
+        if (title == null) {
+            title = "";
+        }
 
         return new CosmeticGui(plugin,
                 Adventure.SERIALIZER.serialize(
-                Adventure.MINI_MESSAGE.parse(title)),
+                        Adventure.MINI_MESSAGE.deserialize(title)),
                 rowsNode.getInt(),
                 guiItemMap);
     }
@@ -77,4 +78,5 @@ public class GuiSerializer implements TypeSerializer<CosmeticGui> {
     public void serialize(final Type type, @Nullable final CosmeticGui obj, final ConfigurationNode node) throws SerializationException {
 
     }
+
 }

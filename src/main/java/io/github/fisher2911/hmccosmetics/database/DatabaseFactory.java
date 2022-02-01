@@ -5,18 +5,18 @@ import com.j256.ormlite.jdbc.JdbcPooledConnectionSource;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.sql.SQLException;
+import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import java.io.File;
-import java.nio.file.Path;
-import java.sql.SQLException;
-import java.util.logging.Logger;
-
 public class DatabaseFactory {
 
-    private static final String FILE_NAME = "database.yml";
+    private static final Path FILE_PATH = HMCCosmetics.PLUGIN_FOLDER.resolve("database.yml");
     private static final String TYPE_PATH = "type";
     private static final String NAME_PATH = "name";
     private static final String USERNAME_PATH = "username";
@@ -25,13 +25,11 @@ public class DatabaseFactory {
     private static final String PORT_PATH = "port";
 
     public static Database create(final HMCCosmetics plugin) throws SQLException {
-        final File file = Path.of(plugin.getDataFolder().getPath(), FILE_NAME).toFile();
-
-        if (!file.exists()) {
-            plugin.saveResource(FILE_NAME, false);
+        if (!Files.exists(FILE_PATH)) {
+            plugin.saveResource(FILE_PATH.getFileName().toString(), false);
         }
 
-        final FileConfiguration config = YamlConfiguration.loadConfiguration(file);
+        final FileConfiguration config = YamlConfiguration.loadConfiguration(FILE_PATH.toFile());
 
         final String type = config.getString(TYPE_PATH);
 
@@ -82,7 +80,8 @@ public class DatabaseFactory {
         };
 
         if (database == null) {
-            logger.severe("Error loading database, type " + type + " is invalid! Disabling plugin.");
+            logger.severe(
+                    "Error loading database, type " + type + " is invalid! Disabling plugin.");
             Bukkit.getPluginManager().disablePlugin(plugin);
         }
 

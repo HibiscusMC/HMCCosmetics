@@ -32,7 +32,10 @@ public class ItemsAdderHook implements ItemHook, Listener {
     @Override
     public ItemStack getItem(final String id) {
         final CustomStack stack = CustomStack.getInstance(id);
-        if (stack == null) return null;
+        if (stack == null) {
+            return null;
+        }
         return stack.getItemStack().clone();
     }
+
 }

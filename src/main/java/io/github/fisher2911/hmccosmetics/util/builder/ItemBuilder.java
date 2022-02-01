@@ -1,7 +1,10 @@
 package io.github.fisher2911.hmccosmetics.util.builder;
 
 import io.github.fisher2911.hmccosmetics.message.Placeholder;
-import net.kyori.adventure.text.Component;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -9,11 +12,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 public class ItemBuilder {
 
@@ -36,7 +34,8 @@ public class ItemBuilder {
 
     ItemBuilder(final ItemStack itemStack) {
         this.material = itemStack.getType();
-        this.itemMeta = itemStack.hasItemMeta() ? itemStack.getItemMeta() : Bukkit.getItemFactory().getItemMeta(this.material);
+        this.itemMeta = itemStack.hasItemMeta() ? itemStack.getItemMeta()
+                : Bukkit.getItemFactory().getItemMeta(this.material);
     }
 
     /**
@@ -146,12 +145,16 @@ public class ItemBuilder {
     }
 
     private void lorePapiPlaceholders(final Player player) {
-        if (this.itemMeta == null) return;
+        if (this.itemMeta == null) {
+            return;
+        }
         final List<String> newLore = new ArrayList<>();
 
         final List<String> lore = this.itemMeta.getLore();
 
-        if (lore == null) return;
+        if (lore == null) {
+            return;
+        }
 
         for (final String line : this.itemMeta.getLore()) {
             newLore.add(Placeholder.applyPapiPlaceholders(player, line));
@@ -161,7 +164,9 @@ public class ItemBuilder {
     }
 
     private void namePapiPlaceholders(final Player player) {
-        if (this.itemMeta == null) return;
+        if (this.itemMeta == null) {
+            return;
+        }
 
         this.itemMeta.setDisplayName(
                 Placeholder.applyPapiPlaceholders(
@@ -196,16 +201,18 @@ public class ItemBuilder {
     }
 
     /**
-     * @param enchantments            enchants to be added to the ItemStack
+     * @param enchantments enchants to be added to the ItemStack
      * @param ignoreLeveLRestrictions whether to ignore enchantment level restrictions
      * @return this
      */
 
-    public ItemBuilder enchants(final Map<Enchantment, Integer> enchantments, boolean ignoreLeveLRestrictions) {
+    public ItemBuilder enchants(final Map<Enchantment, Integer> enchantments,
+            boolean ignoreLeveLRestrictions) {
         if (this.itemMeta == null) {
             return this;
         }
-        enchantments.forEach((enchantment, level) -> this.itemMeta.addEnchant(enchantment, level, ignoreLeveLRestrictions));
+        enchantments.forEach((enchantment, level) -> this.itemMeta.addEnchant(enchantment, level,
+                ignoreLeveLRestrictions));
         return this;
     }
 

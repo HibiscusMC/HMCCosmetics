@@ -11,14 +11,14 @@ public class Threads {
         INSTANCE = new Threads();
     }
 
-    public static Threads getInstance() {
-        return INSTANCE;
-    }
-
     private final ExecutorService service;
 
     private Threads() {
         this.service = Executors.newFixedThreadPool(1);
+    }
+
+    public static Threads getInstance() {
+        return INSTANCE;
     }
 
     public void execute(final Runnable runnable) {

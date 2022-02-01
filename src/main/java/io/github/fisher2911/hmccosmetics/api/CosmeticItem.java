@@ -1,11 +1,10 @@
 package io.github.fisher2911.hmccosmetics.api;
 
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
+import java.util.ArrayList;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.ArrayList;
 
 /**
  * Wrapper for ArmorItem used internally for convenience and safety
@@ -19,7 +18,6 @@ public class CosmeticItem {
     }
 
     /**
-     *
      * @param itemStack the {@link org.bukkit.inventory.ItemStack} display item
      * @param id the id of the item
      * @param type the cosmetic item type
@@ -27,12 +25,12 @@ public class CosmeticItem {
      * @param rgb from Bukkit's {@link Color#asRGB()}
      */
 
-    public CosmeticItem(final ItemStack itemStack, final String id, final ArmorItem.Type type, final boolean dyeable, final int rgb) {
+    public CosmeticItem(final ItemStack itemStack, final String id, final ArmorItem.Type type,
+            final boolean dyeable, final int rgb) {
         this.armorItem = new ArmorItem(itemStack, id, new ArrayList<>(), "", type, dyeable, rgb);
     }
 
     /**
-     *
      * @param material the {@link org.bukkit.Material} display item
      * @param id the id of the item
      * @param type the cosmetic item type
@@ -40,12 +38,12 @@ public class CosmeticItem {
      * @param rgb from Bukkit's {@link Color#asRGB()}
      */
 
-    public CosmeticItem(final Material material, final String id, final ArmorItem.Type type, final boolean dyeable, final int rgb) {
+    public CosmeticItem(final Material material, final String id, final ArmorItem.Type type,
+            final boolean dyeable, final int rgb) {
         this.armorItem = new ArmorItem(material, id, new ArrayList<>(), "", type, dyeable, rgb);
     }
 
     /**
-     *
      * @param itemStack the {@link org.bukkit.inventory.ItemStack} display item
      * @param id the id of the item
      * @param type the cosmetic item type
@@ -56,7 +54,6 @@ public class CosmeticItem {
     }
 
     /**
-     *
      * @param material the {@link org.bukkit.Material} display item
      * @param id the id of the item
      * @param type the cosmetic item type
@@ -93,4 +90,5 @@ public class CosmeticItem {
     public ArmorItem getArmorItem() {
         return this.armorItem;
     }
+
 }

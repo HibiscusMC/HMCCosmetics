@@ -17,6 +17,10 @@ public abstract class CosmeticItemEvent extends Event implements Cancellable {
         this.cancelled = false;
     }
 
+    public static HandlerList getHandlerList() {
+        return HANDLERS;
+    }
+
     public CosmeticItem getCosmeticItem() {
         return this.cosmeticItem;
     }
@@ -35,12 +39,9 @@ public abstract class CosmeticItemEvent extends Event implements Cancellable {
         this.cancelled = cancelled;
     }
 
-    public static HandlerList getHandlerList() {
-        return HANDLERS;
-    }
-
     @Override
     public HandlerList getHandlers() {
         return HANDLERS;
     }
+
 }

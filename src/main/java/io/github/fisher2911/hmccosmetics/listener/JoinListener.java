@@ -27,7 +27,7 @@ public class JoinListener implements Listener {
         final Player player = event.getPlayer();
         this.database.loadUser(player.getUniqueId(),
                 user -> Bukkit.getScheduler().runTaskAsynchronously(this.plugin,
-                () -> this.userManager.resendCosmetics(player)));
+                        () -> this.userManager.resendCosmetics(player)));
     }
 
     @EventHandler
@@ -35,4 +35,5 @@ public class JoinListener implements Listener {
         final Player player = event.getPlayer();
         this.userManager.remove(player.getUniqueId());
     }
+
 }

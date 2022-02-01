@@ -13,7 +13,9 @@ public class ColorItem extends GuiItem {
 
     private final Color color;
 
-    public ColorItem(final @NotNull ItemStack itemStack, final GuiAction<InventoryClickEvent> action, final Color color) {
+    public ColorItem(final @NotNull ItemStack itemStack,
+            final GuiAction<InventoryClickEvent> action,
+            final Color color) {
         super(itemStack, action);
         this.color = color;
     }
@@ -28,7 +30,8 @@ public class ColorItem extends GuiItem {
         this.color = color;
     }
 
-    public ColorItem(final @NotNull Material material, final @Nullable GuiAction<InventoryClickEvent> action, final Color color) {
+    public ColorItem(final @NotNull Material material,
+            final @Nullable GuiAction<InventoryClickEvent> action, final Color color) {
         super(material, action);
         this.color = color;
     }
@@ -36,4 +39,5 @@ public class ColorItem extends GuiItem {
     public Color getColor() {
         return color;
     }
+
 }

@@ -1,6 +1,5 @@
 package io.github.fisher2911.hmccosmetics.hook.item;
 
-import io.github.fisher2911.hmccosmetics.hook.Hook;
 import io.th0rgal.oraxen.items.ItemBuilder;
 import io.th0rgal.oraxen.items.OraxenItems;
 import org.bukkit.inventory.ItemStack;
@@ -23,7 +22,10 @@ public class OraxenHook implements ItemHook {
     @Override
     public ItemStack getItem(final String id) {
         final ItemBuilder itemBuilder = OraxenItems.getItemById(id);
-        if (itemBuilder == null) return null;
+        if (itemBuilder == null) {
+            return null;
+        }
         return itemBuilder.build();
     }
+
 }

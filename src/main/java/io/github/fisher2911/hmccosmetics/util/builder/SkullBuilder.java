@@ -2,14 +2,13 @@ package io.github.fisher2911.hmccosmetics.util.builder;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
+import java.lang.reflect.Field;
+import java.util.UUID;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.NotNull;
-
-import java.lang.reflect.Field;
-import java.util.UUID;
 
 /**
  * Some parts taken from https://github.com/TriumphTeam/triumph-gui/blob/master/core/src/main/java/dev/triumphteam/gui/builder/item/SkullBuilder.java
@@ -23,7 +22,8 @@ public class SkullBuilder extends ItemBuilder {
         Field field;
 
         try {
-            final SkullMeta skullMeta = (SkullMeta) new ItemStack(Material.PLAYER_HEAD).getItemMeta();
+            final SkullMeta skullMeta = (SkullMeta) new ItemStack(
+                    Material.PLAYER_HEAD).getItemMeta();
             field = skullMeta.getClass().getDeclaredField("profile");
             field.setAccessible(true);
         } catch (NoSuchFieldException e) {
@@ -36,7 +36,6 @@ public class SkullBuilder extends ItemBuilder {
 
 
     /**
-     *
      * @param material The material
      */
 
@@ -46,6 +45,7 @@ public class SkullBuilder extends ItemBuilder {
 
     /**
      * Creates a new SkullBuilder instance
+     *
      * @return this
      */
 
@@ -55,7 +55,6 @@ public class SkullBuilder extends ItemBuilder {
 
 
     /**
-     *
      * @param player skull owner
      * @return this
      */
@@ -68,7 +67,6 @@ public class SkullBuilder extends ItemBuilder {
     }
 
     /**
-     *
      * @param texture skull texture
      * @return this
      */
