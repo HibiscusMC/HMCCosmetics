@@ -20,12 +20,13 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 public class CosmeticsMenu {
 
-    public static final String MAIN_MENU = "main";
-    public static final String DYE_MENU = "dye-menu";
+    public static final String DEFAULT_MAIN_MENU = "main";
+    public static final String DEFAULT_DYE_MENU = "dye-menu";
 
     private final HMCCosmetics plugin;
     private final CosmeticManager cosmeticManager;
@@ -40,13 +41,19 @@ public class CosmeticsMenu {
     public void openMenu(final String id, final HumanEntity humanEntity) {
         final CosmeticGui cosmeticGui = this.getGui(id);
 
+        if (cosmeticGui instanceof final DyeSelectorGui dyeSelectorGui) {
+            final Optional<User> optionalUser = this.plugin.getUserManager().get(humanEntity.getUniqueId());
+            optionalUser.ifPresent(user -> dyeSelectorGui.getGui(user, user.getLastSetItem().getType()).open(humanEntity));
+            return;
+        }
+
         if (cosmeticGui != null) {
             cosmeticGui.open(humanEntity);
         }
     }
 
     public void openDefault(final HumanEntity humanEntity) {
-        this.openMenu(MAIN_MENU, humanEntity);
+        this.openMenu(DEFAULT_MAIN_MENU, humanEntity);
     }
 
     public void reload() {
@@ -66,7 +73,7 @@ public class CosmeticsMenu {
             return;
         }
 
-        final CosmeticGui gui = this.getGui(DYE_MENU);
+        final CosmeticGui gui = this.getGui(DEFAULT_DYE_MENU);
 
         if (gui instanceof final DyeSelectorGui dyeSelectorGui) {
             dyeSelectorGui.getGui(user, type).open(player);
@@ -80,6 +87,9 @@ public class CosmeticsMenu {
         return gui.copy();
     }
 
+    private static final String GUI_TYPE = "gui-type";
+    private static final String DYE_TYPE = "dye";
+
     public void load() {
         this.guiMap.clear();
         final File file = Path.of(this.plugin.getDataFolder().getPath(),
@@ -87,18 +97,18 @@ public class CosmeticsMenu {
 
         if (!Path.of(this.plugin.getDataFolder().getPath(),
                 "menus",
-                MAIN_MENU + ".yml").toFile().exists()) {
+                DEFAULT_MAIN_MENU + ".yml").toFile().exists()) {
             this.plugin.saveResource(
-                    new File("menus", MAIN_MENU + ".yml").getPath(),
+                    new File("menus", DEFAULT_MAIN_MENU + ".yml").getPath(),
                     false
             );
         }
 
         if (!Path.of(this.plugin.getDataFolder().getPath(),
         "menus",
-        DYE_MENU + ".yml").toFile().exists()) {
+                DEFAULT_DYE_MENU + ".yml").toFile().exists()) {
             this.plugin.saveResource(
-                    new File("menus", DYE_MENU + ".yml").getPath(),
+                    new File("menus", DEFAULT_DYE_MENU + ".yml").getPath(),
                     false
             );
         }
@@ -132,8 +142,17 @@ public class CosmeticsMenu {
 
             try {
                 final ConfigurationNode source = loader.load();
+                final ConfigurationNode typeNode = source.node(GUI_TYPE);
 
-                if (id.equals(DYE_MENU)) {
+                final String type;
+
+                if (typeNode != null) {
+                    type = typeNode.getString();
+                } else {
+                    type = "";
+                }
+
+                if (id.equals(DEFAULT_DYE_MENU) || DYE_TYPE.equals(type)) {
                     this.guiMap.put(id, DyeGuiSerializer.INSTANCE.deserialize(DyeSelectorGui.class, source));
                     this.plugin.getLogger().info("Loaded dye gui: " + id);
                     continue;

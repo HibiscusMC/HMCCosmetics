@@ -170,7 +170,6 @@ public class UserManager {
 
         if (!isAir && (!requireEmpty || ignoreRestrictions)) return itemStack;
 
-
         if (equipment == null) return itemStack;
 
         final ItemStack equipped = equipment.getItem(slot);
