@@ -1,7 +1,9 @@
 package io.github.fisher2911.hmccosmetics.gui;
 
+import dev.triumphteam.gui.components.GuiAction;
 import dev.triumphteam.gui.guis.GuiItem;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
+import io.github.fisher2911.hmccosmetics.config.ActionSerializer;
 import io.github.fisher2911.hmccosmetics.config.DyeGuiSerializer;
 import io.github.fisher2911.hmccosmetics.config.GuiSerializer;
 import io.github.fisher2911.hmccosmetics.config.ItemSerializer;

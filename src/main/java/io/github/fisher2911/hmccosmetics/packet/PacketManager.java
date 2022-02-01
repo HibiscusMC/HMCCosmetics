@@ -5,6 +5,7 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers;
+import com.comphenix.protocol.wrappers.MinecraftKey;
 import com.comphenix.protocol.wrappers.Pair;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -80,6 +81,42 @@ public class PacketManager {
         destroyPacket.getModifier().write(0, new IntArrayList(new int[]{entityId}));
 
         return destroyPacket;
+    }
+
+    public static PacketContainer getSoundPacket(
+            final Player player,
+            final Location location,
+            final MinecraftKey name,
+            final float volume,
+            final float pitch,
+            final EnumWrappers.SoundCategory soundCategory
+    ) {
+//        final Location location = player.getLocation();
+
+        final var manager = ProtocolLibrary.getProtocolManager();
+        final var packet = manager.createPacket(PacketType.Play.Server.CUSTOM_SOUND_EFFECT);
+
+        packet.getMinecraftKeys()
+                .write(
+                        0,
+                        name
+                );
+
+        packet.getSoundCategories()
+                .write(0, EnumWrappers.SoundCategory.valueOf(soundCategory.name()));
+
+        packet.getIntegers()
+                .write(0, location.getBlockX() * 8)
+                .write(
+                        1, location.getBlockY() * 8
+                )
+                .write(2, location.getBlockZ() * 8);
+
+        packet.getFloat()
+                .write(0, volume)
+                .write(1, pitch);
+
+        return packet;
     }
 
     public static void sendPacket(final Player to, final PacketContainer... packets) {
