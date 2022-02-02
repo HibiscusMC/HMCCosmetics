@@ -12,7 +12,10 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/1.17" />
+            <option value="$PROJECT_DIR$/1.18" />
             <option value="$PROJECT_DIR$/common" />
+            <option value="$PROJECT_DIR$/nms" />
           </set>
         </option>
       </GradleProjectSettings>

@@ -1,8 +1,0 @@
-# SQLite or MySQL (case-insensitive)
-type: "sqlite"
-# The rest of these are only required for MySQL
-name: "name"
-username: "username"
-password: "password"
-ip: "ip"
-port: 3306

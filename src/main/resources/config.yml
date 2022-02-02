@@ -1,6 +1,0 @@
-cosmetic-settings:
-  require-empty-helmet: false
-  require-empty-off-hand: true
-  # The pitch the player must look down for the backpack to be removed
-  # Set to -1 for no removal
-  look-down-backpack-remove: 70
