@@ -1,5 +1,6 @@
 title: "<white>"
 rows: 4
+gui-type: dye
 cosmetics-slots:
   27: HAT
   28: BACKPACK
@@ -94,4 +95,6 @@ items:
     name: "<#F7DCFA>Previous Page"
     amount: 1
     model-data: 1
-    open-menu: main
+    action: # See how the action system works on the wiki
+      any:
+        open-menu: main

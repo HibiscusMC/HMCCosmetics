@@ -5,6 +5,8 @@ import org.bukkit.ChatColor;
 
 public class Messages {
 
+    public static final Message INVALID_COLOR = new Message(
+            "","<red>" + Placeholder.ITEM + " is an invalid color.");
     public static final Message NO_PERMISSION =
             new Message("no-permission", "You do not have permission for this!");
     public static final Message NO_COSMETIC_PERMISSION =

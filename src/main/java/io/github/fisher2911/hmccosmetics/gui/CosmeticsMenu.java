@@ -1,16 +1,14 @@
 package io.github.fisher2911.hmccosmetics.gui;
 
+import dev.triumphteam.gui.components.GuiAction;
 import dev.triumphteam.gui.guis.GuiItem;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
+import io.github.fisher2911.hmccosmetics.config.ActionSerializer;
 import io.github.fisher2911.hmccosmetics.config.DyeGuiSerializer;
 import io.github.fisher2911.hmccosmetics.config.GuiSerializer;
 import io.github.fisher2911.hmccosmetics.config.ItemSerializer;
 import io.github.fisher2911.hmccosmetics.cosmetic.CosmeticManager;
 import io.github.fisher2911.hmccosmetics.user.User;
-import java.io.File;
-import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -20,10 +18,17 @@ import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
+import java.io.File;
+import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Supplier;
+
 public class CosmeticsMenu {
 
-    public static final String MAIN_MENU = "main";
-    public static final String DYE_MENU = "dye-menu";
+    public static final String DEFAULT_MAIN_MENU = "main";
+    public static final String DEFAULT_DYE_MENU = "dye-menu";
 
     private final HMCCosmetics plugin;
     private final CosmeticManager cosmeticManager;
@@ -38,13 +43,19 @@ public class CosmeticsMenu {
     public void openMenu(final String id, final HumanEntity humanEntity) {
         final CosmeticGui cosmeticGui = this.getGui(id);
 
+        if (cosmeticGui instanceof final DyeSelectorGui dyeSelectorGui) {
+            final Optional<User> optionalUser = this.plugin.getUserManager().get(humanEntity.getUniqueId());
+            optionalUser.ifPresent(user -> dyeSelectorGui.getGui(user, user.getLastSetItem().getType()).open(humanEntity));
+            return;
+        }
+
         if (cosmeticGui != null) {
             cosmeticGui.open(humanEntity);
         }
     }
 
     public void openDefault(final HumanEntity humanEntity) {
-        this.openMenu(MAIN_MENU, humanEntity);
+        this.openMenu(DEFAULT_MAIN_MENU, humanEntity);
     }
 
     public void reload() {
@@ -64,7 +75,7 @@ public class CosmeticsMenu {
             return;
         }
 
-        final CosmeticGui gui = this.getGui(DYE_MENU);
+        final CosmeticGui gui = this.getGui(DEFAULT_DYE_MENU);
 
         if (gui instanceof final DyeSelectorGui dyeSelectorGui) {
             dyeSelectorGui.getGui(user, type).open(player);
@@ -74,11 +85,12 @@ public class CosmeticsMenu {
     @Nullable
     private CosmeticGui getGui(final String id) {
         final CosmeticGui gui = this.guiMap.get(id);
-        if (gui == null) {
-            return null;
-        }
+        if (gui == null) return null;
         return gui.copy();
     }
+
+    private static final String GUI_TYPE = "gui-type";
+    private static final String DYE_TYPE = "dye";
 
     public void load() {
         this.guiMap.clear();
@@ -87,18 +99,18 @@ public class CosmeticsMenu {
 
         if (!Path.of(this.plugin.getDataFolder().getPath(),
                 "menus",
-                MAIN_MENU + ".yml").toFile().exists()) {
+                DEFAULT_MAIN_MENU + ".yml").toFile().exists()) {
             this.plugin.saveResource(
-                    new File("menus", MAIN_MENU + ".yml").getPath(),
+                    new File("menus", DEFAULT_MAIN_MENU + ".yml").getPath(),
                     false
             );
         }
 
         if (!Path.of(this.plugin.getDataFolder().getPath(),
-                "menus",
-                DYE_MENU + ".yml").toFile().exists()) {
+        "menus",
+                DEFAULT_DYE_MENU + ".yml").toFile().exists()) {
             this.plugin.saveResource(
-                    new File("menus", DYE_MENU + ".yml").getPath(),
+                    new File("menus", DEFAULT_DYE_MENU + ".yml").getPath(),
                     false
             );
         }
@@ -132,30 +144,33 @@ public class CosmeticsMenu {
 
             try {
                 final ConfigurationNode source = loader.load();
+                final ConfigurationNode typeNode = source.node(GUI_TYPE);
 
-                if (id.equals(DYE_MENU)) {
-                    this.guiMap.put(id,
-                            DyeGuiSerializer.INSTANCE.deserialize(DyeSelectorGui.class, source));
+                final String type;
+
+                if (typeNode != null) {
+                    type = typeNode.getString();
+                } else {
+                    type = "";
+                }
+
+                if (id.equals(DEFAULT_DYE_MENU) || DYE_TYPE.equals(type)) {
+                    this.guiMap.put(id, DyeGuiSerializer.INSTANCE.deserialize(DyeSelectorGui.class, source));
                     this.plugin.getLogger().info("Loaded dye gui: " + id);
                     continue;
                 }
 
                 final CosmeticGui gui = source.get(CosmeticGui.class);
 
-                if (gui == null) {
-                    continue;
-                }
+                if (gui == null) continue;
 
                 for (final GuiItem guiItem : gui.guiItemMap.values()) {
                     if (guiItem instanceof final ArmorItem item) {
                         final ArmorItem copy = new ArmorItem(item);
                         copy.setAction(null);
                         this.cosmeticManager.addArmorItem(copy);
-                        if (copy.getPermission().isBlank()) {
-                            continue;
-                        }
-                        Bukkit.getPluginManager()
-                                .addPermission(new Permission(copy.getPermission()));
+                        if (copy.getPermission().isBlank()) continue;
+                        Bukkit.getPluginManager().addPermission(new Permission(copy.getPermission()));
                     }
                 }
 
@@ -167,5 +182,4 @@ public class CosmeticsMenu {
 
         }
     }
-
 }

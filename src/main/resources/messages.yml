@@ -18,7 +18,7 @@ help-command: "<#6D9DC5><st>                  </st> <white>  <gradient:#40B7D
 
 <#5AE4B5>- <#40B7D6>/cosmetics - <#6D9DC5>Opens cosmetics GUI.
 
-<#5AE4B5>- <#40B7D6>/cosmetics add <gray><USERNAME> <ID></gray> - <#6D9DC5>Adds cosmetic to player.
+<#5AE4B5>- <#40B7D6>/cosmetics add <gray><USERNAME> <ID> (#HEX)</gray> - <#6D9DC5>Adds cosmetic to player.
 
 <#5AE4B5>- <#40B7D6>/cosmetics remove <gray><USERNAME> <BACKPACK/HAT></gray> - <#6D9DC5>Removes cosmetic from a player.
 

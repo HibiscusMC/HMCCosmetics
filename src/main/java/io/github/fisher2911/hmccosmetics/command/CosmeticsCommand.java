@@ -10,8 +10,10 @@ import io.github.fisher2911.hmccosmetics.message.Placeholder;
 import io.github.fisher2911.hmccosmetics.user.User;
 import io.github.fisher2911.hmccosmetics.user.UserManager;
 import io.github.fisher2911.hmccosmetics.util.StringUtils;
+
 import java.util.Map;
 import java.util.Optional;
+
 import me.mattstudios.mf.annotations.Command;
 import me.mattstudios.mf.annotations.Completion;
 import me.mattstudios.mf.annotations.Default;
@@ -62,7 +64,7 @@ public class CosmeticsCommand extends CommandBase {
     @SubCommand("dye")
     @Permission(io.github.fisher2911.hmccosmetics.message.Permission.DYE_COMMAND)
     public void dyeArmor(final Player player, @Completion("#types") String typeString,
-            final @me.mattstudios.mf.annotations.Optional String dyeColor) {
+                         final @me.mattstudios.mf.annotations.Optional String dyeColor) {
 
         final Optional<User> optionalUser = this.userManager.get(player.getUniqueId());
 
@@ -80,12 +82,11 @@ public class CosmeticsCommand extends CommandBase {
                 return;
             }
 
-            final java.awt.Color awtColor = java.awt.Color.decode(dyeColor);
-            Color color = Color.fromRGB(awtColor.getRed(), awtColor.getGreen(), awtColor.getBlue());
-
             final ArmorItem armorItem = user.getPlayerArmor().getItem(type);
 
-            armorItem.setDye(color.asRGB());
+            if (dyeColor != null) {
+                this.setDyeColor(dyeColor, armorItem, player);
+            }
 
             this.userManager.setItem(user, armorItem);
 
@@ -113,8 +114,11 @@ public class CosmeticsCommand extends CommandBase {
 
     @SubCommand("add")
     @Permission(io.github.fisher2911.hmccosmetics.message.Permission.SET_COSMETIC_COMMAND)
-    public void setCommand(final CommandSender sender, @Completion("#players") final Player player,
-            @Completion("#ids") final String id) {
+    public void setCommand(
+            final CommandSender sender,
+            @Completion("#players") final Player player,
+            @Completion("#ids") final String id,
+            final @me.mattstudios.mf.annotations.Optional String dyeColor) {
         final Optional<User> userOptional = this.userManager.get(player.getUniqueId());
 
         if (userOptional.isEmpty()) {
@@ -126,7 +130,6 @@ public class CosmeticsCommand extends CommandBase {
         }
 
         final User user = userOptional.get();
-
         final ArmorItem armorItem = this.plugin.getCosmeticManager().getArmorItem(id);
 
         if (armorItem == null) {
@@ -135,6 +138,10 @@ public class CosmeticsCommand extends CommandBase {
                     Messages.ITEM_NOT_FOUND
             );
             return;
+        }
+
+        if (dyeColor != null) {
+            this.setDyeColor(dyeColor, armorItem, player);
         }
 
         final Message setMessage = Messages.getSetMessage(armorItem.getType());
@@ -155,7 +162,7 @@ public class CosmeticsCommand extends CommandBase {
     @SubCommand("remove")
     @Permission(io.github.fisher2911.hmccosmetics.message.Permission.SET_COSMETIC_COMMAND)
     public void removeCommand(final CommandSender sender,
-            @Completion("#players") final Player player, @Completion("#types") String typeString) {
+                              @Completion("#players") final Player player, @Completion("#types") String typeString) {
         final Optional<User> userOptional = this.userManager.get(player.getUniqueId());
 
         if (userOptional.isEmpty()) {
@@ -184,4 +191,17 @@ public class CosmeticsCommand extends CommandBase {
         }
     }
 
+    private void setDyeColor(final String dyeColor, final ArmorItem armorItem, final CommandSender sender) {
+        try {
+            final java.awt.Color awtColor = java.awt.Color.decode(dyeColor);
+            Color color = Color.fromRGB(awtColor.getRed(), awtColor.getGreen(), awtColor.getBlue());
+            armorItem.setDye(color.asRGB());
+        } catch (final NumberFormatException exception) {
+            this.messageHandler.sendMessage(
+                    sender,
+                    Messages.INVALID_COLOR,
+                    Map.of(Placeholder.ITEM, dyeColor)
+            );
+        }
+    }
 }

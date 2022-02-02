@@ -7,8 +7,8 @@ plugins {
 }
 
 group = "io.github.fisher2911"
-version = "1.6.3"
-description = "The ultimate cosmetic plugin for your server."
+version = "1.7.0"
+description = "Intuitive, easy-to-use cosmetics plugin, designed for servers using resource packs.\n"
 
 repositories {
     mavenCentral()
@@ -33,7 +33,7 @@ dependencies {
     implementation("net.kyori:adventure-api:4.9.3")
     implementation("net.kyori:adventure-text-minimessage:4.10.0-SNAPSHOT")
     implementation("net.kyori:adventure-platform-bukkit:4.0.1")
-    implementation("dev.triumphteam:triumph-gui:3.0.3")
+    implementation("dev.triumphteam:triumph-gui:3.1.1")
     implementation("me.mattstudios.utils:matt-framework:1.4.6")
     implementation("org.spongepowered:configurate-yaml:4.1.2")
     implementation("org.bstats:bstats-bukkit:2.2.1")
