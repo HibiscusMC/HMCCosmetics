@@ -50,6 +50,13 @@ public class Messages {
 
                             <st>                                                                   </st>""");
 
+    public static final Message OPENED_WARDROBE =
+            new Message("opened-wardrobe", ChatColor.GREEN + "Viewing wardrobe!");
+    public static final Message CLOSED_WARDROBE =
+            new Message("closed-wardrobe", ChatColor.GREEN + "Closing wardrobe!");
+    public static final Message WARDROBE_ALREADY_OPEN =
+            new Message("wardrobe-already-open", ChatColor.RED + "The wardrobe is already open!");
+
     public static final Message SET_OTHER_BACKPACK = new Message(
             "set-other-backpack", ChatColor.GREEN + "You have set the backpack of " +
             Placeholder.PLAYER + " to " + Placeholder.TYPE + "."

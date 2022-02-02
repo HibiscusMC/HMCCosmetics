@@ -9,6 +9,7 @@ import io.github.fisher2911.hmccosmetics.message.Messages;
 import io.github.fisher2911.hmccosmetics.message.Placeholder;
 import io.github.fisher2911.hmccosmetics.user.User;
 import io.github.fisher2911.hmccosmetics.user.UserManager;
+import io.github.fisher2911.hmccosmetics.user.Wardrobe;
 import io.github.fisher2911.hmccosmetics.util.StringUtils;
 
 import java.util.Map;
@@ -189,6 +190,31 @@ public class CosmeticsCommand extends CommandBase {
         } catch (final IllegalArgumentException exception) {
             this.messageHandler.sendMessage(player, Messages.INVALID_TYPE);
         }
+    }
+
+    @SubCommand("wardrobe")
+    @Permission(io.github.fisher2911.hmccosmetics.message.Permission.VIEW_WARDROBE)
+    public void openWardrobe(final Player player) {
+        final Optional<User> optionalUser = this.plugin.getUserManager().get(player.getUniqueId());
+        if (optionalUser.isEmpty()) return;
+
+        final User user = optionalUser.get();
+
+        final Wardrobe wardrobe = user.getWardrobe();
+        if (wardrobe.isActive()) {
+            this.messageHandler.sendMessage(
+                    player,
+                    Messages.WARDROBE_ALREADY_OPEN
+            );
+            return;
+        }
+
+        wardrobe.setActive(true);
+        Bukkit.getScheduler().runTaskAsynchronously(
+                this.plugin,
+                () -> wardrobe.spawnFakePlayer(player)
+        );
+        this.cosmeticsMenu.openDefault(player);
     }
 
     private void setDyeColor(final String dyeColor, final ArmorItem armorItem, final CommandSender sender) {

@@ -19,8 +19,6 @@ public class ClickListener implements Listener {
     private final HMCCosmetics plugin;
     private final UserManager userManager;
 
-    private final List<Integer> equipmentSlots = List.of(39, 40);
-
     public ClickListener(final HMCCosmetics plugin) {
         this.plugin = plugin;
         this.userManager = this.plugin.getUserManager();

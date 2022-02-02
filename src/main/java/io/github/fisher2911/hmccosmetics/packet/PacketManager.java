@@ -4,20 +4,44 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.reflect.StructureModifier;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.MinecraftKey;
 import com.comphenix.protocol.wrappers.Pair;
-import java.lang.reflect.InvocationTargetException;
-import java.util.List;
-import java.util.UUID;
+import com.comphenix.protocol.wrappers.PlayerInfoData;
+import com.comphenix.protocol.wrappers.WrappedChatComponent;
+import com.comphenix.protocol.wrappers.WrappedGameProfile;
+import com.mojang.authlib.GameProfile;
+import io.github.fisher2911.hmccosmetics.playerpackets.PlayerPackets;
+import io.github.fisher2911.hmccosmetics.playerpackets.PlayerPackets_1_17_R1;
+import io.github.fisher2911.hmccosmetics.playerpackets.PlayerPackets_1_18_R1;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.libs.it.unimi.dsi.fastutil.ints.IntArrayList;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 public class PacketManager {
+
+    private static final PlayerPackets playerPackets;
+
+    static {
+        final String version = Bukkit.getVersion();
+        if (version.contains("1.17")) {
+            playerPackets = new PlayerPackets_1_17_R1();
+        } /*else if (version.contains("1.18")) {
+            playerPackets = new PlayerPackets_1_18_R1();
+        }*/ else {
+            playerPackets = null;
+        }
+    }
 
     public static PacketContainer getEntitySpawnPacket(final Location location, final int entityId,
             final EntityType entityType) {
@@ -91,8 +115,6 @@ public class PacketManager {
             final float pitch,
             final EnumWrappers.SoundCategory soundCategory
     ) {
-//        final Location location = player.getLocation();
-
         final var manager = ProtocolLibrary.getProtocolManager();
         final var packet = manager.createPacket(PacketType.Play.Server.CUSTOM_SOUND_EFFECT);
 
@@ -117,6 +139,16 @@ public class PacketManager {
                 .write(1, pitch);
 
         return packet;
+    }
+
+    public static PacketContainer[] getFakePlayerPacket(final Location location, Player player, final UUID uuid, final int entityId) throws IllegalStateException {
+        if (playerPackets == null) throw new IllegalStateException("This cannot be used in version: " + Bukkit.getVersion());
+        return playerPackets.getSpawnPacket(location, player, uuid, entityId);
+    }
+
+    public static PacketContainer getRemovePlayerPacket(final Player player, final UUID uuid, final int entityId) {
+        if (playerPackets == null) throw new IllegalStateException("This cannot be used in version: " + Bukkit.getVersion());
+        return playerPackets.getRemovePacket(player, uuid, entityId);
     }
 
     public static void sendPacket(final Player to, final PacketContainer... packets) {

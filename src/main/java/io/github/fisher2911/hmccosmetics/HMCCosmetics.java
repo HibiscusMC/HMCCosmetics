@@ -15,12 +15,14 @@ import io.github.fisher2911.hmccosmetics.hook.item.ItemsAdderHook;
 import io.github.fisher2911.hmccosmetics.listener.ClickListener;
 import io.github.fisher2911.hmccosmetics.listener.CosmeticFixListener;
 import io.github.fisher2911.hmccosmetics.listener.JoinListener;
+import io.github.fisher2911.hmccosmetics.listener.PlayerShiftListener;
 import io.github.fisher2911.hmccosmetics.listener.RespawnListener;
 import io.github.fisher2911.hmccosmetics.listener.TeleportListener;
 import io.github.fisher2911.hmccosmetics.message.MessageHandler;
 import io.github.fisher2911.hmccosmetics.message.Messages;
 import io.github.fisher2911.hmccosmetics.message.Translation;
 import io.github.fisher2911.hmccosmetics.user.UserManager;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.SQLException;
@@ -28,6 +30,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import me.mattstudios.mf.base.CommandManager;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
@@ -105,7 +108,8 @@ public class HMCCosmetics extends JavaPlugin {
                         new ClickListener(this),
                         new TeleportListener(this),
                         new RespawnListener(this),
-                        new CosmeticFixListener(this)
+                        new CosmeticFixListener(this),
+                        new PlayerShiftListener(this)
                 ).
                 forEach(
                         listener -> this.getServer().getPluginManager()

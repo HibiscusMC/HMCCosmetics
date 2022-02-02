@@ -125,8 +125,11 @@ public class UserManager {
     public void updateCosmetics(final User user, final boolean ignoreRestrictions, final Player other) {
         final Player player = user.getPlayer();
 
+        final Equipment equipment;
         if (player == null) {
-            return;
+            equipment = new Equipment();
+        } else {
+            equipment = Equipment.fromEntityEquipment(player.getEquipment());
         }
 
         final PlayerArmor playerArmor = user.getPlayerArmor();
@@ -134,28 +137,27 @@ public class UserManager {
         final List<Pair<EnumWrappers.ItemSlot, ItemStack>> equipmentList = new ArrayList<>();
 
         equipmentList.add(
-                new Pair<>(EnumWrappers.ItemSlot.HEAD, this.getCosmeticItem(player, playerArmor.getHat(), EquipmentSlot.HEAD, ignoreRestrictions))
+                new Pair<>(EnumWrappers.ItemSlot.HEAD, this.getCosmeticItem(equipment, playerArmor.getHat(), EquipmentSlot.HEAD, ignoreRestrictions))
         );
         equipmentList.add(
-                new Pair<>(EnumWrappers.ItemSlot.OFFHAND, this.getCosmeticItem(player, playerArmor.getOffHand(), EquipmentSlot.OFF_HAND, ignoreRestrictions))
+                new Pair<>(EnumWrappers.ItemSlot.OFFHAND, this.getCosmeticItem(equipment, playerArmor.getOffHand(), EquipmentSlot.OFF_HAND, ignoreRestrictions))
         );
 
         PacketManager.sendPacket(
                 other,
                 PacketManager.getEquipmentPacket(
                         equipmentList,
-                        player.getEntityId()
+                        user.getEntityId()
                 )
         );
     }
 
     private ItemStack getCosmeticItem(
-            final Player player,
+            final Equipment equipment,
             final ArmorItem armorItem,
             final EquipmentSlot slot,
             final boolean ignoreRestrictions) {
         final CosmeticSettings cosmeticSettings = this.settings.getCosmeticSettings();
-        final EntityEquipment equipment = player.getEquipment();
 
         final Map<String, String> placeholders = Map.of(Placeholder.ALLOWED, "true",
                 Placeholder.ENABLED, "true");
@@ -180,17 +182,24 @@ public class UserManager {
     }
 
     public void setItem(final User user, final ArmorItem armorItem) {
-        ArmorItem previous = user.getPlayerArmor().getItem(armorItem.getType());
+        final Wardrobe wardrobe = user.getWardrobe();
+        final User setUser;
+        if (wardrobe.isActive()) {
+            setUser = wardrobe;
+        } else {
+            setUser = user;
+        }
+        ArmorItem previous = setUser.getPlayerArmor().getItem(armorItem.getType());
 
         final CosmeticChangeEvent event =
-                new CosmeticChangeEvent(new CosmeticItem(armorItem.copy()), new CosmeticItem(previous.copy()), user);
+                new CosmeticChangeEvent(new CosmeticItem(armorItem.copy()), new CosmeticItem(previous.copy()), setUser);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) return;
 
-        user.setItem(event.getCosmeticItem().getArmorItem());
+        setUser.setItem(event.getCosmeticItem().getArmorItem());
         Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () -> {
             switch (armorItem.getType()) {
-                case HAT, OFF_HAND -> this.updateCosmetics(user);
+                case HAT, OFF_HAND -> this.updateCosmetics(setUser);
             }
         });
     }

@@ -11,11 +11,14 @@ import io.github.fisher2911.hmccosmetics.database.dao.UserDAO;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
 import io.github.fisher2911.hmccosmetics.user.User;
+
 import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
+
+import io.github.fisher2911.hmccosmetics.user.Wardrobe;
 import org.bukkit.Bukkit;
 
 public class Database {
@@ -25,7 +28,7 @@ public class Database {
     final Dao<ArmorItemDAO, UUID> armorItemDao;
     private final ConnectionSource dataSource;
     private final DatabaseType databaseType;
-    AtomicInteger ARMOR_STAND_ID = new AtomicInteger(Integer.MAX_VALUE);
+    AtomicInteger FAKE_ENTITY_ID = new AtomicInteger(Integer.MAX_VALUE);
     String TABLE_NAME = "user";
     String PLAYER_UUID_COLUMN = "uuid";
     String BACKPACK_COLUMN = "backpack";
@@ -67,7 +70,8 @@ public class Database {
     }
 
     public void loadUser(final UUID uuid, final Consumer<User> onComplete) {
-        final int armorStandId = ARMOR_STAND_ID.getAndDecrement();
+        final int armorStandId = FAKE_ENTITY_ID.getAndDecrement();
+        final Wardrobe wardrobe = this.newWardrobe();
         Threads.getInstance().execute(
                 () -> {
                     try {
@@ -80,8 +84,11 @@ public class Database {
                         final List<ArmorItemDAO> armorItems = this.armorItemDao.queryForEq("uuid",
                                 uuid.toString());
 
-                        final User actualUser = user.toUser(this.plugin.getCosmeticManager(),
-                                armorItems, armorStandId);
+                        final User actualUser = user.toUser(
+                                this.plugin.getCosmeticManager(),
+                                armorItems,
+                                wardrobe,
+                                armorStandId);
                         Bukkit.getScheduler().runTask(this.plugin,
                                 () -> {
                                     this.plugin.getUserManager().add(
@@ -96,7 +103,7 @@ public class Database {
                     }
                 });
 
-        final User user = new User(uuid, PlayerArmor.empty(), armorStandId);
+        final User user = new User(uuid, PlayerArmor.empty(), wardrobe, armorStandId);
         this.plugin.getUserManager().add(user);
         onComplete.accept(user);
 
@@ -149,4 +156,13 @@ public class Database {
         return armorItemDao;
     }
 
+    public Wardrobe newWardrobe() {
+        return new Wardrobe(
+                UUID.randomUUID(),
+                PlayerArmor.empty(),
+                FAKE_ENTITY_ID.getAndDecrement(),
+                FAKE_ENTITY_ID.getAndDecrement(),
+                false
+        );
+    }
 }

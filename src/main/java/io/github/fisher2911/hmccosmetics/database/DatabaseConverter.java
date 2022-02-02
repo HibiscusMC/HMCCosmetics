@@ -4,6 +4,7 @@ import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
 import io.github.fisher2911.hmccosmetics.user.User;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -16,6 +17,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
+
 import org.bukkit.configuration.file.YamlConfiguration;
 
 public class DatabaseConverter {
@@ -85,11 +87,12 @@ public class DatabaseConverter {
 
                 while (results.next()) {
                     final PlayerArmor playerArmor = PlayerArmor.empty();
-                    final User user = new User
-                            (UUID.fromString(results.getString(1)),
-                                    playerArmor,
-                                    this.database.ARMOR_STAND_ID.getAndDecrement()
-                            );
+                    final User user = new User(
+                            UUID.fromString(results.getString(1)),
+                            playerArmor,
+                            this.database.newWardrobe(),
+                            this.database.FAKE_ENTITY_ID.getAndDecrement()
+                    );
                     final String backpackId = results.getString(2);
                     final String hatId = results.getString(3);
                     final int hatDye = results.getInt(4);

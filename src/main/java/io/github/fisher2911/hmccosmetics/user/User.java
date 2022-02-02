@@ -27,12 +27,21 @@ public class User {
     private final UUID uuid;
     private final PlayerArmor playerArmor;
 
+    private Wardrobe wardrobe;
+
     private ArmorItem lastSetItem = ArmorItem.empty(ArmorItem.Type.HAT);
 
     private boolean hasArmorStand;
     private final int armorStandId;
 
-    public User(final UUID uuid, final PlayerArmor playerArmor, final int armorStandId) {
+    public User(final UUID uuid, final PlayerArmor playerArmor, final Wardrobe wardrobe, final int armorStandId) {
+        this.uuid = uuid;
+        this.playerArmor = playerArmor;
+        this.wardrobe = wardrobe;
+        this.armorStandId = armorStandId;
+    }
+
+    protected User(final UUID uuid, final PlayerArmor playerArmor, final int armorStandId) {
         this.uuid = uuid;
         this.playerArmor = playerArmor;
         this.armorStandId = armorStandId;
@@ -48,6 +57,10 @@ public class User {
 
     public PlayerArmor getPlayerArmor() {
         return playerArmor;
+    }
+
+    public Wardrobe getWardrobe() {
+        return wardrobe;
     }
 
     protected void setPlayerArmor(final PlayerArmor playerArmor) {
@@ -161,5 +174,17 @@ public class User {
 
     public ArmorItem getLastSetItem() {
         return lastSetItem;
+    }
+
+    public int getEntityId() {
+        final Player player = this.getPlayer();
+        if (player == null) return -1;
+        return player.getEntityId();
+    }
+
+    public boolean hasPermissionToUse(final ArmorItem armorItem) {
+        final Player player = this.getPlayer();
+        if (player == null) return false;
+        return player.hasPermission(armorItem.getPermission());
     }
 }

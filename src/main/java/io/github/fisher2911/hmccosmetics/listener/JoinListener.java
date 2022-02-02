@@ -2,13 +2,17 @@ package io.github.fisher2911.hmccosmetics.listener;
 
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.database.Database;
+import io.github.fisher2911.hmccosmetics.user.User;
 import io.github.fisher2911.hmccosmetics.user.UserManager;
+import io.github.fisher2911.hmccosmetics.user.Wardrobe;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+
+import java.util.Optional;
 
 public class JoinListener implements Listener {
 
@@ -33,6 +37,17 @@ public class JoinListener implements Listener {
     @EventHandler
     public void onQuit(final PlayerQuitEvent event) {
         final Player player = event.getPlayer();
+        final Optional<User> optionalUser = this.userManager.get(player.getUniqueId());
+        optionalUser.ifPresent(user -> {
+            final Wardrobe wardrobe = user.getWardrobe();
+
+            if (wardrobe.isActive()) {
+                Bukkit.getScheduler().runTaskAsynchronously(
+                        this.plugin,
+                        () -> wardrobe.despawnFakePlayer(player)
+                );
+            }
+        });
         this.userManager.remove(player.getUniqueId());
     }
 

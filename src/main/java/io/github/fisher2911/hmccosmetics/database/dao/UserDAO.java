@@ -6,6 +6,8 @@ import io.github.fisher2911.hmccosmetics.cosmetic.CosmeticManager;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
 import io.github.fisher2911.hmccosmetics.user.User;
+import io.github.fisher2911.hmccosmetics.user.Wardrobe;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -27,7 +29,10 @@ public class UserDAO {
         this.uuid = uuid;
     }
 
-    public User toUser(final CosmeticManager cosmeticManager, final List<ArmorItemDAO> armorItems,
+    public User toUser(
+            final CosmeticManager cosmeticManager,
+            final List<ArmorItemDAO> armorItems,
+            final Wardrobe wardrobe,
             final int armorStandId) {
         final PlayerArmor playerArmor = PlayerArmor.empty();
 
@@ -39,7 +44,7 @@ public class UserDAO {
             playerArmor.setItem(armorItem);
         }
 
-        return new User(this.uuid, playerArmor, armorStandId);
+        return new User(this.uuid, playerArmor, wardrobe, armorStandId);
     }
 
     @Override
