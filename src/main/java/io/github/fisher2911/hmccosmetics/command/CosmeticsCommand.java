@@ -84,7 +84,9 @@ public class CosmeticsCommand extends CommandBase {
 
             final ArmorItem armorItem = user.getPlayerArmor().getItem(type);
 
-            this.setDyeColor(dyeColor, armorItem, player);
+            if (dyeColor != null) {
+                this.setDyeColor(dyeColor, armorItem, player);
+            }
 
             this.userManager.setItem(user, armorItem);
 
@@ -138,7 +140,9 @@ public class CosmeticsCommand extends CommandBase {
             return;
         }
 
-        this.setDyeColor(dyeColor, armorItem, player);
+        if (dyeColor != null) {
+            this.setDyeColor(dyeColor, armorItem, player);
+        }
 
         final Message setMessage = Messages.getSetMessage(armorItem.getType());
         final Message setOtherMessage = Messages.getSetOtherMessage(armorItem.getType());
