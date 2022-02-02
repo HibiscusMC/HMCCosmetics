@@ -192,21 +192,23 @@ public class UserManager {
     }
 
     public void setItem(final User user, final ArmorItem armorItem) {
-        ArmorItem previous = user.getPlayerArmor().getItem(armorItem.getType());
+        Bukkit.getScheduler().runTask(plugin, () -> {
+            ArmorItem previous = user.getPlayerArmor().getItem(armorItem.getType());
 
-        final CosmeticChangeEvent event =
-                new CosmeticChangeEvent(new CosmeticItem(armorItem.copy()),
-                        new CosmeticItem(previous.copy()), user);
-        Bukkit.getPluginManager().callEvent(event);
-        if (event.isCancelled()) {
-            return;
-        }
-
-        user.setItem(event.getCosmeticItem().getArmorItem());
-        Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () -> {
-            switch (armorItem.getType()) {
-                case HAT, OFF_HAND -> this.updateCosmetics(user);
+            final CosmeticChangeEvent event =
+                    new CosmeticChangeEvent(new CosmeticItem(armorItem.copy()),
+                            new CosmeticItem(previous.copy()), user);
+            Bukkit.getPluginManager().callEvent(event);
+            if (event.isCancelled()) {
+                return;
             }
+
+            user.setItem(event.getCosmeticItem().getArmorItem());
+            Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () -> {
+                switch (armorItem.getType()) {
+                    case HAT, OFF_HAND -> this.updateCosmetics(user);
+                }
+            });
         });
     }
 
