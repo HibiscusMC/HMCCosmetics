@@ -7,8 +7,8 @@ plugins {
 }
 
 group = "io.github.fisher2911"
-version = "1.6.2"
-description = "The ultimate cosmetic plugin for your server."
+version = "1.7.1"
+description = "Intuitive, easy-to-use cosmetics plugin, designed for servers using resource packs.\n"
 
 repositories {
     mavenCentral()
