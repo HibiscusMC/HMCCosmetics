@@ -95,4 +95,6 @@ items:
     name: "<#F7DCFA>Previous Page"
     amount: 1
     model-data: 1
-    open-menu: main
+    action: # See how the action system works on the wiki
+      any:
+        open-menu: main
