@@ -3,7 +3,9 @@ package io.github.fisher2911.hmccosmetics.config;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import dev.triumphteam.gui.components.GuiAction;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
+import io.github.fisher2911.hmccosmetics.util.Utils;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
@@ -11,7 +13,11 @@ import org.spongepowered.configurate.serialize.SerializationException;
 import org.spongepowered.configurate.serialize.TypeSerializer;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+import java.util.function.Consumer;
 
 public class ActionSerializer implements TypeSerializer<GuiAction<InventoryClickEvent>> {
 
@@ -44,8 +50,24 @@ public class ActionSerializer implements TypeSerializer<GuiAction<InventoryClick
 
     @Override
     public GuiAction<InventoryClickEvent> deserialize(final Type type, final ConfigurationNode source) {
-        final ConfigurationNode openMenuNode = source.node(OPEN_MENU);
-        final ConfigurationNode soundNode = source.node(SOUND);
+        final var children = source.childrenMap();
+        final List<Consumer<InventoryClickEvent>> consumers = new ArrayList<>();
+        for (final var entry : children.entrySet()) {
+            final String clickType = entry.getKey().toString();
+            if (clickType == null) continue;
+            consumers.add(this.parseAction(entry.getValue(), clickType.toUpperCase(Locale.ROOT)));
+        }
+
+        return event -> {
+            for (final Consumer<InventoryClickEvent> consumer : consumers) {
+                consumer.accept(event);
+            }
+        };
+    }
+
+    private Consumer<InventoryClickEvent> parseAction(final ConfigurationNode node, final String clickType) {
+        final ConfigurationNode openMenuNode = node.node(OPEN_MENU);
+        final ConfigurationNode soundNode = node.node(SOUND);
         final ConfigurationNode soundNameNode = soundNode.node(SOUND_NAME);
         final ConfigurationNode volumeNode = soundNode.node(SOUND_VOLUME);
         final ConfigurationNode pitchNode = soundNode.node(SOUND_PITCH);
@@ -70,7 +92,10 @@ public class ActionSerializer implements TypeSerializer<GuiAction<InventoryClick
             );
         }
 
+        final ClickType click = Utils.stringToEnum(clickType, ClickType.class, ClickType.UNKNOWN);
+
         return event -> {
+            if (click != ClickType.UNKNOWN && event.getClick() != click) return;
             if (!(event.getWhoClicked() instanceof final Player player)) return;
             if (soundData != null) {
                 soundData.play(player);
