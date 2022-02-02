@@ -3,6 +3,8 @@ package io.github.fisher2911.hmccosmetics.config;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import dev.triumphteam.gui.components.GuiAction;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
+import io.github.fisher2911.hmccosmetics.message.Message;
+import io.github.fisher2911.hmccosmetics.message.MessageHandler;
 import io.github.fisher2911.hmccosmetics.util.Utils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -25,6 +27,7 @@ public class ActionSerializer implements TypeSerializer<GuiAction<InventoryClick
     private static final HMCCosmetics plugin;
 
     private static final String OPEN_MENU = "open-menu";
+    private static final String SEND_MESSAGE = "send-message";
     private static final String SOUND = "sound";
     private static final String SOUND_NAME = "name";
     private static final String SOUND_VOLUME = "volume";
@@ -67,6 +70,7 @@ public class ActionSerializer implements TypeSerializer<GuiAction<InventoryClick
 
     private Consumer<InventoryClickEvent> parseAction(final ConfigurationNode node, final String clickType) {
         final ConfigurationNode openMenuNode = node.node(OPEN_MENU);
+        final ConfigurationNode sendMessageNode = node.node(SEND_MESSAGE);
         final ConfigurationNode soundNode = node.node(SOUND);
         final ConfigurationNode soundNameNode = soundNode.node(SOUND_NAME);
         final ConfigurationNode volumeNode = soundNode.node(SOUND_VOLUME);
@@ -74,6 +78,7 @@ public class ActionSerializer implements TypeSerializer<GuiAction<InventoryClick
         final ConfigurationNode categoryNode = soundNode.node(SOUND_CATEGORY);
 
         final String openMenu = openMenuNode.getString();
+        final String sendMessage = sendMessageNode.getString();
 
         final SoundData soundData;
 
@@ -101,6 +106,10 @@ public class ActionSerializer implements TypeSerializer<GuiAction<InventoryClick
                 soundData.play(player);
             }
 
+            if (sendMessage != null) plugin.getMessageHandler().sendMessage(
+                    player,
+                    new Message("", sendMessage)
+            );
             if (openMenu != null) plugin.getCosmeticsMenu().openMenu(openMenu, event.getWhoClicked());
         };
     }
