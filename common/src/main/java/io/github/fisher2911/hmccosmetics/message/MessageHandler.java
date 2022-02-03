@@ -12,6 +12,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
 import net.kyori.adventure.title.Title;
 import net.md_5.bungee.api.ChatMessageType;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -151,6 +152,8 @@ public class MessageHandler {
                             String.format(ErrorMessages.ITEM_NOT_FOUND, "message", fileName));
                 }
             }).replace(Placeholder.PREFIX, prefix);
+
+            Bukkit.broadcastMessage("Prefix: " + prefix);
 
             final Message.Type messageType = Utils.stringToEnum(
                     Utils.replaceIfNull(config.getString("type"), ""), Message.Type.class,

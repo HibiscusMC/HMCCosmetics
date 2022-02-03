@@ -215,6 +215,10 @@ public class CosmeticsCommand extends CommandBase {
                 () -> wardrobe.spawnFakePlayer(player, this.plugin)
         );
         this.cosmeticsMenu.openDefault(player);
+        this.messageHandler.sendMessage(
+                player,
+                Messages.OPENED_WARDROBE
+        );
     }
 
     private void setDyeColor(final String dyeColor, final ArmorItem armorItem, final CommandSender sender) {
