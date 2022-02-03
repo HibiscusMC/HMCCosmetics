@@ -40,14 +40,12 @@ public class DatabaseConverter {
                 FILE_NAME
         ).toFile();
 
-        final boolean fileExists = file.exists();
-
         if (!file.exists()) {
             this.plugin.saveResource("database" + File.separator + FILE_NAME, true);
         }
 
         final YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
-        final int version = fileExists ? config.getInt("version") : 1;
+        final int version = config.getInt("version") == 0 ? 1 : config.getInt("version");
 
         final Set<User> users = new HashSet<>();
 

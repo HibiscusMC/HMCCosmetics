@@ -141,7 +141,7 @@ public class CosmeticGui {
             final String permission =
                     armorItem.getPermission() == null ? "" : armorItem.getPermission();
 
-            final boolean hasPermission = permission.isBlank() || player.hasPermission(permission);
+            final boolean hasPermission = permission.isBlank() || user.hasPermissionToUse(armorItem);
 
             return new GuiItem(
                     this.applyPlaceholders(user, player, armorItem, hasPermission),
