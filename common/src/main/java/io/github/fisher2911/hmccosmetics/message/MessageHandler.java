@@ -153,8 +153,6 @@ public class MessageHandler {
                 }
             }).replace(Placeholder.PREFIX, prefix);
 
-            Bukkit.broadcastMessage("Prefix: " + prefix);
-
             final Message.Type messageType = Utils.stringToEnum(
                     Utils.replaceIfNull(config.getString("type"), ""), Message.Type.class,
                     Message.Type.MESSAGE
