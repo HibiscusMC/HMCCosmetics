@@ -1,11 +1,11 @@
 package io.github.fisher2911.hmccosmetics.user;
 
 import com.comphenix.protocol.events.PacketContainer;
+import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.config.Settings;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
 import io.github.fisher2911.hmccosmetics.packet.PacketManager;
-import net.minecraft.network.protocol.Packet;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -34,7 +34,7 @@ public class Wardrobe extends User {
         this.wardrobe = this;
     }
 
-    public void spawnFakePlayer(final Player viewer, final Settings settings) {
+    public void spawnFakePlayer(final Player viewer, final HMCCosmetics plugin) {
         this.currentLocation = viewer.getLocation().clone();
         this.currentLocation.setPitch(0);
         this.currentLocation.setYaw(0);
@@ -49,11 +49,16 @@ public class Wardrobe extends User {
         );
         PacketManager.sendPacket(viewer, playerInfoPacket, playerSpawnPacket);
         this.spawnArmorStand(viewer);
-        this.updateArmorStand(viewer, settings, this.currentLocation);
+        this.updateArmorStand(viewer, plugin.getSettings(), this.currentLocation);
+    }
+
+    @Override
+    public void updateArmorStand(final Player player, final Settings settings) {
+        this.updateArmorStand(player, settings, this.currentLocation);
     }
 
     public void despawnFakePlayer(final Player viewer) {
-        PacketManager.sendPacket(viewer, PacketManager.getRemovePlayerPacket(viewer, this.getUuid(), this.getEntityId()));
+        PacketManager.sendPacket(viewer, PacketManager.getEntityDestroyPacket(this.getEntityId()));
         this.despawnAttached();
         this.active = false;
     }

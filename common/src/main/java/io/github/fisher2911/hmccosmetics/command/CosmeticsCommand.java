@@ -212,7 +212,7 @@ public class CosmeticsCommand extends CommandBase {
         wardrobe.setActive(true);
         Bukkit.getScheduler().runTaskAsynchronously(
                 this.plugin,
-                () -> wardrobe.spawnFakePlayer(player, this.plugin.getSettings())
+                () -> wardrobe.spawnFakePlayer(player, this.plugin)
         );
         this.cosmeticsMenu.openDefault(player);
     }

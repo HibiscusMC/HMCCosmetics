@@ -1,4 +1,4 @@
-package io.github.fisher2911.nms.playerpackets;
+package io.github.fisher2911.nms;
 
 import com.comphenix.protocol.events.PacketContainer;
 import org.bukkit.Location;

@@ -7,12 +7,14 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.MinecraftKey;
 import com.comphenix.protocol.wrappers.Pair;
-import io.github.fisher2911.nms.playerpackets.PlayerPackets;
+import io.github.fisher2911.nms.DestroyPacket;
+import io.github.fisher2911.nms.DestroyPacket_1_17_R1;
+import io.github.fisher2911.nms.DestroyPacket_1_18_R1;
 import io.github.fisher2911.nms.PlayerPackets_1_17_R1;
 import io.github.fisher2911.nms.PlayerPackets_1_18_R1;
+import io.github.fisher2911.nms.PlayerPackets;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.libs.it.unimi.dsi.fastutil.ints.IntArrayList;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -24,16 +26,20 @@ import java.util.UUID;
 public class PacketManager {
 
     private static final PlayerPackets playerPackets;
+    private static final DestroyPacket destroyPacket;
 
     static {
         final String version = Bukkit.getVersion();
         System.out.println("Version: " + Bukkit.getVersion());
         if (version.contains("1.17")) {
             playerPackets = new PlayerPackets_1_17_R1();
+            destroyPacket = new DestroyPacket_1_17_R1();
         } else if (version.contains("1.18")) {
             playerPackets = new PlayerPackets_1_18_R1();
+            destroyPacket = new DestroyPacket_1_18_R1();
         } else {
             playerPackets = null;
+            destroyPacket = null;
         }
     }
 
@@ -94,11 +100,7 @@ public class PacketManager {
     }
 
     public static PacketContainer getEntityDestroyPacket(final int entityId) {
-        final PacketContainer destroyPacket = new PacketContainer(
-                PacketType.Play.Server.ENTITY_DESTROY);
-        destroyPacket.getModifier().write(0, new IntArrayList(new int[]{entityId}));
-
-        return destroyPacket;
+        return destroyPacket.get(entityId);
     }
 
     public static PacketContainer getSoundPacket(

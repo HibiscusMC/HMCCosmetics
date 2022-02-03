@@ -8,7 +8,8 @@ import com.comphenix.protocol.wrappers.PlayerInfoData;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.mojang.authlib.GameProfile;
-import io.github.fisher2911.nms.playerpackets.PlayerPackets;
+import com.mojang.authlib.properties.Property;
+import com.mojang.authlib.properties.PropertyMap;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_18_R1.entity.CraftPlayer;
@@ -46,7 +47,7 @@ public class PlayerPackets_1_18_R1 implements PlayerPackets {
                 .fromHandle(profile),
                 0,
                 EnumWrappers.NativeGameMode.fromBukkit(GameMode.CREATIVE),
-                WrappedChatComponent.fromText("")));
+                WrappedChatComponent.fromText(profile.getName())));
 
         action.write(0, EnumWrappers.PlayerInfoAction.ADD_PLAYER);
         infoData.write(0, playerInfoData);
@@ -68,7 +69,7 @@ public class PlayerPackets_1_18_R1 implements PlayerPackets {
                 .fromHandle(profile),
                 0,
                 EnumWrappers.NativeGameMode.fromBukkit(GameMode.CREATIVE),
-                WrappedChatComponent.fromText(profile.getName())));
+                WrappedChatComponent.fromText("")));
 
         action.write(0, EnumWrappers.PlayerInfoAction.REMOVE_PLAYER);
         infoData.write(0, playerInfoData);
@@ -80,13 +81,14 @@ public class PlayerPackets_1_18_R1 implements PlayerPackets {
         final GameProfile playerProfile = ((CraftPlayer) player).getProfile();
         final GameProfile profile = new GameProfile(
                 uuid,
-                player.getDisplayName());
+                player.getDisplayName()
+        );
 
-        System.out.println("Printing Profile Data");
-        for (final var entry : playerProfile.getProperties().entries()) {
-            profile.getProperties().put(entry.getKey(), entry.getValue());
-            System.out.println(entry.getKey() + " : " + entry.getValue());
-        }
+        profile.getProperties().removeAll("textures");
+        Property textureProperty = playerProfile.getProperties().get("textures").iterator().next();
+        String texture = textureProperty.getValue();
+        String signature = textureProperty.getSignature();
+        profile.getProperties().put("textures", new Property("textures", texture, signature));
 
         return profile;
     }
