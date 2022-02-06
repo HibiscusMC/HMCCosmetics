@@ -79,7 +79,7 @@ public class HMCCosmetics extends JavaPlugin {
             this.load();
         }
 
-        HookManager.getInstance().registerListeners(this);
+        HookManager.getInstance().init();
 
         this.saveTask = Bukkit.getScheduler().runTaskTimerAsynchronously(
                 this,

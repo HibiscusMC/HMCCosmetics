@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import io.github.fisher2911.hmccosmetics.hook.item.PAPIExpansion;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
@@ -65,6 +67,13 @@ public class HookManager {
 
     public boolean isEnabled(final Class<? extends Hook> hook) {
         return this.registeredHooks.contains(hook);
+    }
+
+    public void init() {
+        if (this.isEnabled(PAPIHook.class)) {
+            new PAPIExpansion(this.plugin).register();
+        }
+        this.registerListeners(this.plugin);
     }
 
     public void registerListeners(final HMCCosmetics plugin) {

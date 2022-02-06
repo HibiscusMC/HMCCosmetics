@@ -20,8 +20,10 @@ import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 public class CosmeticsMenu {
 
@@ -32,6 +34,8 @@ public class CosmeticsMenu {
     private final CosmeticManager cosmeticManager;
 
     private final Map<String, CosmeticGui> guiMap = new HashMap<>();
+
+    private final Set<String> registeredPermissions = new HashSet<>();
 
     public CosmeticsMenu(final HMCCosmetics plugin) {
         this.plugin = plugin;
@@ -178,8 +182,9 @@ public class CosmeticsMenu {
                         final ArmorItem copy = new ArmorItem(item);
                         copy.setAction(null);
                         this.cosmeticManager.addArmorItem(copy);
-                        if (copy.getPermission().isBlank()) continue;
-                        Bukkit.getPluginManager().addPermission(new Permission(copy.getPermission()));
+                        final String perm = copy.getPermission();
+                        if (perm.isBlank() || this.registeredPermissions.contains(perm)) continue;
+                        Bukkit.getPluginManager().addPermission(new Permission(perm));
                     }
                 }
 
