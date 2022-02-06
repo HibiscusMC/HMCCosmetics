@@ -1,6 +1,7 @@
 package io.github.fisher2911.hmccosmetics.listener;
 
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
+import io.github.fisher2911.hmccosmetics.config.WardrobeSettings;
 import io.github.fisher2911.hmccosmetics.database.Database;
 import io.github.fisher2911.hmccosmetics.user.User;
 import io.github.fisher2911.hmccosmetics.user.UserManager;
@@ -31,7 +32,15 @@ public class JoinListener implements Listener {
         final Player player = event.getPlayer();
         this.database.loadUser(player.getUniqueId(),
                 user -> Bukkit.getScheduler().runTaskAsynchronously(this.plugin,
-                        () -> this.userManager.resendCosmetics(player)));
+                        () -> {
+                            this.userManager.resendCosmetics(player);
+                            final WardrobeSettings settings = this.plugin.getSettings().getWardrobeSettings();
+                            if (settings.isAlwaysDisplay() && settings.getLocation() != null) {
+                                final Wardrobe wardrobe = user.getWardrobe();
+                                wardrobe.setCurrentLocation(settings.getLocation());
+                                wardrobe.spawnFakePlayer(player);
+                            }
+                        }));
     }
 
     @EventHandler

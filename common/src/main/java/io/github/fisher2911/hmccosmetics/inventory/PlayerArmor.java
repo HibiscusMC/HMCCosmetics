@@ -62,4 +62,10 @@ public class PlayerArmor {
         return new PlayerArmor(new HashMap<>(this.armorItems));
     }
 
+    public void clear() {
+        for (final ArmorItem.Type type : ArmorItem.Type.values()) {
+            this.setItem(ArmorItem.empty(type));
+        }
+    }
+
 }

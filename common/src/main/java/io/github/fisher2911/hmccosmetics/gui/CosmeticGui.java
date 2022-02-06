@@ -107,12 +107,10 @@ public class CosmeticGui {
         this.gui.updateItem(slot, guiItem);
     }
 
-    public void open(final User user) {
-        final Player player = user.getPlayer();
-        if (player == null) return;
+    public void open(final User user, final Player player) {
         this.gui = Gui.gui().
                 title(Adventure.MINI_MESSAGE.deserialize(
-                        Placeholder.applyPapiPlaceholders(user.getPlayer(), this.title))).
+                        Placeholder.applyPapiPlaceholders(player, this.title))).
                 rows(this.rows).
                 create();
 

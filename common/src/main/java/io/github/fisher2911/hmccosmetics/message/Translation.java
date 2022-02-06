@@ -10,6 +10,10 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 public class Translation {
 
+    public static final String TRUE = "true";
+    public static final String FALSE = "false";
+    public static final String NONE = "none";
+
     private static final Translation INSTANCE;
     private static final String FILE_NAME = "translations.yml";
     private static final String TRANSLATION_PATH = "translations";

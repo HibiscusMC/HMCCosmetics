@@ -61,21 +61,21 @@ public class PAPIExpansion extends PlaceholderExpansion {
             if (parts.length < 2) return null;
             final String id = this.getId(parts, 1);
             for (final ArmorItem item : user.getPlayerArmor().getArmorItems()) {
-                if (item.getId().equals(id)) return Translation.translate("true");
+                if (item.getId().equals(id)) return Translation.translate(Translation.TRUE);
             }
-            return Translation.translate("false");
+            return Translation.translate(Translation.FALSE);
         }
 
         // %hmccosmetics_current_type%
         if (parts[0].equals("current")) {
-            if (parts.length < 2) {
-                final String typeStr = parts[1];
+            if (parts.length >= 2) {
+                final String typeStr = getId(parts, 1);
                 try {
-                    final ArmorItem.Type type = ArmorItem.Type.valueOf(typeStr);
+                    final ArmorItem.Type type = ArmorItem.Type.valueOf(typeStr.toUpperCase());
                     for (final ArmorItem item : user.getPlayerArmor().getArmorItems()) {
                         if (item.getType().equals(type)) return item.getId();
                     }
-                    return null;
+                    return Translation.translate(Translation.NONE);
                 } catch (final IllegalArgumentException exception) {
                     return null;
                 }
@@ -86,9 +86,10 @@ public class PAPIExpansion extends PlaceholderExpansion {
     }
 
     private String getId(final String[] parts, final int fromIndex) {
-        final StringBuilder builder = new StringBuilder(parts[fromIndex]);
-        for (int i = fromIndex + 1; i < parts.length; i++) {
+        final StringBuilder builder = new StringBuilder();
+        for (int i = fromIndex; i < parts.length; i++) {
             builder.append(parts[i]);
+            if (i < parts.length - 1) builder.append("_");
         }
 
         return builder.toString();

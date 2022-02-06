@@ -4,3 +4,22 @@ cosmetic-settings:
   # The pitch the player must look down for the backpack to be removed
   # Set to -1 for no removal
   look-down-backpack-remove: 70
+wardrobe:
+  # if true, the wardrobe will be removed when the player is damaged
+  disable-on-damage: true
+  # removed if player leaves this radius, set to -1 for infinite radius
+  display-radius: -1
+  # if the player can use the wardrobe in other locations
+  portable: false
+  # if the wardrobe should always be displayed in the location below
+  always-display: false
+  # spawn static wardrobe if in this radius of wardrobe-location
+  static-radius: 10
+  # location of static wardrobe, remove for none
+  wardrobe-location:
+    world: "World"
+    x: 0
+    y: 0
+    z: 0
+    yaw: 0
+    pitch: 0

@@ -176,9 +176,7 @@ public class DyeSelectorGui extends CosmeticGui {
     }
 
     @Override
-    public void open(final User user) {
-        final Player player = user.getPlayer();
-        if (player == null) return;
+    public void open(final User user, final Player player) {
         this.getGui(user, user.getLastSetItem().getType()).open(player);
     }
 

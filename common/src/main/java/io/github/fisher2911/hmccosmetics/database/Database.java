@@ -106,7 +106,6 @@ public class Database {
         final User user = new User(uuid, PlayerArmor.empty(), wardrobe, armorStandId);
         this.plugin.getUserManager().add(user);
         onComplete.accept(user);
-
     }
 
     public void saveUser(final User user) {
@@ -158,6 +157,7 @@ public class Database {
 
     public Wardrobe createNewWardrobe(final UUID ownerUUID) {
         return new Wardrobe(
+                this.plugin,
                 UUID.randomUUID(),
                 ownerUUID,
                 PlayerArmor.empty(),

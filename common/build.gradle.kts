@@ -106,6 +106,10 @@ bukkit {
             default = BukkitPluginDescription.Permission.Default.OP
             description = "Permission to set other users' cosmetics."
         }
+        register("hmccosmetics.cmd.wardrobe.portable") {
+            default = BukkitPluginDescription.Permission.Default.OP
+            description = "Permission to use a portable wardrobe"
+        }
         register("hmccosmetics.cmd.wardrobe") {
             default = BukkitPluginDescription.Permission.Default.OP
             description = "Permission to view the wardrobe"

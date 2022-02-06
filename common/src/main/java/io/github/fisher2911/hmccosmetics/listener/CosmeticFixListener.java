@@ -44,8 +44,7 @@ public class CosmeticFixListener implements Listener {
 
     @EventHandler
     public void onRightClick(final PlayerInteractEvent event) {
-        if (event.getAction() != Action.RIGHT_CLICK_BLOCK
-                && event.getHand() != EquipmentSlot.OFF_HAND) {
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
             return;
         }
         final Player player = event.getPlayer();

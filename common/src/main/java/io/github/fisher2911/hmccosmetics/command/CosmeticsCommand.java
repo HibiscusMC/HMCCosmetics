@@ -1,6 +1,8 @@
 package io.github.fisher2911.hmccosmetics.command;
 
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
+import io.github.fisher2911.hmccosmetics.config.Settings;
+import io.github.fisher2911.hmccosmetics.config.WardrobeSettings;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.gui.CosmeticsMenu;
 import io.github.fisher2911.hmccosmetics.message.Message;
@@ -33,17 +35,35 @@ public class CosmeticsCommand extends CommandBase {
     private final UserManager userManager;
     private final MessageHandler messageHandler;
     private final CosmeticsMenu cosmeticsMenu;
+    private final Settings settings;
 
     public CosmeticsCommand(final HMCCosmetics plugin) {
         this.plugin = plugin;
         this.userManager = this.plugin.getUserManager();
         this.messageHandler = this.plugin.getMessageHandler();
         this.cosmeticsMenu = this.plugin.getCosmeticsMenu();
+        this.settings = this.plugin.getSettings();
     }
 
     @Default
     @Permission(io.github.fisher2911.hmccosmetics.message.Permission.DEFAULT_COMMAND)
     public void defaultCommand(final Player player) {
+        final Optional<User> optionalUser = this.userManager.get(player.getUniqueId());
+        if (optionalUser.isEmpty()) {
+            this.cosmeticsMenu.openDefault(player);
+            return;
+        }
+        final User user = optionalUser.get();
+        final Wardrobe wardrobe = user.getWardrobe();
+        if (wardrobe.isActive() &&
+                !this.settings.getWardrobeSettings().inDistanceOfWardrobe(wardrobe.getCurrentLocation(), player.getLocation())) {
+            wardrobe.setActive(false);
+            wardrobe.despawnFakePlayer(player);
+            this.messageHandler.sendMessage(
+                    player,
+                    Messages.CLOSED_WARDROBE
+            );
+        }
         this.cosmeticsMenu.openDefault(player);
     }
 
@@ -193,7 +213,7 @@ public class CosmeticsCommand extends CommandBase {
     }
 
     @SubCommand("wardrobe")
-    @Permission(io.github.fisher2911.hmccosmetics.message.Permission.VIEW_WARDROBE)
+    @Permission(io.github.fisher2911.hmccosmetics.message.Permission.WARDROBE)
     public void openWardrobe(final Player player) {
         final Optional<User> optionalUser = this.plugin.getUserManager().get(player.getUniqueId());
         if (optionalUser.isEmpty()) return;
@@ -209,11 +229,36 @@ public class CosmeticsCommand extends CommandBase {
             return;
         }
 
+        final WardrobeSettings settings = this.settings.getWardrobeSettings();
+
+        final boolean inDistanceOfStatic = settings.inDistanceOfStatic(player.getLocation());
+
+        if (!settings.isPortable() && !inDistanceOfStatic) {
+            this.messageHandler.sendMessage(
+                    player,
+                    Messages.NOT_NEAR_WARDROBE
+            );
+            return;
+        }
+
+        if (settings.isPortable() && !inDistanceOfStatic) {
+            if (!player.hasPermission(io.github.fisher2911.hmccosmetics.message.Permission.PORTABLE_WARDROBE)) {
+                this.messageHandler.sendMessage(
+                        player,
+                        Messages.CANNOT_USE_PORTABLE_WARDROBE
+                );
+                return;
+            }
+            wardrobe.setCurrentLocation(null);
+        }
+
         wardrobe.setActive(true);
+
         Bukkit.getScheduler().runTaskAsynchronously(
                 this.plugin,
-                () -> wardrobe.spawnFakePlayer(player, this.plugin)
+                () -> wardrobe.spawnFakePlayer(player)
         );
+
         this.cosmeticsMenu.openDefault(player);
         this.messageHandler.sendMessage(
                 player,

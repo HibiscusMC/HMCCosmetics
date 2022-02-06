@@ -14,6 +14,7 @@ import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
 import io.github.fisher2911.hmccosmetics.message.Message;
 import io.github.fisher2911.hmccosmetics.message.MessageHandler;
 import io.github.fisher2911.hmccosmetics.message.Placeholder;
+import io.github.fisher2911.hmccosmetics.message.Translation;
 import io.github.fisher2911.hmccosmetics.packet.PacketManager;
 import io.github.fisher2911.hmccosmetics.util.builder.ItemBuilder;
 import org.bukkit.Bukkit;
@@ -167,8 +168,8 @@ public class UserManager {
         if (hidden) return new ItemStack(Material.AIR);
         final CosmeticSettings cosmeticSettings = this.settings.getCosmeticSettings();
 
-        final Map<String, String> placeholders = Map.of(Placeholder.ALLOWED, "true",
-                Placeholder.ENABLED, "true");
+        final Map<String, String> placeholders = Map.of(Placeholder.ALLOWED, Translation.TRUE,
+                Placeholder.ENABLED, Translation.TRUE);
 
         ItemStack itemStack = ItemBuilder.from(armorItem.getColored()).
                 namePlaceholders(placeholders).

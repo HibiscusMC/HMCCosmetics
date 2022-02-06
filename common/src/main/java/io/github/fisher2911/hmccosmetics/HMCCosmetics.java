@@ -141,14 +141,14 @@ public class HMCCosmetics extends JavaPlugin {
     }
 
     public void load() {
-        Bukkit.getScheduler().runTaskAsynchronously(this,
+        Bukkit.getScheduler().runTaskLaterAsynchronously(this,
                 () -> {
                     this.settings.load();
                     this.messageHandler.load();
                     this.cosmeticsMenu.load();
                     Translation.getInstance().load();
                     this.database.load();
-                });
+                }, 1);
     }
 
     public void reload() {

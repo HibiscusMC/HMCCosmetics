@@ -43,6 +43,7 @@ public class CosmeticsMenu {
     }
 
     public void openMenu(final String id, final HumanEntity humanEntity) {
+        if (!(humanEntity instanceof final Player player)) return;
         final CosmeticGui cosmeticGui = this.getGui(id);
 
         final Optional<User> optionalUser = this.plugin.getUserManager().get(humanEntity.getUniqueId());
@@ -59,9 +60,7 @@ public class CosmeticsMenu {
             return;
         }
 
-        if (cosmeticGui != null) {
-            cosmeticGui.open(user);
-        }
+        if (cosmeticGui != null) cosmeticGui.open(user, player);
     }
 
     public void openDefault(final HumanEntity humanEntity) {

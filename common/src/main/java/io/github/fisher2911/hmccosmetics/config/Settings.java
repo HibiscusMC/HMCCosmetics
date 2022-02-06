@@ -5,21 +5,27 @@ import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 public class Settings {
 
     private final HMCCosmetics plugin;
-    private final CosmeticSettings settings;
+    private final CosmeticSettings cosmeticSettings;
+    private final WardrobeSettings wardrobeSettings;
 
     public Settings(final HMCCosmetics plugin) {
         this.plugin = plugin;
-        this.settings = new CosmeticSettings();
+        this.cosmeticSettings = new CosmeticSettings();
+        this.wardrobeSettings = new WardrobeSettings(this.plugin);
     }
 
     public void load() {
         this.plugin.saveDefaultConfig();
         this.plugin.reloadConfig();
-        this.settings.load(this.plugin.getConfig());
+        this.cosmeticSettings.load(this.plugin.getConfig());
+        this.wardrobeSettings.load();
     }
 
     public CosmeticSettings getCosmeticSettings() {
-        return settings;
+        return cosmeticSettings;
     }
 
+    public WardrobeSettings getWardrobeSettings() {
+        return wardrobeSettings;
+    }
 }

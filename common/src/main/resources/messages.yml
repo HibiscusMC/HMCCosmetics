@@ -17,6 +17,8 @@ set-other-off-hand: "%prefix% <gradient:#6D9DC5:#45CDE9>You have set the off han
 opened-wardrobe: "%prefix% <gradient:#6D9DC5:#45CDE9>Viewing wardrobe!"
 closed-wardrobe: "%prefix% <gradient:#6D9DC5:#45CDE9>Closed wardrobe!"
 wardrobe-already-open: "%prefix% <gradient:#6D9DC5:#45CDE9><red>The wardrobe is already open!"
+not-near-wardrobe: "%prefix% <gradient:#6D9DC5:#45CDE9><red>You are not near the wardrobe!"
+cannot-use-portable-wardrobe: "%prefix% <gradient:#6D9DC5:#45CDE9><red>You cannot use the portable wardrobe!"
 help-command: "<#6D9DC5><st>                  </st> %prefix%  <gradient:#40B7D6:#6D9DC5>HMCCosmetics - Help</gradient> %prefix% <#6D9DC5> <st>                  </st>
 
 
