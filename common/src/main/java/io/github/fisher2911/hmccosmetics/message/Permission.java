@@ -9,5 +9,6 @@ public class Permission {
     public static final String SET_COSMETIC_COMMAND = "hmccosmetics.cmd.set";
     public static final String PORTABLE_WARDROBE = "hmccosmetics.cmd.wardrobe.portable";
     public static final String WARDROBE = "hmccosmetics.cmd.wardrobe";
+    public static final String OPEN_OTHER_WARDROBE = "hmccosmetics.cmd.wardrobe.other";
 
 }

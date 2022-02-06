@@ -55,9 +55,9 @@ public class WardrobeSettings {
     @Nullable
     private Location loadLocation(final ConfigurationSection section) {
         final String worldName = section.getString(WORLD_PATH);
-        final int x = section.getInt(X_PATH);
-        final int y = section.getInt(Y_PATH);
-        final int z = section.getInt(Z_PATH);
+        final double x = section.getDouble(X_PATH);
+        final double y = section.getDouble(Y_PATH);
+        final double z = section.getDouble(Z_PATH);
         final float yaw = (float) section.getDouble(YAW_PATH);
         final float pitch = (float) section.getDouble(PITCH_PATH);
 

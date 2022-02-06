@@ -60,6 +60,8 @@ public class Messages {
             new Message("not-near-wardrobe", ChatColor.RED + "You are not near the wardrobe!");
     public static final Message CANNOT_USE_PORTABLE_WARDROBE =
             new Message("cannot-use-portable-wardrobe", ChatColor.RED + "You cannot use the portable wardrobe!");
+    public static final Message OPENED_OTHER_WARDROBE =
+            new Message("opened-other-wardrobe", ChatColor.GREEN + "Opening " + Placeholder.PLAYER + "'s wardrobe.");
 
     public static final Message SET_OTHER_BACKPACK = new Message(
             "set-other-backpack", ChatColor.GREEN + "You have set the backpack of " +

@@ -114,5 +114,9 @@ bukkit {
             default = BukkitPluginDescription.Permission.Default.OP
             description = "Permission to view the wardrobe"
         }
+        register("hmccosmetics.cmd.wardrobe.other") {
+            default = BukkitPluginDescription.Permission.Default.OP
+            description = "Permission to open another player's wardrobe"
+        }
     }
 }

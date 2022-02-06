@@ -172,6 +172,7 @@ public class User {
                     new ItemStack(Material.AIR)
             ));
 
+            if (!this.uuid.equals(other.getUniqueId())) return;
             PacketManager.sendPacket(other, PacketManager.getEquipmentPacket(equipmentList, this.armorStandId));
         }
     }

@@ -24,6 +24,7 @@ import me.mattstudios.mf.annotations.Permission;
 import me.mattstudios.mf.annotations.SubCommand;
 import me.mattstudios.mf.base.CommandBase;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -214,7 +215,22 @@ public class CosmeticsCommand extends CommandBase {
 
     @SubCommand("wardrobe")
     @Permission(io.github.fisher2911.hmccosmetics.message.Permission.WARDROBE)
-    public void openWardrobe(final Player player) {
+    public void openWardrobe(Player player, @me.mattstudios.mf.annotations.Optional final Player other) {
+        if (other != null) {
+            if (!player.hasPermission(io.github.fisher2911.hmccosmetics.message.Permission.OPEN_OTHER_WARDROBE)) {
+                this.messageHandler.sendMessage(
+                        player,
+                        Messages.NO_PERMISSION
+                );
+                return;
+            }
+            this.messageHandler.sendMessage(
+                    player,
+                    Messages.OPENED_OTHER_WARDROBE,
+                    Map.of(Placeholder.PLAYER, other.getName())
+            );
+            player = other;
+        }
         final Optional<User> optionalUser = this.plugin.getUserManager().get(player.getUniqueId());
         if (optionalUser.isEmpty()) return;
 
@@ -254,9 +270,10 @@ public class CosmeticsCommand extends CommandBase {
 
         wardrobe.setActive(true);
 
+        final Player finalPlayer = player;
         Bukkit.getScheduler().runTaskAsynchronously(
                 this.plugin,
-                () -> wardrobe.spawnFakePlayer(player)
+                () -> wardrobe.spawnFakePlayer(finalPlayer)
         );
 
         this.cosmeticsMenu.openDefault(player);
