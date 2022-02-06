@@ -134,12 +134,19 @@ public class UserManager {
         final PlayerArmor playerArmor = user.getPlayerArmor();
 
         final List<Pair<EnumWrappers.ItemSlot, ItemStack>> equipmentList = new ArrayList<>();
+        final boolean hidden = user.isHidden(other);
 
         equipmentList.add(
-                new Pair<>(EnumWrappers.ItemSlot.HEAD, this.getCosmeticItem(equipment, playerArmor.getHat(), EquipmentSlot.HEAD, ignoreRestrictions))
+                new Pair<>(
+                        EnumWrappers.ItemSlot.HEAD,
+                        this.getCosmeticItem(equipment, playerArmor.getHat(), EquipmentSlot.HEAD, ignoreRestrictions, hidden)
+                )
         );
         equipmentList.add(
-                new Pair<>(EnumWrappers.ItemSlot.OFFHAND, this.getCosmeticItem(equipment, playerArmor.getOffHand(), EquipmentSlot.OFF_HAND, ignoreRestrictions))
+                new Pair<>(
+                        EnumWrappers.ItemSlot.OFFHAND,
+                        this.getCosmeticItem(equipment, playerArmor.getOffHand(), EquipmentSlot.OFF_HAND, ignoreRestrictions, hidden)
+                )
         );
 
         PacketManager.sendPacket(
@@ -155,7 +162,9 @@ public class UserManager {
             final Equipment equipment,
             final ArmorItem armorItem,
             final EquipmentSlot slot,
-            final boolean ignoreRestrictions) {
+            final boolean ignoreRestrictions,
+            final boolean hidden) {
+        if (hidden) return new ItemStack(Material.AIR);
         final CosmeticSettings cosmeticSettings = this.settings.getCosmeticSettings();
 
         final Map<String, String> placeholders = Map.of(Placeholder.ALLOWED, "true",

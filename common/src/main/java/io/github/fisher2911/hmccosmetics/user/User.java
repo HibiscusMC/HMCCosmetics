@@ -16,6 +16,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -130,11 +131,18 @@ public class User {
         this.updateArmorStand(other, settings, player.getLocation());
     }
 
-    public void updateArmorStand(final Player other, final Settings settings, final  Location location) {
+    public void updateArmorStand(final Player other, final Settings settings, final Location location) {
         final List<Pair<EnumWrappers.ItemSlot, ItemStack>> equipmentList = new ArrayList<>();
-        equipmentList.add(new Pair<>(EnumWrappers.ItemSlot.HEAD,
-                this.playerArmor.getBackpack().getColored()
-        ));
+        final boolean hidden = this.isHidden(other);
+        if (hidden) {
+            equipmentList.add(new Pair<>(EnumWrappers.ItemSlot.HEAD,
+                    new ItemStack(Material.AIR)
+            ));
+        } else {
+            equipmentList.add(new Pair<>(EnumWrappers.ItemSlot.HEAD,
+                    this.playerArmor.getBackpack().getColored()
+            ));
+        }
 
         final PacketContainer armorPacket = PacketManager.getEquipmentPacket(equipmentList, this.armorStandId);
         final PacketContainer rotationPacket = PacketManager.getRotationPacket(this.armorStandId, location);
@@ -154,6 +162,8 @@ public class User {
 
         PacketManager.sendPacket(other, armorPacket, metaContainer, rotationPacket, ridingPacket);
 
+        if (hidden) return;
+
         final int lookDownPitch = settings.getCosmeticSettings().getLookDownPitch();
 
         if (lookDownPitch != -1 &&
@@ -164,6 +174,11 @@ public class User {
 
             PacketManager.sendPacket(other, PacketManager.getEquipmentPacket(equipmentList, this.armorStandId));
         }
+    }
+
+    public boolean isHidden(final Player other) {
+        final Player player = this.getPlayer();
+        return player != null && (player.hasPotionEffect(PotionEffectType.INVISIBILITY) || !other.canSee(player));
     }
 
     private boolean isFacingDown(final Location location, final int pitchLimit) {

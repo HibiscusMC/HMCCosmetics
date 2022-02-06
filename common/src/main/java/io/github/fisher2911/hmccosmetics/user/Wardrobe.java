@@ -9,6 +9,7 @@ import io.github.fisher2911.hmccosmetics.packet.PacketManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
@@ -82,8 +83,9 @@ public class Wardrobe extends User {
     }
 
     @Override
+    @Nullable
     public Player getPlayer() {
-        return Bukkit.getPlayer(this.ownerUUID);
+        return null;
     }
 
 }
