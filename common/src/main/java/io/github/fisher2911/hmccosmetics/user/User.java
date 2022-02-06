@@ -133,7 +133,7 @@ public class User {
 
     public void updateArmorStand(final Player other, final Settings settings, final Location location) {
         final List<Pair<EnumWrappers.ItemSlot, ItemStack>> equipmentList = new ArrayList<>();
-        final boolean hidden = this.isHidden(other);
+        final boolean hidden = !this.shouldShow(other);
         if (hidden) {
             equipmentList.add(new Pair<>(EnumWrappers.ItemSlot.HEAD,
                     new ItemStack(Material.AIR)
@@ -176,9 +176,12 @@ public class User {
         }
     }
 
-    public boolean isHidden(final Player other) {
+    public boolean shouldShow(final Player other) {
         final Player player = this.getPlayer();
-        return player != null && (player.hasPotionEffect(PotionEffectType.INVISIBILITY) || !other.canSee(player));
+        return player == null ||
+                (!player.hasPotionEffect(PotionEffectType.INVISIBILITY) &&
+                        other.canSee(player) &&
+                        !player.isSwimming());
     }
 
     private boolean isFacingDown(final Location location, final int pitchLimit) {

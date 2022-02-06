@@ -134,7 +134,7 @@ public class UserManager {
         final PlayerArmor playerArmor = user.getPlayerArmor();
 
         final List<Pair<EnumWrappers.ItemSlot, ItemStack>> equipmentList = new ArrayList<>();
-        final boolean hidden = user.isHidden(other);
+        final boolean hidden = !user.shouldShow(other);
 
         equipmentList.add(
                 new Pair<>(
