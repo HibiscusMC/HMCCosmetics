@@ -44,7 +44,8 @@ public class CosmeticFixListener implements Listener {
 
     @EventHandler
     public void onRightClick(final PlayerInteractEvent event) {
-        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK
+                && event.getHand() != EquipmentSlot.OFF_HAND) {
             return;
         }
         final Player player = event.getPlayer();
@@ -54,7 +55,7 @@ public class CosmeticFixListener implements Listener {
         if (mainHand.getType().isBlock() && mainHand.getAmount() > 0) {
             return;
         }
-        this.userManager.updateCosmetics(player.getUniqueId(), true);
+        this.userManager.updateCosmetics(player.getUniqueId());
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -73,7 +74,7 @@ public class CosmeticFixListener implements Listener {
 
     private void fixCosmetics(final Player player) {
         Bukkit.getScheduler().runTaskLaterAsynchronously(this.plugin,
-                () -> this.userManager.updateCosmetics(player.getUniqueId(), true), 2);
+                () -> this.userManager.updateCosmetics(player.getUniqueId()), 2);
     }
 
 }

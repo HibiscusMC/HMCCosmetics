@@ -99,30 +99,22 @@ public class UserManager {
     public void resendCosmetics(final Player player) {
         for (final User user : this.userMap.values()) {
             user.spawnArmorStand(player);
-            this.updateCosmetics(user, false, player);
+            this.updateCosmetics(user, player);
         }
-    }
-
-    public void updateCosmetics(final UUID uuid, final boolean ignoreRestrictions) {
-        this.get(uuid).ifPresent(user -> this.updateCosmetics(user, ignoreRestrictions));
-
     }
 
     public void updateCosmetics(final UUID uuid) {
-        this.updateCosmetics(uuid, false);
+        this.get(uuid).ifPresent(this::updateCosmetics);
+
     }
 
     public void updateCosmetics(final User user) {
-        this.updateCosmetics(user, false);
-    }
-
-    public void updateCosmetics(final User user, final boolean ignoreRestrictions) {
         for (final Player player : Bukkit.getOnlinePlayers()) {
-            this.updateCosmetics(user, ignoreRestrictions, player);
+            this.updateCosmetics(user, player);
         }
     }
 
-    public void updateCosmetics(final User user, final boolean ignoreRestrictions, final Player other) {
+    public void updateCosmetics(final User user, final Player other) {
         final Player player = user.getPlayer();
 
         final Equipment equipment;
@@ -134,38 +126,42 @@ public class UserManager {
 
         final PlayerArmor playerArmor = user.getPlayerArmor();
 
-        final List<Pair<EnumWrappers.ItemSlot, ItemStack>> equipmentList = new ArrayList<>();
+        final List<Pair<EnumWrappers.ItemSlot, ItemStack>> hatList = new ArrayList<>();
+        final List<Pair<EnumWrappers.ItemSlot, ItemStack>> offHandList = new ArrayList<>();
+
         final boolean hidden = !user.shouldShow(other);
 
-        equipmentList.add(
-                new Pair<>(
-                        EnumWrappers.ItemSlot.HEAD,
-                        this.getCosmeticItem(equipment, playerArmor.getHat(), EquipmentSlot.HEAD, ignoreRestrictions, hidden)
-                )
-        );
-        equipmentList.add(
-                new Pair<>(
-                        EnumWrappers.ItemSlot.OFFHAND,
-                        this.getCosmeticItem(equipment, playerArmor.getOffHand(), EquipmentSlot.OFF_HAND, ignoreRestrictions, hidden)
-                )
-        );
+        final ItemStack hat = this.getCosmeticItem(equipment, playerArmor.getHat(), EquipmentSlot.HEAD, hidden);
+        hatList.add(new Pair<>(EnumWrappers.ItemSlot.HEAD, hat));
+        final ItemStack offHand = this.getCosmeticItem(equipment, playerArmor.getOffHand(), EquipmentSlot.OFF_HAND, hidden);
+        offHandList.add(new Pair<>(EnumWrappers.ItemSlot.OFFHAND, offHand));
 
-        PacketManager.sendPacket(
-                other,
-                PacketManager.getEquipmentPacket(
-                        equipmentList,
-                        user.getEntityId()
-                )
-        );
+        if (!hat.equals(equipment.getItem(EquipmentSlot.HEAD))) {
+            PacketManager.sendPacket(
+                    other,
+                    PacketManager.getEquipmentPacket(
+                            hatList,
+                            user.getEntityId()
+                    )
+            );
+        }
+
+        if (!offHand.equals(equipment.getItem(EquipmentSlot.OFF_HAND))) {
+            PacketManager.sendPacket(
+                    other,
+                    PacketManager.getEquipmentPacket(
+                            offHandList,
+                            user.getEntityId()
+                    )
+            );
+        }
     }
 
     private ItemStack getCosmeticItem(
             final Equipment equipment,
             final ArmorItem armorItem,
             final EquipmentSlot slot,
-            final boolean ignoreRestrictions,
             final boolean hidden) {
-        if (hidden) return new ItemStack(Material.AIR);
         final CosmeticSettings cosmeticSettings = this.settings.getCosmeticSettings();
 
         final Map<String, String> placeholders = Map.of(Placeholder.ALLOWED, Translation.TRUE,
@@ -179,7 +175,7 @@ public class UserManager {
         final boolean isAir = itemStack.getType().isAir();
         final boolean requireEmpty = cosmeticSettings.requireEmpty(slot);
 
-        if (!isAir && (!requireEmpty || ignoreRestrictions)) return itemStack;
+        if (!isAir && !requireEmpty && !hidden) return itemStack;
 
         if (equipment == null) return itemStack;
 
