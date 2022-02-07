@@ -64,8 +64,9 @@ public class Wardrobe extends User {
                 this.getUuid()
         );
         PacketManager.sendPacket(viewer, playerInfoPacket, playerSpawnPacket);
-        this.spawnArmorStand(viewer);
+        this.spawnArmorStand(viewer, this.currentLocation);
         this.updateArmorStand(viewer, plugin.getSettings(), this.currentLocation);
+//        PacketManager.sendPacket(viewer, PacketManager.getRotationPacket(this.getEntityId(), this.currentLocation));
         this.spawned = true;
     }
 

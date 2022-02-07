@@ -30,6 +30,7 @@ public class PlayerPackets_1_18_R1 implements PlayerPackets {
                 write(0, location.getX()).
                 write(1, location.getY()).
                 write(2, location.getZ());
+        spawnPacket.getBytes().write(0, (byte)(((location.getYaw() * 256.0F) / 360.0F)));
 
         return spawnPacket;
     }

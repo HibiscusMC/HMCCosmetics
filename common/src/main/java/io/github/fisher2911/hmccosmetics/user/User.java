@@ -89,13 +89,7 @@ public class User {
         return this.setItem(ArmorItem.empty(type));
     }
 
-    public void spawnArmorStand(final Player other) {
-        final Player player = this.getPlayer();
-
-        if (player == null) return;
-
-        final Location location = player.getLocation();
-
+    public void spawnArmorStand(final Player other, final Location location) {
         final PacketContainer packet = PacketManager.getEntitySpawnPacket(location, this.armorStandId, EntityType.ARMOR_STAND);
 
         PacketManager.sendPacket(other, packet);
@@ -107,8 +101,11 @@ public class User {
             return;
         }
 
+        final Player player = this.getPlayer();
+        if (player == null) return;
+
         for (final Player p : Bukkit.getOnlinePlayers()) {
-            this.spawnArmorStand(p);
+            this.spawnArmorStand(p, player.getLocation());
         }
 
         this.hasArmorStand = true;

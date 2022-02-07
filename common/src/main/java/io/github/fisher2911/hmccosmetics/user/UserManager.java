@@ -98,7 +98,9 @@ public class UserManager {
 
     public void resendCosmetics(final Player player) {
         for (final User user : this.userMap.values()) {
-            user.spawnArmorStand(player);
+            final Player p = user.getPlayer();
+            if (p == null) continue;
+            user.spawnArmorStand(player, p.getLocation());
             this.updateCosmetics(user, player);
         }
     }
@@ -131,9 +133,9 @@ public class UserManager {
 
         final boolean hidden = !user.shouldShow(other);
 
-        final ItemStack hat = this.getCosmeticItem(equipment, playerArmor.getHat(), EquipmentSlot.HEAD, hidden);
+        final ItemStack hat = this.getCosmeticItem(user, equipment, playerArmor.getHat(), EquipmentSlot.HEAD, hidden);
         hatList.add(new Pair<>(EnumWrappers.ItemSlot.HEAD, hat));
-        final ItemStack offHand = this.getCosmeticItem(equipment, playerArmor.getOffHand(), EquipmentSlot.OFF_HAND, hidden);
+        final ItemStack offHand = this.getCosmeticItem(user, equipment, playerArmor.getOffHand(), EquipmentSlot.OFF_HAND, hidden);
         offHandList.add(new Pair<>(EnumWrappers.ItemSlot.OFFHAND, offHand));
 
         if (!hat.equals(equipment.getItem(EquipmentSlot.HEAD))) {
@@ -158,6 +160,7 @@ public class UserManager {
     }
 
     private ItemStack getCosmeticItem(
+            final User user,
             final Equipment equipment,
             final ArmorItem armorItem,
             final EquipmentSlot slot,
@@ -175,7 +178,7 @@ public class UserManager {
         final boolean isAir = itemStack.getType().isAir();
         final boolean requireEmpty = cosmeticSettings.requireEmpty(slot);
 
-        if (!isAir && !requireEmpty && !hidden) return itemStack;
+        if (!isAir && (!requireEmpty || user instanceof Wardrobe) && !hidden) return itemStack;
 
         if (equipment == null) return itemStack;
 
