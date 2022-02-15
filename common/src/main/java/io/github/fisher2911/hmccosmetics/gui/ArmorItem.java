@@ -1,5 +1,6 @@
 package io.github.fisher2911.hmccosmetics.gui;
 
+import com.comphenix.protocol.wrappers.EnumWrappers;
 import dev.triumphteam.gui.components.GuiAction;
 import dev.triumphteam.gui.guis.GuiItem;
 import io.github.fisher2911.hmccosmetics.util.builder.ColorBuilder;
@@ -10,6 +11,7 @@ import java.util.List;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -264,10 +266,41 @@ public class ArmorItem extends GuiItem {
 
     public enum Type {
 
-        HAT,
-        BACKPACK,
-        OFF_HAND
+        HAT(EquipmentSlot.HEAD),
+        BACKPACK(null),
+        OFF_HAND(EquipmentSlot.OFF_HAND),
+        CHEST_PLATE(EquipmentSlot.CHEST),
+        PANTS(EquipmentSlot.LEGS),
+        BOOTS(EquipmentSlot.FEET);
 
+        private final EquipmentSlot slot;
+
+        Type(final EquipmentSlot slot) {
+            this.slot = slot;
+        }
+
+        public EquipmentSlot getSlot() {
+            return slot;
+        }
+
+        @Nullable
+        public static Type fromWrapper(EnumWrappers.ItemSlot slot) {
+            return switch (slot) {
+                case HEAD -> Type.HAT;
+                case CHEST -> Type.CHEST_PLATE;
+                case LEGS -> Type.PANTS;
+                case FEET -> Type.BOOTS;
+                case OFFHAND -> Type.OFF_HAND;
+                default -> null;
+            };
+        }
+
+        @Nullable
+        public static Type fromEquipmentSlot(final EquipmentSlot slot) {
+            for (final Type type : values()) {
+                if (type.getSlot() == slot) return type;
+            }
+            return null;
+        }
     }
-
 }

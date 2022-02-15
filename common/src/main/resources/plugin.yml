@@ -1,0 +1,4 @@
+name: HMCCosmetics
+version: '${version}'
+main: io.github.fisher2911.hmccosmetics.HMCCosmetics
+api-version: 1.16

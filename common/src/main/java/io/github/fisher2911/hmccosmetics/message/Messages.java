@@ -23,6 +23,18 @@ public class Messages {
             new Message("set-off-hand", "Set off hand");
     public static final Message REMOVED_OFF_HAND =
             new Message("removed-off-hand", "Removed off hand");
+    public static final Message SET_CHEST_PLATE =
+            new Message("set-chest-plate", "Set chest plate");
+    public static final Message REMOVED_CHEST_PLATE =
+            new Message("removed-chest-plate", "Removed chest plate");
+    public static final Message SET_PANTS =
+            new Message("set-pants", "Set pants");
+    public static final Message REMOVED_PANTS =
+            new Message("removed-pants", "Removed pants");
+    public static final Message SET_BOOTS =
+            new Message("set-boots", "Set boots");
+    public static final Message REMOVED_BOOTS =
+            new Message("removed-boots", "Removed boots");
     public static final Message SET_DYE_COLOR =
             new Message("set-dye-color", "Set dye color of " + Placeholder.ITEM);
     public static final Message MUST_BE_PLAYER =
@@ -75,12 +87,27 @@ public class Messages {
             "set-other-off-hand", ChatColor.GREEN + "You have set the off hand of " +
             Placeholder.PLAYER + " to " + Placeholder.TYPE + "."
     );
+    public static final Message SET_OTHER_CHEST_PLATE = new Message(
+            "set-other-chest-plate", ChatColor.GREEN + "You have set the chest plate of " +
+            Placeholder.PLAYER + " to " + Placeholder.TYPE + "."
+    );
+    public static final Message SET_OTHER_PANTS = new Message(
+            "set-other-pants", ChatColor.GREEN + "You have set the pants of " +
+            Placeholder.PLAYER + " to " + Placeholder.TYPE + "."
+    );
+    public static final Message SET_OTHER_BOOTS = new Message(
+            "set-other-boots", ChatColor.GREEN + "You have set the boots of " +
+            Placeholder.PLAYER + " to " + Placeholder.TYPE + "."
+    );
 
     public static Message getSetMessage(final ArmorItem.Type type) {
         return switch (type) {
             case HAT -> Messages.SET_HAT;
             case BACKPACK -> Messages.SET_BACKPACK;
             case OFF_HAND -> Messages.SET_OFF_HAND;
+            case CHEST_PLATE -> Messages.SET_CHEST_PLATE;
+            case PANTS -> Messages.SET_PANTS;
+            case BOOTS -> Messages.SET_BOOTS;
         };
     }
 
@@ -89,6 +116,9 @@ public class Messages {
             case HAT -> Messages.REMOVED_HAT;
             case BACKPACK -> Messages.REMOVED_BACKPACK;
             case OFF_HAND -> Messages.REMOVED_OFF_HAND;
+            case CHEST_PLATE -> Messages.REMOVED_CHEST_PLATE;
+            case PANTS -> Messages.REMOVED_PANTS;
+            case BOOTS -> Messages.REMOVED_BOOTS;
         };
     }
 
@@ -97,6 +127,9 @@ public class Messages {
             case HAT -> Messages.SET_OTHER_HAT;
             case BACKPACK -> Messages.SET_OTHER_BACKPACK;
             case OFF_HAND -> Messages.SET_OTHER_OFF_HAND;
+            case CHEST_PLATE -> Messages.SET_OTHER_CHEST_PLATE;
+            case PANTS -> Messages.SET_OTHER_PANTS;
+            case BOOTS -> Messages.SET_OTHER_BOOTS;
         };
     }
 

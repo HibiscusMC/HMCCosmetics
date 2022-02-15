@@ -183,6 +183,7 @@ public class CosmeticsMenu {
                         this.cosmeticManager.addArmorItem(copy);
                         final String perm = copy.getPermission();
                         if (perm.isBlank() || this.registeredPermissions.contains(perm)) continue;
+                        this.registeredPermissions.add(perm);
                         Bukkit.getPluginManager().addPermission(new Permission(perm));
                     }
                 }

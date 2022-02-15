@@ -30,14 +30,14 @@ public class JoinListener implements Listener {
     @EventHandler
     public void onJoin(final PlayerJoinEvent event) {
         final Player player = event.getPlayer();
-        this.database.loadUser(player.getUniqueId(),
+        this.database.loadUser(player,
                 user -> Bukkit.getScheduler().runTaskAsynchronously(this.plugin,
                         () -> {
                             this.userManager.resendCosmetics(player);
                             final WardrobeSettings settings = this.plugin.getSettings().getWardrobeSettings();
-                            if (settings.isAlwaysDisplay() && settings.getLocation() != null) {
+                            if (settings.isAlwaysDisplay() && settings.getWardrobeLocation() != null) {
                                 final Wardrobe wardrobe = user.getWardrobe();
-                                wardrobe.setCurrentLocation(settings.getLocation());
+                                wardrobe.setCurrentLocation(settings.getWardrobeLocation());
                                 wardrobe.spawnFakePlayer(player);
                             }
                         }));

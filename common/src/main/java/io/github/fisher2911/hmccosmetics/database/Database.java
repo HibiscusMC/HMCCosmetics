@@ -20,6 +20,7 @@ import java.util.function.Consumer;
 
 import io.github.fisher2911.hmccosmetics.user.Wardrobe;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 public class Database {
 
@@ -69,7 +70,8 @@ public class Database {
         }
     }
 
-    public void loadUser(final UUID uuid, final Consumer<User> onComplete) {
+    public void loadUser(final Player player, final Consumer<User> onComplete) {
+        final UUID uuid = player.getUniqueId();
         final int armorStandId = FAKE_ENTITY_ID.getAndDecrement();
         final Wardrobe wardrobe = this.createNewWardrobe(uuid);
         Threads.getInstance().execute(
@@ -86,6 +88,7 @@ public class Database {
 
                         final User actualUser = user.toUser(
                                 this.plugin.getCosmeticManager(),
+                                player.getEntityId(),
                                 armorItems,
                                 wardrobe,
                                 armorStandId);
@@ -103,7 +106,7 @@ public class Database {
                     }
                 });
 
-        final User user = new User(uuid, PlayerArmor.empty(), wardrobe, armorStandId);
+        final User user = new User(uuid, player.getEntityId(), PlayerArmor.empty(), wardrobe, armorStandId);
         this.plugin.getUserManager().add(user);
         onComplete.accept(user);
     }
@@ -159,6 +162,7 @@ public class Database {
         return new Wardrobe(
                 this.plugin,
                 UUID.randomUUID(),
+                FAKE_ENTITY_ID.getAndDecrement(),
                 ownerUUID,
                 PlayerArmor.empty(),
                 FAKE_ENTITY_ID.getAndDecrement(),

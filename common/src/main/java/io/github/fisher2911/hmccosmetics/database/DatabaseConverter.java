@@ -93,6 +93,7 @@ public class DatabaseConverter {
                     final UUID uuid = UUID.fromString(results.getString(1));
                     final User user = new User(
                             uuid,
+                            -1,
                             playerArmor,
                             this.database.createNewWardrobe(uuid),
                             this.database.FAKE_ENTITY_ID.getAndDecrement()

@@ -31,6 +31,7 @@ public class UserDAO {
 
     public User toUser(
             final CosmeticManager cosmeticManager,
+            final int entityId,
             final List<ArmorItemDAO> armorItems,
             final Wardrobe wardrobe,
             final int armorStandId) {
@@ -44,7 +45,7 @@ public class UserDAO {
             playerArmor.setItem(armorItem);
         }
 
-        return new User(this.uuid, playerArmor, wardrobe, armorStandId);
+        return new User(this.uuid, entityId, playerArmor, wardrobe, armorStandId);
     }
 
     @Override

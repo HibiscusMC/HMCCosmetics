@@ -1,11 +1,11 @@
 package io.github.fisher2911.hmccosmetics.config;
 
+import com.mysql.jdbc.ConnectionFeatureNotAvailableException;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.checkerframework.checker.units.qual.A;
 import org.jetbrains.annotations.Nullable;
 
 import org.bukkit.Location;
@@ -18,7 +18,9 @@ public class WardrobeSettings {
     private static final String PORTABLE_PATH = WARDROBE_PATH + ".portable";
     private static final String ALWAYS_DISPLAY_PATH = WARDROBE_PATH + ".always-display";
     private static final String STATIC_RADIUS_PATH = WARDROBE_PATH + ".static-radius";
+    private static final String ROTATION_SPEED_PATH = WARDROBE_PATH + ".rotation-speed";
     private static final String STATIC_LOCATION_PATH = WARDROBE_PATH + ".wardrobe-location";
+    private static final String VIEWER_LOCATION_PATH = WARDROBE_PATH + ".viewer-location";
     private static final String WORLD_PATH = "world";
     private static final String X_PATH = "x";
     private static final String Y_PATH = "y";
@@ -34,7 +36,9 @@ public class WardrobeSettings {
     private boolean portable;
     private boolean alwaysDisplay;
     private int staticRadius;
-    private Location location;
+    private int rotationSpeed;
+    private Location wardrobeLocation;
+    private Location viewerLocation;
 
     public WardrobeSettings(final HMCCosmetics plugin) {
         this.plugin = plugin;
@@ -47,9 +51,15 @@ public class WardrobeSettings {
         this.portable = config.getBoolean(PORTABLE_PATH);
         this.staticRadius = config.getInt(STATIC_RADIUS_PATH);
         this.alwaysDisplay = config.getBoolean(ALWAYS_DISPLAY_PATH);
-        final ConfigurationSection locationSection = config.getConfigurationSection(STATIC_LOCATION_PATH);
-        if (locationSection == null) return;
-        this.location = this.loadLocation(locationSection);
+        this.rotationSpeed = config.getInt(ROTATION_SPEED_PATH);
+
+        final ConfigurationSection wardrobeLocationSection = config.getConfigurationSection(STATIC_LOCATION_PATH);
+        if (wardrobeLocationSection == null) return;
+        this.wardrobeLocation = this.loadLocation(wardrobeLocationSection);
+
+        final ConfigurationSection viewerLocationSection = config.getConfigurationSection(VIEWER_LOCATION_PATH);
+        if (viewerLocationSection == null) return;
+        this.viewerLocation = this.loadLocation(viewerLocationSection);
     }
 
     @Nullable
@@ -87,18 +97,28 @@ public class WardrobeSettings {
         return staticRadius;
     }
 
-    public Location getLocation() {
-        return location.clone();
+    public int getRotationSpeed() {
+        return rotationSpeed;
+    }
+
+    public Location getWardrobeLocation() {
+        return this.wardrobeLocation.clone();
+    }
+
+    public Location getViewerLocation() {
+        return viewerLocation;
     }
 
     public boolean inDistanceOfWardrobe(final Location wardrobeLocation, final Location playerLocation) {
         if (this.displayRadius == -1) return true;
+        if (!wardrobeLocation.getWorld().equals(playerLocation.getWorld())) return false;
         return playerLocation.distanceSquared(wardrobeLocation) <= this.displayRadius * this.displayRadius;
     }
 
     public boolean inDistanceOfStatic(final Location location) {
-        if (this.location == null) return false;
+        if (this.wardrobeLocation == null) return false;
         if (this.staticRadius == -1) return false;
-        return this.location.distanceSquared(location) <= this.staticRadius * this.staticRadius;
+        if (!this.wardrobeLocation.getWorld().equals(location.getWorld())) return false;
+        return this.wardrobeLocation.distanceSquared(location) <= this.staticRadius * this.staticRadius;
     }
 }

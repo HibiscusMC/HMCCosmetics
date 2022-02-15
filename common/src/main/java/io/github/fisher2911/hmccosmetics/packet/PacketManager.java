@@ -7,12 +7,18 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.MinecraftKey;
 import com.comphenix.protocol.wrappers.Pair;
+import io.github.fisher2911.nms.ArmorStandPackets;
+import io.github.fisher2911.nms.ArmorStandPackets_1_16_R3;
+import io.github.fisher2911.nms.ArmorStandPackets_1_17_R1;
+import io.github.fisher2911.nms.ArmorStandPackets_1_18_R1;
 import io.github.fisher2911.nms.DestroyPacket;
+import io.github.fisher2911.nms.DestroyPacket_1_16_R3;
 import io.github.fisher2911.nms.DestroyPacket_1_17_R1;
 import io.github.fisher2911.nms.DestroyPacket_1_18_R1;
+import io.github.fisher2911.nms.PlayerPackets;
+import io.github.fisher2911.nms.PlayerPackets_1_16_R3;
 import io.github.fisher2911.nms.PlayerPackets_1_17_R1;
 import io.github.fisher2911.nms.PlayerPackets_1_18_R1;
-import io.github.fisher2911.nms.PlayerPackets;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
@@ -27,39 +33,64 @@ public class PacketManager {
 
     private static final PlayerPackets playerPackets;
     private static final DestroyPacket destroyPacket;
+    private static final ArmorStandPackets armorStandPackets;
 
     static {
         final String version = Bukkit.getVersion();
         System.out.println("Version: " + Bukkit.getVersion());
-        if (version.contains("1.17")) {
+        if (version.contains("1.16")) {
+            playerPackets = new PlayerPackets_1_16_R3();
+            destroyPacket = new DestroyPacket_1_16_R3();
+            armorStandPackets = new ArmorStandPackets_1_16_R3();
+        } else if (version.contains("1.17")) {
             playerPackets = new PlayerPackets_1_17_R1();
             destroyPacket = new DestroyPacket_1_17_R1();
+            armorStandPackets = new ArmorStandPackets_1_17_R1();
         } else if (version.contains("1.18")) {
             playerPackets = new PlayerPackets_1_18_R1();
             destroyPacket = new DestroyPacket_1_18_R1();
+            armorStandPackets = new ArmorStandPackets_1_18_R1();
         } else {
             playerPackets = null;
             destroyPacket = null;
+            armorStandPackets = null;
         }
+
     }
 
-    public static PacketContainer getEntitySpawnPacket(final Location location, final int entityId,
+    public static PacketContainer getArmorStandMetaContainer(final int armorStandId) {
+        if (armorStandPackets == null)
+            throw new IllegalStateException("This cannot be used in version: " + Bukkit.getVersion());
+        return armorStandPackets.getArmorStandMeta(armorStandId);
+    }
+
+    public static PacketContainer getEntitySpawnPacket(
+            final Location location,
+            final int entityId,
             final EntityType entityType) {
+        return getEntitySpawnPacket(location, entityId, entityType, UUID.randomUUID());
+    }
+
+    public static PacketContainer getEntitySpawnPacket(
+            final Location location,
+            final int entityId,
+            final EntityType entityType,
+            final UUID uuid) {
         final PacketContainer packet = new PacketContainer(PacketType.Play.Server.SPAWN_ENTITY);
 
         // Entity ID
         packet.getIntegers().write(0, entityId);
         // Entity Type
 //        packet.getIntegers().write(6, 78);
-        // Set yaw pitch
-        packet.getIntegers().write(4, (int) location.getPitch());
-        packet.getIntegers().write(5, (int) location.getYaw());
         // Set location
         packet.getDoubles().write(0, location.getX());
         packet.getDoubles().write(1, location.getY());
         packet.getDoubles().write(2, location.getZ());
+        // Set yaw pitch
+        packet.getIntegers().write(4, (int) location.getPitch());
+        packet.getIntegers().write(5, (int) location.getYaw());
         // Set UUID
-        packet.getUUIDs().write(0, UUID.randomUUID());
+        packet.getUUIDs().write(0, uuid);
 
         packet.getEntityTypeModifier().write(0, entityType);
 
@@ -85,6 +116,17 @@ public class PacketManager {
 
         rotationPacket.getIntegers().write(0, entityId);
         rotationPacket.getBytes().write(0, (byte) (location.getYaw() * 256 / 360));
+
+        return rotationPacket;
+    }
+
+    public static PacketContainer getLookPacket(final int entityId, final Location location) {
+        final PacketContainer rotationPacket = new PacketContainer(
+                PacketType.Play.Server.ENTITY_LOOK);
+
+        rotationPacket.getIntegers().write(0, entityId);
+        rotationPacket.getBytes().write(0, (byte) (location.getYaw() * 256 / 360));
+//        rotationPacket.getBytes().write(1, (byte) (location.getPitch() * 256 / 360));
 
         return rotationPacket;
     }
@@ -138,18 +180,27 @@ public class PacketManager {
     }
 
     public static PacketContainer getFakePlayerSpawnPacket(final Location location, final UUID uuid, final int entityId) throws IllegalStateException {
-        if (playerPackets == null) throw new IllegalStateException("This cannot be used in version: " + Bukkit.getVersion());
+        if (playerPackets == null)
+            throw new IllegalStateException("This cannot be used in version: " + Bukkit.getVersion());
         return playerPackets.getSpawnPacket(location, uuid, entityId);
     }
 
     public static PacketContainer getFakePlayerInfoPacket(final Player player, final UUID uuid) throws IllegalStateException {
-        if (playerPackets == null) throw new IllegalStateException("This cannot be used in version: " + Bukkit.getVersion());
+        if (playerPackets == null)
+            throw new IllegalStateException("This cannot be used in version: " + Bukkit.getVersion());
         return playerPackets.getPlayerInfoPacket(player, uuid);
     }
 
     public static PacketContainer getRemovePlayerPacket(final Player player, final UUID uuid, final int entityId) {
-        if (playerPackets == null) throw new IllegalStateException("This cannot be used in version: " + Bukkit.getVersion());
+        if (playerPackets == null)
+            throw new IllegalStateException("This cannot be used in version: " + Bukkit.getVersion());
         return playerPackets.getRemovePacket(player, uuid, entityId);
+    }
+
+    public static PacketContainer getSpectatePacket(final int entityId) {
+        final PacketContainer packetContainer = new PacketContainer(PacketType.Play.Server.CAMERA);
+        packetContainer.getIntegers().write(0, entityId);
+        return packetContainer;
     }
 
     public static void sendPacket(final Player to, final PacketContainer... packets) {

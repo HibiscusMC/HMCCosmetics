@@ -9,6 +9,7 @@ import io.github.fisher2911.hmccosmetics.message.Message;
 import io.github.fisher2911.hmccosmetics.message.MessageHandler;
 import io.github.fisher2911.hmccosmetics.message.Messages;
 import io.github.fisher2911.hmccosmetics.message.Placeholder;
+import io.github.fisher2911.hmccosmetics.task.TaskChain;
 import io.github.fisher2911.hmccosmetics.user.User;
 import io.github.fisher2911.hmccosmetics.user.UserManager;
 import io.github.fisher2911.hmccosmetics.user.Wardrobe;
@@ -271,16 +272,17 @@ public class CosmeticsCommand extends CommandBase {
         wardrobe.setActive(true);
 
         final Player finalPlayer = player;
-        Bukkit.getScheduler().runTaskAsynchronously(
-                this.plugin,
-                () -> wardrobe.spawnFakePlayer(finalPlayer)
-        );
-
-        this.cosmeticsMenu.openDefault(player);
-        this.messageHandler.sendMessage(
-                player,
-                Messages.OPENED_WARDROBE
-        );
+        new TaskChain(this.plugin).
+                chain(() -> {
+                    wardrobe.spawnFakePlayer(finalPlayer);
+                }, true).
+                chain(() -> {
+//                    this.cosmeticsMenu.openDefault(finalPlayer);
+                    this.messageHandler.sendMessage(
+                            finalPlayer,
+                            Messages.OPENED_WARDROBE
+                    );
+                }).execute();
     }
 
     private void setDyeColor(final String dyeColor, final ArmorItem armorItem, final CommandSender sender) {
