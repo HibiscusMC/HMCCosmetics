@@ -2,3 +2,8 @@
 /.gradle/
 /build/
 /build/classes/java/main/
+/1.18/build/
+/1.17/build/
+/1.16/build/
+/common/build/
+/nms/build/
