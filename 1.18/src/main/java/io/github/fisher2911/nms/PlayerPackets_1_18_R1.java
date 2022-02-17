@@ -107,9 +107,6 @@ public class PlayerPackets_1_18_R1 implements PlayerPackets {
         Property textureProperty = playerProfile.getProperties().get("textures").iterator().next();
         String texture = textureProperty.getValue();
         String signature = textureProperty.getSignature();
-        System.out.println("Texture of: " + uuid);
-        System.out.println("Texture is: " + texture);
-        System.out.println("Signature is: " + signature);
         profile.getProperties().put("textures", new Property("textures", texture, signature));
 
         return profile;

@@ -37,7 +37,6 @@ public class PacketManager {
 
     static {
         final String version = Bukkit.getVersion();
-        System.out.println("Version: " + Bukkit.getVersion());
         if (version.contains("1.16")) {
             playerPackets = new PlayerPackets_1_16_R3();
             destroyPacket = new DestroyPacket_1_16_R3();
