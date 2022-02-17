@@ -171,7 +171,7 @@ public class Wardrobe extends User {
     }
 
     public boolean isCameraLocked() {
-        return cameraLocked;
+        return this.active && this.cameraLocked;
     }
 
     @Override
