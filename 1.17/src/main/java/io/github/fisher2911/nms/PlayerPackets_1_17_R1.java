@@ -6,6 +6,7 @@ import com.comphenix.protocol.reflect.StructureModifier;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.PlayerInfoData;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
+import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
@@ -75,6 +76,23 @@ public class PlayerPackets_1_17_R1 implements PlayerPackets {
         infoData.write(0, playerInfoData);
 
         return playerPacket;
+    }
+
+    @Override
+    public PacketContainer getOverlayPacket(final int entityId) {
+        final PacketContainer metaContainer = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
+
+        WrappedDataWatcher metaData = new WrappedDataWatcher();
+
+        final WrappedDataWatcher.Serializer byteSerializer = WrappedDataWatcher.Registry.get(Byte.class);
+
+        final byte mask = 0x01 | 0x02 | 0x04 | 0x08 | 0x010 | 0x020 | 0x40;
+
+        metaData.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(17, byteSerializer), mask);
+
+        metaContainer.getIntegers().write(0, entityId);
+        metaContainer.getWatchableCollectionModifier().write(0, metaData.getWatchableObjects());
+        return metaContainer;
     }
 
     private GameProfile getCopyProfile(final Player player, final UUID uuid) {

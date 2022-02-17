@@ -105,8 +105,13 @@ public class Wardrobe extends User {
         PacketManager.sendPacket(viewer, playerInfoPacket, playerSpawnPacket);
         this.spawnArmorStand(viewer, this.currentLocation, this.plugin.getSettings().getCosmeticSettings());
         this.updateArmorStand(viewer, plugin.getSettings(), this.currentLocation);
-        PacketManager.sendPacket(viewer, PacketManager.getLookPacket(this.getEntityId(), this.currentLocation));
-        PacketManager.sendPacket(viewer, PacketManager.getRotationPacket(this.getEntityId(), this.currentLocation));
+        PacketManager.sendPacket(
+                viewer,
+                PacketManager.getLookPacket(this.getEntityId(), this.currentLocation),
+                PacketManager.getRotationPacket(this.getEntityId(), this.currentLocation),
+                PacketManager.getPlayerOverlayPacket(this.getEntityId())
+        );
+        viewer.sendMessage("Sent overlay");
 
         this.spawned = true;
         this.startSpinTask(viewer);

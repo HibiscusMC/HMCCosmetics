@@ -191,6 +191,12 @@ public class PacketManager {
         return playerPackets.getPlayerInfoPacket(player, uuid);
     }
 
+    public static PacketContainer getPlayerOverlayPacket(final int playerId) throws IllegalStateException {
+        if (playerPackets == null)
+            throw new IllegalStateException("This cannot be used in version: " + Bukkit.getVersion());
+        return playerPackets.getOverlayPacket(playerId);
+    }
+
     public static PacketContainer getRemovePlayerPacket(final Player player, final UUID uuid, final int entityId) {
         if (playerPackets == null)
             throw new IllegalStateException("This cannot be used in version: " + Bukkit.getVersion());
