@@ -67,19 +67,30 @@ public class PAPIExpansion extends PlaceholderExpansion {
         }
 
         // %hmccosmetics_current_type%
-        if (parts[0].equals("current")) {
+        if (parts[0].startsWith("current")) {
+            final boolean formatted = parts[0].contains("formatted");
             if (parts.length >= 2) {
                 final String typeStr = getId(parts, 1);
                 try {
                     final ArmorItem.Type type = ArmorItem.Type.valueOf(typeStr.toUpperCase());
                     for (final ArmorItem item : user.getPlayerArmor().getArmorItems()) {
-                        if (item.getType().equals(type)) return item.getId();
+                        if (item.getType().equals(type)) {
+                            if (formatted) {
+                                return item.getItemName();
+                            }
+                            return item.getId();
+                        }
                     }
                     return Translation.translate(Translation.NONE);
                 } catch (final IllegalArgumentException exception) {
                     return null;
                 }
             }
+            return null;
+        }
+
+        if (parts[0].equals("wardrobe-enabled")) {
+            return Translation.translate(String.valueOf(user.getWardrobe().isActive()));
         }
 
         return null;
