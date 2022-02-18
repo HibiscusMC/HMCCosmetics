@@ -65,6 +65,10 @@ tasks {
         relocate("com.zaxxer.hikaricp", "io.github.fisher2911.hmccosmetics.hikaricp")
         relocate("com.j256.ormlite", "io.github.fisher2911.hmccosmetics.ormlite")
         archiveFileName.set("HMCCosmetics.jar")
+
+        dependencies {
+            exclude(dependency("org.yaml:snakeyaml"))
+        }
     }
 
     javadoc {
