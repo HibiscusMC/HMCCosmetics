@@ -26,7 +26,6 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Registry;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -214,7 +213,7 @@ public class ItemSerializer implements TypeSerializer<GuiItem> {
                 itemFlags(itemFlags).
                 build();
 
-        final GuiAction<InventoryClickEvent> action = ActionSerializer.INSTANCE.deserialize(GuiAction.class, actionNode);
+        final List<CosmeticGuiAction> actions = ActionSerializer.INSTANCE.deserialize(GuiAction.class, actionNode);
 
         Keys.setKey(itemStack);
 
@@ -229,7 +228,7 @@ public class ItemSerializer implements TypeSerializer<GuiItem> {
 
             return new ArmorItem(
                     itemStack,
-                    action,
+                    actions,
                     Utils.replaceIfNull(idNode.getString(), ""),
                     lockedLore,
                     permission,
@@ -240,7 +239,11 @@ public class ItemSerializer implements TypeSerializer<GuiItem> {
 
         } catch (final IllegalArgumentException exception) {
             final GuiItem guiItem = dev.triumphteam.gui.builder.item.ItemBuilder.from(itemStack).asGuiItem();
-            guiItem.setAction(action);
+            guiItem.setAction(event -> {
+                for (final CosmeticGuiAction action : actions) {
+                    action.execute(event, CosmeticGuiAction.When.ALL);
+                }
+            });
             return guiItem;
         }
     }

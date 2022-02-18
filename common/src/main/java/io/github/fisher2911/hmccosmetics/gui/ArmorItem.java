@@ -3,11 +3,14 @@ package io.github.fisher2911.hmccosmetics.gui;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import dev.triumphteam.gui.components.GuiAction;
 import dev.triumphteam.gui.guis.GuiItem;
+import io.github.fisher2911.hmccosmetics.config.CosmeticGuiAction;
 import io.github.fisher2911.hmccosmetics.util.builder.ColorBuilder;
 import io.github.fisher2911.hmccosmetics.util.builder.ItemBuilder;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -23,23 +26,23 @@ public class ArmorItem extends GuiItem {
     private final List<String> lockedLore;
     private final String permission;
     private final Type type;
-    private GuiAction<InventoryClickEvent> action;
+    private List<CosmeticGuiAction> actions;
     private boolean dyeable;
     private int dye;
 
     public ArmorItem(
             @NotNull final ItemStack itemStack,
-            final GuiAction<InventoryClickEvent> action,
+            final List<CosmeticGuiAction> actions,
             final String id,
             final List<String> lockedLore,
             final String permission,
             final Type type,
             final int dye) {
-        super(itemStack, action);
+        super(itemStack, null);
 
         this.id = id;
         this.lockedLore = lockedLore;
-        this.action = action;
+        this.actions = actions;
         this.permission = permission;
         this.type = type;
         this.dye = dye;
@@ -55,7 +58,7 @@ public class ArmorItem extends GuiItem {
         super(itemStack);
         this.id = id;
         this.lockedLore = lockedLore;
-        this.action = null;
+        this.actions = new ArrayList<>();
         this.permission = permission;
         this.type = type;
         this.dye = dye;
@@ -71,7 +74,7 @@ public class ArmorItem extends GuiItem {
         super(material);
         this.id = id;
         this.lockedLore = lockedLore;
-        this.action = null;
+        this.actions = new ArrayList<>();
         this.permission = permission;
         this.type = type;
         this.dye = dye;
@@ -79,16 +82,16 @@ public class ArmorItem extends GuiItem {
 
     public ArmorItem(
             @NotNull final Material material,
-            @Nullable final GuiAction<InventoryClickEvent> action,
+            final List<CosmeticGuiAction> actions,
             final String id,
             final List<String> lockedLore,
             final String permission,
             final Type type,
             final int dye) {
-        super(material, action);
+        super(material, null);
         this.id = id;
         this.lockedLore = lockedLore;
-        this.action = action;
+        this.actions = new ArrayList<>();
         this.permission = permission;
         this.type = type;
         this.dye = dye;
@@ -96,17 +99,17 @@ public class ArmorItem extends GuiItem {
 
     public ArmorItem(
             @NotNull final ItemStack itemStack,
-            final GuiAction<InventoryClickEvent> action,
+            final List<CosmeticGuiAction> actions,
             final String id,
             final List<String> lockedLore,
             final String permission,
             final Type type,
             final boolean dyeable,
             final int dye) {
-        super(itemStack, action);
+        super(itemStack, null);
         this.id = id;
         this.lockedLore = lockedLore;
-        this.action = action;
+        this.actions = actions;
         this.permission = permission;
         this.type = type;
         this.dyeable = dyeable;
@@ -124,7 +127,7 @@ public class ArmorItem extends GuiItem {
         super(itemStack);
         this.id = id;
         this.lockedLore = lockedLore;
-        this.action = null;
+        this.actions = new ArrayList<>();
         this.permission = permission;
         this.type = type;
         this.dyeable = dyeable;
@@ -142,7 +145,7 @@ public class ArmorItem extends GuiItem {
         super(material);
         this.id = id;
         this.lockedLore = lockedLore;
-        this.action = null;
+        this.actions = new ArrayList<>();
         this.permission = permission;
         this.type = type;
         this.dyeable = dyeable;
@@ -161,7 +164,7 @@ public class ArmorItem extends GuiItem {
         super(material, action);
         this.id = id;
         this.lockedLore = lockedLore;
-        this.action = action;
+        this.actions = new ArrayList<>();
         this.permission = permission;
         this.type = type;
         this.dyeable = dyeable;
@@ -169,11 +172,11 @@ public class ArmorItem extends GuiItem {
     }
 
     public ArmorItem(final ArmorItem armorItem) {
-        super(armorItem.getItemStack(), armorItem.getAction());
+        super(armorItem.getItemStack(), null);
         this.id = armorItem.getId();
         this.lockedLore = new ArrayList<>();
         Collections.copy(armorItem.getLockedLore(), this.lockedLore);
-        this.action = armorItem.getAction();
+        this.actions = armorItem.getActions();
         this.permission = armorItem.getPermission();
         this.type = armorItem.getType();
         this.dyeable = armorItem.isDyeable();
@@ -199,14 +202,13 @@ public class ArmorItem extends GuiItem {
         return lockedLore;
     }
 
-    public GuiAction<InventoryClickEvent> getAction() {
-        return this.action;
+    public List<CosmeticGuiAction> getActions() {
+        return actions;
     }
 
-    @Override
-    public void setAction(final GuiAction<InventoryClickEvent> action) {
-        super.setAction(action);
-        this.action = action;
+    public void setActions(final List<CosmeticGuiAction> actions) {
+        this.actions.clear();
+        this.actions.addAll(actions);
     }
 
     public String getPermission() {

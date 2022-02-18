@@ -57,10 +57,14 @@ public class CosmeticsMenu {
 
         if (cosmeticGui instanceof final DyeSelectorGui dyeSelectorGui) {
             dyeSelectorGui.getGui(user, user.getLastSetItem().getType()).open(humanEntity);
+            user.setOpenGui(dyeSelectorGui);
             return;
         }
 
-        if (cosmeticGui != null) cosmeticGui.open(user, player);
+        if (cosmeticGui != null) {
+            user.setOpenGui(cosmeticGui);
+            cosmeticGui.open(user, player);
+        }
     }
 
     public void openDefault(final HumanEntity humanEntity) {

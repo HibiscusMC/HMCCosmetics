@@ -10,6 +10,7 @@ import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.config.CosmeticSettings;
 import io.github.fisher2911.hmccosmetics.config.Settings;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
+import io.github.fisher2911.hmccosmetics.gui.CosmeticGui;
 import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
 import io.github.fisher2911.hmccosmetics.packet.PacketManager;
 import org.bukkit.Bukkit;
@@ -41,6 +42,8 @@ public class User {
 
     private boolean hasArmorStand;
     private final int armorStandId;
+
+    private CosmeticGui openGui;
 
     // List of players that are currently viewing the armorstand
     private final Set<UUID> viewing = new HashSet<>();
@@ -219,6 +222,15 @@ public class User {
     public void despawnAttached() {
         PacketManager.sendPacketToOnline(PacketManager.getEntityDestroyPacket(this.armorStandId));
         this.hasArmorStand = false;
+    }
+
+    @Nullable
+    public CosmeticGui getOpenGui() {
+        return openGui;
+    }
+
+    public void setOpenGui(final CosmeticGui openGui) {
+        this.openGui = openGui;
     }
 
     public boolean hasArmorStand() {
