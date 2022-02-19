@@ -151,7 +151,7 @@ public class DyeSelectorGui extends CosmeticGui {
         if (previous != null && !previousArmorItem.isEmpty()) {
             final ItemStack previousItem = dev.triumphteam.gui.builder.item.ItemBuilder.from(
                     previous
-            ).glow(false).build();
+            ).build();
 
             this.gui.updateItem(this.selectedCosmetic, previousItem);
         } else {
@@ -164,7 +164,7 @@ public class DyeSelectorGui extends CosmeticGui {
                         guiItem,
                         itemStack
                 );
-                this.gui.updateItem(this.selectedCosmetic, setItem);
+                if (setItem != null) this.gui.updateItem(this.selectedCosmetic, setItem);
             }
         }
 
@@ -186,7 +186,7 @@ public class DyeSelectorGui extends CosmeticGui {
                         this.applyPlaceholders(
                                 user, player, user.getPlayerArmor().getItem(type), true
                         )
-                ).glow(true).build());
+                ).build());
     }
 
     @Override
