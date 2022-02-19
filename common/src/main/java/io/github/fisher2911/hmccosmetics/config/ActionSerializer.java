@@ -5,10 +5,12 @@ import dev.triumphteam.gui.guis.GuiItem;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.gui.CosmeticGui;
+import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
 import io.github.fisher2911.hmccosmetics.message.Message;
 import io.github.fisher2911.hmccosmetics.message.MessageHandler;
 import io.github.fisher2911.hmccosmetics.message.Placeholder;
 import io.github.fisher2911.hmccosmetics.user.User;
+import io.github.fisher2911.hmccosmetics.user.UserManager;
 import io.github.fisher2911.hmccosmetics.util.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -28,6 +30,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public class ActionSerializer implements TypeSerializer<List<CosmeticGuiAction>> {
 
@@ -36,6 +39,7 @@ public class ActionSerializer implements TypeSerializer<List<CosmeticGuiAction>>
 
     private static final String OPEN_MENU = "open-menu";
     private static final String SET_ITEMS = "set-items";
+    private static final String REMOVE_COSMETICS = "remove-cosmetics";
     private static final String ON_EQUIP = "equip";
     private static final String ON_REMOVE = "unequip";
     private static final String ANY = "any";
@@ -102,6 +106,7 @@ public class ActionSerializer implements TypeSerializer<List<CosmeticGuiAction>>
         final ConfigurationNode pitchNode = soundNode.node(SOUND_PITCH);
         final ConfigurationNode categoryNode = soundNode.node(SOUND_CATEGORY);
         final ConfigurationNode setItemsNode = node.node(SET_ITEMS);
+        final ConfigurationNode removeItemsNode = node.node(REMOVE_COSMETICS);
 
         final String openMenu = openMenuNode.getString();
 
@@ -122,6 +127,8 @@ public class ActionSerializer implements TypeSerializer<List<CosmeticGuiAction>>
             );
         }
 
+        final List<ArmorItem.Type> removeCosmeticTypes = this.loadRemoveTypes(removeItemsNode);
+
         final ClickType click = Utils.stringToEnum(clickType, ClickType.class, ClickType.UNKNOWN);
         final Map<Integer, GuiItem> setItems = this.loadSetItems(setItemsNode);
 
@@ -138,9 +145,13 @@ public class ActionSerializer implements TypeSerializer<List<CosmeticGuiAction>>
 
                     if (openMenu != null) plugin.getCosmeticsMenu().openMenu(openMenu, event.getWhoClicked());
                     messageConsumer.accept(player);
-                    final Optional<User> optionalUser = plugin.getUserManager().get(player.getUniqueId());
+                    final UserManager userManager = plugin.getUserManager();
+                    final Optional<User> optionalUser = userManager.get(player.getUniqueId());
                     if (optionalUser.isEmpty()) return;
                     final User user = optionalUser.get();
+                    for (final ArmorItem.Type type : removeCosmeticTypes) {
+                        userManager.removeItem(user, type);
+                    }
                     final CosmeticGui gui = user.getOpenGui();
                     if (gui != null) {
                         for (final var entry : setItems.entrySet()) {
@@ -240,6 +251,28 @@ public class ActionSerializer implements TypeSerializer<List<CosmeticGuiAction>>
                 player.chat("/" + commandToSend.replace(Placeholder.PLAYER, playerName));
             }
         };
+    }
+
+    private List<ArmorItem.Type> loadRemoveTypes(final ConfigurationNode node) {
+        try {
+            final List<String> typeStrings = node.getList(String.class);
+            if (typeStrings == null) return new ArrayList<>();
+            return typeStrings.stream().map(
+                    string -> {
+                        try {
+                            return ArmorItem.Type.valueOf(string.toUpperCase(Locale.ROOT));
+                        } catch (final IllegalArgumentException exception) {
+                            plugin.getLogger().severe(string + " is not a valid cosmetic type.");
+                        }
+                        return null;
+                    }
+            ).
+                    filter(type -> type != null).
+                    collect(Collectors.toList());
+        } catch (final SerializationException exception) {
+            exception.printStackTrace();
+        }
+        return new ArrayList<>();
     }
 
     @Override
