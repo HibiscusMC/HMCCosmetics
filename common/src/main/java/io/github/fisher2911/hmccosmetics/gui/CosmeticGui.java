@@ -151,7 +151,7 @@ public class CosmeticGui {
     }
 
     @Nullable
-    private GuiItem getGuiItem(final User user, final Player player, final GuiItem guiItem, final ItemStack itemStack) {
+    protected GuiItem getGuiItem(final User user, final Player player, final GuiItem guiItem, final ItemStack itemStack) {
         if (guiItem instanceof final ArmorItem armorItem) {
             final String permission =
                     armorItem.getPermission() == null ? "" : armorItem.getPermission();
@@ -188,8 +188,12 @@ public class CosmeticGui {
         return guiItem;
     }
 
-    protected ItemStack applyPlaceholders(final User user, final Player player,
-                                          final ArmorItem armorItem, final boolean hasPermission) {
+    protected ItemStack applyPlaceholders(
+            final User user,
+            final Player player,
+            final ArmorItem armorItem,
+            final boolean hasPermission
+    ) {
         final Map<String, String> placeholders = new HashMap<>();
 
         final PlayerArmor playerArmor = user.getPlayerArmor();
