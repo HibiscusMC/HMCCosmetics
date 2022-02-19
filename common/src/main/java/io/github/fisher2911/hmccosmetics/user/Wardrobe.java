@@ -102,16 +102,22 @@ public class Wardrobe extends User {
                 this.getUuid()
         );
 
-        PacketManager.sendPacket(viewer, playerInfoPacket, playerSpawnPacket);
-        this.spawnArmorStand(viewer, this.currentLocation, this.plugin.getSettings().getCosmeticSettings());
-        this.updateArmorStand(viewer, plugin.getSettings(), this.currentLocation);
-        PacketManager.sendPacket(
-                viewer,
-                PacketManager.getLookPacket(this.getEntityId(), this.currentLocation),
-                PacketManager.getRotationPacket(this.getEntityId(), this.currentLocation),
-                PacketManager.getPlayerOverlayPacket(this.getEntityId())
+
+        Bukkit.getScheduler().runTaskLaterAsynchronously(
+                this.plugin,
+                () -> {
+                    PacketManager.sendPacket(viewer, playerInfoPacket, playerSpawnPacket);
+                    this.spawnArmorStand(viewer, this.currentLocation, this.plugin.getSettings().getCosmeticSettings());
+                    this.updateArmorStand(viewer, plugin.getSettings(), this.currentLocation);
+                    PacketManager.sendPacket(
+                            viewer,
+                            PacketManager.getLookPacket(this.getEntityId(), this.currentLocation),
+                            PacketManager.getRotationPacket(this.getEntityId(), this.currentLocation),
+                            PacketManager.getPlayerOverlayPacket(this.getEntityId())
+                    );
+                },
+                settings.getSpawnDelay()
         );
-        viewer.sendMessage("Sent overlay");
 
         this.spawned = true;
         this.startSpinTask(viewer);
@@ -124,25 +130,31 @@ public class Wardrobe extends User {
 
     public void despawnFakePlayer(final Player viewer) {
         final WardrobeSettings settings = this.plugin.getSettings().getWardrobeSettings();
-        PacketManager.sendPacket(
-                viewer,
-                PacketManager.getEntityDestroyPacket(this.getEntityId())
-                // for spectator packets
+        Bukkit.getScheduler().runTaskLaterAsynchronously(
+                this.plugin,
+                () -> {
+                    PacketManager.sendPacket(
+                            viewer,
+                            PacketManager.getEntityDestroyPacket(this.getEntityId())
+                            // for spectator packets
 //                PacketManager.getEntityDestroyPacket(this.viewerId)
-        );
-        this.showPlayer(this.plugin.getUserManager());
-        this.despawnAttached();
-        this.active = false;
-        this.spawned = false;
-        this.cameraLocked = false;
-        this.currentLocation = null;
-        this.getPlayerArmor().clear();
+                    );
+                    this.despawnAttached();
+                    this.showPlayer(this.plugin.getUserManager());
+                    this.active = false;
+                    this.spawned = false;
+                    this.cameraLocked = false;
+                    this.currentLocation = null;
+                    this.getPlayerArmor().clear();
 
-        if (settings.isAlwaysDisplay()) {
-            this.currentLocation = settings.getWardrobeLocation();
-            if (this.currentLocation == null) return;
-            this.spawnFakePlayer(viewer);
-        }
+                    if (settings.isAlwaysDisplay()) {
+                        this.currentLocation = settings.getWardrobeLocation();
+                        if (this.currentLocation == null) return;
+                        this.spawnFakePlayer(viewer);
+                    }
+                },
+                settings.getDespawnDelay()
+        );
     }
 
     private void startSpinTask(final Player player) {

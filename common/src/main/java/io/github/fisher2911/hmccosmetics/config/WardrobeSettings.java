@@ -19,6 +19,8 @@ public class WardrobeSettings {
     private static final String ALWAYS_DISPLAY_PATH = WARDROBE_PATH + ".always-display";
     private static final String STATIC_RADIUS_PATH = WARDROBE_PATH + ".static-radius";
     private static final String ROTATION_SPEED_PATH = WARDROBE_PATH + ".rotation-speed";
+    private static final String SPAWN_DELAY_PATH = WARDROBE_PATH + ".spawn-delay";
+    private static final String DESPAWN_DELAY_PATH = WARDROBE_PATH + ".despawn-delay";
     private static final String STATIC_LOCATION_PATH = WARDROBE_PATH + ".wardrobe-location";
     private static final String VIEWER_LOCATION_PATH = WARDROBE_PATH + ".viewer-location";
     private static final String WORLD_PATH = "world";
@@ -37,6 +39,8 @@ public class WardrobeSettings {
     private boolean alwaysDisplay;
     private int staticRadius;
     private int rotationSpeed;
+    private int spawnDelay;
+    private int despawnDelay;
     private Location wardrobeLocation;
     private Location viewerLocation;
 
@@ -52,6 +56,8 @@ public class WardrobeSettings {
         this.staticRadius = config.getInt(STATIC_RADIUS_PATH);
         this.alwaysDisplay = config.getBoolean(ALWAYS_DISPLAY_PATH);
         this.rotationSpeed = config.getInt(ROTATION_SPEED_PATH);
+        this.spawnDelay = config.getInt(SPAWN_DELAY_PATH);
+        this.despawnDelay = config.getInt(DESPAWN_DELAY_PATH);
 
         final ConfigurationSection wardrobeLocationSection = config.getConfigurationSection(STATIC_LOCATION_PATH);
         if (wardrobeLocationSection == null) return;
@@ -99,6 +105,14 @@ public class WardrobeSettings {
 
     public int getRotationSpeed() {
         return rotationSpeed;
+    }
+
+    public int getSpawnDelay() {
+        return spawnDelay;
+    }
+
+    public int getDespawnDelay() {
+        return despawnDelay;
     }
 
     public Location getWardrobeLocation() {
