@@ -20,6 +20,7 @@ repositories {
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
     maven("https://mvnrepository.com/artifact/com.zaxxer/HikariCP")
     maven("https://repo.jeff-media.de/maven2/")
+    maven("https://repo.citizensnpcs.co");
 }
 
 dependencies {
@@ -34,6 +35,7 @@ dependencies {
     compileOnly("me.clip:placeholderapi:2.11.1")
     compileOnly("com.github.oraxen:oraxen:-SNAPSHOT")
     compileOnly("com.github.LoneDev6:API-ItemsAdder:2.5.4")
+    compileOnly("net.citizensnpcs:citizens-main:2.0.29-SNAPSHOT")
     implementation("net.kyori:adventure-api:4.9.3")
     implementation ("net.kyori:adventure-text-minimessage:4.10.0-SNAPSHOT")
     implementation("net.kyori:adventure-platform-bukkit:4.0.1")
