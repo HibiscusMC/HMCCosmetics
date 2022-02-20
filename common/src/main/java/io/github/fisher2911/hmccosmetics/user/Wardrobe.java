@@ -216,35 +216,40 @@ public class Wardrobe extends User {
     }
 
     private void hidePlayer() {
-        final Player player = this.getPlayer();
-        if (player == null) return;
-        for (final Player p : Bukkit.getOnlinePlayers()) {
-            p.hidePlayer(this.plugin, player);
-            player.hidePlayer(this.plugin, p);
-        }
+        Bukkit.getScheduler().runTask(this.plugin,
+                () -> {
+                    final Player player = this.getPlayer();
+                    if (player == null) return;
+                    for (final Player p : Bukkit.getOnlinePlayers()) {
+                        p.hidePlayer(this.plugin, player);
+                        player.hidePlayer(this.plugin, p);
+                    }
+                });
     }
 
     private void showPlayer(final UserManager userManager) {
-        final Player player = this.getPlayer();
-        if (player == null) return;
-        final Optional<User> optionalUser = userManager.get(player.getUniqueId());
-        for (final Player p : Bukkit.getOnlinePlayers()) {
-            final Optional<User> optional = userManager.get(p.getUniqueId());
-            if (optional.isEmpty()) continue;
-            if (optional.get().getWardrobe().isActive()) continue;
-            player.showPlayer(this.plugin, p);
-            p.showPlayer(this.plugin, player);
-            Bukkit.getScheduler().runTaskLaterAsynchronously(
-                    this.plugin,
-                    () -> optional.ifPresent(user -> userManager.updateCosmetics(user, player)),
-                    1
-            );
-            Bukkit.getScheduler().runTaskLaterAsynchronously(
-                    this.plugin,
-                    () -> optionalUser.ifPresent(userManager::updateCosmetics),
-                    1
-            );
-        }
+        Bukkit.getScheduler().runTask(
+                this.plugin,
+                () -> {
+                    final Player player = this.getPlayer();
+                    if (player == null) return;
+                    final Optional<User> optionalUser = userManager.get(player.getUniqueId());
+                    for (final Player p : Bukkit.getOnlinePlayers()) {
+                        final Optional<User> optional = userManager.get(p.getUniqueId());
+                        if (optional.isEmpty()) continue;
+                        if (optional.get().getWardrobe().isActive()) continue;
+                        player.showPlayer(this.plugin, p);
+                        p.showPlayer(this.plugin, player);
+                        Bukkit.getScheduler().runTaskLaterAsynchronously(
+                                this.plugin,
+                                () -> {
+                                    optional.ifPresent(user -> userManager.updateCosmetics(user, player));
+                                    optionalUser.ifPresent(userManager::updateCosmetics);
+                                },
+                                1
+                        );
+                    }
+                });
     }
 
     @Override
