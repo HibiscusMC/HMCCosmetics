@@ -144,7 +144,9 @@ public class CitizensHook implements Hook, Listener {
                                 () -> {
                                     this.npcs.put(npc.getId(), user);
                                     for (final ArmorItem.Type type : ArmorItem.Type.values()) {
-                                        this.setNpcCosmetic(npc.getId(), user.getPlayerArmor().getItem(type));
+                                        final ArmorItem armorItem = user.getPlayerArmor().getItem(type);
+                                        if (armorItem.isEmpty()) continue;
+                                        this.setNpcCosmetic(npc.getId(), armorItem);
                                     }
                                 }
                         )
