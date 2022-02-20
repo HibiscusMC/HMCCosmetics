@@ -203,12 +203,13 @@ public class ItemSerializer implements TypeSerializer<GuiItem> {
             itemBuilder.modelData(modelData);
         }
 
+        if (!lore.isEmpty()) itemBuilder.lore(lore);
+        if (!name.isBlank()) itemBuilder.name(name);
+
         itemStack = itemBuilder.
                 amount(amount).
-                name(name).
                 unbreakable(unbreakable).
                 glow(glowing).
-                lore(lore).
                 enchants(enchantments, true).
                 itemFlags(itemFlags).
                 build();
