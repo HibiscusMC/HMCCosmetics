@@ -115,7 +115,7 @@ public class ItemSerializer implements TypeSerializer<GuiItem> {
             }
         }
 
-        final String name = StringUtils.parseStringToString(Utils.replaceIfNull("", nameNode.getString()));
+        final String name = StringUtils.parseStringToString(Utils.replaceIfNull(nameNode.getString(), ""));
 
         final boolean unbreakable = unbreakableNode.getBoolean();
         final boolean glowing = glowingNode.getBoolean();

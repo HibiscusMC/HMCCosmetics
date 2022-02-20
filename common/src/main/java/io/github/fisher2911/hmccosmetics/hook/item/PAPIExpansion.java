@@ -76,7 +76,9 @@ public class PAPIExpansion extends PlaceholderExpansion {
                     for (final ArmorItem item : user.getPlayerArmor().getArmorItems()) {
                         if (item.getType().equals(type)) {
                             if (formatted) {
-                                return item.getItemName();
+                                final String name = item.getItemName();
+                                if (name.isBlank()) return item.getId().replace("_", "");
+                                return name;
                             }
                             return item.getId();
                         }
