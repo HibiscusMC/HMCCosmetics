@@ -49,10 +49,10 @@ public class HookManager {
         final ItemsAdderHook itemsAdderHook = new ItemsAdderHook();
         final CitizensHook citizensHook = new CitizensHook(this.plugin);
         if (pluginManager.getPlugin("Oraxen") != null) {
-            itemHookMap.put(oraxenHook.getId(), oraxenHook);
+            itemHookMap.put(oraxenHook.getIdentifier(), oraxenHook);
         }
         if (pluginManager.getPlugin("ItemsAdder") != null) {
-            itemHookMap.put(itemsAdderHook.getId(), itemsAdderHook);
+            itemHookMap.put(itemsAdderHook.getIdentifier(), itemsAdderHook);
             this.listeners.add(itemsAdderHook);
         }
         if (pluginManager.getPlugin("Citizens") != null) {
