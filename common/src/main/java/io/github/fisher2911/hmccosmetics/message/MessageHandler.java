@@ -65,6 +65,9 @@ public class MessageHandler {
                 sender,
                 Placeholder.applyPlaceholders(this.getMessage(key), placeholders)
         );
+
+        if (message.isBlank()) return;
+
         final Component component = Adventure.MINI_MESSAGE.deserialize(message);
         sender.spigot().sendMessage(BungeeComponentSerializer.get().serialize(component));
     }
