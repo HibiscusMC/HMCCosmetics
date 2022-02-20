@@ -56,20 +56,6 @@ public class DyeSelectorGui extends CosmeticGui {
             this.selectedCosmetic = selected == null ? this.selectedCosmetic : selected;
         }
 
-        for (final var entry : this.cosmeticsSlots.entrySet()) {
-            gui.setItem(
-                    entry.getKey(),
-                    new GuiItem(
-                            this.applyPlaceholders(
-                                    user,
-                                    player,
-                                    user.getPlayerArmor().getItem(entry.getValue()),
-                                    true
-                            )
-                    )
-            );
-        }
-
         for (final var entry : this.guiItemMap.entrySet()) {
 
             final GuiItem guiItem = entry.getValue();
@@ -79,6 +65,21 @@ public class DyeSelectorGui extends CosmeticGui {
             if (itemStack == null) {
                 continue;
             }
+
+            guiItem.setItemStack(
+                    ItemBuilder.from(itemStack.clone()).papiPlaceholders(player).build()
+            );
+
+            gui.setItem(entry.getKey(), guiItem);
+        }
+
+        for (final var entry : this.cosmeticsSlots.entrySet()) {
+
+            final ArmorItem guiItem = user.getPlayerArmor().getItem(entry.getValue()).copy();
+
+            final ItemStack itemStack = guiItem.getItemStack();
+
+            if (itemStack == null || guiItem.isEmpty()) continue;
 
             guiItem.setItemStack(
                     ItemBuilder.from(itemStack.clone()).papiPlaceholders(player).build()
@@ -129,8 +130,11 @@ public class DyeSelectorGui extends CosmeticGui {
 
             armorItem.setDye(colorItem.getColor().asRGB());
 
-            if (user.isWardrobeActive())
-            this.plugin.getUserManager().setItem(user, armorItem);
+            if (user.isWardrobeActive()) {
+                this.plugin.getUserManager().setItem(user.getWardrobe(), armorItem);
+            } else {
+                this.plugin.getUserManager().setItem(user, armorItem);
+            }
             this.updateSelected(user, player);
         });
 
@@ -182,11 +186,14 @@ public class DyeSelectorGui extends CosmeticGui {
             return;
         }
 
+        final ArmorItem armorItem = user.getPlayerArmor().getItem(type);
+        if (armorItem.isEmpty()) return;
+
         this.gui.updateItem(
                 this.selectedCosmetic,
                 ItemBuilder.from(
                         this.applyPlaceholders(
-                                user, player, user.getPlayerArmor().getItem(type), true
+                                user, player, armorItem, true
                         )
                 ).build());
     }

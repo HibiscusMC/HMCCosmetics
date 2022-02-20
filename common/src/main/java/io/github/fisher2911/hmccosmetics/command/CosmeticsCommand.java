@@ -337,7 +337,27 @@ public class CosmeticsCommand extends CommandBase {
                     );
                 }
             }
-        };
+        }
+    }
+
+    @SubCommand("hide")
+    public void hide(final Player player) {
+        final Optional<User> optionalUser = this.userManager.get(player.getUniqueId());
+        if (optionalUser.isEmpty()) return;
+        final User user = optionalUser.get();
+        if (user.isHidden()) {
+            user.setHidden(false);
+            this.messageHandler.sendMessage(
+                    player,
+                    Messages.SHOWN_COSMETICS
+            );
+            return;
+        }
+        user.setHidden(true);
+        this.messageHandler.sendMessage(
+                player,
+                Messages.HID_COSMETICS
+        );
     }
 
     private void setNpcCosmetic(final CitizensHook hook, final CommandSender sender, final int npcId, final ArmorItem item) {

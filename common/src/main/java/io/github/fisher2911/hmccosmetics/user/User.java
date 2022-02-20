@@ -16,6 +16,7 @@ public class User extends BaseUser<UUID> {
 
     protected Wardrobe wardrobe;
     private CosmeticGui openGui;
+    private boolean hidden;
 
     public User(final UUID uuid, final int entityId, final PlayerArmor playerArmor, final Wardrobe wardrobe, final int armorStandId) {
         super(uuid, entityId, playerArmor, armorStandId);
@@ -37,6 +38,7 @@ public class User extends BaseUser<UUID> {
     public boolean shouldShow(final Player other) {
         final Player player = this.getPlayer();
         if (player == null) return false;
+        if (player.getUniqueId().equals(other.getUniqueId()) && this.hidden) return false;
         return player.getGameMode() != GameMode.SPECTATOR &&
                 (!player.hasPotionEffect(PotionEffectType.INVISIBILITY) &&
                         other.canSee(player) &&
@@ -76,5 +78,13 @@ public class User extends BaseUser<UUID> {
     @Override
     public boolean isWardrobeActive() {
         return this.wardrobe.isActive();
+    }
+
+    public boolean isHidden() {
+        return hidden;
+    }
+
+    public void setHidden(final boolean hidden) {
+        this.hidden = hidden;
     }
 }

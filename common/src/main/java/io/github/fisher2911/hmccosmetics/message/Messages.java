@@ -54,6 +54,10 @@ public class Messages {
     public static final Message SET_NPC_COSMETIC =
             new Message("set-npc-cosmetic", ChatColor.GREEN + "Set " + Placeholder.TYPE + " of " +
                     Placeholder.ID + " to " + Placeholder.ITEM);
+    public static final Message HID_COSMETICS =
+            new Message("hid-cosmetics", ChatColor.GREEN + "You have hidden your cosmetics");
+    public static final Message SHOWN_COSMETICS =
+            new Message("showed-cosmetics", ChatColor.GREEN + "You have shown your cosmetics");
     public static final Message HELP_COMMAND =
             new Message("help-command",
                     """

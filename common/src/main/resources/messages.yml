@@ -23,6 +23,8 @@ set-other-off-hand: "%prefix% <gradient:#6D9DC5:#45CDE9>You have set the off han
 set-other-chest-plate: "%prefix% <gradient:#6D9DC5:#45CDE9>You have set the chest plate of %player% to %type%"
 set-other-pants: "%prefix% <gradient:#6D9DC5:#45CDE9>You have set the pants of %player% to %type%"
 set-other-boots: "%prefix% <gradient:#6D9DC5:#45CDE9>You have set the boots of %player% to %type%"
+hid-cosmetics: "%prefix% <gradient:#6D9DC5:#45CDE9>You have hidden your cosmetics"
+shown-cosmetics: "%prefix% <gradient:#6D9DC5:#45CDE9>You have shown your cosmetics"
 opened-wardrobe:
   type: title
   message: "<black>"
