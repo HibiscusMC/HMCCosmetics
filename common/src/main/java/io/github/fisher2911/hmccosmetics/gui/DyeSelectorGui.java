@@ -8,6 +8,7 @@ import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
 import io.github.fisher2911.hmccosmetics.message.Placeholder;
 import io.github.fisher2911.hmccosmetics.user.User;
+import io.github.fisher2911.hmccosmetics.user.Wardrobe;
 import io.github.fisher2911.hmccosmetics.util.builder.ItemBuilder;
 import java.util.HashMap;
 import java.util.Map;
@@ -128,6 +129,7 @@ public class DyeSelectorGui extends CosmeticGui {
 
             armorItem.setDye(colorItem.getColor().asRGB());
 
+            if (user.isWardrobeActive())
             this.plugin.getUserManager().setItem(user, armorItem);
             this.updateSelected(user, player);
         });

@@ -11,6 +11,7 @@ import io.github.fisher2911.hmccosmetics.database.DatabaseFactory;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.gui.CosmeticsMenu;
 import io.github.fisher2911.hmccosmetics.hook.HookManager;
+import io.github.fisher2911.hmccosmetics.hook.item.CitizensHook;
 import io.github.fisher2911.hmccosmetics.hook.item.ItemsAdderHook;
 import io.github.fisher2911.hmccosmetics.listener.ClickListener;
 import io.github.fisher2911.hmccosmetics.listener.CosmeticFixListener;
@@ -29,12 +30,14 @@ import io.github.fisher2911.hmccosmetics.user.UserManager;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import me.mattstudios.mf.base.CommandManager;
+import me.mattstudios.mf.base.CompletionHandler;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -102,10 +105,10 @@ public class HMCCosmetics extends JavaPlugin {
         this.saveTask.cancel();
         this.database.saveAll();
         this.messageHandler.close();
-        this.userManager.cancelTeleportTask();
         this.userManager.removeAll();
         Threads.getInstance().onDisable();
         this.database.close();
+        this.taskManager.end();
     }
 
     private void registerListeners() {
@@ -127,6 +130,7 @@ public class HMCCosmetics extends JavaPlugin {
 
     private void registerCommands() {
         this.commandManager = new CommandManager(this, true);
+        final HookManager hookManager = HookManager.getInstance();
         this.commandManager.getMessageHandler().register(
                 "cmd.no.console", player ->
                         this.messageHandler.sendMessage(
@@ -134,17 +138,28 @@ public class HMCCosmetics extends JavaPlugin {
                                 Messages.MUST_BE_PLAYER
                         )
         );
-        this.commandManager.getCompletionHandler().register("#types",
+        final CompletionHandler completionHandler = this.commandManager.getCompletionHandler();
+        completionHandler.register("#types",
                 resolver ->
                         Arrays.stream(ArmorItem.Type.
                                         values()).
                                 map(ArmorItem.Type::toString).
                                 collect(Collectors.toList())
         );
-        this.commandManager.getCompletionHandler().register("#ids",
+        completionHandler.register("#ids",
                 resolver ->
                         this.cosmeticManager.getAll().stream().map(ArmorItem::getId)
                                 .collect(Collectors.toList()));
+        completionHandler.register("#npc-args",
+                resolver -> List.of(CosmeticsCommand.NPC_REMOVE, CosmeticsCommand.NPC_APPLY));
+        completionHandler.register("#npcs", resolver -> {
+            final List<String> ids = new ArrayList<>();
+            if (!hookManager.isEnabled(CitizensHook.class)) return ids;
+            for (final int id : hookManager.getCitizensHook().getAllNPCS()) {
+                ids.add(String.valueOf(id));
+            }
+            return ids;
+        });
         this.commandManager.register(new CosmeticsCommand(this));
     }
 

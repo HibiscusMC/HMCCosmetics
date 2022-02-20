@@ -90,8 +90,14 @@ public class CosmeticGui {
 
         final ArmorItem.Type type = armorItem.getType();
 
+        final User setUser;
+        if (user.isWardrobeActive()) {
+            setUser = user.getWardrobe();
+        } else {
+            setUser = user;
+        }
         final ArmorItem setTo = this.plugin.getUserManager().setOrUnset(
-                user,
+                setUser,
                 armorItem,
                 Messages.getRemovedMessage(type),
                 Messages.getSetMessage(type)

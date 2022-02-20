@@ -1,6 +1,7 @@
 package io.github.fisher2911.hmccosmetics.hook;
 
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
+import io.github.fisher2911.hmccosmetics.hook.item.CitizensHook;
 import io.github.fisher2911.hmccosmetics.hook.item.ItemHook;
 import io.github.fisher2911.hmccosmetics.hook.item.ItemHooks;
 import io.github.fisher2911.hmccosmetics.hook.item.ItemsAdderHook;
@@ -27,6 +28,7 @@ public class HookManager {
     private final HMCCosmetics plugin;
     private final ItemHooks itemHooks;
     private final PAPIHook papiHook;
+    private final CitizensHook citizensHook;
     private final Set<Class<? extends Hook>> registeredHooks;
     private final Set<Listener> listeners;
 
@@ -45,12 +47,20 @@ public class HookManager {
         final Map<String, ItemHook> itemHookMap = new HashMap<>();
         final OraxenHook oraxenHook = new OraxenHook();
         final ItemsAdderHook itemsAdderHook = new ItemsAdderHook();
+        final CitizensHook citizensHook = new CitizensHook(this.plugin);
         if (pluginManager.getPlugin("Oraxen") != null) {
-            itemHookMap.put(oraxenHook.getIdentifier(), oraxenHook);
+            itemHookMap.put(oraxenHook.getId(), oraxenHook);
         }
         if (pluginManager.getPlugin("ItemsAdder") != null) {
-            itemHookMap.put(itemsAdderHook.getIdentifier(), itemsAdderHook);
+            itemHookMap.put(itemsAdderHook.getId(), itemsAdderHook);
             this.listeners.add(itemsAdderHook);
+        }
+        if (pluginManager.getPlugin("Citizens") != null) {
+            this.registerHook(citizensHook.getClass());
+            this.listeners.add(citizensHook);
+            this.citizensHook = citizensHook;
+        } else {
+            this.citizensHook = null;
         }
 
         this.itemHooks = new ItemHooks(itemHookMap);
@@ -85,6 +95,11 @@ public class HookManager {
     @Nullable
     public PAPIHook getPapiHook() {
         return papiHook;
+    }
+
+    @Nullable
+    public CitizensHook getCitizensHook() {
+        return this.citizensHook;
     }
 
     public ItemHooks getItemHooks() {

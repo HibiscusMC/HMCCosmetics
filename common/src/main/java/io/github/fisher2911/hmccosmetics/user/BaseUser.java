@@ -23,9 +23,9 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
-public abstract class BaseUser {
+public abstract class BaseUser<T> {
 
-    protected final UUID uuid;
+    protected final T id;
     protected final int entityId;
     protected final PlayerArmor playerArmor;
 
@@ -37,8 +37,8 @@ public abstract class BaseUser {
     // List of players that are currently viewing the armor stand
     protected final Set<UUID> viewing = new HashSet<>();
 
-    public BaseUser(final UUID uuid, final int entityId, final PlayerArmor playerArmor,  final int armorStandId) {
-        this.uuid = uuid;
+    public BaseUser(final T id, final int entityId, final PlayerArmor playerArmor,  final int armorStandId) {
+        this.id = id;
         this.entityId = entityId;
         this.playerArmor = playerArmor;
         this.armorStandId = armorStandId;
@@ -47,8 +47,8 @@ public abstract class BaseUser {
     @Nullable
     public abstract Location getLocation();
 
-    public UUID getUuid() {
-        return this.uuid;
+    public T getId() {
+        return this.id;
     }
 
     public PlayerArmor getPlayerArmor() {
@@ -153,7 +153,7 @@ public abstract class BaseUser {
                     new ItemStack(Material.AIR)
             ));
 
-            if (!this.uuid.equals(other.getUniqueId())) return;
+            if (!this.id.equals(other.getUniqueId())) return;
             PacketManager.sendPacket(other, PacketManager.getEquipmentPacket(equipmentList, this.armorStandId));
         }
     }
@@ -191,5 +191,9 @@ public abstract class BaseUser {
     public int getEntityId() {
         return this.entityId;
     }
+
+    public abstract Equipment getEquipment();
+
+    public abstract boolean isWardrobeActive();
 
 }

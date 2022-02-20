@@ -94,12 +94,12 @@ public class Wardrobe extends User {
 
         final PacketContainer playerSpawnPacket = PacketManager.getFakePlayerSpawnPacket(
                 this.currentLocation,
-                this.getUuid(),
+                this.getId(),
                 this.getEntityId()
         );
         final PacketContainer playerInfoPacket = PacketManager.getFakePlayerInfoPacket(
                 viewer,
-                this.getUuid()
+                this.getId()
         );
 
 
@@ -246,4 +246,8 @@ public class Wardrobe extends User {
         }
     }
 
+    @Override
+    public Equipment getEquipment() {
+        return new Equipment();
+    }
 }

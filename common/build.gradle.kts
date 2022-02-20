@@ -93,7 +93,7 @@ bukkit {
     apiVersion = "1.16"
     name = "HMCCosmetics"
     authors = listOf("MasterOfTheFish")
-    softDepend = listOf("Multiverse", "PlaceholderAPI", "Oraxen", "ItemsAdder")
+    softDepend = listOf("Multiverse", "PlaceholderAPI", "Oraxen", "ItemsAdder", "Citizens")
     depend = listOf("ProtocolLib")
     permissions {
         register("hmccosmetics.cmd.default") {

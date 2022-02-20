@@ -16,6 +16,7 @@ public class Placeholder {
     public static final String PLAYER = "%player%";
     public static final String ENABLED = "%enabled%";
     public static final String ALLOWED = "%allowed%";
+    public static final String ID = "%id%";
 
     /**
      * @param message message being translated

@@ -5,6 +5,8 @@ import io.github.fisher2911.hmccosmetics.config.Settings;
 import io.github.fisher2911.hmccosmetics.config.WardrobeSettings;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.gui.CosmeticsMenu;
+import io.github.fisher2911.hmccosmetics.hook.HookManager;
+import io.github.fisher2911.hmccosmetics.hook.item.CitizensHook;
 import io.github.fisher2911.hmccosmetics.message.Message;
 import io.github.fisher2911.hmccosmetics.message.MessageHandler;
 import io.github.fisher2911.hmccosmetics.message.Messages;
@@ -14,10 +16,6 @@ import io.github.fisher2911.hmccosmetics.user.User;
 import io.github.fisher2911.hmccosmetics.user.UserManager;
 import io.github.fisher2911.hmccosmetics.user.Wardrobe;
 import io.github.fisher2911.hmccosmetics.util.StringUtils;
-
-import java.util.Map;
-import java.util.Optional;
-
 import me.mattstudios.mf.annotations.Command;
 import me.mattstudios.mf.annotations.Completion;
 import me.mattstudios.mf.annotations.Default;
@@ -25,10 +23,13 @@ import me.mattstudios.mf.annotations.Permission;
 import me.mattstudios.mf.annotations.SubCommand;
 import me.mattstudios.mf.base.CommandBase;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
 
 @Command("cosmetics")
 public class CosmeticsCommand extends CommandBase {
@@ -86,8 +87,11 @@ public class CosmeticsCommand extends CommandBase {
 
     @SubCommand("dye")
     @Permission(io.github.fisher2911.hmccosmetics.message.Permission.DYE_COMMAND)
-    public void dyeArmor(final Player player, @Completion("#types") String typeString,
-                         final @me.mattstudios.mf.annotations.Optional String dyeColor) {
+    public void dyeArmor(
+            final Player player,
+            @Completion("#types") String typeString,
+            final @me.mattstudios.mf.annotations.Optional String dyeColor
+    ) {
 
         final Optional<User> optionalUser = this.userManager.get(player.getUniqueId());
 
@@ -141,7 +145,8 @@ public class CosmeticsCommand extends CommandBase {
             final CommandSender sender,
             @Completion("#players") final Player player,
             @Completion("#ids") final String id,
-            final @me.mattstudios.mf.annotations.Optional String dyeColor) {
+            final @me.mattstudios.mf.annotations.Optional String dyeColor
+    ) {
         final Optional<User> userOptional = this.userManager.get(player.getUniqueId());
 
         if (userOptional.isEmpty()) {
@@ -283,6 +288,75 @@ public class CosmeticsCommand extends CommandBase {
                             Messages.OPENED_WARDROBE
                     );
                 }).execute();
+    }
+
+    public static final String NPC_APPLY = "apply";
+    public static final String NPC_REMOVE = "remove";
+
+    @SubCommand("npc")
+    @Permission(io.github.fisher2911.hmccosmetics.message.Permission.SET_COSMETIC_COMMAND)
+    public void applyNpc(
+            final CommandSender sender,
+            @Completion("#npc-args") final String arg,
+            /*@Completion("#npcs")*/ final Integer npcId,
+            @Completion("#types") final String typeStr,
+            @me.mattstudios.mf.annotations.Optional @Completion("#ids") final String itemId
+    ) {
+        final CitizensHook citizensHook = HookManager.getInstance().getCitizensHook();
+        if (citizensHook == null) {
+            this.messageHandler.sendMessage(
+                    sender,
+                    Messages.HOOK_NOT_ENABLED,
+                    Map.of(Placeholder.TYPE, "Citizens")
+            );
+            return;
+        }
+        final ArmorItem armorItem = this.plugin.getCosmeticManager().getArmorItem(itemId);
+        if (armorItem == null) {
+            this.messageHandler.sendMessage(
+                    sender,
+                    Messages.ITEM_NOT_FOUND
+            );
+            return;
+        }
+        switch (arg.toLowerCase(Locale.ROOT)) {
+            case NPC_APPLY -> {
+                this.setNpcCosmetic(citizensHook, sender, npcId, armorItem);
+            }
+
+            case NPC_REMOVE -> {
+                try {
+                    final ArmorItem.Type type = ArmorItem.Type.valueOf(typeStr);
+                    this.setNpcCosmetic(citizensHook, sender, npcId, ArmorItem.empty(type, "none"));
+
+                } catch (final IllegalArgumentException exception) {
+                    this.messageHandler.sendMessage(
+                            sender,
+                            Messages.INVALID_TYPE,
+                            Map.of(Placeholder.TYPE, typeStr)
+                    );
+                }
+            }
+        };
+    }
+
+    private void setNpcCosmetic(final CitizensHook hook, final CommandSender sender, final int npcId, final ArmorItem item) {
+        final boolean isSet = hook.setNpcCosmetic(npcId, item);
+        if (!isSet) {
+            this.messageHandler.sendMessage(
+                    sender,
+                    Messages.NPC_NOT_FOUND,
+                    Map.of(Placeholder.ID, String.valueOf(npcId))
+            );
+            return;
+        }
+        this.messageHandler.sendMessage(
+                sender,
+                Messages.SET_NPC_COSMETIC,
+                Map.of(Placeholder.TYPE, item.getType().toString(),
+                        Placeholder.ITEM, item.getId(),
+                        Placeholder.ID, String.valueOf(npcId))
+        );
     }
 
     private void setDyeColor(final String dyeColor, final ArmorItem armorItem, final CommandSender sender) {

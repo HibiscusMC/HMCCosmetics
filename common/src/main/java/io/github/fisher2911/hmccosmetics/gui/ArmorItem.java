@@ -184,9 +184,13 @@ public class ArmorItem extends GuiItem {
     }
 
     public static ArmorItem empty(final Type type) {
+        return empty(type, "");
+    }
+
+    public static ArmorItem empty(final Type type, final String id) {
         return new ArmorItem(
                 new ItemStack(Material.AIR),
-                "",
+                id,
                 new ArrayList<>(),
                 "",
                 type,

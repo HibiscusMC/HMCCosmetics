@@ -7,9 +7,14 @@ import com.j256.ormlite.table.TableUtils;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.concurrent.Threads;
 import io.github.fisher2911.hmccosmetics.database.dao.ArmorItemDAO;
+import io.github.fisher2911.hmccosmetics.database.dao.CitizenDAO;
 import io.github.fisher2911.hmccosmetics.database.dao.UserDAO;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
+import io.github.fisher2911.hmccosmetics.hook.HookManager;
+import io.github.fisher2911.hmccosmetics.hook.item.CitizensHook;
 import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
+import io.github.fisher2911.hmccosmetics.user.BaseUser;
+import io.github.fisher2911.hmccosmetics.user.NPCUser;
 import io.github.fisher2911.hmccosmetics.user.User;
 
 import java.sql.SQLException;
@@ -18,15 +23,18 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
+import io.github.fisher2911.hmccosmetics.user.UserFactory;
 import io.github.fisher2911.hmccosmetics.user.Wardrobe;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 public class Database {
 
     protected final HMCCosmetics plugin;
     final Dao<UserDAO, UUID> userDao;
-    final Dao<ArmorItemDAO, UUID> armorItemDao;
+    final Dao<CitizenDAO, Integer> citizenDao;
+    final Dao<ArmorItemDAO, String> armorItemDao;
     private final ConnectionSource dataSource;
     private final DatabaseType databaseType;
     AtomicInteger FAKE_ENTITY_ID = new AtomicInteger(Integer.MAX_VALUE);
@@ -52,6 +60,7 @@ public class Database {
         this.plugin = plugin;
         this.dataSource = dataSource;
         this.userDao = DaoManager.createDao(this.dataSource, UserDAO.class);
+        this.citizenDao = DaoManager.createDao(this.dataSource, CitizenDAO.class);
         this.armorItemDao = DaoManager.createDao(this.dataSource, ArmorItemDAO.class);
         this.databaseType = databaseType;
 
@@ -65,13 +74,14 @@ public class Database {
         try {
             TableUtils.createTableIfNotExists(this.dataSource, ArmorItemDAO.class);
             TableUtils.createTableIfNotExists(this.dataSource, UserDAO.class);
+            TableUtils.createTableIfNotExists(this.dataSource, CitizenDAO.class);
         } catch (final SQLException exception) {
             exception.printStackTrace();
         }
     }
 
-    public void loadUser(final Player player, final Consumer<User> onComplete) {
-        final UUID uuid = player.getUniqueId();
+    public void loadUser(final Entity entity, final Consumer<User> onComplete) {
+        final UUID uuid = entity.getUniqueId();
         final int armorStandId = FAKE_ENTITY_ID.getAndDecrement();
         final Wardrobe wardrobe = this.createNewWardrobe(uuid);
         Threads.getInstance().execute(
@@ -83,22 +93,54 @@ public class Database {
                             user = this.userDao.createIfNotExists(new UserDAO(uuid));
                         }
 
-                        final List<ArmorItemDAO> armorItems = this.armorItemDao.queryForEq("uuid",
-                                uuid.toString());
+                        final List<ArmorItemDAO> armorItems = this.armorItemDao.queryForEq("uuid", uuid.toString());
 
                         final User actualUser = user.toUser(
                                 this.plugin.getCosmeticManager(),
-                                player.getEntityId(),
+                                entity.getEntityId(),
                                 armorItems,
                                 wardrobe,
-                                armorStandId);
+                                armorStandId
+                        );
                         Bukkit.getScheduler().runTask(this.plugin,
-                                () -> {
-                                    this.plugin.getUserManager().add(
-                                            actualUser
-                                    );
-                                    onComplete.accept(actualUser);
-                                }
+                                () -> onComplete.accept(actualUser)
+                        );
+
+                    } catch (final SQLException exception) {
+                        exception.printStackTrace();
+                    }
+                });
+        onComplete.accept(new User(
+                uuid,
+                entity.getEntityId(),
+                PlayerArmor.empty(),
+                wardrobe,
+                armorStandId
+        ));
+    }
+
+    public void loadNPCUser(final int id, final Entity entity, final Consumer<NPCUser> onComplete) {
+        final int armorStandId = FAKE_ENTITY_ID.getAndDecrement();
+        Threads.getInstance().execute(
+                () -> {
+                    try {
+                        CitizenDAO citizen = this.citizenDao.queryForId(id);
+
+                        if (citizen == null) {
+                            citizen = this.citizenDao.createIfNotExists(new CitizenDAO(id));
+                        }
+
+                        final List<ArmorItemDAO> armorItems = this.armorItemDao.queryForEq("uuid", String.valueOf(id));
+
+                        final NPCUser actualUser = citizen.toUser(
+                                this.plugin.getCosmeticManager(),
+                                entity.getEntityId(),
+                                armorItems,
+                                armorStandId
+                        );
+
+                        Bukkit.getScheduler().runTask(this.plugin,
+                                () -> onComplete.accept(actualUser)
                         );
 
                     } catch (final SQLException exception) {
@@ -106,20 +148,35 @@ public class Database {
                     }
                 });
 
-        final User user = new User(uuid, player.getEntityId(), PlayerArmor.empty(), wardrobe, armorStandId);
-        this.plugin.getUserManager().add(user);
-        onComplete.accept(user);
+        onComplete.accept(new NPCUser(id, entity.getEntityId(), PlayerArmor.empty(), armorStandId));
     }
 
     public void saveUser(final User user) {
         try {
-            final UserDAO userDAO = new UserDAO(user.getUuid());
+            final UserDAO userDAO = new UserDAO(user.getId());
             this.userDao.createOrUpdate(userDAO);
 
-            final String uuid = user.getUuid().toString();
+            final String uuid = user.getId().toString();
             for (final ArmorItem armorItem : user.getPlayerArmor().getArmorItems()) {
                 final ArmorItemDAO dao = ArmorItemDAO.fromArmorItem(armorItem);
                 dao.setUuid(uuid);
+                this.armorItemDao.createOrUpdate(dao);
+            }
+
+        } catch (final SQLException exception) {
+            exception.printStackTrace();
+        }
+    }
+
+    public void saveNPCUser(final NPCUser user) {
+        try {
+            final CitizenDAO citizenDAO = new CitizenDAO(user.getId());
+            this.citizenDao.createOrUpdate(citizenDAO);
+
+            final String id = user.getId().toString();
+            for (final ArmorItem armorItem : user.getPlayerArmor().getArmorItems()) {
+                final ArmorItemDAO dao = ArmorItemDAO.fromArmorItem(armorItem);
+                dao.setUuid(id);
                 this.armorItemDao.createOrUpdate(dao);
             }
 
@@ -154,7 +211,7 @@ public class Database {
         return userDao;
     }
 
-    public Dao<ArmorItemDAO, UUID> getArmorItemDao() {
+    public Dao<ArmorItemDAO, String> getArmorItemDao() {
         return armorItemDao;
     }
 

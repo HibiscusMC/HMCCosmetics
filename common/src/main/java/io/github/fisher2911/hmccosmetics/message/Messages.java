@@ -47,6 +47,13 @@ public class Messages {
             new Message("invalid-user", ChatColor.RED + "That user's data cannot be found!");
     public static final Message ITEM_NOT_FOUND =
             new Message("item-not-found", ChatColor.RED + "That item could not be found!");
+    public static final Message HOOK_NOT_ENABLED =
+            new Message("hook-not-enabled", ChatColor.RED + Placeholder.TYPE + " is not enabled!");
+    public static final Message NPC_NOT_FOUND =
+            new Message("npc-not-found", ChatColor.RED + "NPC with id " + Placeholder.ID + " not found!");
+    public static final Message SET_NPC_COSMETIC =
+            new Message("set-npc-cosmetic", ChatColor.GREEN + "Set " + Placeholder.TYPE + " of " +
+                    Placeholder.ID + " to " + Placeholder.ITEM);
     public static final Message HELP_COMMAND =
             new Message("help-command",
                     """

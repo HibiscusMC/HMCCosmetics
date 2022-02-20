@@ -3,6 +3,7 @@ package io.github.fisher2911.hmccosmetics.listener;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.config.WardrobeSettings;
 import io.github.fisher2911.hmccosmetics.database.Database;
+import io.github.fisher2911.hmccosmetics.task.TaskChain;
 import io.github.fisher2911.hmccosmetics.user.User;
 import io.github.fisher2911.hmccosmetics.user.UserManager;
 import io.github.fisher2911.hmccosmetics.user.Wardrobe;
@@ -30,17 +31,20 @@ public class JoinListener implements Listener {
     @EventHandler
     public void onJoin(final PlayerJoinEvent event) {
         final Player player = event.getPlayer();
-        this.database.loadUser(player,
-                user -> Bukkit.getScheduler().runTaskAsynchronously(this.plugin,
-                        () -> {
-                            this.userManager.resendCosmetics(player);
-                            final WardrobeSettings settings = this.plugin.getSettings().getWardrobeSettings();
-                            if (settings.isAlwaysDisplay() && settings.getWardrobeLocation() != null) {
-                                final Wardrobe wardrobe = user.getWardrobe();
-                                wardrobe.setCurrentLocation(settings.getWardrobeLocation());
-                                wardrobe.spawnFakePlayer(player);
-                            }
-                        }));
+        this.database.loadUser(
+                player,
+                user -> new TaskChain(this.plugin).chain(
+                        () -> this.userManager.add(user)
+                ).chain(() -> {
+                    this.userManager.resendCosmetics(player);
+                    final WardrobeSettings settings = this.plugin.getSettings().getWardrobeSettings();
+                    if (settings.isAlwaysDisplay() && settings.getWardrobeLocation() != null) {
+                        final Wardrobe wardrobe = user.getWardrobe();
+                        wardrobe.setCurrentLocation(settings.getWardrobeLocation());
+                        wardrobe.spawnFakePlayer(player);
+                    }
+                }, true).execute()
+        );
     }
 
     @EventHandler
