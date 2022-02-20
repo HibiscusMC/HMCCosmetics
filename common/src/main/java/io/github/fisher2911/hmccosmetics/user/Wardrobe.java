@@ -15,7 +15,6 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.text.html.Option;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -135,7 +134,8 @@ public class Wardrobe extends User {
                 () -> {
                     PacketManager.sendPacket(
                             viewer,
-                            PacketManager.getEntityDestroyPacket(this.getEntityId())
+                            PacketManager.getEntityDestroyPacket(this.getEntityId()),
+                            PacketManager.getRemovePlayerPacket(viewer, this.id, this.getEntityId())
                             // for spectator packets
 //                PacketManager.getEntityDestroyPacket(this.viewerId)
                     );
