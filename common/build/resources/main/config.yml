@@ -26,10 +26,10 @@ wardrobe:
   static-radius: 10
   # how much yaw should change per tick, set to 0 for none
   rotation-speed: 3
-  # how long in seconds until the wardrobe should be spawned
-  spawn-delay: 0
-  # how long in seconds until the wardrobe should be despawned
-  despawn-delay: 0
+  # how long in ticks until the wardrobe should be spawned
+  spawn-delay: 40
+  # how long in ticks until the wardrobe should be despawned
+  despawn-delay: 40
   # location of static wardrobe, remove for none
   wardrobe-location:
     world: "World"
@@ -42,6 +42,13 @@ wardrobe:
     world: "World"
     x: 5
     y: 0
+    z: 5
+    yaw: 0
+    pitch: 0
+  leave-location:
+    world: "World"
+    x: 5
+    y: 5
     z: 5
     yaw: 0
     pitch: 0

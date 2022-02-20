@@ -146,6 +146,7 @@ public class Wardrobe extends User {
                     this.cameraLocked = false;
                     this.currentLocation = null;
                     this.getPlayerArmor().clear();
+                    Bukkit.getScheduler().runTask(this.plugin, () -> viewer.teleport(settings.getLeaveLocation()));
 
                     if (settings.isAlwaysDisplay()) {
                         this.currentLocation = settings.getWardrobeLocation();

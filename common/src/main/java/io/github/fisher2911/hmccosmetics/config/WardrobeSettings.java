@@ -23,6 +23,7 @@ public class WardrobeSettings {
     private static final String DESPAWN_DELAY_PATH = WARDROBE_PATH + ".despawn-delay";
     private static final String STATIC_LOCATION_PATH = WARDROBE_PATH + ".wardrobe-location";
     private static final String VIEWER_LOCATION_PATH = WARDROBE_PATH + ".viewer-location";
+    private static final String LEAVE_LOCATION_PATH = WARDROBE_PATH + ".leave-location";
     private static final String WORLD_PATH = "world";
     private static final String X_PATH = "x";
     private static final String Y_PATH = "y";
@@ -43,6 +44,7 @@ public class WardrobeSettings {
     private int despawnDelay;
     private Location wardrobeLocation;
     private Location viewerLocation;
+    private Location leaveLocation;
 
     public WardrobeSettings(final HMCCosmetics plugin) {
         this.plugin = plugin;
@@ -66,6 +68,13 @@ public class WardrobeSettings {
         final ConfigurationSection viewerLocationSection = config.getConfigurationSection(VIEWER_LOCATION_PATH);
         if (viewerLocationSection == null) return;
         this.viewerLocation = this.loadLocation(viewerLocationSection);
+
+        final ConfigurationSection leaveLocationSection = config.getConfigurationSection(LEAVE_LOCATION_PATH);
+        if (leaveLocationSection == null) {
+            this.leaveLocation = this.viewerLocation;
+            return;
+        }
+        this.leaveLocation = this.loadLocation(leaveLocationSection);
     }
 
     @Nullable
@@ -121,6 +130,10 @@ public class WardrobeSettings {
 
     public Location getViewerLocation() {
         return viewerLocation;
+    }
+
+    public Location getLeaveLocation() {
+        return leaveLocation;
     }
 
     public boolean inDistanceOfWardrobe(final Location wardrobeLocation, final Location playerLocation) {
