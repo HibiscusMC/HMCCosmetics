@@ -4,7 +4,6 @@ import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 

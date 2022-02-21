@@ -5,6 +5,7 @@ import io.github.fisher2911.hmccosmetics.hook.item.CitizensHook;
 import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
@@ -32,11 +33,14 @@ public class NPCUser extends BaseUser<Integer> {
     public Location getLocation() {
         final NPC npc = this.getNpc();
         if (npc == null) return null;
-        return npc.getEntity().getLocation();
+        final Entity entity = npc.getEntity();
+        if (entity == null) return null;
+        return entity.getLocation();
     }
 
     public boolean isValid() {
-        return this.getNpc() != null;
+        final NPC npc = this.getNpc();
+        return npc != null && npc.getEntity() != null;
     }
 
     @Override
