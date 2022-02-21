@@ -128,6 +128,7 @@ public class Wardrobe extends User {
     }
 
     public void despawnFakePlayer(final Player viewer) {
+        this.active = false;
         final WardrobeSettings settings = this.plugin.getSettings().getWardrobeSettings();
         Bukkit.getScheduler().runTaskLaterAsynchronously(
                 this.plugin,
@@ -141,7 +142,6 @@ public class Wardrobe extends User {
                     );
                     this.despawnAttached();
                     this.showPlayer(this.plugin.getUserManager());
-                    this.active = false;
                     this.spawned = false;
                     this.cameraLocked = false;
                     this.currentLocation = null;
