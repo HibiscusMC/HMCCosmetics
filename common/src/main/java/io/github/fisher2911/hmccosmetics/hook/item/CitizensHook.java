@@ -133,6 +133,7 @@ public class CitizensHook implements Hook, Listener {
 
     private void loadNpc(final NPC npc) {
         if (Bukkit.getPlayer(npc.getUniqueId()) != null) return;
+        if (npc.getEntity() == null) return;
 
         Bukkit.getScheduler().runTaskLater(this.plugin,
                 () -> Threads.getInstance().execute(() -> this.database.loadNPCUser(

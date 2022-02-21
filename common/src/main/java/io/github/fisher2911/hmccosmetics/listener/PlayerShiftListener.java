@@ -27,6 +27,8 @@ public class PlayerShiftListener implements Listener {
         final Player player = event.getPlayer();
         final Optional<User> userOptional = this.userManager.get(player.getUniqueId());
 
+        if (!event.isSneaking()) return;
+
         if (userOptional.isEmpty()) return;
 
         final User user = userOptional.get();

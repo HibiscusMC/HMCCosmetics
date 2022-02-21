@@ -23,6 +23,7 @@ import me.mattstudios.mf.annotations.Permission;
 import me.mattstudios.mf.annotations.SubCommand;
 import me.mattstudios.mf.base.CommandBase;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -298,7 +299,7 @@ public class CosmeticsCommand extends CommandBase {
     public void applyNpc(
             final CommandSender sender,
             @Completion("#npc-args") final String arg,
-            /*@Completion("#npcs")*/ final Integer npcId,
+            @Completion("#npcs") final Integer npcId,
             @Completion("#types") final String typeStr,
             @me.mattstudios.mf.annotations.Optional @Completion("#ids") final String itemId
     ) {
@@ -308,6 +309,13 @@ public class CosmeticsCommand extends CommandBase {
                     sender,
                     Messages.HOOK_NOT_ENABLED,
                     Map.of(Placeholder.TYPE, "Citizens")
+            );
+            return;
+        }
+        if (npcId == null) {
+            this.messageHandler.sendMessage(
+                    sender,
+                    new Message("illegal-npc-id", ChatColor.RED + "Invalid NPC id specified: " + npcId)
             );
             return;
         }
