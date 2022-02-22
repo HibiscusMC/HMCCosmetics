@@ -24,11 +24,11 @@ import org.bukkit.event.Listener;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class CitizensHook implements Hook, Listener {
 
@@ -37,7 +37,7 @@ public class CitizensHook implements Hook, Listener {
     private final HMCCosmetics plugin;
     private final Database database;
 
-    private final Map<Integer, NPCUser> npcs = new HashMap<>();
+    private final Map<Integer, NPCUser> npcs = new ConcurrentHashMap<>();
 
     public CitizensHook(final HMCCosmetics plugin) {
         this.plugin = plugin;
