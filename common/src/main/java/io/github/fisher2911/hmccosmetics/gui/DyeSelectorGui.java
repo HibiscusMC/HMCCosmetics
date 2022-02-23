@@ -82,7 +82,11 @@ public class DyeSelectorGui extends CosmeticGui {
             if (itemStack == null || guiItem.isEmpty()) continue;
 
             guiItem.setItemStack(
-                    ItemBuilder.from(itemStack.clone()).papiPlaceholders(player).build()
+                    ItemBuilder.from(
+                            this.applyPlaceholders(
+                                    user, player, guiItem, true
+                            )
+                    ).build()
             );
 
             gui.setItem(entry.getKey(), guiItem);
