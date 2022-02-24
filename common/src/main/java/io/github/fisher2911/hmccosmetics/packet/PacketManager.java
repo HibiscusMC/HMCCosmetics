@@ -96,6 +96,12 @@ public class PacketManager {
         return packet;
     }
 
+    public static PacketContainer getLeashPacket(final int entityId, final int balloonId) {
+        final PacketContainer packet = new PacketContainer(PacketType.Play.Server.ATTACH_ENTITY);
+        packet.getIntegers().write(0, balloonId).write(1, entityId);
+        return packet;
+    }
+
     public static PacketContainer getEquipmentPacket(
             final List<Pair<EnumWrappers.ItemSlot, ItemStack>> equipmentList,
             final int entityId

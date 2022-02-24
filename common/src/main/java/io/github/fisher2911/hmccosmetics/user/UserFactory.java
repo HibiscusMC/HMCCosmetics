@@ -4,6 +4,7 @@ import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.hook.HookManager;
 import io.github.fisher2911.hmccosmetics.hook.item.CitizensHook;
 import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
+import io.github.fisher2911.hmccosmetics.packet.EntityIds;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,17 +25,21 @@ public class UserFactory {
     public static <T extends BaseUser> T createUser(
             final Class<T> type,
             final Entity entity,
-            final int armorStandId
+            final int armorStandId,
+            final int balloonId
             ) {
         final UUID uuid = entity.getUniqueId();
         final int entityId = entity.getEntityId();
         if (type.equals(User.class)) {
             return (T) new User(
                     uuid,
-                    entityId,
                     PlayerArmor.empty(),
                     plugin.getDatabase().createNewWardrobe(uuid),
-                    armorStandId
+                    new EntityIds(
+                            entityId,
+                            armorStandId,
+                            balloonId
+                    )
             );
         }
 
@@ -43,9 +48,12 @@ public class UserFactory {
             final int citizensId = HookManager.getInstance().getCitizensHook().getCitizensId(entity);
             return (T) new NPCUser(
                     citizensId,
-                    entityId,
                     PlayerArmor.empty(),
-                    armorStandId
+                    new EntityIds(
+                            entityId,
+                            armorStandId,
+                            balloonId
+                    )
             );
         }
 

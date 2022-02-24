@@ -13,6 +13,7 @@ import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.hook.HookManager;
 import io.github.fisher2911.hmccosmetics.hook.item.CitizensHook;
 import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
+import io.github.fisher2911.hmccosmetics.packet.EntityIds;
 import io.github.fisher2911.hmccosmetics.user.BaseUser;
 import io.github.fisher2911.hmccosmetics.user.NPCUser;
 import io.github.fisher2911.hmccosmetics.user.User;
@@ -83,6 +84,7 @@ public class Database {
     public void loadUser(final Entity entity, final Consumer<User> onComplete) {
         final UUID uuid = entity.getUniqueId();
         final int armorStandId = FAKE_ENTITY_ID.getAndDecrement();
+        final int balloonId = FAKE_ENTITY_ID.getAndDecrement();
         final Wardrobe wardrobe = this.createNewWardrobe(uuid);
         Threads.getInstance().execute(
                 () -> {
@@ -97,10 +99,13 @@ public class Database {
 
                         final User actualUser = user.toUser(
                                 this.plugin.getCosmeticManager(),
-                                entity.getEntityId(),
+                                new EntityIds(
+                                        entity.getEntityId(),
+                                        armorStandId,
+                                        balloonId
+                                ),
                                 armorItems,
-                                wardrobe,
-                                armorStandId
+                                wardrobe
                         );
                         Bukkit.getScheduler().runTask(this.plugin,
                                 () -> onComplete.accept(actualUser)
@@ -112,15 +117,14 @@ public class Database {
                 });
         onComplete.accept(new User(
                 uuid,
-                entity.getEntityId(),
                 PlayerArmor.empty(),
-                wardrobe,
-                armorStandId
+                new EntityIds(entity.getEntityId(), armorStandId, balloonId)
         ));
     }
 
     public void loadNPCUser(final int id, final Entity entity, final Consumer<NPCUser> onComplete) {
         final int armorStandId = FAKE_ENTITY_ID.getAndDecrement();
+        final int balloonId = FAKE_ENTITY_ID.getAndDecrement();
         Threads.getInstance().execute(
                 () -> {
                     try {
@@ -134,9 +138,12 @@ public class Database {
 
                         final NPCUser actualUser = citizen.toUser(
                                 this.plugin.getCosmeticManager(),
-                                entity.getEntityId(),
-                                armorItems,
-                                armorStandId
+                                new EntityIds(
+                                        entity.getEntityId(),
+                                        armorStandId,
+                                        balloonId
+                                ),
+                                armorItems
                         );
 
                         Bukkit.getScheduler().runTask(this.plugin,
@@ -148,7 +155,12 @@ public class Database {
                     }
                 });
 
-        onComplete.accept(new NPCUser(id, entity.getEntityId(), PlayerArmor.empty(), armorStandId));
+        onComplete.accept(new NPCUser(
+                id,
+                PlayerArmor.empty(),
+                new EntityIds(entity.getEntityId(), armorStandId, balloonId)
+                )
+        );
     }
 
     public void saveUser(final User user) {
@@ -219,11 +231,13 @@ public class Database {
         return new Wardrobe(
                 this.plugin,
                 UUID.randomUUID(),
-                FAKE_ENTITY_ID.getAndDecrement(),
                 ownerUUID,
                 PlayerArmor.empty(),
-                FAKE_ENTITY_ID.getAndDecrement(),
-                FAKE_ENTITY_ID.getAndDecrement(),
+                new EntityIds(
+                        FAKE_ENTITY_ID.getAndDecrement(),
+                        FAKE_ENTITY_ID.getAndDecrement(),
+                        FAKE_ENTITY_ID.getAndDecrement()
+                ),
                 false
         );
     }

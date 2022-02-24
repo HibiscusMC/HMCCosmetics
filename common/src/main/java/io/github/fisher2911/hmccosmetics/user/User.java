@@ -3,6 +3,7 @@ package io.github.fisher2911.hmccosmetics.user;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.gui.CosmeticGui;
 import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
+import io.github.fisher2911.hmccosmetics.packet.EntityIds;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -18,13 +19,13 @@ public class User extends BaseUser<UUID> {
     private CosmeticGui openGui;
     private boolean hidden;
 
-    public User(final UUID uuid, final int entityId, final PlayerArmor playerArmor, final Wardrobe wardrobe, final int armorStandId) {
-        super(uuid, entityId, playerArmor, armorStandId);
+    public User(final UUID uuid, final PlayerArmor playerArmor, final Wardrobe wardrobe, final EntityIds entityIds) {
+        super(uuid, playerArmor, entityIds);
         this.wardrobe = wardrobe;
     }
 
-    public User(final UUID uuid, final int entityId, final PlayerArmor playerArmor, final int armorStandId) {
-        super(uuid, entityId, playerArmor, armorStandId);
+    public User(final UUID uuid, final PlayerArmor playerArmor, final EntityIds entityIds) {
+        super(uuid, playerArmor, entityIds);
     }
 
     public @Nullable Player getPlayer() {

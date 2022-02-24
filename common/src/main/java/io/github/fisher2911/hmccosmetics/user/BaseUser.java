@@ -7,6 +7,7 @@ import io.github.fisher2911.hmccosmetics.config.CosmeticSettings;
 import io.github.fisher2911.hmccosmetics.config.Settings;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
+import io.github.fisher2911.hmccosmetics.packet.EntityIds;
 import io.github.fisher2911.hmccosmetics.packet.PacketManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -26,22 +27,21 @@ import java.util.UUID;
 public abstract class BaseUser<T> {
 
     protected final T id;
-    protected final int entityId;
+    protected final EntityIds entityIds;
     protected final PlayerArmor playerArmor;
 
     protected ArmorItem lastSetItem = ArmorItem.empty(ArmorItem.Type.HAT);
 
     protected boolean hasArmorStand;
-    protected final int armorStandId;
+    protected boolean hasBallon;
 
     // List of players that are currently viewing the armor stand
     protected final Set<UUID> viewing = new HashSet<>();
 
-    public BaseUser(final T id, final int entityId, final PlayerArmor playerArmor,  final int armorStandId) {
+    public BaseUser(final T id, final PlayerArmor playerArmor, final EntityIds entityIds) {
         this.id = id;
-        this.entityId = entityId;
+        this.entityIds = entityIds;
         this.playerArmor = playerArmor;
-        this.armorStandId = armorStandId;
     }
 
     @Nullable
@@ -68,7 +68,11 @@ public abstract class BaseUser<T> {
     }
 
     public int getArmorStandId() {
-        return armorStandId;
+        return this.entityIds.armorStand();
+    }
+
+    public int getBalloonId() {
+        return this.entityIds.balloon();
     }
 
     protected ArmorItem setItem(final ArmorItem armorItem) {
@@ -80,47 +84,78 @@ public abstract class BaseUser<T> {
         return this.setItem(ArmorItem.empty(type));
     }
 
-    public void spawnArmorStand(final Player other, final Location location, final CosmeticSettings settings) {
-        if (!this.isInViewDistance(this.getLocation(), other.getLocation(), settings) || !shouldShow(other)) return;
+    public void spawnOutsideCosmetics(final Player other, final Location location, final Settings settings) {
+        if (this.getLocation() == null) return;
+        this.updateOutsideCosmetics(other, location, settings);
+    }
 
-        final PacketContainer packet = PacketManager.getEntitySpawnPacket(location, this.armorStandId, EntityType.ARMOR_STAND);
-        this.viewing.add(other.getUniqueId());
+    private void despawnBalloon(final Player other) {
+        final PacketContainer removePacket = PacketManager.getEntityDestroyPacket(this.getBalloonId());
+        PacketManager.sendPacket(other, removePacket);
+    }
+
+    private void spawnBalloon(final Player other, final Location location, final CosmeticSettings settings) {
+        final Location actual = location.add(0, 5, 0);
+        final PacketContainer spawnPacket = PacketManager.getEntitySpawnPacket(actual, this.getBalloonId(), EntityType.PIG);
+        final PacketContainer leashPacket = PacketManager.getLeashPacket(this.getBalloonId(), this.getEntityId());
+        PacketManager.sendPacket(other, spawnPacket, leashPacket);
+    }
+
+    private void updateBalloon(final CosmeticSettings settings) {
+        final Location location = this.getLocation();
+        for (final Player player : Bukkit.getOnlinePlayers()) {
+            if (!this.hasBallon) {
+                this.spawnBalloon(player, location, settings);
+            } else {
+                this.updateBalloon(player, location, settings);
+            }
+        }
+        this.hasBallon = true;
+    }
+
+    private void updateBalloon(final Player other, final Location location, final CosmeticSettings settings) {
+//        final PacketContainer spawnPacket = PacketManager.getEntitySpawnPacket(location, this.getBalloonId(), EntityType.PARROT);
+//        PacketManager.sendPacket(other, spawnPacket, spawnPacket);
+    }
+
+    private void spawnArmorStand(final Player other, final Location location, final CosmeticSettings settings) {
+//        if (!this.isInViewDistance(this.getLocation(), other.getLocation(), settings) || !shouldShow(other)) return;
+        final PacketContainer packet = PacketManager.getEntitySpawnPacket(location, this.getArmorStandId(), EntityType.ARMOR_STAND);
         PacketManager.sendPacket(other, packet);
     }
 
-    public void spawnArmorStand(final Settings settings) {
-        if (this.hasArmorStand) {
-            this.updateArmorStand(settings);
-            return;
-        }
+//    private void spawnArmorStand(final Settings settings) {
+//        if (this.hasArmorStand) {
+//            this.updateArmorStand(settings);
+//            return;
+//        }
+//
+//        for (final Player p : Bukkit.getOnlinePlayers()) {
+//            this.spawnArmorStand(p, this.getLocation(), settings.getCosmeticSettings());
+//        }
+//
+//        this.hasArmorStand = true;
+//    }
 
-        for (final Player p : Bukkit.getOnlinePlayers()) {
-            this.spawnArmorStand(p, this.getLocation(), settings.getCosmeticSettings());
-        }
-
-        this.hasArmorStand = true;
+    public void updateOutsideCosmetics(final Player player, final Settings settings) {
+        this.updateOutsideCosmetics(player, this.getLocation(), settings);
     }
 
-    public void updateArmorStand(final Settings settings) {
-        if (!this.hasArmorStand) {
-            this.spawnArmorStand(settings);
-        }
+    public void updateOutsideCosmetics(final Settings settings) {
         for (final Player player : Bukkit.getOnlinePlayers()) {
-            this.updateArmorStand(player, settings);
+            this.spawnOutsideCosmetics(player, this.getLocation(), settings);
         }
     }
 
-    public void updateArmorStand(final Player other, final Settings settings) {
-        this.updateArmorStand(other, settings, this.getLocation());
-    }
-
-    public void updateArmorStand(final Player other, final Settings settings, final Location location) {
+    public void updateOutsideCosmetics(final Player other, final Location location, final Settings settings) {
         final boolean inViewDistance = this.isInViewDistance(this.getLocation(), other.getLocation(), settings.getCosmeticSettings());
         if (!this.viewing.contains(other.getUniqueId())) {
             if (!inViewDistance || !shouldShow(other)) return;
             this.spawnArmorStand(other, location, settings.getCosmeticSettings());
+            this.spawnBalloon(other, location, settings.getCosmeticSettings());
         } else if (!inViewDistance || !shouldShow(other)) {
             this.despawnAttached(other);
+            this.despawnBalloon(other);
             this.viewing.remove(other.getUniqueId());
             return;
         }
@@ -136,14 +171,17 @@ public abstract class BaseUser<T> {
             ));
         }
 
-        final PacketContainer armorPacket = PacketManager.getEquipmentPacket(equipmentList, this.armorStandId);
-        final PacketContainer rotationPacket = PacketManager.getRotationPacket(this.armorStandId, location);
-        final PacketContainer ridingPacket = PacketManager.getRidingPacket(this.getEntityId(), this.armorStandId);
-        final PacketContainer armorStandMetaContainer = PacketManager.getArmorStandMetaContainer(this.armorStandId);
+        final int armorStandId = this.getArmorStandId();
+        final PacketContainer armorPacket = PacketManager.getEquipmentPacket(equipmentList, armorStandId);
+        final PacketContainer rotationPacket = PacketManager.getRotationPacket(armorStandId, location);
+        final PacketContainer ridingPacket = PacketManager.getRidingPacket(this.getEntityId(), armorStandId);
+        final PacketContainer armorStandMetaContainer = PacketManager.getArmorStandMetaContainer(armorStandId);
 
         PacketManager.sendPacket(other, armorPacket, armorStandMetaContainer, rotationPacket, ridingPacket);
 
         if (hidden) return;
+
+        this.updateBalloon(other, location, settings.getCosmeticSettings());
 
         final int lookDownPitch = settings.getCosmeticSettings().getLookDownPitch();
 
@@ -154,7 +192,7 @@ public abstract class BaseUser<T> {
             ));
 
             if (!this.id.equals(other.getUniqueId())) return;
-            PacketManager.sendPacket(other, PacketManager.getEquipmentPacket(equipmentList, this.armorStandId));
+            PacketManager.sendPacket(other, PacketManager.getEquipmentPacket(equipmentList, armorStandId));
         }
     }
 
@@ -170,13 +208,13 @@ public abstract class BaseUser<T> {
     }
 
     public void despawnAttached(final Player other) {
-        PacketManager.sendPacket(other, PacketManager.getEntityDestroyPacket(this.armorStandId));
+        PacketManager.sendPacket(other, PacketManager.getEntityDestroyPacket(this.getArmorStandId()));
         this.viewing.remove(other.getUniqueId());
         this.hasArmorStand = false;
     }
 
     public void despawnAttached() {
-        PacketManager.sendPacketToOnline(PacketManager.getEntityDestroyPacket(this.armorStandId));
+        PacketManager.sendPacketToOnline(PacketManager.getEntityDestroyPacket(this.getArmorStandId()));
         this.hasArmorStand = false;
     }
 
@@ -189,7 +227,7 @@ public abstract class BaseUser<T> {
     }
 
     public int getEntityId() {
-        return this.entityId;
+        return this.entityIds.self();
     }
 
     public abstract Equipment getEquipment();

@@ -49,7 +49,7 @@ public class CitizensHook implements Hook, Listener {
                         if (!user.isValid()) {
                             continue;
                         }
-                        user.updateArmorStand(settings);
+                        user.updateOutsideCosmetics(settings);
                     }
                 })
         );

@@ -89,7 +89,7 @@ public class UserManager {
         this.plugin.getTaskManager().submit(new InfiniteTask(
                 () -> {
                     for (final User user : this.userMap.values()) {
-                        user.updateArmorStand(this.plugin.getSettings());
+                        user.updateOutsideCosmetics(this.plugin.getSettings());
                     }
                 }
         ));
@@ -99,7 +99,7 @@ public class UserManager {
         for (final User user : this.userMap.values()) {
             final Player p = user.getPlayer();
             if (p == null) continue;
-            user.spawnArmorStand(player, p.getLocation(), this.settings.getCosmeticSettings());
+            user.updateOutsideCosmetics(player, p.getLocation(), this.settings);
             this.updateCosmetics(user, player);
         }
     }
@@ -202,7 +202,7 @@ public class UserManager {
                     this.updateCosmetics(user);
                 }
                 case BACKPACK -> {
-                    if (user instanceof Wardrobe) user.updateArmorStand(settings);
+                    if (user instanceof Wardrobe) user.updateOutsideCosmetics(settings);
                 }
             }
         });

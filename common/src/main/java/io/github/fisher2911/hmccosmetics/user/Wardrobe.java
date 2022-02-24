@@ -6,6 +6,7 @@ import io.github.fisher2911.hmccosmetics.config.Settings;
 import io.github.fisher2911.hmccosmetics.config.WardrobeSettings;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
+import io.github.fisher2911.hmccosmetics.packet.EntityIds;
 import io.github.fisher2911.hmccosmetics.packet.PacketManager;
 import io.github.fisher2911.hmccosmetics.task.SupplierTask;
 import io.github.fisher2911.hmccosmetics.task.Task;
@@ -23,7 +24,6 @@ public class Wardrobe extends User {
 
     private final HMCCosmetics plugin;
     private final UUID ownerUUID;
-    private final int viewerId;
     private boolean active;
     private boolean cameraLocked;
 
@@ -34,16 +34,13 @@ public class Wardrobe extends User {
     public Wardrobe(
             final HMCCosmetics plugin,
             final UUID uuid,
-            final int entityId,
             final UUID ownerUUID,
             final PlayerArmor playerArmor,
-            final int armorStandId,
-            final int viewerId,
+            final EntityIds entityIds,
             final boolean active) {
-        super(uuid, entityId, playerArmor, armorStandId);
+        super(uuid, playerArmor, entityIds);
         this.plugin = plugin;
         this.ownerUUID = ownerUUID;
-        this.viewerId = viewerId;
         this.active = active;
         this.wardrobe = this;
     }
@@ -106,8 +103,8 @@ public class Wardrobe extends User {
                 this.plugin,
                 () -> {
                     PacketManager.sendPacket(viewer, playerInfoPacket, playerSpawnPacket);
-                    this.spawnArmorStand(viewer, this.currentLocation, this.plugin.getSettings().getCosmeticSettings());
-                    this.updateArmorStand(viewer, plugin.getSettings(), this.currentLocation);
+                    this.spawnOutsideCosmetics(viewer, this.currentLocation, this.plugin.getSettings());
+                    this.updateOutsideCosmetics(viewer, this.currentLocation, plugin.getSettings());
                     PacketManager.sendPacket(
                             viewer,
                             PacketManager.getLookPacket(this.getEntityId(), this.currentLocation),
@@ -123,8 +120,8 @@ public class Wardrobe extends User {
     }
 
     @Override
-    public void updateArmorStand(final Player player, final Settings settings) {
-        this.updateArmorStand(player, settings, this.currentLocation);
+    public void updateOutsideCosmetics(final Player player, final Settings settings) {
+        this.updateOutsideCosmetics(player, this.currentLocation, settings);
     }
 
     public void despawnFakePlayer(final Player viewer) {
@@ -168,7 +165,7 @@ public class Wardrobe extends User {
                     final int yaw = data.get();
                     location.setYaw(yaw);
                     PacketManager.sendPacket(player, PacketManager.getLookPacket(this.getEntityId(), location));
-                    this.updateArmorStand(player, this.plugin.getSettings(), location);
+                    this.updateOutsideCosmetics(player, location, this.plugin.getSettings());
                     location.setYaw(this.getNextYaw(yaw - 30, rotationSpeed));
                     PacketManager.sendPacket(player, PacketManager.getRotationPacket(this.getEntityId(), location));
                     data.set(this.getNextYaw(yaw, rotationSpeed));
