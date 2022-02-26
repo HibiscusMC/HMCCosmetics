@@ -97,6 +97,7 @@ public class Database {
         onComplete.accept(new User(
                 uuid,
                 PlayerArmor.empty(),
+                wardrobe,
                 new EntityIds(entity.getEntityId(), armorStandId, balloonId)
         ));
     }

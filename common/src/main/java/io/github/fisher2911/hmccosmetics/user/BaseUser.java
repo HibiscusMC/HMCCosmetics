@@ -124,7 +124,6 @@ public abstract class BaseUser<T> {
         final String id = balloonItem.getModelId();
         final HookManager hookManager = HookManager.getInstance();
         if (id.isBlank() || !hookManager.isEnabled(ModelEngineHook.class)) return;
-        other.sendMessage("Spawned balloon");
         this.balloon.setAlive(true);
         this.viewingBalloon.add(other.getUniqueId());
         this.balloon.setLocation(actual);
