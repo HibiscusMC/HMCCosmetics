@@ -5,6 +5,7 @@ import dev.triumphteam.gui.guis.GuiItem;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.gui.BalloonItem;
+import io.github.fisher2911.hmccosmetics.gui.WrappedGuiItem;
 import io.github.fisher2911.hmccosmetics.hook.HookManager;
 import io.github.fisher2911.hmccosmetics.util.Keys;
 import io.github.fisher2911.hmccosmetics.util.StringUtils;
@@ -27,6 +28,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Registry;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -34,7 +36,7 @@ import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 import org.spongepowered.configurate.serialize.TypeSerializer;
 
-public class ItemSerializer implements TypeSerializer<GuiItem> {
+public class ItemSerializer implements TypeSerializer<WrappedGuiItem> {
 
     public static final ItemSerializer INSTANCE = new ItemSerializer();
     private static final HMCCosmetics plugin;
@@ -79,7 +81,7 @@ public class ItemSerializer implements TypeSerializer<GuiItem> {
     }
 
     @Override
-    public GuiItem deserialize(final Type type, final ConfigurationNode source)
+    public WrappedGuiItem deserialize(final Type type, final ConfigurationNode source)
             throws SerializationException {
         final ConfigurationNode materialNode = this.nonVirtualNode(source, MATERIAL);
         final ConfigurationNode amountNode = source.node(AMOUNT);
@@ -259,17 +261,18 @@ public class ItemSerializer implements TypeSerializer<GuiItem> {
 
         } catch (final IllegalArgumentException exception) {
             final GuiItem guiItem = dev.triumphteam.gui.builder.item.ItemBuilder.from(itemStack).asGuiItem();
-            guiItem.setAction(event -> {
+            final GuiAction<InventoryClickEvent> guiAction = event -> {
                 for (final CosmeticGuiAction action : actions) {
                     action.execute(event, CosmeticGuiAction.When.ALL);
                 }
-            });
-            return guiItem;
+            };
+            guiItem.setAction(guiAction);
+            return new WrappedGuiItem(guiItem, guiAction);
         }
     }
 
     @Override
-    public void serialize(final Type type, @Nullable final GuiItem obj, final ConfigurationNode node) throws SerializationException {
+    public void serialize(final Type type, @Nullable final WrappedGuiItem obj, final ConfigurationNode node) throws SerializationException {
 
     }
 

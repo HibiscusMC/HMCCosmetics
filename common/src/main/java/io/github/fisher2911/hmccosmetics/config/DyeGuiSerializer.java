@@ -7,6 +7,7 @@ import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.gui.ColorItem;
 import io.github.fisher2911.hmccosmetics.gui.DyeSelectorGui;
+import io.github.fisher2911.hmccosmetics.gui.WrappedGuiItem;
 import io.github.fisher2911.hmccosmetics.message.Adventure;
 import java.lang.reflect.Type;
 import java.util.Arrays;
@@ -67,7 +68,7 @@ public class DyeGuiSerializer implements TypeSerializer<DyeSelectorGui> {
 
             final var node = entry.getValue();
 
-            final GuiItem guiItem = ItemSerializer.INSTANCE.deserialize(
+            final WrappedGuiItem guiItem = ItemSerializer.INSTANCE.deserialize(
                     GuiItem.class,
                     node
             );
@@ -84,7 +85,8 @@ public class DyeGuiSerializer implements TypeSerializer<DyeSelectorGui> {
             final int blue = colorNode.node(BLUE).getInt();
 
             guiItemMap.put(slot,
-                    new ColorItem(guiItem.getItemStack(), Color.fromRGB(red, green, blue)));
+                    new ColorItem(guiItem.getItemStack(), guiItem.getAction(), Color.fromRGB(red, green, blue))
+            );
         }
 
         final BiMap<Integer, ArmorItem.Type> cosmeticSlots = HashBiMap.create();

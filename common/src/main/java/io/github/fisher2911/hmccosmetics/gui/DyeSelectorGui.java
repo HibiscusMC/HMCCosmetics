@@ -139,6 +139,7 @@ public class DyeSelectorGui extends CosmeticGui {
             } else {
                 this.plugin.getUserManager().setItem(user, armorItem);
             }
+            colorItem.getAction().execute(event);
             this.updateSelected(user, player);
         });
 

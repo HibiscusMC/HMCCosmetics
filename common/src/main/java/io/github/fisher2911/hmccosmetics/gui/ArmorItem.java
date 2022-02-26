@@ -20,7 +20,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class ArmorItem extends GuiItem {
+public class ArmorItem extends WrappedGuiItem {
 
     private final String id;
     private final List<String> lockedLore;

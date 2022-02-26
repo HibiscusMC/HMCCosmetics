@@ -152,7 +152,7 @@ public class CosmeticsMenu {
                     path(Path.of(guiFile.getPath())).
                     defaultOptions(opts ->
                             opts.serializers(build -> {
-                                build.register(GuiItem.class, ItemSerializer.INSTANCE);
+                                build.register(WrappedGuiItem.class, ItemSerializer.INSTANCE);
                                 build.register(CosmeticGui.class, GuiSerializer.INSTANCE);
                                 build.register(DyeSelectorGui.class, DyeGuiSerializer.INSTANCE);
                             }))
