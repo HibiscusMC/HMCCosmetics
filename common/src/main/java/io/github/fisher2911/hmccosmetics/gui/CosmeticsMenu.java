@@ -182,7 +182,7 @@ public class CosmeticsMenu {
 
                 for (final GuiItem guiItem : gui.guiItemMap.values()) {
                     if (guiItem instanceof final ArmorItem item) {
-                        final ArmorItem copy = new ArmorItem(item);
+                        final ArmorItem copy = item.copy();
                         copy.setAction(null);
                         this.cosmeticManager.addArmorItem(copy);
                         final String perm = copy.getPermission();

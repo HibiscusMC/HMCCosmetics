@@ -35,6 +35,10 @@ public class Messages {
             new Message("set-boots", "Set boots");
     public static final Message REMOVED_BOOTS =
             new Message("removed-boots", "Removed boots");
+    public static final Message SET_BALLOON =
+            new Message("set-balloon", "Set balloon");
+    public static final Message REMOVED_BALLOON =
+            new Message("removed-balloon", "Removed balloon");
     public static final Message SET_DYE_COLOR =
             new Message("set-dye-color", "Set dye color of " + Placeholder.ITEM);
     public static final Message MUST_BE_PLAYER =
@@ -110,6 +114,10 @@ public class Messages {
             "set-other-boots", ChatColor.GREEN + "You have set the boots of " +
             Placeholder.PLAYER + " to " + Placeholder.TYPE + "."
     );
+    public static final Message SET_OTHER_BALLOON = new Message(
+            "set-other-balloon", ChatColor.GREEN + "You have set the balloon of " +
+            Placeholder.PLAYER + " to " + Placeholder.TYPE + "."
+    );
 
     public static Message getSetMessage(final ArmorItem.Type type) {
         return switch (type) {
@@ -119,6 +127,7 @@ public class Messages {
             case CHEST_PLATE -> Messages.SET_CHEST_PLATE;
             case PANTS -> Messages.SET_PANTS;
             case BOOTS -> Messages.SET_BOOTS;
+            case BALLOON -> Messages.SET_BALLOON;
         };
     }
 
@@ -130,6 +139,7 @@ public class Messages {
             case CHEST_PLATE -> Messages.REMOVED_CHEST_PLATE;
             case PANTS -> Messages.REMOVED_PANTS;
             case BOOTS -> Messages.REMOVED_BOOTS;
+            case BALLOON -> Messages.REMOVED_BALLOON;
         };
     }
 
@@ -141,6 +151,7 @@ public class Messages {
             case CHEST_PLATE -> Messages.SET_OTHER_CHEST_PLATE;
             case PANTS -> Messages.SET_OTHER_PANTS;
             case BOOTS -> Messages.SET_OTHER_BOOTS;
+            case BALLOON -> Messages.REMOVED_BALLOON;
         };
     }
 

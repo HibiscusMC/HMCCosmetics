@@ -3,7 +3,6 @@ package io.github.fisher2911.hmccosmetics.user;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.gui.CosmeticGui;
 import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
-import io.github.fisher2911.hmccosmetics.packet.EntityIds;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;

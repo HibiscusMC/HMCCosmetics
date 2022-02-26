@@ -1,6 +1,8 @@
 package io.github.fisher2911.hmccosmetics.inventory;
 
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
+import org.bukkit.Bukkit;
+
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.HashMap;

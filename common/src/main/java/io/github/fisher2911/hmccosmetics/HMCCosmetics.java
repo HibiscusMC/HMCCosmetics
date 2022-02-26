@@ -11,7 +11,7 @@ import io.github.fisher2911.hmccosmetics.database.DatabaseFactory;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.gui.CosmeticsMenu;
 import io.github.fisher2911.hmccosmetics.hook.HookManager;
-import io.github.fisher2911.hmccosmetics.hook.item.CitizensHook;
+import io.github.fisher2911.hmccosmetics.hook.CitizensHook;
 import io.github.fisher2911.hmccosmetics.hook.item.ItemsAdderHook;
 import io.github.fisher2911.hmccosmetics.listener.ClickListener;
 import io.github.fisher2911.hmccosmetics.listener.CosmeticFixListener;

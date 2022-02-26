@@ -5,11 +5,8 @@ import com.j256.ormlite.table.DatabaseTable;
 import io.github.fisher2911.hmccosmetics.cosmetic.CosmeticManager;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
-import io.github.fisher2911.hmccosmetics.packet.EntityIds;
-import io.github.fisher2911.hmccosmetics.user.BaseUser;
+import io.github.fisher2911.hmccosmetics.user.EntityIds;
 import io.github.fisher2911.hmccosmetics.user.NPCUser;
-import io.github.fisher2911.hmccosmetics.user.User;
-import io.github.fisher2911.hmccosmetics.user.Wardrobe;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;

@@ -1,5 +1,5 @@
 name: HMCCosmetics
-version: 1.9.3
+version: 1.9.4
 main: io.github.fisher2911.hmccosmetics.HMCCosmetics
 description: |
   Intuitive, easy-to-use cosmetics plugin, designed for servers using resource packs.
@@ -37,3 +37,4 @@ softdepend:
  - Oraxen
  - ItemsAdder
  - Citizens
+ - ModelEngine

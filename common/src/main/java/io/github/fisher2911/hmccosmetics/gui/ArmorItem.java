@@ -171,7 +171,7 @@ public class ArmorItem extends GuiItem {
         this.dye = dye;
     }
 
-    public ArmorItem(final ArmorItem armorItem) {
+    protected ArmorItem(final ArmorItem armorItem) {
         super(armorItem.getItemStack(), null);
         this.id = armorItem.getId();
         this.lockedLore = new ArrayList<>();
@@ -188,6 +188,17 @@ public class ArmorItem extends GuiItem {
     }
 
     public static ArmorItem empty(final Type type, final String id) {
+        if (type == Type.BALLOON) {
+            return new BalloonItem(
+                    new ItemStack(Material.AIR),
+                    id,
+                    new ArrayList<>(),
+                    "",
+                    type,
+                    -1,
+                    ""
+            );
+        }
         return new ArmorItem(
                 new ItemStack(Material.AIR),
                 id,
@@ -268,6 +279,9 @@ public class ArmorItem extends GuiItem {
     }
 
     public ArmorItem copy() {
+        if (this instanceof final BalloonItem item) {
+            return new BalloonItem(item);
+        }
         return new ArmorItem(this);
     }
 
@@ -281,6 +295,7 @@ public class ArmorItem extends GuiItem {
 
         HAT(EquipmentSlot.HEAD),
         BACKPACK(null),
+        BALLOON(null),
         OFF_HAND(EquipmentSlot.OFF_HAND),
         CHEST_PLATE(EquipmentSlot.CHEST),
         PANTS(EquipmentSlot.LEGS),

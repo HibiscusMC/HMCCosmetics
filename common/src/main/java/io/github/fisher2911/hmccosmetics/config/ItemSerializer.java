@@ -4,6 +4,7 @@ import dev.triumphteam.gui.components.GuiAction;
 import dev.triumphteam.gui.guis.GuiItem;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
+import io.github.fisher2911.hmccosmetics.gui.BalloonItem;
 import io.github.fisher2911.hmccosmetics.hook.HookManager;
 import io.github.fisher2911.hmccosmetics.util.Keys;
 import io.github.fisher2911.hmccosmetics.util.StringUtils;
@@ -58,6 +59,7 @@ public class ItemSerializer implements TypeSerializer<GuiItem> {
     private static final String ACTION = "action";
     private static final String ID = "id";
     private static final String DYEABLE = "dyeable";
+    private static final String BALLOON_MODEL_ID = "balloon";
 
     static {
         plugin = HMCCosmetics.getPlugin(HMCCosmetics.class);
@@ -100,6 +102,7 @@ public class ItemSerializer implements TypeSerializer<GuiItem> {
         final ConfigurationNode actionNode = source.node(ACTION);
         final ConfigurationNode idNode = source.node(ID);
         final ConfigurationNode dyeableNode = source.node(DYEABLE);
+        final ConfigurationNode balloonModelIdNode = source.node(BALLOON_MODEL_ID);
 
         final String materialString = Utils.replaceIfNull(materialNode.getString(), "");
         final int amount = amountNode.getInt();
@@ -227,6 +230,20 @@ public class ItemSerializer implements TypeSerializer<GuiItem> {
 
             final String permission = permissionNode.getString();
 
+            if (cosmeticType == ArmorItem.Type.BALLOON) {
+                return new BalloonItem(
+                        itemStack,
+                        actions,
+                        Utils.replaceIfNull(idNode.getString(), ""),
+                        lockedLore,
+                        permission,
+                        cosmeticType,
+                        dyeable,
+                        -1,
+                        balloonModelIdNode.getString()
+                );
+            }
+
             return new ArmorItem(
                     itemStack,
                     actions,
@@ -237,6 +254,8 @@ public class ItemSerializer implements TypeSerializer<GuiItem> {
                     dyeable,
                     -1
             );
+
+
 
         } catch (final IllegalArgumentException exception) {
             final GuiItem guiItem = dev.triumphteam.gui.builder.item.ItemBuilder.from(itemStack).asGuiItem();

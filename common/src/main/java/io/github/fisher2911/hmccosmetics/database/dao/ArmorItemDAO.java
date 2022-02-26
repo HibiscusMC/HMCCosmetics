@@ -46,7 +46,7 @@ public class ArmorItemDAO {
         if (armorItem == null) {
             return null;
         }
-        final ArmorItem copy = new ArmorItem(armorItem);
+        final ArmorItem copy = armorItem.copy();
         copy.setDye(this.rgbDye);
         return copy;
     }

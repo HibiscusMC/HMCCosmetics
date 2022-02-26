@@ -1,7 +1,6 @@
 package io.github.fisher2911.hmccosmetics.hook;
 
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
-import io.github.fisher2911.hmccosmetics.hook.item.CitizensHook;
 import io.github.fisher2911.hmccosmetics.hook.item.ItemHook;
 import io.github.fisher2911.hmccosmetics.hook.item.ItemHooks;
 import io.github.fisher2911.hmccosmetics.hook.item.ItemsAdderHook;
@@ -11,7 +10,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import io.github.fisher2911.hmccosmetics.hook.item.PAPIExpansion;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
@@ -29,6 +27,7 @@ public class HookManager {
     private final ItemHooks itemHooks;
     private final PAPIHook papiHook;
     private final CitizensHook citizensHook;
+    private final ModelEngineHook modelEngineHook;
     private final Set<Class<? extends Hook>> registeredHooks;
     private final Set<Listener> listeners;
 
@@ -48,6 +47,7 @@ public class HookManager {
         final OraxenHook oraxenHook = new OraxenHook();
         final ItemsAdderHook itemsAdderHook = new ItemsAdderHook();
         final CitizensHook citizensHook = new CitizensHook(this.plugin);
+        final ModelEngineHook modelEngineHook = new ModelEngineHook();
         if (pluginManager.getPlugin("Oraxen") != null) {
             itemHookMap.put(oraxenHook.getIdentifier(), oraxenHook);
         }
@@ -61,6 +61,12 @@ public class HookManager {
             this.citizensHook = citizensHook;
         } else {
             this.citizensHook = null;
+        }
+        if (pluginManager.getPlugin("ModelEngine") != null) {
+            this.registerHook(modelEngineHook.getClass());
+            this.modelEngineHook = modelEngineHook;
+        } else {
+            this.modelEngineHook = null;
         }
 
         this.itemHooks = new ItemHooks(itemHookMap);
@@ -100,6 +106,11 @@ public class HookManager {
     @Nullable
     public CitizensHook getCitizensHook() {
         return this.citizensHook;
+    }
+
+    @Nullable
+    public ModelEngineHook getModelEngineHook() {
+        return modelEngineHook;
     }
 
     public ItemHooks getItemHooks() {

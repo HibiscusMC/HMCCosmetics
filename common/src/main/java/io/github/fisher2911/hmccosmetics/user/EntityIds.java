@@ -1,4 +1,4 @@
-package io.github.fisher2911.hmccosmetics.packet;
+package io.github.fisher2911.hmccosmetics.user;
 
 import java.util.EnumMap;
 import java.util.Map;

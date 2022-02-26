@@ -1,4 +1,4 @@
-package io.github.fisher2911.hmccosmetics.hook.item;
+package io.github.fisher2911.hmccosmetics.hook;
 
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.api.CosmeticItem;

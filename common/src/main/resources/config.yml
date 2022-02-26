@@ -13,6 +13,11 @@ cosmetic-settings:
   # setting this to lower than the server player view distance should fix the
   # bug where players see random backpacks
   view-distance: 32
+  # how the balloon should be positioned relative to the player
+  balloon-offset:
+    x: 0.5
+    y: 3
+    z: 0.5
 wardrobe:
   # if true, the wardrobe will be removed when the player is damaged
   disable-on-damage: true

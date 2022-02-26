@@ -10,13 +10,13 @@ import io.github.fisher2911.hmccosmetics.database.dao.ArmorItemDAO;
 import io.github.fisher2911.hmccosmetics.database.dao.CitizenDAO;
 import io.github.fisher2911.hmccosmetics.database.dao.UserDAO;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
-import io.github.fisher2911.hmccosmetics.hook.HookManager;
-import io.github.fisher2911.hmccosmetics.hook.item.CitizensHook;
 import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
-import io.github.fisher2911.hmccosmetics.packet.EntityIds;
-import io.github.fisher2911.hmccosmetics.user.BaseUser;
+import io.github.fisher2911.hmccosmetics.user.EntityIds;
 import io.github.fisher2911.hmccosmetics.user.NPCUser;
 import io.github.fisher2911.hmccosmetics.user.User;
+import io.github.fisher2911.hmccosmetics.user.Wardrobe;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Entity;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -24,35 +24,15 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
-import io.github.fisher2911.hmccosmetics.user.UserFactory;
-import io.github.fisher2911.hmccosmetics.user.Wardrobe;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-
 public class Database {
 
     protected final HMCCosmetics plugin;
-    final Dao<UserDAO, UUID> userDao;
-    final Dao<CitizenDAO, Integer> citizenDao;
-    final Dao<ArmorItemDAO, String> armorItemDao;
+    private final Dao<UserDAO, UUID> userDao;
+    private final Dao<CitizenDAO, Integer> citizenDao;
+    private final Dao<ArmorItemDAO, String> armorItemDao;
     private final ConnectionSource dataSource;
     private final DatabaseType databaseType;
     AtomicInteger FAKE_ENTITY_ID = new AtomicInteger(Integer.MAX_VALUE);
-    String TABLE_NAME = "user";
-    String PLAYER_UUID_COLUMN = "uuid";
-    String BACKPACK_COLUMN = "backpack";
-    String HAT_COLUMN = "hat";
-    String DYE_COLOR_COLUMN = "dye";
-    String CREATE_TABLE_STATEMENT =
-            "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" +
-                    PLAYER_UUID_COLUMN + " CHAR(36), " +
-                    BACKPACK_COLUMN + " CHAR(50), " +
-                    HAT_COLUMN + " CHAR(50), " +
-                    DYE_COLOR_COLUMN + " INT, " +
-                    "UNIQUE (" +
-                    PLAYER_UUID_COLUMN +
-                    "))";
 
     public Database(
             final HMCCosmetics plugin,
@@ -64,7 +44,6 @@ public class Database {
         this.citizenDao = DaoManager.createDao(this.dataSource, CitizenDAO.class);
         this.armorItemDao = DaoManager.createDao(this.dataSource, ArmorItemDAO.class);
         this.databaseType = databaseType;
-
     }
 
     public void load() {

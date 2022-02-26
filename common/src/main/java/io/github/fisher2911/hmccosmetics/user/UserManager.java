@@ -1,11 +1,5 @@
 package io.github.fisher2911.hmccosmetics.user;
 
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.events.ListenerPriority;
-import com.comphenix.protocol.events.PacketAdapter;
-import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.Pair;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
@@ -29,7 +23,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -39,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class UserManager {
 
@@ -46,7 +40,7 @@ public class UserManager {
     private final Settings settings;
     private final MessageHandler messageHandler;
 
-    private final Map<UUID, User> userMap = new HashMap<>();
+    private final Map<UUID, User> userMap = new ConcurrentHashMap<>();
 
     public UserManager(final HMCCosmetics plugin) {
         this.plugin = plugin;
@@ -106,7 +100,6 @@ public class UserManager {
 
     public void updateCosmetics(final UUID uuid) {
         this.get(uuid).ifPresent(this::updateCosmetics);
-
     }
 
     public void updateCosmetics(final BaseUser user) {

@@ -1,8 +1,11 @@
 package io.github.fisher2911.hmccosmetics.config;
 
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.util.Vector;
+import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 @ConfigSerializable
@@ -14,6 +17,7 @@ public class CosmeticSettings {
     private static final transient String REQUIRE_EMPTY_CHEST_PLATE_PATH = "require-empty-chest-plate";
     private static final transient String REQUIRE_EMPTY_PANTS_PATH = "require-empty-pants";
     private static final transient String REQUIRE_EMPTY_BOOTS_PATH = "require-empty-boots";
+    private static final transient String BALLOON_OFFSET = "balloon-offset";
 
     private static final transient String LOOK_DOWN_PITCH_PATH = "look-down-backpack-remove";
     private static final String VIEW_DISTANCE_PATH = "view-distance";
@@ -25,6 +29,7 @@ public class CosmeticSettings {
     private boolean requireEmptyBoots;
     private int lookDownPitch;
     private int viewDistance;
+    private Vector balloonOffset;
 
     public void load(final FileConfiguration config) {
         this.requireEmptyHelmet = config.getBoolean(COSMETIC_SETTINGS_PATH + "." + REQUIRE_EMPTY_HELMET_PATH);
@@ -35,6 +40,16 @@ public class CosmeticSettings {
 
         this.lookDownPitch = config.getInt(COSMETIC_SETTINGS_PATH + "." + LOOK_DOWN_PITCH_PATH);
         this.viewDistance = config.getInt(COSMETIC_SETTINGS_PATH + "." + VIEW_DISTANCE_PATH);
+
+        final var balloonSection = config.getConfigurationSection(COSMETIC_SETTINGS_PATH + "." + BALLOON_OFFSET);
+
+        if (balloonSection != null) {
+            this.balloonOffset = loadVector(balloonSection);
+        }
+    }
+
+    private Vector loadVector(final ConfigurationSection section) {
+        return new Vector(section.getDouble("x"), section.getDouble("y"), section.getDouble("z"));
     }
 
     public boolean isRequireEmptyHelmet() {
@@ -75,6 +90,10 @@ public class CosmeticSettings {
 
     public void setRequireEmptyBoots(final boolean requireEmptyBoots) {
         this.requireEmptyBoots = requireEmptyBoots;
+    }
+
+    public Vector getBalloonOffset() {
+        return balloonOffset;
     }
 
     public int getLookDownPitch() {

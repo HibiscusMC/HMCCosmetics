@@ -7,6 +7,7 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.MinecraftKey;
 import com.comphenix.protocol.wrappers.Pair;
+import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import io.github.fisher2911.nms.ArmorStandPackets;
 import io.github.fisher2911.nms.ArmorStandPackets_1_16_R3;
 import io.github.fisher2911.nms.ArmorStandPackets_1_17_R1;
@@ -96,7 +97,28 @@ public class PacketManager {
         return packet;
     }
 
-    public static PacketContainer getLeashPacket(final int entityId, final int balloonId) {
+    public static PacketContainer getInvisibilityPacket(final int entityId) {
+        final PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
+        packet.getIntegers().write(0, entityId);
+
+        WrappedDataWatcher metaData = new WrappedDataWatcher();
+
+        final WrappedDataWatcher.Serializer byteSerializer = WrappedDataWatcher.Registry.get(Byte.class);
+
+        metaData.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(0, byteSerializer), (byte) (0x20));
+
+        packet.getWatchableCollectionModifier().write(0, metaData.getWatchableObjects());
+        return packet;
+    }
+
+    public static PacketContainer getTeleportPacket(final int entityId, final Location location) {
+        final PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_TELEPORT);
+        packet.getIntegers().write(0, entityId);
+        packet.getDoubles().write(0, location.getX()).write(1, location.getY()).write(2, location.getZ());
+        return packet;
+    }
+
+    public static PacketContainer getLeashPacket(final int balloonId, final int entityId) {
         final PacketContainer packet = new PacketContainer(PacketType.Play.Server.ATTACH_ENTITY);
         packet.getIntegers().write(0, balloonId).write(1, entityId);
         return packet;

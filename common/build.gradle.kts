@@ -20,7 +20,8 @@ repositories {
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
     maven("https://mvnrepository.com/artifact/com.zaxxer/HikariCP")
     maven("https://repo.jeff-media.de/maven2/")
-    maven("https://repo.citizensnpcs.co");
+    maven("https://repo.citizensnpcs.co")
+    maven("https://mvn.lumine.io/repository/maven-public")
 }
 
 dependencies {
@@ -36,6 +37,7 @@ dependencies {
     compileOnly("com.github.oraxen:oraxen:-SNAPSHOT")
     compileOnly("com.github.LoneDev6:API-ItemsAdder:2.5.4")
     compileOnly("net.citizensnpcs:citizens-main:2.0.29-SNAPSHOT")
+    compileOnly("com.ticxo.modelengine:api:R2.4.1:")
     implementation("net.kyori:adventure-api:4.9.3")
     implementation ("net.kyori:adventure-text-minimessage:4.10.0-SNAPSHOT")
     implementation("net.kyori:adventure-platform-bukkit:4.0.1")
@@ -93,7 +95,7 @@ bukkit {
     apiVersion = "1.16"
     name = "HMCCosmetics"
     authors = listOf("MasterOfTheFish")
-    softDepend = listOf("Multiverse", "PlaceholderAPI", "Oraxen", "ItemsAdder", "Citizens")
+    softDepend = listOf("Multiverse", "PlaceholderAPI", "Oraxen", "ItemsAdder", "Citizens", "ModelEngine")
     depend = listOf("ProtocolLib")
     permissions {
         register("hmccosmetics.cmd.default") {

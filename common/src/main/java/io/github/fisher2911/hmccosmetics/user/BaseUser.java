@@ -3,15 +3,20 @@ package io.github.fisher2911.hmccosmetics.user;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.Pair;
+import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.config.CosmeticSettings;
 import io.github.fisher2911.hmccosmetics.config.Settings;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
+import io.github.fisher2911.hmccosmetics.gui.BalloonItem;
+import io.github.fisher2911.hmccosmetics.hook.HookManager;
+import io.github.fisher2911.hmccosmetics.hook.ModelEngineHook;
+import io.github.fisher2911.hmccosmetics.hook.entity.BalloonEntity;
 import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
-import io.github.fisher2911.hmccosmetics.packet.EntityIds;
 import io.github.fisher2911.hmccosmetics.packet.PacketManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -26,22 +31,24 @@ import java.util.UUID;
 
 public abstract class BaseUser<T> {
 
+    private final HMCCosmetics plugin;
     protected final T id;
     protected final EntityIds entityIds;
+    protected final BalloonEntity balloon;
     protected final PlayerArmor playerArmor;
 
     protected ArmorItem lastSetItem = ArmorItem.empty(ArmorItem.Type.HAT);
 
-    protected boolean hasArmorStand;
-    protected boolean hasBallon;
-
     // List of players that are currently viewing the armor stand
-    protected final Set<UUID> viewing = new HashSet<>();
+    protected final Set<UUID> viewingArmorStand = new HashSet<>();
+    protected final Set<UUID> viewingBalloon = new HashSet<>();
 
     public BaseUser(final T id, final PlayerArmor playerArmor, final EntityIds entityIds) {
         this.id = id;
         this.entityIds = entityIds;
         this.playerArmor = playerArmor;
+        this.plugin = HMCCosmetics.getPlugin(HMCCosmetics.class);
+        this.balloon = new BalloonEntity(UUID.randomUUID(), -1);
     }
 
     @Nullable
@@ -89,76 +96,111 @@ public abstract class BaseUser<T> {
         this.updateOutsideCosmetics(other, location, settings);
     }
 
-    private void despawnBalloon(final Player other) {
-        final PacketContainer removePacket = PacketManager.getEntityDestroyPacket(this.getBalloonId());
-        PacketManager.sendPacket(other, removePacket);
+    protected void despawnBalloon() {
+        final HookManager hookManager = HookManager.getInstance();
+        if (!hookManager.isEnabled(ModelEngineHook.class)) return;
+        hookManager.getModelEngineHook().remove(this.balloon.getUniqueId());
+        PacketManager.sendPacketToOnline(PacketManager.getEntityDestroyPacket(this.getBalloonId()));
+        this.viewingBalloon.clear();
+    }
+
+    protected void despawnBalloon(final Player other) {
+        final HookManager hookManager = HookManager.getInstance();
+        if (!hookManager.isEnabled(ModelEngineHook.class)) return;
+        hookManager.getModelEngineHook().removePlayerFromModel(other, this.balloon.getUniqueId());
+        PacketManager.sendPacket(other, PacketManager.getEntityDestroyPacket(this.getBalloonId()));
+        this.viewingBalloon.remove(other.getUniqueId());
+        if (this.viewingBalloon.isEmpty()) {
+            this.despawnBalloon();
+        }
     }
 
     private void spawnBalloon(final Player other, final Location location, final CosmeticSettings settings) {
-        final Location actual = location.add(0, 5, 0);
-        final PacketContainer spawnPacket = PacketManager.getEntitySpawnPacket(actual, this.getBalloonId(), EntityType.PIG);
-        final PacketContainer leashPacket = PacketManager.getLeashPacket(this.getBalloonId(), this.getEntityId());
-        PacketManager.sendPacket(other, spawnPacket, leashPacket);
+        final Location actual = location.clone().add(settings.getBalloonOffset());
+        final World world = location.getWorld();
+        if (world == null) return;
+
+        final BalloonItem balloonItem = (BalloonItem) this.playerArmor.getItem(ArmorItem.Type.BALLOON);
+        final String id = balloonItem.getModelId();
+        final HookManager hookManager = HookManager.getInstance();
+        if (id.isBlank() || !hookManager.isEnabled(ModelEngineHook.class)) return;
+        other.sendMessage("Spawned balloon");
+        this.balloon.setAlive(true);
+        this.viewingBalloon.add(other.getUniqueId());
+        this.balloon.setLocation(actual);
+
+        final ModelEngineHook hook = hookManager.getModelEngineHook();
+        hook.spawnModel(id, this.balloon);
+        hook.addPlayerToModel(other, id, this.balloon);
+        this.updateBalloon(other, location, settings);
+        PacketManager.sendPacket(
+                other,
+                PacketManager.getEntitySpawnPacket(
+                        actual,
+                        this.getBalloonId(),
+                        EntityType.PIG
+                ),
+                PacketManager.getInvisibilityPacket(this.getBalloonId()),
+                PacketManager.getLeashPacket(
+                        this.getBalloonId(),
+                        this.getEntityId()
+                )
+        );
     }
 
-    private void updateBalloon(final CosmeticSettings settings) {
-        final Location location = this.getLocation();
-        for (final Player player : Bukkit.getOnlinePlayers()) {
-            if (!this.hasBallon) {
-                this.spawnBalloon(player, location, settings);
-            } else {
-                this.updateBalloon(player, location, settings);
-            }
+    protected void updateBalloon(final Player other, final Location location, final CosmeticSettings settings) {
+        if (!this.viewingBalloon.contains(other.getUniqueId())) {
+            this.spawnBalloon(other, location, settings);
+            return;
         }
-        this.hasBallon = true;
+        final Location actual = location.clone().add(settings.getBalloonOffset());
+        this.balloon.setLocation(actual);
+        PacketManager.sendPacket(
+                other,
+                PacketManager.getTeleportPacket(this.getBalloonId(), actual)
+        );
     }
 
-    private void updateBalloon(final Player other, final Location location, final CosmeticSettings settings) {
-//        final PacketContainer spawnPacket = PacketManager.getEntitySpawnPacket(location, this.getBalloonId(), EntityType.PARROT);
-//        PacketManager.sendPacket(other, spawnPacket, spawnPacket);
-    }
-
-    private void spawnArmorStand(final Player other, final Location location, final CosmeticSettings settings) {
-//        if (!this.isInViewDistance(this.getLocation(), other.getLocation(), settings) || !shouldShow(other)) return;
+    private void spawnArmorStand(final Player other, final Location location) {
         final PacketContainer packet = PacketManager.getEntitySpawnPacket(location, this.getArmorStandId(), EntityType.ARMOR_STAND);
         PacketManager.sendPacket(other, packet);
     }
 
-//    private void spawnArmorStand(final Settings settings) {
-//        if (this.hasArmorStand) {
-//            this.updateArmorStand(settings);
-//            return;
-//        }
-//
-//        for (final Player p : Bukkit.getOnlinePlayers()) {
-//            this.spawnArmorStand(p, this.getLocation(), settings.getCosmeticSettings());
-//        }
-//
-//        this.hasArmorStand = true;
-//    }
-
-    public void updateOutsideCosmetics(final Player player, final Settings settings) {
-        this.updateOutsideCosmetics(player, this.getLocation(), settings);
-    }
-
     public void updateOutsideCosmetics(final Settings settings) {
+        final Location location = this.getLocation();
+        if (location == null) return;
         for (final Player player : Bukkit.getOnlinePlayers()) {
-            this.spawnOutsideCosmetics(player, this.getLocation(), settings);
+            this.spawnOutsideCosmetics(player, location, settings);
         }
     }
 
     public void updateOutsideCosmetics(final Player other, final Location location, final Settings settings) {
-        final boolean inViewDistance = this.isInViewDistance(this.getLocation(), other.getLocation(), settings.getCosmeticSettings());
-        if (!this.viewing.contains(other.getUniqueId())) {
-            if (!inViewDistance || !shouldShow(other)) return;
-            this.spawnArmorStand(other, location, settings.getCosmeticSettings());
-            this.spawnBalloon(other, location, settings.getCosmeticSettings());
-        } else if (!inViewDistance || !shouldShow(other)) {
+        final boolean inViewDistance = this.isInViewDistance(location, other.getLocation(), settings.getCosmeticSettings());
+        final boolean shouldShow = shouldShow(other);
+        final UUID otherUUID = other.getUniqueId();
+        if (!this.viewingArmorStand.contains(otherUUID)) {
+            if (!inViewDistance || !shouldShow) {
+                if (this.viewingBalloon.contains(otherUUID)) {
+                    this.despawnAttached(other);
+                }
+                return;
+            }
+            this.spawnArmorStand(other, location);
+            this.viewingArmorStand.add(otherUUID);
+        } else if (!inViewDistance || !shouldShow) {
             this.despawnAttached(other);
-            this.despawnBalloon(other);
-            this.viewing.remove(other.getUniqueId());
+            if (this.viewingBalloon.contains(otherUUID)) {
+                this.despawnBalloon(other);
+            }
             return;
         }
+
+        if (!this.viewingBalloon.contains(otherUUID)) {
+            this.spawnBalloon(other, location, settings.getCosmeticSettings());
+        } else if (!this.hasBalloon()) {
+            this.despawnBalloon(other);
+        }
+
         final List<Pair<EnumWrappers.ItemSlot, ItemStack>> equipmentList = new ArrayList<>();
         final boolean hidden = !this.shouldShow(other);
         if (hidden) {
@@ -180,7 +222,6 @@ public abstract class BaseUser<T> {
         PacketManager.sendPacket(other, armorPacket, armorStandMetaContainer, rotationPacket, ridingPacket);
 
         if (hidden) return;
-
         this.updateBalloon(other, location, settings.getCosmeticSettings());
 
         final int lookDownPitch = settings.getCosmeticSettings().getLookDownPitch();
@@ -196,6 +237,11 @@ public abstract class BaseUser<T> {
         }
     }
 
+    private boolean hasBalloon() {
+        return (this.playerArmor.getItem(ArmorItem.Type.BALLOON) instanceof final BalloonItem balloonItem &&
+                !balloonItem.getModelId().isBlank());
+    }
+
     public abstract boolean shouldShow(final Player other);
 
     protected boolean isInViewDistance(final Location location, final Location other, final CosmeticSettings settings) {
@@ -209,17 +255,12 @@ public abstract class BaseUser<T> {
 
     public void despawnAttached(final Player other) {
         PacketManager.sendPacket(other, PacketManager.getEntityDestroyPacket(this.getArmorStandId()));
-        this.viewing.remove(other.getUniqueId());
-        this.hasArmorStand = false;
+        this.viewingArmorStand.remove(other.getUniqueId());
     }
 
     public void despawnAttached() {
         PacketManager.sendPacketToOnline(PacketManager.getEntityDestroyPacket(this.getArmorStandId()));
-        this.hasArmorStand = false;
-    }
-
-    public boolean hasArmorStand() {
-        return hasArmorStand;
+        this.viewingArmorStand.clear();
     }
 
     public ArmorItem getLastSetItem() {

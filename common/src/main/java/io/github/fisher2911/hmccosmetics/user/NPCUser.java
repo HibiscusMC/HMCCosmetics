@@ -1,9 +1,8 @@
 package io.github.fisher2911.hmccosmetics.user;
 
 import io.github.fisher2911.hmccosmetics.hook.HookManager;
-import io.github.fisher2911.hmccosmetics.hook.item.CitizensHook;
+import io.github.fisher2911.hmccosmetics.hook.CitizensHook;
 import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
-import io.github.fisher2911.hmccosmetics.packet.EntityIds;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;

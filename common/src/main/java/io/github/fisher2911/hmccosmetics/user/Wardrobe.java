@@ -2,11 +2,9 @@ package io.github.fisher2911.hmccosmetics.user;
 
 import com.comphenix.protocol.events.PacketContainer;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
-import io.github.fisher2911.hmccosmetics.config.Settings;
 import io.github.fisher2911.hmccosmetics.config.WardrobeSettings;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
-import io.github.fisher2911.hmccosmetics.packet.EntityIds;
 import io.github.fisher2911.hmccosmetics.packet.PacketManager;
 import io.github.fisher2911.hmccosmetics.task.SupplierTask;
 import io.github.fisher2911.hmccosmetics.task.Task;
@@ -103,7 +101,6 @@ public class Wardrobe extends User {
                 this.plugin,
                 () -> {
                     PacketManager.sendPacket(viewer, playerInfoPacket, playerSpawnPacket);
-                    this.spawnOutsideCosmetics(viewer, this.currentLocation, this.plugin.getSettings());
                     this.updateOutsideCosmetics(viewer, this.currentLocation, plugin.getSettings());
                     PacketManager.sendPacket(
                             viewer,
@@ -117,11 +114,6 @@ public class Wardrobe extends User {
 
         this.spawned = true;
         this.startSpinTask(viewer);
-    }
-
-    @Override
-    public void updateOutsideCosmetics(final Player player, final Settings settings) {
-        this.updateOutsideCosmetics(player, this.currentLocation, settings);
     }
 
     public void despawnFakePlayer(final Player viewer) {
@@ -138,6 +130,7 @@ public class Wardrobe extends User {
 //                PacketManager.getEntityDestroyPacket(this.viewerId)
                     );
                     this.despawnAttached();
+                    this.despawnBalloon();
                     this.showPlayer(this.plugin.getUserManager());
                     this.spawned = false;
                     this.cameraLocked = false;
@@ -167,7 +160,10 @@ public class Wardrobe extends User {
                     PacketManager.sendPacket(player, PacketManager.getLookPacket(this.getEntityId(), location));
                     this.updateOutsideCosmetics(player, location, this.plugin.getSettings());
                     location.setYaw(this.getNextYaw(yaw - 30, rotationSpeed));
-                    PacketManager.sendPacket(player, PacketManager.getRotationPacket(this.getEntityId(), location));
+                    PacketManager.sendPacket(
+                            player,
+                            PacketManager.getRotationPacket(this.getEntityId(), location)
+                    );
                     data.set(this.getNextYaw(yaw, rotationSpeed));
                 },
                 () -> !this.spawned || this.currentLocation == null
