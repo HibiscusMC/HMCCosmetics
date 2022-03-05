@@ -5,6 +5,7 @@ import io.github.fisher2911.hmccosmetics.util.Utils;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
+import net.kyori.adventure.title.Title;
 import net.md_5.bungee.api.ChatMessageType;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -12,6 +13,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import java.io.File;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -129,22 +132,22 @@ public class MessageHandler {
         );
         final TitleMessage titleMessage = (TitleMessage) key;
         Component component = Adventure.MINI_MESSAGE.deserialize(message);
-        player.sendTitle(
-                Adventure.SERIALIZER.serialize(component),
-                "",
-                titleMessage.getFadeIn() * 20,
-                titleMessage.getDuration() * 20,
-                titleMessage.getFadeOut() * 20
-        );
-//        this.adventure.player(player).showTitle(
-//                Title.title(
-//                        component,
-//                        Component.empty(),
-//                        Title.Times.times(
-//                                Duration.of(titleMessage.getFadeIn(), ChronoUnit.SECONDS),
-//                                Duration.of(titleMessage.getDuration(), ChronoUnit.SECONDS),
-//                                Duration.of(titleMessage.getFadeOut(), ChronoUnit.SECONDS)
-//                )));
+//        player.sendTitle(
+//                Adventure.SERIALIZER.serialize(component),
+//                "",
+//                titleMessage.getFadeIn() * 20,
+//                titleMessage.getDuration() * 20,
+//                titleMessage.getFadeOut() * 20
+//        );
+        this.adventure.player(player).showTitle(
+                Title.title(
+                        component,
+                        Component.empty(),
+                        Title.Times.times(
+                                Duration.of(titleMessage.getFadeIn(), ChronoUnit.SECONDS),
+                                Duration.of(titleMessage.getDuration(), ChronoUnit.SECONDS),
+                                Duration.of(titleMessage.getFadeOut(), ChronoUnit.SECONDS)
+                )));
     }
 
     /**

@@ -13,5 +13,6 @@ public class Adventure {
 
     public static final MiniMessage MINI_MESSAGE = MiniMessage.builder().tags(
                     StandardTags.defaults()
-            ).build();
+            ).
+            build();
 }

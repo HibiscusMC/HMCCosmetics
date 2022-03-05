@@ -121,7 +121,7 @@ public class BalloonEntity implements BaseEntity<BalloonEntity> {
 
     @Override
     public EntityType getType() {
-        return EntityType.PIG;
+        return EntityType.PUFFERFISH;
     }
 
     @Override

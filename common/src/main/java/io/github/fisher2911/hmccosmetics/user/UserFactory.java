@@ -21,7 +21,7 @@ public class UserFactory {
 
     @SuppressWarnings("unchecked")
     @Nullable
-    public static <T extends BaseUser> T createUser(
+    public static <T extends BaseUser<?>> T createUser(
             final Class<T> type,
             final Entity entity,
             final int armorStandId,

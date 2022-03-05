@@ -38,7 +38,7 @@ dependencies {
     compileOnly("com.github.LoneDev6:API-ItemsAdder:2.5.4")
     compileOnly("net.citizensnpcs:citizens-main:2.0.29-SNAPSHOT")
     compileOnly("com.ticxo.modelengine:api:R2.4.1:")
-    implementation("net.kyori:adventure-api:4.9.3")
+    implementation("net.kyori:adventure-api:4.10.0")
     implementation ("net.kyori:adventure-text-minimessage:4.10.0-SNAPSHOT")
     implementation("net.kyori:adventure-platform-bukkit:4.0.1")
     implementation("dev.triumphteam:triumph-gui:3.1.2")
@@ -73,6 +73,8 @@ tasks {
         dependencies {
             exclude(dependency("org.yaml:snakeyaml"))
         }
+
+        destinationDirectory.set(file("D:\\paper-1.18.1\\plugins"))
     }
 
     javadoc {

@@ -23,7 +23,6 @@ public class ModelEngineHook implements Hook {
 
     public void addPlayerToModel(final Player player, final String id, final BaseEntity<?> entity) {
         final ModeledEntity model = ModelEngineAPI.getModeledEntity(entity.getUniqueId());
-
         if (model == null) {
             this.spawnModel(id, entity);
             return;

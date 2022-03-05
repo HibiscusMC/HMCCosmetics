@@ -23,7 +23,6 @@ import me.mattstudios.mf.annotations.Permission;
 import me.mattstudios.mf.annotations.SubCommand;
 import me.mattstudios.mf.base.CommandBase;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -112,9 +111,7 @@ public class CosmeticsCommand extends CommandBase {
 
             final ArmorItem armorItem = user.getPlayerArmor().getItem(type);
 
-            if (dyeColor != null) {
-                this.setDyeColor(dyeColor, armorItem, player);
-            }
+            this.setDyeColor(dyeColor, armorItem, player);
 
             this.userManager.setItem(user, armorItem);
 
@@ -315,7 +312,7 @@ public class CosmeticsCommand extends CommandBase {
         if (npcId == null) {
             this.messageHandler.sendMessage(
                     sender,
-                    new Message("illegal-npc-id", ChatColor.RED + "Invalid NPC id specified: " + npcId)
+                    new Message("illegal-npc-id", "<red>" + "Invalid NPC id specified: " + npcId)
             );
             return;
         }

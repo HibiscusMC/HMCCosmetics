@@ -131,13 +131,29 @@ public class HMCCosmetics extends JavaPlugin {
     private void registerCommands() {
         this.commandManager = new CommandManager(this, true);
         final HookManager hookManager = HookManager.getInstance();
-        this.commandManager.getMessageHandler().register(
-                "cmd.no.console", player ->
+        final me.mattstudios.mf.base.MessageHandler messageHandler = this.commandManager.getMessageHandler();
+        messageHandler.register("cmd.no.console", player ->
                         this.messageHandler.sendMessage(
                                 player,
                                 Messages.MUST_BE_PLAYER
                         )
         );
+        messageHandler.register("cmd.no.permission", player ->
+                        this.messageHandler.sendMessage(
+                                player,
+                                Messages.NO_PERMISSION
+                        )
+        );
+        messageHandler.register("cmd.no.exists", player ->
+                this.messageHandler.sendMessage(
+                        player,
+                        Messages.HELP_COMMAND
+                ));
+        messageHandler.register("cmd.wrong.usage", player ->
+                this.messageHandler.sendMessage(
+                        player,
+                        Messages.HELP_COMMAND
+                ));
         final CompletionHandler completionHandler = this.commandManager.getCompletionHandler();
         completionHandler.register("#types",
                 resolver ->

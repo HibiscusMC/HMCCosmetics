@@ -68,8 +68,7 @@ public class GuiSerializer implements TypeSerializer<CosmeticGui> {
         }
 
         return new CosmeticGui(plugin,
-                Adventure.SERIALIZER.serialize(
-                        Adventure.MINI_MESSAGE.deserialize(title)),
+                title,
                 rowsNode.getInt(),
                 guiItemMap);
     }

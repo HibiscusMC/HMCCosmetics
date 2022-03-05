@@ -125,19 +125,20 @@ public abstract class BaseUser<T> {
         final HookManager hookManager = HookManager.getInstance();
         if (id.isBlank() || !hookManager.isEnabled(ModelEngineHook.class)) return;
         this.balloon.setAlive(true);
-        this.viewingBalloon.add(other.getUniqueId());
-        this.balloon.setLocation(actual);
-
-        final ModelEngineHook hook = hookManager.getModelEngineHook();
-        hook.spawnModel(id, this.balloon);
-        hook.addPlayerToModel(other, id, this.balloon);
+        if (!this.viewingBalloon.contains(other.getUniqueId())) {
+            this.viewingBalloon.add(other.getUniqueId());
+            this.balloon.setLocation(actual);
+            final ModelEngineHook hook = hookManager.getModelEngineHook();
+            hook.spawnModel(id, this.balloon);
+            hook.addPlayerToModel(other, id, this.balloon);
+        }
         this.updateBalloon(other, location, settings);
         PacketManager.sendPacket(
                 other,
                 PacketManager.getEntitySpawnPacket(
                         actual,
                         this.getBalloonId(),
-                        EntityType.PIG
+                        this.balloon.getType()
                 ),
                 PacketManager.getInvisibilityPacket(this.getBalloonId()),
                 PacketManager.getLeashPacket(
@@ -153,10 +154,13 @@ public abstract class BaseUser<T> {
             return;
         }
         final Location actual = location.clone().add(settings.getBalloonOffset());
+        final Location previous = this.balloon.getLocation();
         this.balloon.setLocation(actual);
+        this.balloon.setVelocity(actual.clone().subtract(previous.clone()).toVector());
         PacketManager.sendPacket(
                 other,
-                PacketManager.getTeleportPacket(this.getBalloonId(), actual)
+                PacketManager.getTeleportPacket(this.getBalloonId(), actual),
+                PacketManager.getLeashPacket(this.getBalloonId(), this.getEntityId())
         );
     }
 

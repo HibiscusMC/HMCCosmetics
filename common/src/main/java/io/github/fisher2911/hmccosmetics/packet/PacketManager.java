@@ -118,6 +118,16 @@ public class PacketManager {
         return packet;
     }
 
+    public static PacketContainer getMovePacket(final int entityId, final Location from, final Location to) {
+        final PacketContainer packet = new PacketContainer(PacketType.Play.Server.REL_ENTITY_MOVE);
+        final short x = (short) ((to.getX() * 32 - from.getX() * 32) * 128);
+        final short y = (short) ((to.getY() * 32 - from.getY() * 32) * 128);
+        final short z = (short) ((to.getZ() * 32 - from.getZ() * 32) * 128);
+        packet.getIntegers().write(0, entityId);
+        packet.getShorts().write(0, x).write(1, y).write(2, y);
+        return packet;
+    }
+
     public static PacketContainer getLeashPacket(final int balloonId, final int entityId) {
         final PacketContainer packet = new PacketContainer(PacketType.Play.Server.ATTACH_ENTITY);
         packet.getIntegers().write(0, balloonId).write(1, entityId);

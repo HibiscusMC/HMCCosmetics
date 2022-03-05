@@ -31,7 +31,6 @@ public class WardrobeSettings {
     private static final String YAW_PATH = "yaw";
     private static final String PITCH_PATH = "pitch";
 
-
     private final HMCCosmetics plugin;
 
     private boolean disableOnDamage;

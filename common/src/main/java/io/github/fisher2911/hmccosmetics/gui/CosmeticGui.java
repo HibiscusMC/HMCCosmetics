@@ -1,6 +1,5 @@
 package io.github.fisher2911.hmccosmetics.gui;
 
-import dev.triumphteam.gui.components.GuiAction;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
@@ -12,18 +11,18 @@ import io.github.fisher2911.hmccosmetics.message.Messages;
 import io.github.fisher2911.hmccosmetics.message.Placeholder;
 import io.github.fisher2911.hmccosmetics.user.User;
 import io.github.fisher2911.hmccosmetics.util.builder.ItemBuilder;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-
+import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 public class CosmeticGui {
 
@@ -131,9 +130,9 @@ public class CosmeticGui {
     }
 
     public void open(final User user, final Player player) {
+        final Component component = Adventure.MINI_MESSAGE.deserialize(this.title);
         this.gui = Gui.gui().
-                title(Adventure.MINI_MESSAGE.deserialize(
-                        Placeholder.applyPapiPlaceholders(player, this.title))).
+                title(component).
                 rows(this.rows).
                 create();
 
