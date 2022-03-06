@@ -36,8 +36,7 @@ public class ArmorItemDAO {
     }
 
     public static ArmorItemDAO fromArmorItem(final ArmorItem armorItem) {
-        return new ArmorItemDAO(armorItem.getId(), armorItem.getType().toString(),
-                armorItem.getDye());
+        return new ArmorItemDAO(armorItem.getId(), armorItem.getType().toString(), armorItem.getDye());
     }
 
     @Nullable

@@ -93,8 +93,8 @@ public class DatabaseConverter {
                             this.database.createNewWardrobe(uuid),
                             new EntityIds(
                                     -1,
-                                    this.database.FAKE_ENTITY_ID.getAndDecrement(),
-                                    this.database.FAKE_ENTITY_ID.getAndDecrement()
+                                    Database.getNextEntityId(),
+                                    Database.getNextEntityId()
                             )
                     );
                     final String backpackId = results.getString(2);

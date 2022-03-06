@@ -59,7 +59,7 @@ public class JoinListener implements Listener {
             if (wardrobe.isActive()) {
                 Bukkit.getScheduler().runTaskAsynchronously(
                         this.plugin,
-                        () -> wardrobe.despawnFakePlayer(player)
+                        () -> wardrobe.despawnFakePlayer(player, userManager)
                 );
             }
         });

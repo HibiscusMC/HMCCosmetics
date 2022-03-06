@@ -95,7 +95,7 @@ public class Messages {
     public static final Message TRADED_TOKEN  =
             new Message("traded-token", "<green>You have received the cosmetic: " + Placeholder.ID);
     public static final Message ALREADY_UNLOCKED =
-            new Message("alread-unlocked", "<green>You have already unlocked the cosmetic: " + Placeholder.ID);
+            new Message("already-unlocked", "<green>You have already unlocked the cosmetic: " + Placeholder.ID);
     public static final Message SET_OTHER_BACKPACK = new Message(
             "set-other-backpack", "<green>You have set the backpack of " +
             Placeholder.PLAYER + " to " + Placeholder.TYPE + "."

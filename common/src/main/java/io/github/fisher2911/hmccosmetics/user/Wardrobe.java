@@ -14,6 +14,9 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -116,7 +119,7 @@ public class Wardrobe extends User {
         this.startSpinTask(viewer);
     }
 
-    public void despawnFakePlayer(final Player viewer) {
+    public void despawnFakePlayer(final Player viewer, final UserManager userManager) {
         this.active = false;
         final WardrobeSettings settings = this.plugin.getSettings().getWardrobeSettings();
         Bukkit.getScheduler().runTaskLaterAsynchronously(
@@ -135,6 +138,19 @@ public class Wardrobe extends User {
                     this.spawned = false;
                     this.cameraLocked = false;
                     this.currentLocation = null;
+                    final Collection<ArmorItem> armorItems = new ArrayList<>(this.getPlayerArmor().getArmorItems());
+                    if (settings.isApplyCosmeticsOnClose()) {
+                        final Optional<User> optionalUser = userManager.get(this.ownerUUID);
+                        optionalUser.ifPresent(user -> Bukkit.getScheduler().runTask(
+                                plugin,
+                                () -> {
+                                    for (final ArmorItem armorItem : armorItems) {
+                                        if (!user.hasPermissionToUse(armorItem)) continue;
+                                        userManager.setItem(user, armorItem);
+                                    }
+                                }
+                        ));
+                    }
                     this.getPlayerArmor().clear();
                     Bukkit.getScheduler().runTask(this.plugin, () -> {
                         if (viewer == null || !viewer.isOnline()) return;

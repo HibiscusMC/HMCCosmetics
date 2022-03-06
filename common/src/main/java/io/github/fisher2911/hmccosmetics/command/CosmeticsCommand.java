@@ -72,7 +72,7 @@ public class CosmeticsCommand extends CommandBase {
         if (wardrobe.isActive() &&
                 !this.settings.getWardrobeSettings().inDistanceOfWardrobe(wardrobe.getCurrentLocation(), player.getLocation())) {
             wardrobe.setActive(false);
-            wardrobe.despawnFakePlayer(player);
+            wardrobe.despawnFakePlayer(player, userManager);
             this.messageHandler.sendMessage(
                     player,
                     Messages.CLOSED_WARDROBE

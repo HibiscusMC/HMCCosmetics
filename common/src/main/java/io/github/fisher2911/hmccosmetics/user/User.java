@@ -6,7 +6,11 @@ import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,6 +43,13 @@ public class User extends BaseUser<UUID> {
         final Player player = this.getPlayer();
         if (player == null) return false;
         if (player.getUniqueId().equals(other.getUniqueId()) && this.hidden) return false;
+        final ItemStack itemStack = player.getInventory().getItemInMainHand();
+        if (itemStack != null && itemStack.getType() == Material.TRIDENT) {
+            final ItemMeta itemMeta = itemStack.getItemMeta();
+            if (itemMeta != null && itemMeta.hasEnchant(Enchantment.RIPTIDE)) {
+                return false;
+            }
+        }
         return player.getGameMode() != GameMode.SPECTATOR &&
                 (!player.hasPotionEffect(PotionEffectType.INVISIBILITY) &&
                         other.canSee(player) &&

@@ -35,6 +35,8 @@ wardrobe:
   spawn-delay: 40
   # how long in ticks until the wardrobe should be despawned
   despawn-delay: 40
+  # if cosmetics that the user have permissions for should be applied on close of wardrobe
+  apply-cosmetcics-on-close: true
   open-sound:
     sound: # Play a sound
       name: "minecraft:block.chain.break"

@@ -57,7 +57,7 @@ tasks {
 
     compileJava {
         options.encoding = Charsets.UTF_8.name()
-        options.release.set(16)
+        options.release.set(17)
     }
 
     shadowJar {
@@ -88,7 +88,7 @@ tasks {
 }
 
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(16))
+    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 }
 
 bukkit {

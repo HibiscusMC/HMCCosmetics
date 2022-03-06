@@ -32,17 +32,12 @@ public class WardrobeSettings {
     private static final String ROTATION_SPEED_PATH = "rotation-speed";
     private static final String SPAWN_DELAY_PATH = "spawn-delay";
     private static final String DESPAWN_DELAY_PATH = "despawn-delay";
+    private static final String APPLY_COSMETICS_ON_CLOSE = "apply-cosmetcics-on-close";
     private static final String OPEN_SOUND = "open-sound";
     private static final String CLOSE_SOUND = "close-sound";
     private static final String STATIC_LOCATION_PATH = "wardrobe-location";
     private static final String VIEWER_LOCATION_PATH = "viewer-location";
     private static final String LEAVE_LOCATION_PATH = "leave-location";
-    private static final String WORLD_PATH = "world";
-    private static final String X_PATH = "x";
-    private static final String Y_PATH = "y";
-    private static final String Z_PATH = "z";
-    private static final String YAW_PATH = "yaw";
-    private static final String PITCH_PATH = "pitch";
 
     private final HMCCosmetics plugin;
 
@@ -54,6 +49,7 @@ public class WardrobeSettings {
     private int rotationSpeed;
     private int spawnDelay;
     private int despawnDelay;
+    private boolean applyCosmeticsOnClose;
     private SoundData openSound;
     private SoundData closeSound;
     private Location wardrobeLocation;
@@ -85,6 +81,7 @@ public class WardrobeSettings {
             this.rotationSpeed = source.node(ROTATION_SPEED_PATH).getInt();
             this.spawnDelay = source.node(SPAWN_DELAY_PATH).getInt();
             this.despawnDelay = source.node(DESPAWN_DELAY_PATH).getInt();
+            this.applyCosmeticsOnClose = source.node(APPLY_COSMETICS_ON_CLOSE).getBoolean();
             this.openSound = source.node(OPEN_SOUND).get(SoundData.class);
             this.closeSound = source.node(CLOSE_SOUND).get(SoundData.class);
             this.wardrobeLocation = source.node(STATIC_LOCATION_PATH).get(Location.class);
@@ -125,6 +122,10 @@ public class WardrobeSettings {
 
     public int getDespawnDelay() {
         return despawnDelay;
+    }
+
+    public boolean isApplyCosmeticsOnClose() {
+        return applyCosmeticsOnClose;
     }
 
     public Location getWardrobeLocation() {

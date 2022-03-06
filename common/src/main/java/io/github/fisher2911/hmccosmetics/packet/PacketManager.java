@@ -124,7 +124,11 @@ public class PacketManager {
         final PacketContainer armorPacket = new PacketContainer(
                 PacketType.Play.Server.ENTITY_EQUIPMENT);
         armorPacket.getIntegers().write(0, entityId);
-        armorPacket.getSlotStackPairLists().write(0, equipmentList);
+
+        try {
+            armorPacket.getSlotStackPairLists().write(0, equipmentList);
+            // for some reason ProtocolLib throws an error the first time this is called
+        } catch (final NullPointerException ignored) {}
 
         return armorPacket;
     }

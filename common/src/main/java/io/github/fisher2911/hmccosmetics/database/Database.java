@@ -20,7 +20,10 @@ import org.bukkit.entity.Entity;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Random;
+import java.util.SplittableRandom;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
@@ -32,7 +35,7 @@ public class Database {
     private final Dao<ArmorItemDAO, String> armorItemDao;
     private final ConnectionSource dataSource;
     private final DatabaseType databaseType;
-    AtomicInteger FAKE_ENTITY_ID = new AtomicInteger(Integer.MAX_VALUE);
+    private static final SplittableRandom RANDOM = new SplittableRandom();
 
     public Database(
             final HMCCosmetics plugin,
@@ -62,8 +65,8 @@ public class Database {
 
     public void loadUser(final Entity entity, final Consumer<User> onComplete) {
         final UUID uuid = entity.getUniqueId();
-        final int armorStandId = FAKE_ENTITY_ID.getAndDecrement();
-        final int balloonId = FAKE_ENTITY_ID.getAndDecrement();
+        final int armorStandId = getNextEntityId();
+        final int balloonId = getNextEntityId();
         final Wardrobe wardrobe = this.createNewWardrobe(uuid);
         Threads.getInstance().execute(
                 () -> {
@@ -103,8 +106,8 @@ public class Database {
     }
 
     public void loadNPCUser(final int id, final Entity entity, final Consumer<NPCUser> onComplete) {
-        final int armorStandId = FAKE_ENTITY_ID.getAndDecrement();
-        final int balloonId = FAKE_ENTITY_ID.getAndDecrement();
+        final int armorStandId = getNextEntityId();
+        final int balloonId = getNextEntityId();
         Threads.getInstance().execute(
                 () -> {
                     try {
@@ -214,11 +217,15 @@ public class Database {
                 ownerUUID,
                 PlayerArmor.empty(),
                 new EntityIds(
-                        FAKE_ENTITY_ID.getAndDecrement(),
-                        FAKE_ENTITY_ID.getAndDecrement(),
-                        FAKE_ENTITY_ID.getAndDecrement()
+                        getNextEntityId(),
+                        getNextEntityId(),
+                        getNextEntityId()
                 ),
                 false
         );
+    }
+
+    public static int getNextEntityId() {
+        return RANDOM.nextInt(50_000, 100_000);
     }
 }
