@@ -49,9 +49,9 @@ help-command: "<#6D9DC5><st>                  </st> %prefix%  <gradient:#40B7D6:
 
 <#5AE4B5>- <#40B7D6>/cosmetics add <gray><USERNAME> <ID> (#HEX)</gray> - <#6D9DC5>Adds cosmetic to player.
 
-<#5AE4B5>- <#40B7D6>/cosmetics remove <gray><USERNAME> <BACKPACK/HAT></gray> - <#6D9DC5>Removes cosmetic from a player.
+<#5AE4B5>- <#40B7D6>/cosmetics remove <gray><USERNAME> \\<BACKPACK/HAT></gray> - <#6D9DC5>Removes cosmetic from a player.
 
-<#5AE4B5>- <#40B7D6>/cosmetics dye <gray><BACKPACK/HAT></gray> - <#6D9DC5>Opens dye menu for the specified cosmetic type.
+<#5AE4B5>- <#40B7D6>/cosmetics dye <gray>\\<BACKPACK/HAT></gray> - <#6D9DC5>Opens dye menu for the specified cosmetic type.
 
 <#5AE4B5>- <#40B7D6>/cosmetics help - <#6D9DC5>Opens this menu.
 
