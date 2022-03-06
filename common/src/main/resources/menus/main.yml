@@ -10,6 +10,8 @@ items:
       - "<gray>Allowed: <#6D9DC5>%allowed%"
     locked-lore: # Lore displayed when the player does not have the correct permission.
       - "<red>You do not own this item!"
+    applied-lore: # Lore displayed when the player has the cosmetic in their inventory.
+        - "<gray>My awesome <rainbow>Colorful Hat</rainbow>!"
     amount: 1
     model-data: 2 # CustomModelData Number
     type: HAT
@@ -104,8 +106,8 @@ items:
     type: BOOTS
     permission: ""
     id: boots
-  8:
-    material: BARRIER
+  10:
+    material: PAPER
     name: "<blue>Balloon"
     lore:
       - ""
@@ -114,10 +116,11 @@ items:
     locked-lore:
       - "<red>You do not own this item!"
     amount: 1
+    model-data: 7
     type: BALLOON
     permission: ""
-    id: barrier
-    balloon: "kindletronjr"
+    id: kite_cosmetic
+    balloon: "kite"
   37:
     material: PAPER
     name: "<#40B7D6>Previous Page"
