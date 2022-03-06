@@ -6,18 +6,17 @@ import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
+import io.github.fisher2911.hmccosmetics.message.Adventure;
 import io.github.fisher2911.hmccosmetics.message.Placeholder;
 import io.github.fisher2911.hmccosmetics.user.User;
 import io.github.fisher2911.hmccosmetics.util.builder.ItemBuilder;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Material;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class DyeSelectorGui extends CosmeticGui {
 
@@ -42,9 +41,9 @@ public class DyeSelectorGui extends CosmeticGui {
     }
 
     public Gui getGui(final User user, @Nullable final ArmorItem.Type type) {
+        final Component component = Adventure.MINI_MESSAGE.deserialize(Placeholder.applyPapiPlaceholders(user.getPlayer(), this.title));
         this.gui = Gui.gui().
-                title(Component.text(
-                        Placeholder.applyPapiPlaceholders(user.getPlayer(), this.title))).
+                title(component).
                 rows(rows).
                 create();
 
@@ -53,20 +52,6 @@ public class DyeSelectorGui extends CosmeticGui {
         if (type != null) {
             final Integer selected = this.cosmeticsSlots.inverse().get(type);
             this.selectedCosmetic = selected == null ? this.selectedCosmetic : selected;
-        }
-
-        for (final var entry : this.cosmeticsSlots.entrySet()) {
-            gui.setItem(
-                    entry.getKey(),
-                    new GuiItem(
-                            this.applyPlaceholders(
-                                    user,
-                                    player,
-                                    user.getPlayerArmor().getItem(entry.getValue()),
-                                    true
-                            )
-                    )
-            );
         }
 
         for (final var entry : this.guiItemMap.entrySet()) {
@@ -81,6 +66,25 @@ public class DyeSelectorGui extends CosmeticGui {
 
             guiItem.setItemStack(
                     ItemBuilder.from(itemStack.clone()).papiPlaceholders(player).build()
+            );
+
+            gui.setItem(entry.getKey(), guiItem);
+        }
+
+        for (final var entry : this.cosmeticsSlots.entrySet()) {
+
+            final ArmorItem guiItem = user.getPlayerArmor().getItem(entry.getValue()).copy();
+
+            final ItemStack itemStack = guiItem.getItemStack();
+
+            if (itemStack == null || guiItem.isEmpty()) continue;
+
+            guiItem.setItemStack(
+                    ItemBuilder.from(
+                            this.applyPlaceholders(
+                                    user, player, guiItem, true
+                            )
+                    ).build()
             );
 
             gui.setItem(entry.getKey(), guiItem);
@@ -128,7 +132,12 @@ public class DyeSelectorGui extends CosmeticGui {
 
             armorItem.setDye(colorItem.getColor().asRGB());
 
-            this.plugin.getUserManager().setItem(user, armorItem);
+            if (user.isWardrobeActive()) {
+                this.plugin.getUserManager().setItem(user.getWardrobe(), armorItem);
+            } else {
+                this.plugin.getUserManager().setItem(user, armorItem);
+            }
+            colorItem.getAction().execute(event);
             this.updateSelected(user, player);
         });
 
@@ -139,19 +148,33 @@ public class DyeSelectorGui extends CosmeticGui {
 
         final PlayerArmor playerArmor = user.getPlayerArmor();
 
+        final ArmorItem previousArmorItem = playerArmor.getItem(this.cosmeticsSlots.get(this.selectedCosmetic));
+
         final ItemStack previous = this.applyPlaceholders(
                 user,
                 player,
-                playerArmor.getItem(this.cosmeticsSlots.get(this.selectedCosmetic)),
+                previousArmorItem,
                 true
         );
 
-        if (previous != null && previous.getType() != Material.AIR) {
+        if (previous != null && !previousArmorItem.isEmpty()) {
             final ItemStack previousItem = dev.triumphteam.gui.builder.item.ItemBuilder.from(
                     previous
-            ).glow(false).build();
+            ).build();
 
             this.gui.updateItem(this.selectedCosmetic, previousItem);
+        } else {
+            final GuiItem guiItem = this.guiItemMap.get(this.selectedCosmetic);
+            final ItemStack itemStack = this.itemStackMap.get(this.selectedCosmetic);
+            if (itemStack != null && guiItem != null) {
+                final GuiItem setItem = this.getGuiItem(
+                        user,
+                        player,
+                        guiItem,
+                        itemStack
+                );
+                if (setItem != null) this.gui.updateItem(this.selectedCosmetic, setItem);
+            }
         }
 
         this.selectedCosmetic = slot;
@@ -166,13 +189,16 @@ public class DyeSelectorGui extends CosmeticGui {
             return;
         }
 
-        this.gui.updateItem(this.selectedCosmetic,
+        final ArmorItem armorItem = user.getPlayerArmor().getItem(type);
+        if (armorItem.isEmpty()) return;
 
+        this.gui.updateItem(
+                this.selectedCosmetic,
                 ItemBuilder.from(
                         this.applyPlaceholders(
-                                user, player, user.getPlayerArmor().getItem(type), true
+                                user, player, armorItem, true
                         )
-                ).glow(true).build());
+                ).build());
     }
 
     @Override

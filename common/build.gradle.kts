@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "io.github.fisher2911"
-version = "1.8.1"
+version = "1.10.0"
 description = "Intuitive, easy-to-use cosmetics plugin, designed for servers using resource packs.\n"
 
 repositories {
@@ -20,6 +20,8 @@ repositories {
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
     maven("https://mvnrepository.com/artifact/com.zaxxer/HikariCP")
     maven("https://repo.jeff-media.de/maven2/")
+    maven("https://repo.citizensnpcs.co")
+    maven("https://mvn.lumine.io/repository/maven-public")
 }
 
 dependencies {
@@ -34,10 +36,12 @@ dependencies {
     compileOnly("me.clip:placeholderapi:2.11.1")
     compileOnly("com.github.oraxen:oraxen:-SNAPSHOT")
     compileOnly("com.github.LoneDev6:API-ItemsAdder:2.5.4")
-    implementation("net.kyori:adventure-api:4.9.3")
+    compileOnly("net.citizensnpcs:citizens-main:2.0.29-SNAPSHOT")
+    compileOnly("com.ticxo.modelengine:api:R2.4.1:")
+    implementation("net.kyori:adventure-api:4.10.0")
     implementation ("net.kyori:adventure-text-minimessage:4.10.0-SNAPSHOT")
     implementation("net.kyori:adventure-platform-bukkit:4.0.1")
-    implementation("dev.triumphteam:triumph-gui:3.1.1")
+    implementation("dev.triumphteam:triumph-gui:3.1.2")
     implementation("me.mattstudios.utils:matt-framework:1.4.6")
     implementation("org.spongepowered:configurate-yaml:4.1.2")
     implementation("org.bstats:bstats-bukkit:2.2.1")
@@ -53,7 +57,7 @@ tasks {
 
     compileJava {
         options.encoding = Charsets.UTF_8.name()
-        options.release.set(16)
+        options.release.set(17)
     }
 
     shadowJar {
@@ -65,6 +69,10 @@ tasks {
         relocate("com.zaxxer.hikaricp", "io.github.fisher2911.hmccosmetics.hikaricp")
         relocate("com.j256.ormlite", "io.github.fisher2911.hmccosmetics.ormlite")
         archiveFileName.set("HMCCosmetics.jar")
+
+        dependencies {
+            exclude(dependency("org.yaml:snakeyaml"))
+        }
     }
 
     javadoc {
@@ -78,7 +86,7 @@ tasks {
 }
 
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(16))
+    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 }
 
 bukkit {
@@ -87,7 +95,7 @@ bukkit {
     apiVersion = "1.16"
     name = "HMCCosmetics"
     authors = listOf("MasterOfTheFish")
-    softDepend = listOf("Multiverse", "PlaceholderAPI", "Oraxen", "ItemsAdder")
+    softDepend = listOf("Multiverse", "PlaceholderAPI", "Oraxen", "ItemsAdder", "Citizens", "ModelEngine")
     depend = listOf("ProtocolLib")
     permissions {
         register("hmccosmetics.cmd.default") {
@@ -117,6 +125,10 @@ bukkit {
         register("hmccosmetics.cmd.wardrobe.other") {
             default = BukkitPluginDescription.Permission.Default.OP
             description = "Permission to open another player's wardrobe"
+        }
+        register("hmccosmetics.cmd.token.give") {
+            default = BukkitPluginDescription.Permission.Default.OP
+            description = "Permission to give other players tokens"
         }
     }
 }

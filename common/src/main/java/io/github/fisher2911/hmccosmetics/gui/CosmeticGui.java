@@ -1,9 +1,9 @@
 package io.github.fisher2911.hmccosmetics.gui;
 
-import dev.triumphteam.gui.components.GuiAction;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
+import io.github.fisher2911.hmccosmetics.config.CosmeticGuiAction;
 import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
 import io.github.fisher2911.hmccosmetics.message.Adventure;
 import io.github.fisher2911.hmccosmetics.message.MessageHandler;
@@ -11,15 +11,19 @@ import io.github.fisher2911.hmccosmetics.message.Messages;
 import io.github.fisher2911.hmccosmetics.message.Placeholder;
 import io.github.fisher2911.hmccosmetics.user.User;
 import io.github.fisher2911.hmccosmetics.util.builder.ItemBuilder;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 public class CosmeticGui {
 
@@ -45,6 +49,7 @@ public class CosmeticGui {
         this.guiItemMap = guiItemMap;
         this.itemStackMap = new HashMap<>();
         this.guiItemMap.forEach((key, value) -> itemStackMap.put(key, value.getItemStack()));
+
     }
 
     private void setItems(final User user) {
@@ -71,7 +76,7 @@ public class CosmeticGui {
             final User user,
             final ArmorItem armorItem,
             final InventoryClickEvent event,
-            final GuiAction<InventoryClickEvent> actionIfSet) {
+            final List<CosmeticGuiAction> actions) {
 
         final long current = System.currentTimeMillis();
         if ((current - this.lastClicked) / 1000. < COOL_DOWN) {
@@ -85,15 +90,23 @@ public class CosmeticGui {
 
         final ArmorItem.Type type = armorItem.getType();
 
+        final User setUser;
+        if (user.isWardrobeActive()) {
+            setUser = user.getWardrobe();
+        } else {
+            setUser = user;
+        }
         final ArmorItem setTo = this.plugin.getUserManager().setOrUnset(
-                user,
+                setUser,
                 armorItem,
                 Messages.getRemovedMessage(type),
                 Messages.getSetMessage(type)
         );
 
         if (!setTo.isEmpty()) {
-            actionIfSet.execute(event);
+            executeActions(event, actions, CosmeticGuiAction.When.EQUIP);
+        } else {
+            executeActions(event, actions, CosmeticGuiAction.When.REMOVE);
         }
 
         final int slot = event.getSlot();
@@ -107,14 +120,25 @@ public class CosmeticGui {
         this.gui.updateItem(slot, guiItem);
     }
 
+    private void executeActions(
+            final InventoryClickEvent event,
+            final List<CosmeticGuiAction> actions,
+            final CosmeticGuiAction.When when
+    ) {
+        for (final CosmeticGuiAction action : actions) {
+            action.execute(event, when);
+        }
+    }
+
     public void open(final User user, final Player player) {
+        final Component component = Adventure.MINI_MESSAGE.deserialize(Placeholder.applyPapiPlaceholders(user.getPlayer(), this.title));
         this.gui = Gui.gui().
-                title(Adventure.MINI_MESSAGE.deserialize(
-                        Placeholder.applyPapiPlaceholders(player, this.title))).
+                title(component).
                 rows(this.rows).
                 create();
 
         this.gui.setDefaultClickAction(event -> event.setCancelled(true));
+        this.gui.setCloseGuiAction(event -> user.setOpenGui(null));
 
         this.setItems(user);
 
@@ -124,17 +148,16 @@ public class CosmeticGui {
     @Nullable
     private GuiItem getGuiItem(final User user, final Player player, final int slot) {
         final GuiItem guiItem = this.guiItemMap.get(slot);
-
         if (guiItem == null) {
             return null;
         }
-
         final ItemStack itemStack = this.itemStackMap.get(slot);
+        if (itemStack == null) return null;
+        return this.getGuiItem(user, player, guiItem, itemStack);
+    }
 
-        if (itemStack == null) {
-            return null;
-        }
-
+    @Nullable
+    protected GuiItem getGuiItem(final User user, final Player player, final GuiItem guiItem, final ItemStack itemStack) {
         if (guiItem instanceof final ArmorItem armorItem) {
             final String permission =
                     armorItem.getPermission() == null ? "" : armorItem.getPermission();
@@ -159,7 +182,7 @@ public class CosmeticGui {
                             return;
                         }
 
-                        this.setUserArmor(player, user, cosmeticItem, event, armorItem.getAction());
+                        this.setUserArmor(player, user, cosmeticItem, event, armorItem.getActions());
                     }
             );
         }
@@ -171,8 +194,12 @@ public class CosmeticGui {
         return guiItem;
     }
 
-    protected ItemStack applyPlaceholders(final User user, final Player player,
-            final ArmorItem armorItem, final boolean hasPermission) {
+    protected ItemStack applyPlaceholders(
+            final User user,
+            final Player player,
+            final ArmorItem armorItem,
+            final boolean hasPermission
+    ) {
         final Map<String, String> placeholders = new HashMap<>();
 
         final PlayerArmor playerArmor = user.getPlayerArmor();
@@ -194,9 +221,9 @@ public class CosmeticGui {
         final ItemStack itemStack;
 
         if (!hasPermission) {
-            itemStack = armorItem.getItemStack(false);
+            itemStack = armorItem.getItemStack(ArmorItem.Status.LOCKED);
         } else {
-            itemStack = armorItem.getColored();
+            itemStack = armorItem.getItemStack(ArmorItem.Status.ALLOWED);
         }
 
         return ItemBuilder.from(
@@ -205,6 +232,15 @@ public class CosmeticGui {
                 lorePlaceholders(placeholders).
                 papiPlaceholders(player).
                 build();
+    }
+
+    public void updateItem(final int slot, final GuiItem guiItem, final User user, final Player player) {
+        final ItemStack itemStack = guiItem.getItemStack().clone();
+        this.guiItemMap.put(slot, guiItem);
+        this.itemStackMap.put(slot, itemStack);
+        final GuiItem setItem = this.getGuiItem(user, player, guiItem, itemStack);
+        if (setItem == null) return;
+        this.gui.updateItem(slot, setItem);
     }
 
     public CosmeticGui copy() {

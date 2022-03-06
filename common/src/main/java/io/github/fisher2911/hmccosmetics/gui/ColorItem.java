@@ -9,13 +9,16 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class ColorItem extends GuiItem {
+public class ColorItem extends WrappedGuiItem {
 
     private final Color color;
 
-    public ColorItem(final @NotNull ItemStack itemStack,
-            final GuiAction<InventoryClickEvent> action,
-            final Color color) {
+    public ColorItem(final GuiItem item, final GuiAction<InventoryClickEvent> action, final Color color) {
+        super(item, action);
+        this.color = color;
+    }
+
+    public ColorItem(final @NotNull ItemStack itemStack, final @Nullable GuiAction<@NotNull InventoryClickEvent> action, final Color color) {
         super(itemStack, action);
         this.color = color;
     }
@@ -30,8 +33,7 @@ public class ColorItem extends GuiItem {
         this.color = color;
     }
 
-    public ColorItem(final @NotNull Material material,
-            final @Nullable GuiAction<InventoryClickEvent> action, final Color color) {
+    public ColorItem(final @NotNull Material material, final @Nullable GuiAction<@NotNull InventoryClickEvent> action, final Color color) {
         super(material, action);
         this.color = color;
     }
@@ -39,5 +41,4 @@ public class ColorItem extends GuiItem {
     public Color getColor() {
         return color;
     }
-
 }

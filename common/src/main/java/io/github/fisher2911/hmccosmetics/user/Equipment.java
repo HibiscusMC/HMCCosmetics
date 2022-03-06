@@ -32,4 +32,5 @@ public class Equipment {
     public void setItem(final EquipmentSlot slot, @Nullable final ItemStack itemStack) {
         this.equipment.put(slot, itemStack);
     }
+
 }

@@ -1,0 +1,14 @@
+title: "<white>Token Menu" #GUI Title
+rows: 5 # Rows in the GUI
+token-slot: 0
+cosmetic-slot: 1
+gui-type: token
+items:
+  43:
+    material: PAPER
+    name: "<#40B7D6>Next Page"
+    amount: 1
+    model-data: 2
+    action:
+      any:
+        open-menu: menu-2

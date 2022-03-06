@@ -1,0 +1,43 @@
+name: HMCCosmetics
+version: 1.10.0-BETA
+main: io.github.fisher2911.hmccosmetics.HMCCosmetics
+description: |
+  Intuitive, easy-to-use cosmetics plugin, designed for servers using resource packs.
+load: STARTUP
+authors:
+ - MasterOfTheFish
+depend:
+ - ProtocolLib
+permissions:
+  hmccosmetics.cmd.default:
+    description: Permission to execute the default command.
+    default: op
+  hmccosmetics.cmd.dye:
+    description: Permission to dye armor.
+    default: op
+  hmccosmetics.cmd.reload:
+    description: Permission to use the reload command.
+    default: op
+  hmccosmetics.cmd.set:
+    description: Permission to set other users' cosmetics.
+    default: op
+  hmccosmetics.cmd.token.give:
+    description: Permission to give other players tokens
+    default: op
+  hmccosmetics.cmd.wardrobe:
+    description: Permission to view the wardrobe
+    default: op
+  hmccosmetics.cmd.wardrobe.other:
+    description: Permission to open another player's wardrobe
+    default: op
+  hmccosmetics.cmd.wardrobe.portable:
+    description: Permission to use a portable wardrobe
+    default: op
+api-version: 1.16
+softdepend:
+ - Multiverse
+ - PlaceholderAPI
+ - Oraxen
+ - ItemsAdder
+ - Citizens
+ - ModelEngine

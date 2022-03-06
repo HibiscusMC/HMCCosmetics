@@ -25,9 +25,17 @@ public class CosmeticItem {
      * @param rgb from Bukkit's {@link Color#asRGB()}
      */
 
-    public CosmeticItem(final ItemStack itemStack, final String id, final ArmorItem.Type type,
-            final boolean dyeable, final int rgb) {
-        this.armorItem = new ArmorItem(itemStack, id, new ArrayList<>(), "", type, dyeable, rgb);
+    public CosmeticItem(
+            final ItemStack itemStack,
+            final String name,
+            final String id,
+            final ItemStack locked,
+            final ItemStack applied,
+            final String permission,
+            final ArmorItem.Type type,
+            final boolean dyeable,
+            final int rgb) {
+        this.armorItem = new ArmorItem(itemStack, name, id, locked, applied, permission, type, dyeable, rgb);
     }
 
     /**
@@ -38,9 +46,18 @@ public class CosmeticItem {
      * @param rgb from Bukkit's {@link Color#asRGB()}
      */
 
-    public CosmeticItem(final Material material, final String id, final ArmorItem.Type type,
-            final boolean dyeable, final int rgb) {
-        this.armorItem = new ArmorItem(material, id, new ArrayList<>(), "", type, dyeable, rgb);
+    public CosmeticItem(
+            final Material material,
+            final String name,
+            final String id,
+            final Material locked,
+            final Material applied,
+            final String permission,
+            final ArmorItem.Type type,
+            final boolean dyeable,
+            final int rgb
+    ) {
+        this.armorItem = new ArmorItem(material, name, id, new ItemStack(locked), new ItemStack(applied), permission, type, dyeable, rgb);
     }
 
     /**
@@ -49,8 +66,8 @@ public class CosmeticItem {
      * @param type the cosmetic item type
      */
 
-    public CosmeticItem(final ItemStack itemStack, final String id, final ArmorItem.Type type) {
-        this(itemStack, id, type, false, -1);
+    public CosmeticItem(final ItemStack itemStack, final String name, final String id, final ItemStack locked, final ItemStack applied, final ArmorItem.Type type) {
+        this(itemStack, name, id, locked, applied, "", type, false, -1);
     }
 
     /**
@@ -59,12 +76,12 @@ public class CosmeticItem {
      * @param type the cosmetic item type
      */
 
-    public CosmeticItem(final Material material, final String id, final ArmorItem.Type type) {
-        this(material, id, type, false, -1);
+    public CosmeticItem(final Material material, final Material locked, final Material applied, final String name, final String id, final ArmorItem.Type type) {
+        this(material, name, id, locked, applied, "", type, false, -1);
     }
 
-    public ItemStack getColored() {
-        return this.armorItem.getColored();
+    public ItemStack getItemStack(final ArmorItem.Status status) {
+        return this.armorItem.getItemStack(status);
     }
 
     public ItemStack getItemStack() {

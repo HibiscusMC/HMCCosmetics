@@ -1,11 +1,5 @@
 package io.github.fisher2911.hmccosmetics.user;
 
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.events.ListenerPriority;
-import com.comphenix.protocol.events.PacketAdapter;
-import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.Pair;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
@@ -22,13 +16,13 @@ import io.github.fisher2911.hmccosmetics.message.MessageHandler;
 import io.github.fisher2911.hmccosmetics.message.Placeholder;
 import io.github.fisher2911.hmccosmetics.message.Translation;
 import io.github.fisher2911.hmccosmetics.packet.PacketManager;
+import io.github.fisher2911.hmccosmetics.task.InfiniteTask;
 import io.github.fisher2911.hmccosmetics.util.builder.ItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -38,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class UserManager {
 
@@ -45,11 +40,7 @@ public class UserManager {
     private final Settings settings;
     private final MessageHandler messageHandler;
 
-    private final Map<UUID, User> userMap = new HashMap<>();
-    private final Map<Integer, User> userEntityIdMap = new HashMap<>();
-    private final Map<Integer, User> armorStandIdMap = new HashMap<>();
-
-    private BukkitTask teleportTask;
+    private final Map<UUID, User> userMap = new ConcurrentHashMap<>();
 
     public UserManager(final HMCCosmetics plugin) {
         this.plugin = plugin;
@@ -58,12 +49,7 @@ public class UserManager {
     }
 
     public void add(final User user) {
-        this.userMap.put(user.getUuid(), user);
-        final Player player = user.getPlayer();
-        if (player != null) {
-            this.userEntityIdMap.put(user.getEntityId(), user);
-        }
-        this.armorStandIdMap.put(user.getArmorStandId(), user);
+        this.userMap.put(user.getId(), user);
         this.updateCosmetics(user);
     }
 
@@ -80,9 +66,6 @@ public class UserManager {
 
         if (user == null) return;
 
-        this.armorStandIdMap.remove(user.getArmorStandId());
-        this.userEntityIdMap.remove(user.getEntityId());
-
         final PlayerArmor copy = user.getPlayerArmor().copy();
 
         user.removeAllCosmetics();
@@ -97,47 +80,37 @@ public class UserManager {
     public void startTeleportTask() {
         // throws an error on first load of registry if this isn't here
         WrappedDataWatcher.Registry.get(Byte.class);
-        this.teleportTask = Bukkit.getScheduler().runTaskTimerAsynchronously(
-                this.plugin,
+        this.plugin.getTaskManager().submit(new InfiniteTask(
                 () -> {
                     for (final User user : this.userMap.values()) {
-                        user.updateArmorStand(this.plugin.getSettings());
+                        user.updateOutsideCosmetics(this.plugin.getSettings());
                     }
-                },
-                1,
-                1
-        );
+                }
+        ));
     }
 
     public void resendCosmetics(final Player player) {
         for (final User user : this.userMap.values()) {
             final Player p = user.getPlayer();
             if (p == null) continue;
-            user.spawnArmorStand(player, p.getLocation(), this.settings.getCosmeticSettings());
+            user.updateOutsideCosmetics(player, p.getLocation(), this.settings);
             this.updateCosmetics(user, player);
         }
     }
 
     public void updateCosmetics(final UUID uuid) {
         this.get(uuid).ifPresent(this::updateCosmetics);
-
     }
 
-    public void updateCosmetics(final User user) {
+    public void updateCosmetics(final BaseUser user) {
         for (final Player player : Bukkit.getOnlinePlayers()) {
             this.updateCosmetics(user, player);
         }
     }
 
-    public void updateCosmetics(final User user, final Player other) {
-        final Player player = user.getPlayer();
-
-        final Equipment equipment;
-        if (player == null) {
-            equipment = new Equipment();
-        } else {
-            equipment = Equipment.fromEntityEquipment(player.getEquipment());
-        }
+    public void updateCosmetics(final BaseUser user, final Player other) {
+//        final Player player = user.getPlayer();
+        final Equipment equipment = user.getEquipment();
 
         for (final ArmorItem.Type type : ArmorItem.Type.values()) {
             if (type.getSlot() == null) continue;
@@ -151,13 +124,13 @@ public class UserManager {
     }
 
     private void sendUpdatePacket(
-            final User user,
+            final BaseUser user,
             final Player other,
             final Equipment equipment,
             final ArmorItem.Type type) {
         final PlayerArmor playerArmor = user.getPlayerArmor();
         final EquipmentSlot slot = type.getSlot();
-        final ItemStack itemStack = this.getCosmeticItem(user, equipment, playerArmor.getItem(type), slot);
+        final ItemStack itemStack = this.getCosmeticItem(user, equipment, playerArmor.getItem(type), ArmorItem.Status.APPLIED, slot);
         if (itemStack != null && itemStack.equals(equipment.getItem(slot))) return;
         final List<Pair<EnumWrappers.ItemSlot, ItemStack>> itemList = new ArrayList<>();
         itemList.add(new Pair<>(EnumWrappers.ItemSlot.valueOf(slot.toString().replace("_", "")), itemStack));
@@ -171,16 +144,18 @@ public class UserManager {
     }
 
     private ItemStack getCosmeticItem(
-            final User user,
+            final BaseUser user,
             final Equipment equipment,
             final ArmorItem armorItem,
-            final EquipmentSlot slot) {
+            final ArmorItem.Status status,
+            final EquipmentSlot slot
+    ) {
         final CosmeticSettings cosmeticSettings = this.settings.getCosmeticSettings();
 
         final Map<String, String> placeholders = Map.of(Placeholder.ALLOWED, Translation.TRUE,
                 Placeholder.ENABLED, Translation.TRUE);
 
-        ItemStack itemStack = ItemBuilder.from(armorItem.getColored()).
+        ItemStack itemStack = ItemBuilder.from(armorItem.getItemStack(status)).
                 namePlaceholders(placeholders).
                 lorePlaceholders(placeholders).
                 build();
@@ -200,36 +175,29 @@ public class UserManager {
 
         final ItemStack equipped = equipment.getItem(slot);
 
-        if (equipped != null && (equipped.getType() != Material.AIR && !user.getWardrobe().isActive())) {
+        if (equipped != null && (equipped.getType() != Material.AIR && !user.isWardrobeActive())) {
             return equipped;
         }
 
         return itemStack;
     }
 
-    public void setItem(final User user, final ArmorItem armorItem) {
-        final Wardrobe wardrobe = user.getWardrobe();
-        final User setUser;
-        if (wardrobe.isActive()) {
-            setUser = wardrobe;
-        } else {
-            setUser = user;
-        }
-        ArmorItem previous = setUser.getPlayerArmor().getItem(armorItem.getType());
+    public void setItem(final BaseUser user, final ArmorItem armorItem) {
+        ArmorItem previous = user.getPlayerArmor().getItem(armorItem.getType());
 
         final CosmeticChangeEvent event =
-                new CosmeticChangeEvent(new CosmeticItem(armorItem.copy()), new CosmeticItem(previous.copy()), setUser);
+                new CosmeticChangeEvent(new CosmeticItem(armorItem.copy()), new CosmeticItem(previous.copy()), user);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) return;
 
-        setUser.setItem(event.getCosmeticItem().getArmorItem());
+        user.setItem(event.getCosmeticItem().getArmorItem());
         Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () -> {
             switch (armorItem.getType()) {
                 case HAT, OFF_HAND, CHEST_PLATE, PANTS, BOOTS -> {
-                    this.updateCosmetics(setUser);
+                    this.updateCosmetics(user);
                 }
                 case BACKPACK -> {
-                    if (wardrobe.isActive()) setUser.updateArmorStand(settings);
+                    if (user instanceof Wardrobe) user.updateOutsideCosmetics(settings);
                 }
             }
         });
@@ -288,10 +256,6 @@ public class UserManager {
         }
 
         this.userMap.clear();
-    }
-
-    public void cancelTeleportTask() {
-        this.teleportTask.cancel();
     }
 
     @Nullable

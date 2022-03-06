@@ -4,14 +4,14 @@ import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.LinkedList;
 import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class TaskManager {
 
     private final HMCCosmetics plugin;
     private BukkitTask timer;
-    private final Queue<Task> tasks = new LinkedList<>();
+    private final Queue<Task> tasks = new ConcurrentLinkedQueue<>();
 
     public TaskManager(final HMCCosmetics plugin) {
         this.plugin = plugin;

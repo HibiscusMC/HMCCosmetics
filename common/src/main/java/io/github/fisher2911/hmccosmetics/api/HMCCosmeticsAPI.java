@@ -60,7 +60,7 @@ public class HMCCosmeticsAPI {
         if (armorItem == null) {
             return null;
         }
-        return new CosmeticItem(new ArmorItem(armorItem));
+        return new CosmeticItem(armorItem.copy());
     }
 
     /**

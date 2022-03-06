@@ -2,7 +2,6 @@ package io.github.fisher2911.hmccosmetics.user;
 
 import com.comphenix.protocol.events.PacketContainer;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
-import io.github.fisher2911.hmccosmetics.config.Settings;
 import io.github.fisher2911.hmccosmetics.config.WardrobeSettings;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
@@ -15,7 +14,9 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.text.html.Option;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -24,7 +25,6 @@ public class Wardrobe extends User {
 
     private final HMCCosmetics plugin;
     private final UUID ownerUUID;
-    private final int viewerId;
     private boolean active;
     private boolean cameraLocked;
 
@@ -35,16 +35,13 @@ public class Wardrobe extends User {
     public Wardrobe(
             final HMCCosmetics plugin,
             final UUID uuid,
-            final int entityId,
             final UUID ownerUUID,
             final PlayerArmor playerArmor,
-            final int armorStandId,
-            final int viewerId,
+            final EntityIds entityIds,
             final boolean active) {
-        super(uuid, entityId, playerArmor, armorStandId);
+        super(uuid, playerArmor, entityIds);
         this.plugin = plugin;
         this.ownerUUID = ownerUUID;
-        this.viewerId = viewerId;
         this.active = active;
         this.wardrobe = this;
     }
@@ -94,50 +91,80 @@ public class Wardrobe extends User {
 
         final PacketContainer playerSpawnPacket = PacketManager.getFakePlayerSpawnPacket(
                 this.currentLocation,
-                this.getUuid(),
+                this.getId(),
                 this.getEntityId()
         );
         final PacketContainer playerInfoPacket = PacketManager.getFakePlayerInfoPacket(
                 viewer,
-                this.getUuid()
+                this.getId()
         );
 
-        PacketManager.sendPacket(viewer, playerInfoPacket, playerSpawnPacket);
-        this.spawnArmorStand(viewer, this.currentLocation, this.plugin.getSettings().getCosmeticSettings());
-        this.updateArmorStand(viewer, plugin.getSettings(), this.currentLocation);
-        PacketManager.sendPacket(viewer, PacketManager.getLookPacket(this.getEntityId(), this.currentLocation));
-        PacketManager.sendPacket(viewer, PacketManager.getRotationPacket(this.getEntityId(), this.currentLocation));
+
+        Bukkit.getScheduler().runTaskLaterAsynchronously(
+                this.plugin,
+                () -> {
+                    PacketManager.sendPacket(viewer, playerInfoPacket, playerSpawnPacket);
+                    this.updateOutsideCosmetics(viewer, this.currentLocation, plugin.getSettings());
+                    PacketManager.sendPacket(
+                            viewer,
+                            PacketManager.getLookPacket(this.getEntityId(), this.currentLocation),
+                            PacketManager.getRotationPacket(this.getEntityId(), this.currentLocation),
+                            PacketManager.getPlayerOverlayPacket(this.getEntityId())
+                    );
+                },
+                settings.getSpawnDelay()
+        );
 
         this.spawned = true;
         this.startSpinTask(viewer);
     }
 
-    @Override
-    public void updateArmorStand(final Player player, final Settings settings) {
-        this.updateArmorStand(player, settings, this.currentLocation);
-    }
-
-    public void despawnFakePlayer(final Player viewer) {
-        final WardrobeSettings settings = this.plugin.getSettings().getWardrobeSettings();
-        PacketManager.sendPacket(
-                viewer,
-                PacketManager.getEntityDestroyPacket(this.getEntityId())
-                // for spectator packets
-//                PacketManager.getEntityDestroyPacket(this.viewerId)
-        );
-        this.showPlayer(this.plugin.getUserManager());
-        this.despawnAttached();
+    public void despawnFakePlayer(final Player viewer, final UserManager userManager) {
         this.active = false;
-        this.spawned = false;
-        this.cameraLocked = false;
-        this.currentLocation = null;
-        this.getPlayerArmor().clear();
+        final WardrobeSettings settings = this.plugin.getSettings().getWardrobeSettings();
+        Bukkit.getScheduler().runTaskLaterAsynchronously(
+                this.plugin,
+                () -> {
+                    PacketManager.sendPacket(
+                            viewer,
+                            PacketManager.getEntityDestroyPacket(this.getEntityId()),
+                            PacketManager.getRemovePlayerPacket(viewer, this.id, this.getEntityId())
+                            // for spectator packets
+//                PacketManager.getEntityDestroyPacket(this.viewerId)
+                    );
+                    this.despawnAttached();
+                    this.despawnBalloon();
+                    this.showPlayer(this.plugin.getUserManager());
+                    this.spawned = false;
+                    this.cameraLocked = false;
+                    this.currentLocation = null;
+                    final Collection<ArmorItem> armorItems = new ArrayList<>(this.getPlayerArmor().getArmorItems());
+                    if (settings.isApplyCosmeticsOnClose()) {
+                        final Optional<User> optionalUser = userManager.get(this.ownerUUID);
+                        optionalUser.ifPresent(user -> Bukkit.getScheduler().runTask(
+                                plugin,
+                                () -> {
+                                    for (final ArmorItem armorItem : armorItems) {
+                                        if (!user.hasPermissionToUse(armorItem)) continue;
+                                        userManager.setItem(user, armorItem);
+                                    }
+                                }
+                        ));
+                    }
+                    this.getPlayerArmor().clear();
+                    Bukkit.getScheduler().runTask(this.plugin, () -> {
+                        if (viewer == null || !viewer.isOnline()) return;
+                        viewer.teleport(settings.getLeaveLocation());
+                    });
 
-        if (settings.isAlwaysDisplay()) {
-            this.currentLocation = settings.getWardrobeLocation();
-            if (this.currentLocation == null) return;
-            this.spawnFakePlayer(viewer);
-        }
+                    if (settings.isAlwaysDisplay()) {
+                        this.currentLocation = settings.getWardrobeLocation();
+                        if (this.currentLocation == null) return;
+                        this.spawnFakePlayer(viewer);
+                    }
+                },
+                settings.getDespawnDelay()
+        );
     }
 
     private void startSpinTask(final Player player) {
@@ -150,9 +177,12 @@ public class Wardrobe extends User {
                     final int yaw = data.get();
                     location.setYaw(yaw);
                     PacketManager.sendPacket(player, PacketManager.getLookPacket(this.getEntityId(), location));
-                    this.updateArmorStand(player, this.plugin.getSettings(), location);
+                    this.updateOutsideCosmetics(player, location, this.plugin.getSettings());
                     location.setYaw(this.getNextYaw(yaw - 30, rotationSpeed));
-                    PacketManager.sendPacket(player, PacketManager.getRotationPacket(this.getEntityId(), location));
+                    PacketManager.sendPacket(
+                            player,
+                            PacketManager.getRotationPacket(this.getEntityId(), location)
+                    );
                     data.set(this.getNextYaw(yaw, rotationSpeed));
                 },
                 () -> !this.spawned || this.currentLocation == null
@@ -166,7 +196,7 @@ public class Wardrobe extends User {
     }
 
     public boolean isCameraLocked() {
-        return cameraLocked;
+        return this.active && this.cameraLocked;
     }
 
     @Override
@@ -198,35 +228,44 @@ public class Wardrobe extends User {
     }
 
     private void hidePlayer() {
-        final Player player = this.getPlayer();
-        if (player == null) return;
-        for (final Player p : Bukkit.getOnlinePlayers()) {
-            p.hidePlayer(this.plugin, player);
-            player.hidePlayer(this.plugin, p);
-        }
+        Bukkit.getScheduler().runTask(this.plugin,
+                () -> {
+                    final Player player = this.getPlayer();
+                    if (player == null) return;
+                    for (final Player p : Bukkit.getOnlinePlayers()) {
+                        p.hidePlayer(this.plugin, player);
+                        player.hidePlayer(this.plugin, p);
+                    }
+                });
     }
 
     private void showPlayer(final UserManager userManager) {
-        final Player player = this.getPlayer();
-        if (player == null) return;
-        final Optional<User> optionalUser = userManager.get(player.getUniqueId());
-        for (final Player p : Bukkit.getOnlinePlayers()) {
-            final Optional<User> optional = userManager.get(p.getUniqueId());
-            if (optional.isEmpty()) continue;
-            if (optional.get().getWardrobe().isActive()) continue;
-            player.showPlayer(this.plugin, p);
-            p.showPlayer(this.plugin, player);
-            Bukkit.getScheduler().runTaskLaterAsynchronously(
-                    this.plugin,
-                    () -> optional.ifPresent(user -> userManager.updateCosmetics(user, player)),
-                    1
-            );
-            Bukkit.getScheduler().runTaskLaterAsynchronously(
-                    this.plugin,
-                    () -> optionalUser.ifPresent(userManager::updateCosmetics),
-                    1
-            );
-        }
+        Bukkit.getScheduler().runTask(
+                this.plugin,
+                () -> {
+                    final Player player = this.getPlayer();
+                    if (player == null) return;
+                    final Optional<User> optionalUser = userManager.get(player.getUniqueId());
+                    for (final Player p : Bukkit.getOnlinePlayers()) {
+                        final Optional<User> optional = userManager.get(p.getUniqueId());
+                        if (optional.isEmpty()) continue;
+                        if (optional.get().getWardrobe().isActive()) continue;
+                        player.showPlayer(this.plugin, p);
+                        p.showPlayer(this.plugin, player);
+                        Bukkit.getScheduler().runTaskLaterAsynchronously(
+                                this.plugin,
+                                () -> {
+                                    optional.ifPresent(user -> userManager.updateCosmetics(user, player));
+                                    optionalUser.ifPresent(userManager::updateCosmetics);
+                                },
+                                1
+                        );
+                    }
+                });
     }
 
+    @Override
+    public Equipment getEquipment() {
+        return new Equipment();
+    }
 }

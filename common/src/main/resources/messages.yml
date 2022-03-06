@@ -3,6 +3,8 @@ no-permission: "%prefix% <red>No Permission!"
 no-cosmetic-permission: "%prefix% <red>You do not have permission for this cosmetic!"
 set-hat: "%prefix% <gradient:#6D9DC5:#45CDE9>Applied hat!"
 removed-hat: "%prefix% <gradient:#6D9DC5:#45CDE9>Removed hat!"
+set-balloon: "%prefix% <gradient:#6D9DC5:#45CDE9>Applied Balloon!"
+removed-balloon: "%prefix% <gradient:#6D9DC5:#45CDE9>Removed Balloon!"
 set-backpack: "%prefix% <gradient:#6D9DC5:#45CDE9>Applied backpack!"
 removed-backpack: "%prefix% <gradient:#6D9DC5:#45CDE9>Removed backpack!"
 set-off-hand: "%prefix% <gradient:#6D9DC5:#45CDE9>Applied offhand!"
@@ -23,6 +25,8 @@ set-other-off-hand: "%prefix% <gradient:#6D9DC5:#45CDE9>You have set the off han
 set-other-chest-plate: "%prefix% <gradient:#6D9DC5:#45CDE9>You have set the chest plate of %player% to %type%"
 set-other-pants: "%prefix% <gradient:#6D9DC5:#45CDE9>You have set the pants of %player% to %type%"
 set-other-boots: "%prefix% <gradient:#6D9DC5:#45CDE9>You have set the boots of %player% to %type%"
+hid-cosmetics: "%prefix% <gradient:#6D9DC5:#45CDE9>You have hidden your cosmetics"
+shown-cosmetics: "%prefix% <gradient:#6D9DC5:#45CDE9>You have shown your cosmetics"
 opened-wardrobe:
   type: title
   message: "<black>"
@@ -34,6 +38,10 @@ wardrobe-already-open: "%prefix% <gradient:#6D9DC5:#45CDE9><red>The wardrobe is 
 not-near-wardrobe: "%prefix% <gradient:#6D9DC5:#45CDE9><red>You are not near the wardrobe!"
 cannot-use-portable-wardrobe: "%prefix% <gradient:#6D9DC5:#45CDE9><red>You cannot use the portable wardrobe!"
 opened-other-wardrobe: "%prefix% <gradient:#6D9DC5:#45CDE9><red>Opening %player%'s wardrobe."
+gave-token: "%prefix% <gradient:#6D9DC5:#45CDE9><green>You gave %player% a %id% token"
+received-token: "%prefix% <gradient:#6D9DC5:#45CDE9><green>You were given a %id% token"
+traded-token: "%prefix% <gradient:#6D9DC5:#45CDE9><green>You have received the cosmetic: %id%"
+already-unlocked: "%prefix% <gradient:#6D9DC5:#45CDE9><green>You have already unlocked the cosmetic: %id%"
 help-command: "<#6D9DC5><st>                  </st> %prefix%  <gradient:#40B7D6:#6D9DC5>HMCCosmetics - Help</gradient> %prefix% <#6D9DC5> <st>                  </st>
 
 
@@ -41,9 +49,13 @@ help-command: "<#6D9DC5><st>                  </st> %prefix%  <gradient:#40B7D6:
 
 <#5AE4B5>- <#40B7D6>/cosmetics add <gray><USERNAME> <ID> (#HEX)</gray> - <#6D9DC5>Adds cosmetic to player.
 
-<#5AE4B5>- <#40B7D6>/cosmetics remove <gray><USERNAME> <BACKPACK/HAT></gray> - <#6D9DC5>Removes cosmetic from a player.
+<#5AE4B5>- <#40B7D6>/cosmetics remove <gray><USERNAME> \\<BACKPACK/HAT></gray> - <#6D9DC5>Removes cosmetic from a player.
 
-<#5AE4B5>- <#40B7D6>/cosmetics dye <gray><BACKPACK/HAT></gray> - <#6D9DC5>Opens dye menu for the specified cosmetic type.
+<#5AE4B5>- <#40B7D6>/cosmetics dye <gray>\\<BACKPACK/HAT></gray> - <#6D9DC5>Opens dye menu for the specified cosmetic type.
+
+<#5AE4B5>- <#40B7D6>/cosmetics token <gray>\\<ID> <USERNAME></gray> - <#6D9DC5>Gives player a cosmetic token.
+
+<#5AE4B5>- <#40B7D6>/cosmetics menu <gray>\\<MENU></gray> - <#6D9DC5>Opens the specified menu.
 
 <#5AE4B5>- <#40B7D6>/cosmetics help - <#6D9DC5>Opens this menu.
 

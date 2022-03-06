@@ -1,6 +1,7 @@
 package io.github.fisher2911.hmccosmetics.api.event;
 
 import io.github.fisher2911.hmccosmetics.api.CosmeticItem;
+import io.github.fisher2911.hmccosmetics.user.BaseUser;
 import io.github.fisher2911.hmccosmetics.user.User;
 
 /**
@@ -8,17 +9,19 @@ import io.github.fisher2911.hmccosmetics.user.User;
  */
 public class CosmeticChangeEvent extends CosmeticItemEvent {
 
-    private final User user;
+    private final BaseUser user;
     private CosmeticItem removed;
 
-    public CosmeticChangeEvent(final CosmeticItem cosmeticItem, final CosmeticItem removed,
-            final User user) {
+    public CosmeticChangeEvent(
+            final CosmeticItem cosmeticItem,
+            final CosmeticItem removed,
+            final BaseUser user) {
         super(cosmeticItem);
         this.removed = removed;
         this.user = user;
     }
 
-    public User getUser() {
+    public BaseUser getUser() {
         return user;
     }
 

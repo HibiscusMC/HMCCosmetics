@@ -5,8 +5,10 @@ import com.j256.ormlite.table.DatabaseTable;
 import io.github.fisher2911.hmccosmetics.cosmetic.CosmeticManager;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
+import io.github.fisher2911.hmccosmetics.user.EntityIds;
 import io.github.fisher2911.hmccosmetics.user.User;
 import io.github.fisher2911.hmccosmetics.user.Wardrobe;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
@@ -29,12 +31,13 @@ public class UserDAO {
         this.uuid = uuid;
     }
 
+    @Nullable
     public User toUser(
             final CosmeticManager cosmeticManager,
-            final int entityId,
+            final EntityIds entityIds,
             final List<ArmorItemDAO> armorItems,
-            final Wardrobe wardrobe,
-            final int armorStandId) {
+            final Wardrobe wardrobe
+    ) {
         final PlayerArmor playerArmor = PlayerArmor.empty();
 
         for (final ArmorItemDAO armorItemDao : armorItems) {
@@ -45,7 +48,7 @@ public class UserDAO {
             playerArmor.setItem(armorItem);
         }
 
-        return new User(this.uuid, entityId, playerArmor, wardrobe, armorStandId);
+        return new User(this.uuid, playerArmor, wardrobe, entityIds);
     }
 
     @Override

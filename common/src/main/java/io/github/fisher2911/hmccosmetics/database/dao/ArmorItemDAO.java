@@ -36,8 +36,7 @@ public class ArmorItemDAO {
     }
 
     public static ArmorItemDAO fromArmorItem(final ArmorItem armorItem) {
-        return new ArmorItemDAO(armorItem.getId(), armorItem.getType().toString(),
-                armorItem.getDye());
+        return new ArmorItemDAO(armorItem.getId(), armorItem.getType().toString(), armorItem.getDye());
     }
 
     @Nullable
@@ -46,7 +45,7 @@ public class ArmorItemDAO {
         if (armorItem == null) {
             return null;
         }
-        final ArmorItem copy = new ArmorItem(armorItem);
+        final ArmorItem copy = armorItem.copy();
         copy.setDye(this.rgbDye);
         return copy;
     }
