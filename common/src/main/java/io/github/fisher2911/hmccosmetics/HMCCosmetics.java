@@ -5,11 +5,13 @@ import com.comphenix.protocol.ProtocolManager;
 import io.github.fisher2911.hmccosmetics.command.CosmeticsCommand;
 import io.github.fisher2911.hmccosmetics.concurrent.Threads;
 import io.github.fisher2911.hmccosmetics.config.Settings;
+import io.github.fisher2911.hmccosmetics.config.TokenLoader;
 import io.github.fisher2911.hmccosmetics.cosmetic.CosmeticManager;
 import io.github.fisher2911.hmccosmetics.database.Database;
 import io.github.fisher2911.hmccosmetics.database.DatabaseFactory;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.gui.CosmeticsMenu;
+import io.github.fisher2911.hmccosmetics.gui.Token;
 import io.github.fisher2911.hmccosmetics.hook.HookManager;
 import io.github.fisher2911.hmccosmetics.hook.CitizensHook;
 import io.github.fisher2911.hmccosmetics.hook.item.ItemsAdderHook;
@@ -54,6 +56,7 @@ public class HMCCosmetics extends JavaPlugin {
     private CosmeticManager cosmeticManager;
     private MessageHandler messageHandler;
     private CosmeticsMenu cosmeticsMenu;
+    private TokenLoader tokenLoader;
     private CommandManager commandManager;
     private Database database;
 
@@ -70,8 +73,9 @@ public class HMCCosmetics extends JavaPlugin {
         this.settings = new Settings(this);
         this.messageHandler = new MessageHandler(this);
         this.userManager = new UserManager(this);
-        this.cosmeticManager = new CosmeticManager(new HashMap<>());
+        this.cosmeticManager = new CosmeticManager(new HashMap<>(), new HashMap<>());
         this.cosmeticsMenu = new CosmeticsMenu(this);
+        this.tokenLoader = new TokenLoader(this);
 
         this.userManager.startTeleportTask();
 
@@ -164,8 +168,15 @@ public class HMCCosmetics extends JavaPlugin {
         );
         completionHandler.register("#ids",
                 resolver ->
-                        this.cosmeticManager.getAll().stream().map(ArmorItem::getId)
+                        this.cosmeticManager.getAllArmorItems().stream().map(ArmorItem::getId)
                                 .collect(Collectors.toList()));
+        completionHandler.register("#tokens",
+                resolver ->
+                        this.cosmeticManager.getAllTokens().stream().map(Token::getId)
+                                .collect(Collectors.toList()));
+        completionHandler.register("#menus",
+                resolver -> new ArrayList<>(this.cosmeticsMenu.getMenus())
+        );
         completionHandler.register("#npc-args",
                 resolver -> List.of(CosmeticsCommand.NPC_REMOVE, CosmeticsCommand.NPC_APPLY));
         completionHandler.register("#npcs", resolver -> {
@@ -185,6 +196,7 @@ public class HMCCosmetics extends JavaPlugin {
                     this.settings.load();
                     this.messageHandler.load();
                     this.cosmeticsMenu.load();
+                    this.tokenLoader.load();
                     Translation.getInstance().load();
                     this.database.load();
                 }, 1);
@@ -196,6 +208,7 @@ public class HMCCosmetics extends JavaPlugin {
                     this.settings.load();
                     this.messageHandler.load();
                     this.cosmeticsMenu.reload();
+                    this.tokenLoader.load();
                     Translation.getInstance().load();
                 });
     }

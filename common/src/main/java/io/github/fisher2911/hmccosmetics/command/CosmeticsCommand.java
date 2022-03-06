@@ -3,8 +3,10 @@ package io.github.fisher2911.hmccosmetics.command;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.config.Settings;
 import io.github.fisher2911.hmccosmetics.config.WardrobeSettings;
+import io.github.fisher2911.hmccosmetics.cosmetic.CosmeticManager;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.gui.CosmeticsMenu;
+import io.github.fisher2911.hmccosmetics.gui.Token;
 import io.github.fisher2911.hmccosmetics.hook.HookManager;
 import io.github.fisher2911.hmccosmetics.hook.CitizensHook;
 import io.github.fisher2911.hmccosmetics.message.Message;
@@ -38,6 +40,7 @@ public class CosmeticsCommand extends CommandBase {
     private final UserManager userManager;
     private final MessageHandler messageHandler;
     private final CosmeticsMenu cosmeticsMenu;
+    private final CosmeticManager cosmeticManager;
     private final Settings settings;
 
     public CosmeticsCommand(final HMCCosmetics plugin) {
@@ -45,15 +48,23 @@ public class CosmeticsCommand extends CommandBase {
         this.userManager = this.plugin.getUserManager();
         this.messageHandler = this.plugin.getMessageHandler();
         this.cosmeticsMenu = this.plugin.getCosmeticsMenu();
+        this.cosmeticManager = this.plugin.getCosmeticManager();
         this.settings = this.plugin.getSettings();
     }
 
     @Default
     @Permission(io.github.fisher2911.hmccosmetics.message.Permission.DEFAULT_COMMAND)
     public void defaultCommand(final Player player) {
+        this.defaultCommand(player, CosmeticsMenu.DEFAULT_MAIN_MENU);
+    }
+
+    @SubCommand("menu")
+    @Permission(io.github.fisher2911.hmccosmetics.message.Permission.DEFAULT_COMMAND)
+    public void defaultCommand(final Player player, @Completion("#menus") @me.mattstudios.mf.annotations.Optional String menu) {
         final Optional<User> optionalUser = this.userManager.get(player.getUniqueId());
+        if (menu == null) menu = CosmeticsMenu.DEFAULT_MAIN_MENU;
         if (optionalUser.isEmpty()) {
-            this.cosmeticsMenu.openDefault(player);
+            this.cosmeticsMenu.openMenu(menu, player);
             return;
         }
         final User user = optionalUser.get();
@@ -67,7 +78,7 @@ public class CosmeticsCommand extends CommandBase {
                     Messages.CLOSED_WARDROBE
             );
         }
-        this.cosmeticsMenu.openDefault(player);
+        this.cosmeticsMenu.openMenu(menu, player);
     }
 
     @SubCommand("reload")
@@ -363,6 +374,42 @@ public class CosmeticsCommand extends CommandBase {
         this.messageHandler.sendMessage(
                 player,
                 Messages.HID_COSMETICS
+        );
+    }
+
+    @SubCommand("token")
+    @Permission(io.github.fisher2911.hmccosmetics.message.Permission.GIVE_TOKEN)
+    public void token(final CommandSender sender, @Completion("#tokens") final String tokenId, @me.mattstudios.mf.annotations.Optional Player giveTo) {
+        if (!(sender instanceof Player) && giveTo == null) {
+            this.messageHandler.sendMessage(
+                    sender,
+                    Messages.MUST_BE_PLAYER
+            );
+            return;
+        }
+        if (giveTo == null) {
+            giveTo = ((Player) sender);
+        }
+        final Token token = this.cosmeticManager.getToken(tokenId);
+        if (token == null) {
+            this.messageHandler.sendMessage(
+                    sender,
+                    Messages.ITEM_NOT_FOUND
+            );
+            return;
+        }
+        giveTo.getInventory().addItem(token.getItemStack().clone());
+        final String tokenName = token.getArmorItem().getItemName();
+        this.messageHandler.sendMessage(
+                sender,
+                Messages.GAVE_TOKEN,
+                Map.of(Placeholder.ID, tokenName,
+                        Placeholder.PLAYER, giveTo.getDisplayName())
+        );
+        this.messageHandler.sendMessage(
+                giveTo,
+                Messages.RECEIVED_TOKEN,
+                Map.of(Placeholder.ID, tokenName)
         );
     }
 

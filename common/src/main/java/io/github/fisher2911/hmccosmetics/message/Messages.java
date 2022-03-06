@@ -69,7 +69,7 @@ public class Messages {
 
                             <#5AE4B5>• <#40B7D6>/cosmetics - <#6D9DC5>Opens cosmetics GUI.
 
-                            <#5AE4B5>• <#40B7D6>/cosmetics dye <gray><BACKPACK/HAT></gray> - <#6D9DC5>Opens dye menu for specified cosmetic.
+                            <#5AE4B5>• <#40B7D6>/cosmetics dye <gray>\\BACKPACK/HAT></gray> - <#6D9DC5>Opens dye menu for specified cosmetic.
 
                             <#5AE4B5>• <#40B7D6>/cosmetics help - <#6D9DC5>Opens this menu.
 
@@ -88,7 +88,14 @@ public class Messages {
             new Message("cannot-use-portable-wardrobe", "<red>You cannot use the portable wardrobe!");
     public static final Message OPENED_OTHER_WARDROBE =
             new Message("opened-other-wardrobe", "<green>Opening " + Placeholder.PLAYER + "'s wardrobe.");
-
+    public static final Message GAVE_TOKEN =
+            new Message("gave-token", "<green>You gave " + Placeholder.PLAYER + " a " + Placeholder.ID + " token");
+    public static final Message RECEIVED_TOKEN =
+            new Message("received-token", "<green>You were given a " + Placeholder.ID + " token");
+    public static final Message TRADED_TOKEN  =
+            new Message("traded-token", "<green>You have received the cosmetic: " + Placeholder.ID);
+    public static final Message ALREADY_UNLOCKED =
+            new Message("alread-unlocked", "<green>You have already unlocked the cosmetic: " + Placeholder.ID);
     public static final Message SET_OTHER_BACKPACK = new Message(
             "set-other-backpack", "<green>You have set the backpack of " +
             Placeholder.PLAYER + " to " + Placeholder.TYPE + "."

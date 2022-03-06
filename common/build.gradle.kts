@@ -128,5 +128,9 @@ bukkit {
             default = BukkitPluginDescription.Permission.Default.OP
             description = "Permission to open another player's wardrobe"
         }
+        register("hmccosmetics.cmd.token.give") {
+            default = BukkitPluginDescription.Permission.Default.OP
+            description = "Permission to give other players tokens"
+        }
     }
 }

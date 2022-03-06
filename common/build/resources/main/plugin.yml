@@ -21,6 +21,9 @@ permissions:
   hmccosmetics.cmd.set:
     description: Permission to set other users' cosmetics.
     default: op
+  hmccosmetics.cmd.token.give:
+    description: Permission to give other players tokens
+    default: op
   hmccosmetics.cmd.wardrobe:
     description: Permission to view the wardrobe
     default: op
