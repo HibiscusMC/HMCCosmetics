@@ -196,7 +196,6 @@ public class CosmeticsMenu {
                     continue;
                 }
 
-                System.out.println("Type of gui is: " + type);
                 if (TOKEN_TYPE.equals(type)) {
                     this.guiMap.put(id, TokenGuiSerializer.INSTANCE.deserialize(TokenGui.class, source));
                     this.plugin.getLogger().info("Loaded token gui: " + id);
