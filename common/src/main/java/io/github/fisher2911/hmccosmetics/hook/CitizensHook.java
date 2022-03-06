@@ -104,7 +104,7 @@ public class CitizensHook implements Hook, Listener {
         if (type != ArmorItem.Type.BACKPACK) {
             entity.getEquipment().setItem(
                     type.getSlot(),
-                    armorItem.getItemStack(true)
+                    armorItem.getItemStack(ArmorItem.Status.APPLIED)
             );
         }
 

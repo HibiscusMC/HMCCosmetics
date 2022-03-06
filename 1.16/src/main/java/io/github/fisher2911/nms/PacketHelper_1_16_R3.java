@@ -19,10 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class PlayerPackets_1_16_R3 implements PlayerPackets {
+public class PacketHelper_1_16_R3 implements PacketHelper {
 
     @Override
-    public PacketContainer getSpawnPacket(final Location location, UUID uuid, final int entityId) {
+    public PacketContainer getPlayerSpawnPacket(final Location location, UUID uuid, final int entityId) {
         final PacketContainer spawnPacket = new PacketContainer(PacketType.Play.Server.NAMED_ENTITY_SPAWN);
         spawnPacket.getUUIDs().write(0, uuid);
         spawnPacket.getIntegers().write(0, entityId);
@@ -57,7 +57,7 @@ public class PlayerPackets_1_16_R3 implements PlayerPackets {
     }
 
     @Override
-    public PacketContainer getRemovePacket(final Player player, final UUID uuid, final int entityId) {
+    public PacketContainer getPlayerRemovePacket(final Player player, final UUID uuid, final int entityId) {
         final PacketContainer playerPacket = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
         final StructureModifier<EnumWrappers.PlayerInfoAction> action = playerPacket.getPlayerInfoAction();
         final StructureModifier<List<PlayerInfoData>> infoData = playerPacket.getPlayerInfoDataLists();
@@ -79,7 +79,7 @@ public class PlayerPackets_1_16_R3 implements PlayerPackets {
     }
 
     @Override
-    public PacketContainer getOverlayPacket(final int entityId) {
+    public PacketContainer getPlayerOverlayPacket(final int entityId) {
         final PacketContainer metaContainer = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
 
         WrappedDataWatcher metaData = new WrappedDataWatcher();
@@ -109,6 +109,31 @@ public class PlayerPackets_1_16_R3 implements PlayerPackets {
         profile.getProperties().put("textures", new Property("textures", texture, signature));
 
         return profile;
+    }
+
+    @Override
+    public PacketContainer getArmorStandMeta(final int armorStandId) {
+        final PacketContainer metaContainer = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
+
+        WrappedDataWatcher metaData = new WrappedDataWatcher();
+
+        final WrappedDataWatcher.Serializer byteSerializer = WrappedDataWatcher.Registry.get(Byte.class);
+
+        metaData.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(0, byteSerializer), (byte) (0x20));
+        metaData.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(14, byteSerializer), (byte) (0x10));
+
+        metaContainer.getIntegers().write(0, armorStandId);
+        metaContainer.getWatchableCollectionModifier().write(0, metaData.getWatchableObjects());
+        return metaContainer;
+    }
+
+    @Override
+    public PacketContainer getDestroyPacket(final int entityId) {
+        final PacketContainer destroyPacket = new PacketContainer(
+                PacketType.Play.Server.ENTITY_DESTROY);
+        destroyPacket.getIntegerArrays().write(0, new int[]{entityId});
+
+        return destroyPacket;
     }
 
 }

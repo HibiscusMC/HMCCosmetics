@@ -273,6 +273,7 @@ public class CosmeticsCommand extends CommandBase {
         }
 
         wardrobe.setActive(true);
+        settings.playOpenSound(player);
 
         final Player finalPlayer = player;
         new TaskChain(this.plugin).

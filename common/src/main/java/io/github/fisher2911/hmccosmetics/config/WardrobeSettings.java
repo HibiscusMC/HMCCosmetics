@@ -1,29 +1,42 @@
 package io.github.fisher2911.hmccosmetics.config;
 
-import com.mysql.jdbc.ConnectionFeatureNotAvailableException;
+import com.comphenix.protocol.events.PacketListener;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
+import io.github.fisher2911.hmccosmetics.gui.CosmeticGui;
+import io.github.fisher2911.hmccosmetics.gui.DyeSelectorGui;
+import io.github.fisher2911.hmccosmetics.gui.WrappedGuiItem;
+import io.github.fisher2911.hmccosmetics.util.Utils;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
+import org.spongepowered.configurate.ConfigurateException;
+import org.spongepowered.configurate.ConfigurationNode;
+import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
-import org.bukkit.Location;
+import java.io.File;
+import java.nio.file.Path;
 
 public class WardrobeSettings {
 
     private static final String WARDROBE_PATH = "wardrobe";
-    private static final String DISABLE_ON_DAMAGE_PATH = WARDROBE_PATH + ".disable-on-damage";
-    private static final String DISPLAY_RADIUS_PATH = WARDROBE_PATH + ".display-radius";
-    private static final String PORTABLE_PATH = WARDROBE_PATH + ".portable";
-    private static final String ALWAYS_DISPLAY_PATH = WARDROBE_PATH + ".always-display";
-    private static final String STATIC_RADIUS_PATH = WARDROBE_PATH + ".static-radius";
-    private static final String ROTATION_SPEED_PATH = WARDROBE_PATH + ".rotation-speed";
-    private static final String SPAWN_DELAY_PATH = WARDROBE_PATH + ".spawn-delay";
-    private static final String DESPAWN_DELAY_PATH = WARDROBE_PATH + ".despawn-delay";
-    private static final String STATIC_LOCATION_PATH = WARDROBE_PATH + ".wardrobe-location";
-    private static final String VIEWER_LOCATION_PATH = WARDROBE_PATH + ".viewer-location";
-    private static final String LEAVE_LOCATION_PATH = WARDROBE_PATH + ".leave-location";
+    private static final String DISABLE_ON_DAMAGE_PATH = "disable-on-damage";
+    private static final String DISPLAY_RADIUS_PATH = "display-radius";
+    private static final String PORTABLE_PATH = "portable";
+    private static final String ALWAYS_DISPLAY_PATH = "always-display";
+    private static final String STATIC_RADIUS_PATH = "static-radius";
+    private static final String ROTATION_SPEED_PATH = "rotation-speed";
+    private static final String SPAWN_DELAY_PATH = "spawn-delay";
+    private static final String DESPAWN_DELAY_PATH = "despawn-delay";
+    private static final String OPEN_SOUND = "open-sound";
+    private static final String CLOSE_SOUND = "close-sound";
+    private static final String STATIC_LOCATION_PATH = "wardrobe-location";
+    private static final String VIEWER_LOCATION_PATH = "viewer-location";
+    private static final String LEAVE_LOCATION_PATH = "leave-location";
     private static final String WORLD_PATH = "world";
     private static final String X_PATH = "x";
     private static final String Y_PATH = "y";
@@ -41,6 +54,8 @@ public class WardrobeSettings {
     private int rotationSpeed;
     private int spawnDelay;
     private int despawnDelay;
+    private SoundData openSound;
+    private SoundData closeSound;
     private Location wardrobeLocation;
     private Location viewerLocation;
     private Location leaveLocation;
@@ -50,45 +65,34 @@ public class WardrobeSettings {
     }
 
     public void load() {
-        final FileConfiguration config = this.plugin.getConfig();
-        this.disableOnDamage = config.getBoolean(DISABLE_ON_DAMAGE_PATH);
-        this.displayRadius = config.getInt(DISPLAY_RADIUS_PATH);
-        this.portable = config.getBoolean(PORTABLE_PATH);
-        this.staticRadius = config.getInt(STATIC_RADIUS_PATH);
-        this.alwaysDisplay = config.getBoolean(ALWAYS_DISPLAY_PATH);
-        this.rotationSpeed = config.getInt(ROTATION_SPEED_PATH);
-        this.spawnDelay = config.getInt(SPAWN_DELAY_PATH);
-        this.despawnDelay = config.getInt(DESPAWN_DELAY_PATH);
-
-        final ConfigurationSection wardrobeLocationSection = config.getConfigurationSection(STATIC_LOCATION_PATH);
-        if (wardrobeLocationSection == null) return;
-        this.wardrobeLocation = this.loadLocation(wardrobeLocationSection);
-
-        final ConfigurationSection viewerLocationSection = config.getConfigurationSection(VIEWER_LOCATION_PATH);
-        if (viewerLocationSection == null) return;
-        this.viewerLocation = this.loadLocation(viewerLocationSection);
-
-        final ConfigurationSection leaveLocationSection = config.getConfigurationSection(LEAVE_LOCATION_PATH);
-        if (leaveLocationSection == null) {
-            this.leaveLocation = this.viewerLocation;
-            return;
+        final File file = Path.of(this.plugin.getDataFolder().getPath(), "config.yml").toFile();
+        final YamlConfigurationLoader loader = YamlConfigurationLoader.
+                builder().
+                path(file.toPath()).
+                defaultOptions(opts ->
+                        opts.serializers(build -> {
+                            build.register(SoundData.class, SoundSerializer.INSTANCE);
+                            build.register(Location.class, LocationSerializer.INSTANCE);
+                        }))
+                .build();
+        try {
+            final var source = loader.load().node(WARDROBE_PATH);
+            this.disableOnDamage = source.node(DISABLE_ON_DAMAGE_PATH).getBoolean();
+            this.displayRadius = source.node(DISPLAY_RADIUS_PATH).getInt();
+            this.portable = source.node(PORTABLE_PATH).getBoolean();
+            this.staticRadius = source.node(STATIC_RADIUS_PATH).getInt();
+            this.alwaysDisplay = source.node(ALWAYS_DISPLAY_PATH).getBoolean();
+            this.rotationSpeed = source.node(ROTATION_SPEED_PATH).getInt();
+            this.spawnDelay = source.node(SPAWN_DELAY_PATH).getInt();
+            this.despawnDelay = source.node(DESPAWN_DELAY_PATH).getInt();
+            this.openSound = source.node(OPEN_SOUND).get(SoundData.class);
+            this.closeSound = source.node(CLOSE_SOUND).get(SoundData.class);
+            this.wardrobeLocation = source.node(STATIC_LOCATION_PATH).get(Location.class);
+            this.viewerLocation = source.node(VIEWER_LOCATION_PATH).get(Location.class);
+            this.leaveLocation = Utils.replaceIfNull(source.node(LEAVE_LOCATION_PATH).get(Location.class), this.viewerLocation);
+        } catch (final ConfigurateException exception) {
+            this.plugin.getLogger().severe("Error loading wardrobe settings");
         }
-        this.leaveLocation = this.loadLocation(leaveLocationSection);
-    }
-
-    @Nullable
-    private Location loadLocation(final ConfigurationSection section) {
-        final String worldName = section.getString(WORLD_PATH);
-        final double x = section.getDouble(X_PATH);
-        final double y = section.getDouble(Y_PATH);
-        final double z = section.getDouble(Z_PATH);
-        final float yaw = (float) section.getDouble(YAW_PATH);
-        final float pitch = (float) section.getDouble(PITCH_PATH);
-
-        if (worldName == null || worldName.isBlank()) return null;
-        final World world = Bukkit.getWorld(worldName);
-        if (world == null) return null;
-        return new Location(world, x, y, z, yaw, pitch);
     }
 
     public boolean getDisableOnDamage() {
@@ -133,6 +137,16 @@ public class WardrobeSettings {
 
     public Location getLeaveLocation() {
         return leaveLocation;
+    }
+
+    public void playOpenSound(final Player player) {
+        if (this.openSound == null) return;
+        this.openSound.play(player);
+    }
+
+    public void playCloseSound(final Player player) {
+        if (this.closeSound == null) return;
+        this.closeSound.play(player);
     }
 
     public boolean inDistanceOfWardrobe(final Location wardrobeLocation, final Location playerLocation) {

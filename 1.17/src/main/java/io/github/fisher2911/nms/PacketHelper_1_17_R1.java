@@ -10,20 +10,20 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
-import com.mojang.authlib.properties.PropertyMap;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_18_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.libs.it.unimi.dsi.fastutil.ints.IntArrayList;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class PlayerPackets_1_18_R1 implements PlayerPackets {
+public class PacketHelper_1_17_R1 implements PacketHelper {
 
     @Override
-    public PacketContainer getSpawnPacket(final Location location, UUID uuid, final int entityId) {
+    public PacketContainer getPlayerSpawnPacket(final Location location, UUID uuid, final int entityId) {
         final PacketContainer spawnPacket = new PacketContainer(PacketType.Play.Server.NAMED_ENTITY_SPAWN);
         spawnPacket.getUUIDs().write(0, uuid);
         spawnPacket.getIntegers().write(0, entityId);
@@ -48,7 +48,7 @@ public class PlayerPackets_1_18_R1 implements PlayerPackets {
         playerInfoData.add(new PlayerInfoData(WrappedGameProfile
                 .fromHandle(profile),
                 0,
-                EnumWrappers.NativeGameMode.fromBukkit(GameMode.SURVIVAL),
+                EnumWrappers.NativeGameMode.fromBukkit(GameMode.CREATIVE),
                 WrappedChatComponent.fromText(profile.getName())));
 
         action.write(0, EnumWrappers.PlayerInfoAction.ADD_PLAYER);
@@ -58,7 +58,7 @@ public class PlayerPackets_1_18_R1 implements PlayerPackets {
     }
 
     @Override
-    public PacketContainer getRemovePacket(final Player player, final UUID uuid, final int entityId) {
+    public PacketContainer getPlayerRemovePacket(final Player player, final UUID uuid, final int entityId) {
         final PacketContainer playerPacket = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
         final StructureModifier<EnumWrappers.PlayerInfoAction> action = playerPacket.getPlayerInfoAction();
         final StructureModifier<List<PlayerInfoData>> infoData = playerPacket.getPlayerInfoDataLists();
@@ -80,7 +80,7 @@ public class PlayerPackets_1_18_R1 implements PlayerPackets {
     }
 
     @Override
-    public PacketContainer getOverlayPacket(final int entityId) {
+    public PacketContainer getPlayerOverlayPacket(final int entityId) {
         final PacketContainer metaContainer = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
 
         WrappedDataWatcher metaData = new WrappedDataWatcher();
@@ -110,6 +110,31 @@ public class PlayerPackets_1_18_R1 implements PlayerPackets {
         profile.getProperties().put("textures", new Property("textures", texture, signature));
 
         return profile;
+    }
+
+    @Override
+    public PacketContainer getArmorStandMeta(final int armorStandId) {
+        final PacketContainer metaContainer = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
+
+        WrappedDataWatcher metaData = new WrappedDataWatcher();
+
+        final WrappedDataWatcher.Serializer byteSerializer = WrappedDataWatcher.Registry.get(Byte.class);
+
+        metaData.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(0, byteSerializer), (byte) (0x20));
+        metaData.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(15, byteSerializer), (byte) (0x10));
+
+        metaContainer.getIntegers().write(0, armorStandId);
+        metaContainer.getWatchableCollectionModifier().write(0, metaData.getWatchableObjects());
+        return metaContainer;
+    }
+
+    @Override
+    public PacketContainer getDestroyPacket(final int entityId) {
+        final PacketContainer destroyPacket = new PacketContainer(
+                PacketType.Play.Server.ENTITY_DESTROY);
+        destroyPacket.getModifier().write(0, new IntArrayList(new int[]{entityId}));
+
+        return destroyPacket;
     }
 
 }

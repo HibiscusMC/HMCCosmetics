@@ -6,19 +6,17 @@ import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
+import io.github.fisher2911.hmccosmetics.message.Adventure;
 import io.github.fisher2911.hmccosmetics.message.Placeholder;
 import io.github.fisher2911.hmccosmetics.user.User;
-import io.github.fisher2911.hmccosmetics.user.Wardrobe;
 import io.github.fisher2911.hmccosmetics.util.builder.ItemBuilder;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Material;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class DyeSelectorGui extends CosmeticGui {
 
@@ -43,9 +41,9 @@ public class DyeSelectorGui extends CosmeticGui {
     }
 
     public Gui getGui(final User user, @Nullable final ArmorItem.Type type) {
+        final Component component = Adventure.MINI_MESSAGE.deserialize(Placeholder.applyPapiPlaceholders(user.getPlayer(), this.title));
         this.gui = Gui.gui().
-                title(Component.text(
-                        Placeholder.applyPapiPlaceholders(user.getPlayer(), this.title))).
+                title(component).
                 rows(rows).
                 create();
 

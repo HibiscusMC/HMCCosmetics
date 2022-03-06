@@ -37,6 +37,7 @@ public class PlayerShiftListener implements Listener {
         if (!wardrobe.isActive()) return;
 
         wardrobe.despawnFakePlayer(player);
+        this.plugin.getSettings().getWardrobeSettings().playCloseSound(player);
         this.plugin.getMessageHandler().sendMessage(
                 player,
                 Messages.CLOSED_WARDROBE

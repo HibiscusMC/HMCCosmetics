@@ -36,6 +36,18 @@ wardrobe:
   # how long in ticks until the wardrobe should be despawned
   despawn-delay: 40
   # location of static wardrobe, remove for none
+  open-sound:
+    sound: # Play a sound
+      name: "minecraft:block.chain.break"
+      volume: 1.0
+      pitch: 1.0
+      category: "BLOCKS"
+  close-sound:
+    sound: # Play a sound
+      name: "minecraft:block.chain.break"
+      volume: 1.0
+      pitch: 1.0
+      category: "BLOCKS"
   wardrobe-location:
     world: "World"
     x: 0

@@ -212,7 +212,7 @@ public abstract class BaseUser<T> {
             ));
         } else {
             equipmentList.add(new Pair<>(EnumWrappers.ItemSlot.HEAD,
-                    this.playerArmor.getBackpack().getColored()
+                    this.playerArmor.getBackpack().getItemStack(ArmorItem.Status.APPLIED)
             ));
         }
 

@@ -20,7 +20,8 @@ public class BalloonItem extends ArmorItem {
                 item.getItemStack(),
                 item.getActions(),
                 item.getId(),
-                item.getLockedLore(),
+                item.getLockedItem(),
+                item.getAppliedItem(),
                 item.getPermission(),
                 item.getType(),
                 item.getDye(),
@@ -28,43 +29,43 @@ public class BalloonItem extends ArmorItem {
         );
     }
 
-    public BalloonItem(final @NotNull ItemStack itemStack, final List<CosmeticGuiAction> actions, final String id, final List<String> lockedLore, final String permission, final Type type, final int dye, final String modelId) {
-        super(itemStack, actions, id, lockedLore, permission, type, dye);
+    public BalloonItem(final @NotNull ItemStack itemStack, final List<CosmeticGuiAction> actions, final String id, final ItemStack lockedItem, final ItemStack appliedItem, final String permission, final Type type, final int dye, final String modelId) {
+        super(itemStack, actions, id, lockedItem, appliedItem, permission, type, dye);
         this.modelId = modelId;
     }
 
-    public BalloonItem(final @NotNull ItemStack itemStack, final String id, final List<String> lockedLore, final String permission, final Type type, final int dye, final String modelId) {
-        super(itemStack, id, lockedLore, permission, type, dye);
+    public BalloonItem(final @NotNull ItemStack itemStack, final String id, final ItemStack lockedItem, final ItemStack appliedItem, final String permission, final Type type, final int dye, final String modelId) {
+        super(itemStack, id, lockedItem, appliedItem, permission, type, dye);
         this.modelId = modelId;
     }
 
-    public BalloonItem(final @NotNull Material material, final String id, final List<String> lockedLore, final String permission, final Type type, final int dye, final String modelId) {
-        super(material, id, lockedLore, permission, type, dye);
+    public BalloonItem(final @NotNull Material material, final String id, final ItemStack lockedItem, final ItemStack appliedItem, final String permission, final Type type, final int dye, final String modelId) {
+        super(material, id, lockedItem, appliedItem, permission, type, dye);
         this.modelId = modelId;
     }
 
-    public BalloonItem(final @NotNull Material material, final List<CosmeticGuiAction> actions, final String id, final List<String> lockedLore, final String permission, final Type type, final int dye, final String modelId) {
-        super(material, actions, id, lockedLore, permission, type, dye);
+    public BalloonItem(final @NotNull Material material, final List<CosmeticGuiAction> actions, final String id, final ItemStack lockedItem, final ItemStack appliedItem, final String permission, final Type type, final int dye, final String modelId) {
+        super(material, actions, id, lockedItem, appliedItem, permission, type, dye);
         this.modelId = modelId;
     }
 
-    public BalloonItem(final @NotNull ItemStack itemStack, final List<CosmeticGuiAction> actions, final String id, final List<String> lockedLore, final String permission, final Type type, final boolean dyeable, final int dye, final String modelId) {
-        super(itemStack, actions, id, lockedLore, permission, type, dyeable, dye);
+    public BalloonItem(final @NotNull ItemStack itemStack, final List<CosmeticGuiAction> actions, final String id, final ItemStack lockedItem, final ItemStack appliedItem, final String permission, final Type type, final boolean dyeable, final int dye, final String modelId) {
+        super(itemStack, actions, id, lockedItem, appliedItem, permission, type, dyeable, dye);
         this.modelId = modelId;
     }
 
-    public BalloonItem(final @NotNull ItemStack itemStack, final String id, final List<String> lockedLore, final String permission, final Type type, final boolean dyeable, final int dye, final String modelId) {
-        super(itemStack, id, lockedLore, permission, type, dyeable, dye);
+    public BalloonItem(final @NotNull ItemStack itemStack, final String id, final ItemStack lockedItem, final ItemStack appliedItem, final String permission, final Type type, final boolean dyeable, final int dye, final String modelId) {
+        super(itemStack, id, lockedItem, appliedItem, permission, type, dyeable, dye);
         this.modelId = modelId;
     }
 
-    public BalloonItem(final @NotNull Material material, final String id, final List<String> lockedLore, final String permission, final Type type, final boolean dyeable, final int dye, final String modelId) {
-        super(material, id, lockedLore, permission, type, dyeable, dye);
+    public BalloonItem(final @NotNull Material material, final String id, final ItemStack lockedItem, final ItemStack appliedItem, final String permission, final Type type, final boolean dyeable, final int dye, final String modelId) {
+        super(material, id, lockedItem, appliedItem, permission, type, dyeable, dye);
         this.modelId = modelId;
     }
 
-    public BalloonItem(final @NotNull Material material, final @Nullable GuiAction<InventoryClickEvent> action, final String id, final List<String> lockedLore, final String permission, final Type type, final boolean dyeable, final int dye, final String modelId) {
-        super(material, action, id, lockedLore, permission, type, dyeable, dye);
+    public BalloonItem(final @NotNull Material material, final @Nullable GuiAction<InventoryClickEvent> action, final String id, final ItemStack lockedItem, final ItemStack appliedItem, final String permission, final Type type, final boolean dyeable, final int dye, final String modelId) {
+        super(material, action, id, lockedItem, appliedItem, permission, type, dyeable, dye);
         this.modelId = modelId;
     }
 

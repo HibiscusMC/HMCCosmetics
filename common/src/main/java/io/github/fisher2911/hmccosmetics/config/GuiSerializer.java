@@ -49,11 +49,8 @@ public class GuiSerializer implements TypeSerializer<CosmeticGui> {
         final Map<Integer, GuiItem> guiItemMap = new HashMap<>();
 
         for (final var entry : childrenMap.entrySet()) {
-            if (!(entry.getKey() instanceof final Integer slot)) {
-                continue;
-            }
-
-            final GuiItem guiItem = ItemSerializer.INSTANCE.deserialize(
+            if (!(entry.getKey() instanceof final Integer slot)) continue;
+            final GuiItem guiItem = ArmorItemSerializer.INSTANCE.deserialize(
                     GuiItem.class,
                     entry.getValue()
             );

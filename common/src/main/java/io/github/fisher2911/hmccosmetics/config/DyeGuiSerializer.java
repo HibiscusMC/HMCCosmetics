@@ -8,18 +8,16 @@ import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.gui.ColorItem;
 import io.github.fisher2911.hmccosmetics.gui.DyeSelectorGui;
 import io.github.fisher2911.hmccosmetics.gui.WrappedGuiItem;
-import io.github.fisher2911.hmccosmetics.message.Adventure;
-
-import java.lang.reflect.Type;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.bukkit.Color;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 import org.spongepowered.configurate.serialize.TypeSerializer;
+
+import java.lang.reflect.Type;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DyeGuiSerializer implements TypeSerializer<DyeSelectorGui> {
 
@@ -70,7 +68,7 @@ public class DyeGuiSerializer implements TypeSerializer<DyeSelectorGui> {
 
             final var node = entry.getValue();
 
-            final WrappedGuiItem guiItem = ItemSerializer.INSTANCE.deserialize(
+            final WrappedGuiItem guiItem = ArmorItemSerializer.INSTANCE.deserialize(
                     GuiItem.class,
                     node
             );

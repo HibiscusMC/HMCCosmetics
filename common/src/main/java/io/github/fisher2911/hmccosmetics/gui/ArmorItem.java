@@ -23,7 +23,8 @@ import org.jetbrains.annotations.Nullable;
 public class ArmorItem extends WrappedGuiItem {
 
     private final String id;
-    private final List<String> lockedLore;
+    private final ItemStack lockedItem;
+    private final ItemStack appliedItem;
     private final String permission;
     private final Type type;
     private List<CosmeticGuiAction> actions;
@@ -34,14 +35,16 @@ public class ArmorItem extends WrappedGuiItem {
             @NotNull final ItemStack itemStack,
             final List<CosmeticGuiAction> actions,
             final String id,
-            final List<String> lockedLore,
+            final ItemStack lockedItem,
+            final ItemStack appliedItem,
             final String permission,
             final Type type,
             final int dye) {
         super(itemStack, null);
 
         this.id = id;
-        this.lockedLore = lockedLore;
+        this.lockedItem = lockedItem;
+        this.appliedItem = appliedItem;
         this.actions = actions;
         this.permission = permission;
         this.type = type;
@@ -51,13 +54,15 @@ public class ArmorItem extends WrappedGuiItem {
     public ArmorItem(
             @NotNull final ItemStack itemStack,
             final String id,
-            final List<String> lockedLore,
+            final ItemStack lockedItem,
+            final ItemStack appliedItem,
             final String permission,
             final Type type,
             final int dye) {
         super(itemStack);
         this.id = id;
-        this.lockedLore = lockedLore;
+        this.lockedItem = lockedItem;
+        this.appliedItem = appliedItem;
         this.actions = new ArrayList<>();
         this.permission = permission;
         this.type = type;
@@ -67,13 +72,15 @@ public class ArmorItem extends WrappedGuiItem {
     public ArmorItem(
             @NotNull final Material material,
             final String id,
-            final List<String> lockedLore,
+            final ItemStack lockedItem,
+            final ItemStack appliedItem,
             final String permission,
             final Type type,
             final int dye) {
         super(material);
         this.id = id;
-        this.lockedLore = lockedLore;
+        this.lockedItem = lockedItem;
+        this.appliedItem = appliedItem;
         this.actions = new ArrayList<>();
         this.permission = permission;
         this.type = type;
@@ -84,13 +91,15 @@ public class ArmorItem extends WrappedGuiItem {
             @NotNull final Material material,
             final List<CosmeticGuiAction> actions,
             final String id,
-            final List<String> lockedLore,
+            final ItemStack lockedItem,
+            final ItemStack appliedItem,
             final String permission,
             final Type type,
             final int dye) {
         super(material, null);
         this.id = id;
-        this.lockedLore = lockedLore;
+        this.lockedItem = lockedItem;
+        this.appliedItem = appliedItem;
         this.actions = new ArrayList<>();
         this.permission = permission;
         this.type = type;
@@ -101,14 +110,16 @@ public class ArmorItem extends WrappedGuiItem {
             @NotNull final ItemStack itemStack,
             final List<CosmeticGuiAction> actions,
             final String id,
-            final List<String> lockedLore,
+            final ItemStack lockedItem,
+            final ItemStack appliedItem,
             final String permission,
             final Type type,
             final boolean dyeable,
             final int dye) {
         super(itemStack, null);
         this.id = id;
-        this.lockedLore = lockedLore;
+        this.lockedItem = lockedItem;
+        this.appliedItem = appliedItem;
         this.actions = actions;
         this.permission = permission;
         this.type = type;
@@ -119,14 +130,16 @@ public class ArmorItem extends WrappedGuiItem {
     public ArmorItem(
             @NotNull final ItemStack itemStack,
             final String id,
-            final List<String> lockedLore,
+            final ItemStack lockedItem,
+            final ItemStack appliedItem,
             final String permission,
             final Type type,
             final boolean dyeable,
             final int dye) {
         super(itemStack);
         this.id = id;
-        this.lockedLore = lockedLore;
+        this.lockedItem = lockedItem;
+        this.appliedItem = appliedItem;
         this.actions = new ArrayList<>();
         this.permission = permission;
         this.type = type;
@@ -137,14 +150,16 @@ public class ArmorItem extends WrappedGuiItem {
     public ArmorItem(
             @NotNull final Material material,
             final String id,
-            final List<String> lockedLore,
+            final ItemStack lockedItem,
+            final ItemStack appliedItem,
             final String permission,
             final Type type,
             final boolean dyeable,
             final int dye) {
         super(material);
         this.id = id;
-        this.lockedLore = lockedLore;
+        this.lockedItem = lockedItem;
+        this.appliedItem = appliedItem;
         this.actions = new ArrayList<>();
         this.permission = permission;
         this.type = type;
@@ -156,14 +171,16 @@ public class ArmorItem extends WrappedGuiItem {
             @NotNull final Material material,
             @Nullable final GuiAction<InventoryClickEvent> action,
             final String id,
-            final List<String> lockedLore,
+            final ItemStack lockedItem,
+            final ItemStack appliedItem,
             final String permission,
             final Type type,
             final boolean dyeable,
             final int dye) {
         super(material, action);
         this.id = id;
-        this.lockedLore = lockedLore;
+        this.lockedItem = lockedItem;
+        this.appliedItem = appliedItem;
         this.actions = new ArrayList<>();
         this.permission = permission;
         this.type = type;
@@ -172,10 +189,10 @@ public class ArmorItem extends WrappedGuiItem {
     }
 
     protected ArmorItem(final ArmorItem armorItem) {
-        super(armorItem.getItemStack(), null);
+        super(armorItem.getItemStack().clone(), null);
         this.id = armorItem.getId();
-        this.lockedLore = new ArrayList<>();
-        Collections.copy(armorItem.getLockedLore(), this.lockedLore);
+        this.lockedItem = armorItem.getLockedItem().clone();
+        this.appliedItem = armorItem.getAppliedItem().clone();
         this.actions = armorItem.getActions();
         this.permission = armorItem.getPermission();
         this.type = armorItem.getType();
@@ -192,7 +209,8 @@ public class ArmorItem extends WrappedGuiItem {
             return new BalloonItem(
                     new ItemStack(Material.AIR),
                     id,
-                    new ArrayList<>(),
+                    new ItemStack(Material.AIR),
+                    new ItemStack(Material.AIR),
                     "",
                     type,
                     -1,
@@ -202,7 +220,8 @@ public class ArmorItem extends WrappedGuiItem {
         return new ArmorItem(
                 new ItemStack(Material.AIR),
                 id,
-                new ArrayList<>(),
+                new ItemStack(Material.AIR),
+                new ItemStack(Material.AIR),
                 "",
                 type,
                 -1
@@ -213,8 +232,12 @@ public class ArmorItem extends WrappedGuiItem {
         return id;
     }
 
-    public List<String> getLockedLore() {
-        return lockedLore;
+    public ItemStack getLockedItem() {
+        return lockedItem;
+    }
+
+    public ItemStack getAppliedItem() {
+        return appliedItem;
     }
 
     public List<CosmeticGuiAction> getActions() {
@@ -246,22 +269,12 @@ public class ArmorItem extends WrappedGuiItem {
         this.dye = dye;
     }
 
-    public ItemStack getColored() {
-        return this.color(super.getItemStack());
-    }
-
-    public ItemStack getItemStack(final boolean allowed) {
-        final ItemStack itemStack;
-
-        if (allowed) {
-            itemStack = super.getItemStack();
-        } else {
-            itemStack = ItemBuilder.from(this.getItemStack()).
-                    lore(this.lockedLore).
-                    build();
-        }
-
-        return this.color(itemStack);
+    public ItemStack getItemStack(final Status status) {
+        return this.color(switch (status) {
+            case ALLOWED -> super.getItemStack();
+            case LOCKED -> this.getLockedItem();
+            case APPLIED -> this.getAppliedItem();
+        });
     }
 
     private ItemStack color(final ItemStack itemStack) {
@@ -286,7 +299,7 @@ public class ArmorItem extends WrappedGuiItem {
     }
 
     public String getItemName() {
-        final ItemMeta itemMeta = this.getItemStack(true).getItemMeta();
+        final ItemMeta itemMeta = this.getItemStack(Status.ALLOWED).getItemMeta();
         if (itemMeta == null) return this.id;
         return itemMeta.getDisplayName();
     }
@@ -330,5 +343,11 @@ public class ArmorItem extends WrappedGuiItem {
             }
             return null;
         }
+    }
+
+    public enum Status {
+        ALLOWED,
+        LOCKED,
+        APPLIED
     }
 }

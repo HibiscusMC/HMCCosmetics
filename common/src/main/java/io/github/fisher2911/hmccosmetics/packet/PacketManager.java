@@ -8,18 +8,10 @@ import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.MinecraftKey;
 import com.comphenix.protocol.wrappers.Pair;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
-import io.github.fisher2911.nms.ArmorStandPackets;
-import io.github.fisher2911.nms.ArmorStandPackets_1_16_R3;
-import io.github.fisher2911.nms.ArmorStandPackets_1_17_R1;
-import io.github.fisher2911.nms.ArmorStandPackets_1_18_R1;
-import io.github.fisher2911.nms.DestroyPacket;
-import io.github.fisher2911.nms.DestroyPacket_1_16_R3;
-import io.github.fisher2911.nms.DestroyPacket_1_17_R1;
-import io.github.fisher2911.nms.DestroyPacket_1_18_R1;
-import io.github.fisher2911.nms.PlayerPackets;
-import io.github.fisher2911.nms.PlayerPackets_1_16_R3;
-import io.github.fisher2911.nms.PlayerPackets_1_17_R1;
-import io.github.fisher2911.nms.PlayerPackets_1_18_R1;
+import io.github.fisher2911.nms.PacketHelper;
+import io.github.fisher2911.nms.PacketHelper_1_16_R3;
+import io.github.fisher2911.nms.PacketHelper_1_17_R1;
+import io.github.fisher2911.nms.PacketHelper_1_18_R1;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
@@ -32,36 +24,26 @@ import java.util.UUID;
 
 public class PacketManager {
 
-    private static final PlayerPackets playerPackets;
-    private static final DestroyPacket destroyPacket;
-    private static final ArmorStandPackets armorStandPackets;
+    private static final PacketHelper PACKET_HELPER;
 
     static {
         final String version = Bukkit.getVersion();
         if (version.contains("1.16")) {
-            playerPackets = new PlayerPackets_1_16_R3();
-            destroyPacket = new DestroyPacket_1_16_R3();
-            armorStandPackets = new ArmorStandPackets_1_16_R3();
+            PACKET_HELPER = new PacketHelper_1_16_R3();
         } else if (version.contains("1.17")) {
-            playerPackets = new PlayerPackets_1_17_R1();
-            destroyPacket = new DestroyPacket_1_17_R1();
-            armorStandPackets = new ArmorStandPackets_1_17_R1();
+            PACKET_HELPER = new PacketHelper_1_17_R1();
         } else if (version.contains("1.18")) {
-            playerPackets = new PlayerPackets_1_18_R1();
-            destroyPacket = new DestroyPacket_1_18_R1();
-            armorStandPackets = new ArmorStandPackets_1_18_R1();
+            PACKET_HELPER = new PacketHelper_1_18_R1();
         } else {
-            playerPackets = null;
-            destroyPacket = null;
-            armorStandPackets = null;
+            PACKET_HELPER = null;
         }
 
     }
 
     public static PacketContainer getArmorStandMetaContainer(final int armorStandId) {
-        if (armorStandPackets == null)
+        if (PACKET_HELPER == null)
             throw new IllegalStateException("This cannot be used in version: " + Bukkit.getVersion());
-        return armorStandPackets.getArmorStandMeta(armorStandId);
+        return PACKET_HELPER.getArmorStandMeta(armorStandId);
     }
 
     public static PacketContainer getEntitySpawnPacket(
@@ -179,7 +161,7 @@ public class PacketManager {
     }
 
     public static PacketContainer getEntityDestroyPacket(final int entityId) {
-        return destroyPacket.get(entityId);
+        return PACKET_HELPER.getDestroyPacket(entityId);
     }
 
     public static PacketContainer getSoundPacket(
@@ -217,27 +199,27 @@ public class PacketManager {
     }
 
     public static PacketContainer getFakePlayerSpawnPacket(final Location location, final UUID uuid, final int entityId) throws IllegalStateException {
-        if (playerPackets == null)
+        if (PACKET_HELPER == null)
             throw new IllegalStateException("This cannot be used in version: " + Bukkit.getVersion());
-        return playerPackets.getSpawnPacket(location, uuid, entityId);
+        return PACKET_HELPER.getPlayerSpawnPacket(location, uuid, entityId);
     }
 
     public static PacketContainer getFakePlayerInfoPacket(final Player player, final UUID uuid) throws IllegalStateException {
-        if (playerPackets == null)
+        if (PACKET_HELPER == null)
             throw new IllegalStateException("This cannot be used in version: " + Bukkit.getVersion());
-        return playerPackets.getPlayerInfoPacket(player, uuid);
+        return PACKET_HELPER.getPlayerInfoPacket(player, uuid);
     }
 
     public static PacketContainer getPlayerOverlayPacket(final int playerId) throws IllegalStateException {
-        if (playerPackets == null)
+        if (PACKET_HELPER == null)
             throw new IllegalStateException("This cannot be used in version: " + Bukkit.getVersion());
-        return playerPackets.getOverlayPacket(playerId);
+        return PACKET_HELPER.getPlayerOverlayPacket(playerId);
     }
 
     public static PacketContainer getRemovePlayerPacket(final Player player, final UUID uuid, final int entityId) {
-        if (playerPackets == null)
+        if (PACKET_HELPER == null)
             throw new IllegalStateException("This cannot be used in version: " + Bukkit.getVersion());
-        return playerPackets.getRemovePacket(player, uuid, entityId);
+        return PACKET_HELPER.getPlayerRemovePacket(player, uuid, entityId);
     }
 
     public static PacketContainer getSpectatePacket(final int entityId) {

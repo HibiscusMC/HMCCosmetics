@@ -12,6 +12,7 @@ import io.github.fisher2911.hmccosmetics.message.Placeholder;
 import io.github.fisher2911.hmccosmetics.user.User;
 import io.github.fisher2911.hmccosmetics.util.builder.ItemBuilder;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -130,7 +131,7 @@ public class CosmeticGui {
     }
 
     public void open(final User user, final Player player) {
-        final Component component = Adventure.MINI_MESSAGE.deserialize(this.title);
+        final Component component = Adventure.MINI_MESSAGE.deserialize(Placeholder.applyPapiPlaceholders(user.getPlayer(), this.title));
         this.gui = Gui.gui().
                 title(component).
                 rows(this.rows).
@@ -220,9 +221,9 @@ public class CosmeticGui {
         final ItemStack itemStack;
 
         if (!hasPermission) {
-            itemStack = armorItem.getItemStack(false);
+            itemStack = armorItem.getItemStack(ArmorItem.Status.LOCKED);
         } else {
-            itemStack = armorItem.getColored();
+            itemStack = armorItem.getItemStack(ArmorItem.Status.ALLOWED);
         }
 
         return ItemBuilder.from(

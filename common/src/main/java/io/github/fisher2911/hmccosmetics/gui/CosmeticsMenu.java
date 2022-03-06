@@ -2,6 +2,7 @@ package io.github.fisher2911.hmccosmetics.gui;
 
 import dev.triumphteam.gui.guis.GuiItem;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
+import io.github.fisher2911.hmccosmetics.config.ArmorItemSerializer;
 import io.github.fisher2911.hmccosmetics.config.DyeGuiSerializer;
 import io.github.fisher2911.hmccosmetics.config.GuiSerializer;
 import io.github.fisher2911.hmccosmetics.config.ItemSerializer;
@@ -152,7 +153,7 @@ public class CosmeticsMenu {
                     path(Path.of(guiFile.getPath())).
                     defaultOptions(opts ->
                             opts.serializers(build -> {
-                                build.register(WrappedGuiItem.class, ItemSerializer.INSTANCE);
+                                build.register(WrappedGuiItem.class, ArmorItemSerializer.INSTANCE);
                                 build.register(CosmeticGui.class, GuiSerializer.INSTANCE);
                                 build.register(DyeSelectorGui.class, DyeGuiSerializer.INSTANCE);
                             }))

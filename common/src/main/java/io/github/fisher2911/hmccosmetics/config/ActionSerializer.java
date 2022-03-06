@@ -16,6 +16,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 import org.spongepowered.configurate.serialize.TypeSerializer;
@@ -40,18 +41,11 @@ public class ActionSerializer implements TypeSerializer<List<CosmeticGuiAction>>
     private static final String OPEN_MENU = "open-menu";
     private static final String SET_ITEMS = "set-items";
     private static final String REMOVE_COSMETICS = "remove-cosmetics";
-    private static final String ON_EQUIP = "equip";
-    private static final String ON_REMOVE = "unequip";
-    private static final String ANY = "any";
     private static final String SEND_MESSAGE = "send-message";
     private static final String SEND_MESSAGES = "send-messages";
     private static final String SEND_COMMAND = "send-command";
     private static final String SEND_COMMANDS = "send-commands";
     private static final String SOUND = "sound";
-    private static final String SOUND_NAME = "name";
-    private static final String SOUND_VOLUME = "volume";
-    private static final String SOUND_PITCH = "pitch";
-    private static final String SOUND_CATEGORY = "category";
 
     static {
         plugin = HMCCosmetics.getPlugin(HMCCosmetics.class);
@@ -100,32 +94,11 @@ public class ActionSerializer implements TypeSerializer<List<CosmeticGuiAction>>
             final CosmeticGuiAction.When when
     ) {
         final ConfigurationNode openMenuNode = node.node(OPEN_MENU);
-        final ConfigurationNode soundNode = node.node(SOUND);
-        final ConfigurationNode soundNameNode = soundNode.node(SOUND_NAME);
-        final ConfigurationNode volumeNode = soundNode.node(SOUND_VOLUME);
-        final ConfigurationNode pitchNode = soundNode.node(SOUND_PITCH);
-        final ConfigurationNode categoryNode = soundNode.node(SOUND_CATEGORY);
         final ConfigurationNode setItemsNode = node.node(SET_ITEMS);
         final ConfigurationNode removeItemsNode = node.node(REMOVE_COSMETICS);
+        final ConfigurationNode soundNode = node.node(SOUND);
 
         final String openMenu = openMenuNode.getString();
-
-        final SoundData soundData;
-
-        final String soundName = soundNameNode.getString();
-        final String category = categoryNode.getString();
-        final int volume = volumeNode.getInt();
-        final int pitch = pitchNode.getInt();
-        if (soundName == null || category == null) {
-            soundData = null;
-        } else {
-            soundData = new SoundData(
-                    soundName,
-                    EnumWrappers.SoundCategory.valueOf(category),
-                    volume,
-                    pitch
-            );
-        }
 
         final List<ArmorItem.Type> removeCosmeticTypes = this.loadRemoveTypes(removeItemsNode);
 
@@ -133,12 +106,14 @@ public class ActionSerializer implements TypeSerializer<List<CosmeticGuiAction>>
         final Map<Integer, GuiItem> setItems = this.loadSetItems(setItemsNode);
 
         final Consumer<Player> messageConsumer = this.loadMessages(node, plugin);
+        final SoundData soundData = this.loadSoundData(soundNode);
 
         return new CosmeticGuiAction(
                 when,
                 event -> {
                     if (click != ClickType.UNKNOWN && event.getClick() != click) return;
                     if (!(event.getWhoClicked() instanceof final Player player)) return;
+
                     if (soundData != null) {
                         soundData.play(player);
                     }
@@ -170,7 +145,7 @@ public class ActionSerializer implements TypeSerializer<List<CosmeticGuiAction>>
             for (final var entry : node.childrenMap().entrySet()) {
                 if (!(entry.getKey() instanceof final Integer slot)) continue;
                 final var key = entry.getValue();
-                final GuiItem guiItem = ItemSerializer.INSTANCE.deserialize(GuiItem.class, key);
+                final GuiItem guiItem = ArmorItemSerializer.INSTANCE.deserialize(GuiItem.class, key);
                 if (guiItem == null) continue;
                 setItems.put(slot, guiItem);
             }
@@ -275,9 +250,16 @@ public class ActionSerializer implements TypeSerializer<List<CosmeticGuiAction>>
         return new ArrayList<>();
     }
 
+    private SoundData loadSoundData(final ConfigurationNode node) {
+        try {
+            return SoundSerializer.INSTANCE.deserialize(SoundData.class, node);
+        } catch (final ConfigurateException exception) {
+            return null;
+        }
+    }
+
     @Override
     public void serialize(final Type type, @Nullable final List<CosmeticGuiAction> obj, final ConfigurationNode node) throws SerializationException {
-
     }
 
 }

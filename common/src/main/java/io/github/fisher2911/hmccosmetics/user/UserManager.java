@@ -130,7 +130,7 @@ public class UserManager {
             final ArmorItem.Type type) {
         final PlayerArmor playerArmor = user.getPlayerArmor();
         final EquipmentSlot slot = type.getSlot();
-        final ItemStack itemStack = this.getCosmeticItem(user, equipment, playerArmor.getItem(type), slot);
+        final ItemStack itemStack = this.getCosmeticItem(user, equipment, playerArmor.getItem(type), ArmorItem.Status.APPLIED, slot);
         if (itemStack != null && itemStack.equals(equipment.getItem(slot))) return;
         final List<Pair<EnumWrappers.ItemSlot, ItemStack>> itemList = new ArrayList<>();
         itemList.add(new Pair<>(EnumWrappers.ItemSlot.valueOf(slot.toString().replace("_", "")), itemStack));
@@ -147,13 +147,15 @@ public class UserManager {
             final BaseUser user,
             final Equipment equipment,
             final ArmorItem armorItem,
-            final EquipmentSlot slot) {
+            final ArmorItem.Status status,
+            final EquipmentSlot slot
+    ) {
         final CosmeticSettings cosmeticSettings = this.settings.getCosmeticSettings();
 
         final Map<String, String> placeholders = Map.of(Placeholder.ALLOWED, Translation.TRUE,
                 Placeholder.ENABLED, Translation.TRUE);
 
-        ItemStack itemStack = ItemBuilder.from(armorItem.getColored()).
+        ItemStack itemStack = ItemBuilder.from(armorItem.getItemStack(status)).
                 namePlaceholders(placeholders).
                 lorePlaceholders(placeholders).
                 build();
