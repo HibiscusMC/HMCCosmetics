@@ -11,12 +11,14 @@ import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.List;
 
 public class TokenLoader {
 
     private static final String FILE_NAME = "tokens.yml";
     private static final String TOKEN_PATH = "tokens";
     private static final String ID_PATH = "id";
+    private static final String COMMANDS_PATH = "commands";
     private final HMCCosmetics plugin;
     private final CosmeticManager cosmeticManager;
 
@@ -46,7 +48,8 @@ public class TokenLoader {
                 if (armorItem == null) {
                     this.plugin.getLogger().severe("Could not find armor item for token: " + id + " with id: " + id);
                 }
-                this.cosmeticManager.addToken(new Token(itemStack, armorItem));
+                final List<String> commands = node.node(COMMANDS_PATH).getList(String.class);
+                this.cosmeticManager.addToken(new Token(itemStack, armorItem, commands));
             }
         } catch (final ConfigurateException exception) {
             this.plugin.getLogger().severe("Error loading tokens!");

@@ -6,6 +6,7 @@ import io.github.fisher2911.hmccosmetics.cosmetic.CosmeticManager;
 import io.github.fisher2911.hmccosmetics.message.Messages;
 import io.github.fisher2911.hmccosmetics.message.Placeholder;
 import io.github.fisher2911.hmccosmetics.user.User;
+import io.github.fisher2911.hmccosmetics.util.builder.ItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -72,7 +73,14 @@ public class TokenGui extends CosmeticGui {
                     return;
                 }
                 final ArmorItem item = token.getArmorItem();
-                inventory.setItem(this.cosmeticSlot, item.getItemStack(ArmorItem.Status.ALLOWED));
+                inventory.setItem(this.cosmeticSlot,
+                        this.applyPlaceholders(
+                                user,
+                                player,
+                                item,
+                                true
+                        )
+                );
                 return;
             }
             if (inHand != null && inHand.getType() != Material.AIR) {
@@ -81,7 +89,7 @@ public class TokenGui extends CosmeticGui {
             }
             tokenItem = inventory.getItem(this.tokenSlot);
             token = this.cosmeticManager.getToken(tokenItem);
-            if (token == null) {
+            if (tokenItem == null || token == null) {
                 event.setCancelled(true);
                 return;
             }
@@ -100,7 +108,12 @@ public class TokenGui extends CosmeticGui {
             tokenItem.setAmount(tokenItem.getAmount() - 1);
             inventory.setItem(this.tokenSlot, tokenItem);
             clicked.setAmount(0);
-            player.addAttachment(this.plugin, armorItem.getPermission(), true);
+            for (final String command : token.getCommands()) {
+                Bukkit.dispatchCommand(
+                        Bukkit.getConsoleSender(),
+                        command.replace(Placeholder.PLAYER, player.getName())
+                );
+            }
             this.messageHandler.sendMessage(
                     player,
                     Messages.TRADED_TOKEN,

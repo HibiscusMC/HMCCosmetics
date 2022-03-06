@@ -3,3 +3,5 @@ tokens:
     id: colorful_hat
     material: emerald
     name: "<green>Colorful hat token"
+    commands:
+      - "lp user %player% permission set cosmetics.colorful_hat"op

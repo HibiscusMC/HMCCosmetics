@@ -1,11 +1,9 @@
 package io.github.fisher2911.hmccosmetics.config;
 
-import com.comphenix.protocol.wrappers.EnumWrappers;
 import dev.triumphteam.gui.guis.GuiItem;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.gui.CosmeticGui;
-import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
 import io.github.fisher2911.hmccosmetics.message.Message;
 import io.github.fisher2911.hmccosmetics.message.MessageHandler;
 import io.github.fisher2911.hmccosmetics.message.Placeholder;
