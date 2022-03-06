@@ -32,7 +32,7 @@ public class WardrobeSettings {
     private static final String ROTATION_SPEED_PATH = "rotation-speed";
     private static final String SPAWN_DELAY_PATH = "spawn-delay";
     private static final String DESPAWN_DELAY_PATH = "despawn-delay";
-    private static final String APPLY_COSMETICS_ON_CLOSE = "apply-cosmetcics-on-close";
+    private static final String APPLY_COSMETICS_ON_CLOSE = "apply-cosmetics-on-close";
     private static final String OPEN_SOUND = "open-sound";
     private static final String CLOSE_SOUND = "close-sound";
     private static final String STATIC_LOCATION_PATH = "wardrobe-location";

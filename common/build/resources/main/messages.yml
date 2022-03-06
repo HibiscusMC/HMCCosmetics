@@ -41,7 +41,7 @@ opened-other-wardrobe: "%prefix% <gradient:#6D9DC5:#45CDE9><red>Opening %player%
 gave-token: "%prefix% <gradient:#6D9DC5:#45CDE9><green>You gave %player% a %id% token"
 received-token: "%prefix% <gradient:#6D9DC5:#45CDE9><green>You were given a %id% token"
 traded-token: "%prefix% <gradient:#6D9DC5:#45CDE9><green>You have received the cosmetic: %id%"
-already-unlocked<green>You have already unlocked the cosmetic: " + %id%);
+already-unlocked: "%prefix% <gradient:#6D9DC5:#45CDE9><green>You have already unlocked the cosmetic: %id%"
 help-command: "<#6D9DC5><st>                  </st> %prefix%  <gradient:#40B7D6:#6D9DC5>HMCCosmetics - Help</gradient> %prefix% <#6D9DC5> <st>                  </st>
 
 
