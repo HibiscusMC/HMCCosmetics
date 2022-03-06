@@ -53,7 +53,7 @@ help-command: "<#6D9DC5><st>                  </st> %prefix%  <gradient:#40B7D6:
 
 <#5AE4B5>- <#40B7D6>/cosmetics dye <gray>\\<BACKPACK/HAT></gray> - <#6D9DC5>Opens dye menu for the specified cosmetic type.
 
-<#5AE4B5>- <#40B7D6>/cosmetics token <gray>\\<IDT> <USERNAME></gray> - <#6D9DC5>Gives player a cosmetic token.
+<#5AE4B5>- <#40B7D6>/cosmetics token <gray>\\<ID> <USERNAME></gray> - <#6D9DC5>Gives player a cosmetic token.
 
 <#5AE4B5>- <#40B7D6>/cosmetics menu <gray>\\<MENU></gray> - <#6D9DC5>Opens the specified menu.
 
