@@ -1,9 +1,7 @@
 package io.github.fisher2911.hmccosmetics.hook;
 
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
-import io.github.fisher2911.hmccosmetics.api.CosmeticItem;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
-import io.github.fisher2911.hmccosmetics.message.Placeholder;
 import io.github.fisher2911.hmccosmetics.message.Translation;
 import io.github.fisher2911.hmccosmetics.user.User;
 import io.github.fisher2911.hmccosmetics.user.UserManager;
@@ -12,9 +10,6 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 public class PAPIExpansion extends PlaceholderExpansion {
@@ -76,7 +71,7 @@ public class PAPIExpansion extends PlaceholderExpansion {
                     for (final ArmorItem item : user.getPlayerArmor().getArmorItems()) {
                         if (item.getType().equals(type)) {
                             if (formatted) {
-                                final String name = item.getItemName();
+                                final String name = item.getName();
                                 if (name.isBlank()) return item.getId().replace("_", "");
                                 return name;
                             }

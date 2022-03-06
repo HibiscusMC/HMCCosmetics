@@ -1,13 +1,15 @@
 package io.github.fisher2911.hmccosmetics.gui;
 
-import com.google.common.collect.HashBiMap;
 import dev.triumphteam.gui.guis.GuiItem;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.cosmetic.CosmeticManager;
 import io.github.fisher2911.hmccosmetics.message.Messages;
 import io.github.fisher2911.hmccosmetics.message.Placeholder;
 import io.github.fisher2911.hmccosmetics.user.User;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -33,28 +35,38 @@ public class TokenGui extends CosmeticGui {
 
     @Override
     public void open(final User user, final Player player) {
-        player.sendMessage("Opened GUI");
         super.open(user, player);
+        this.gui.setDragAction(event -> event.setCancelled(true));
         this.gui.setDefaultClickAction(event -> {
-            player.sendMessage("Test");
             final int slot = event.getSlot();
             final Inventory inventory = event.getClickedInventory();
             if (inventory == null) {
                 event.setCancelled(true);
                 return;
             }
-            if (event.getClickedInventory().equals(event.getView().getBottomInventory())) {
-                player.sendMessage("Same inventory");
-                return;
-            }
-            player.sendMessage("Not same");
-            if (slot != tokenSlot && slot != this.cosmeticSlot) {
+            final ClickType clickType = event.getClick();
+            if (clickType == ClickType.SHIFT_RIGHT || clickType == ClickType.SHIFT_LEFT) {
                 event.setCancelled(true);
                 return;
             }
+            if (event.getClickedInventory().equals(event.getView().getBottomInventory())) return;
+            ItemStack tokenItem = event.getInventory().getItem(this.tokenSlot);
+            if (slot != tokenSlot && slot != this.cosmeticSlot) {
+                event.setCancelled(true);
+                if (tokenItem == null) {
+                    inventory.setItem(this.cosmeticSlot, new ItemStack(Material.AIR));
+                }
+                return;
+            }
             final ItemStack inHand = event.getCursor();
+            Token token;
             if (slot == this.tokenSlot) {
-                final Token token = this.cosmeticManager.getToken(inHand);
+                if (inHand == null || inHand.getType() == Material.AIR) {
+                    if (tokenItem != null && tokenItem.getAmount() > 1 && clickType == ClickType.RIGHT) return;
+                    inventory.setItem(this.cosmeticSlot, new ItemStack(Material.AIR));
+                    return;
+                }
+                token = this.cosmeticManager.getToken(inHand);
                 if (token == null) {
                     event.setCancelled(true);
                     return;
@@ -63,18 +75,16 @@ public class TokenGui extends CosmeticGui {
                 inventory.setItem(this.cosmeticSlot, item.getItemStack(ArmorItem.Status.ALLOWED));
                 return;
             }
-            final ItemStack tokenItem = event.getInventory().getItem(this.tokenSlot);
-            if (tokenItem == null) {
+            if (inHand != null && inHand.getType() != Material.AIR) {
                 event.setCancelled(true);
                 return;
             }
-            final Token token = this.cosmeticManager.getToken(tokenItem);
+            tokenItem = inventory.getItem(this.tokenSlot);
+            token = this.cosmeticManager.getToken(tokenItem);
             if (token == null) {
                 event.setCancelled(true);
                 return;
             }
-            tokenItem.setAmount(tokenItem.getAmount() - 1);
-            inventory.setItem(this.tokenSlot, tokenItem);
             final ItemStack clicked = event.getCurrentItem();
             final ArmorItem armorItem = token.getArmorItem();
             if (clicked == null) return;
@@ -82,22 +92,26 @@ public class TokenGui extends CosmeticGui {
                 this.messageHandler.sendMessage(
                         player,
                         Messages.ALREADY_UNLOCKED,
-                        Map.of(Placeholder.ID, armorItem.getItemName())
+                        Map.of(Placeholder.ID, armorItem.getName())
                 );
+                event.setCancelled(true);
                 return;
             }
+            tokenItem.setAmount(tokenItem.getAmount() - 1);
+            inventory.setItem(this.tokenSlot, tokenItem);
             clicked.setAmount(0);
             player.addAttachment(this.plugin, armorItem.getPermission(), true);
             this.messageHandler.sendMessage(
                     player,
                     Messages.TRADED_TOKEN,
-                    Map.of(Placeholder.ID, armorItem.getItemName())
+                    Map.of(Placeholder.ID, armorItem.getName())
             );
         });
 
         this.gui.setCloseGuiAction(event -> {
             final Inventory inventory = event.getInventory();
             final ItemStack tokens = inventory.getItem(this.tokenSlot);
+            if (tokens == null) return;
             event.getPlayer().getInventory().addItem(tokens);
             user.setOpenGui(null);
         });

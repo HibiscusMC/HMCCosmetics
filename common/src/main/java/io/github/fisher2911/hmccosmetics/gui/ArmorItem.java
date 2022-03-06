@@ -2,13 +2,10 @@ package io.github.fisher2911.hmccosmetics.gui;
 
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import dev.triumphteam.gui.components.GuiAction;
-import dev.triumphteam.gui.guis.GuiItem;
 import io.github.fisher2911.hmccosmetics.config.CosmeticGuiAction;
 import io.github.fisher2911.hmccosmetics.util.builder.ColorBuilder;
-import io.github.fisher2911.hmccosmetics.util.builder.ItemBuilder;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.bukkit.Color;
@@ -16,12 +13,12 @@ import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class ArmorItem extends WrappedGuiItem {
 
+    private final String name;
     private final String id;
     private final ItemStack lockedItem;
     private final ItemStack appliedItem;
@@ -34,6 +31,7 @@ public class ArmorItem extends WrappedGuiItem {
     public ArmorItem(
             @NotNull final ItemStack itemStack,
             final List<CosmeticGuiAction> actions,
+            final String name,
             final String id,
             final ItemStack lockedItem,
             final ItemStack appliedItem,
@@ -41,7 +39,7 @@ public class ArmorItem extends WrappedGuiItem {
             final Type type,
             final int dye) {
         super(itemStack, null);
-
+        this.name = name;
         this.id = id;
         this.lockedItem = lockedItem;
         this.appliedItem = appliedItem;
@@ -53,6 +51,7 @@ public class ArmorItem extends WrappedGuiItem {
 
     public ArmorItem(
             @NotNull final ItemStack itemStack,
+            final String name,
             final String id,
             final ItemStack lockedItem,
             final ItemStack appliedItem,
@@ -61,6 +60,7 @@ public class ArmorItem extends WrappedGuiItem {
             final int dye) {
         super(itemStack);
         this.id = id;
+        this.name = name;
         this.lockedItem = lockedItem;
         this.appliedItem = appliedItem;
         this.actions = new ArrayList<>();
@@ -71,6 +71,7 @@ public class ArmorItem extends WrappedGuiItem {
 
     public ArmorItem(
             @NotNull final Material material,
+            final String name,
             final String id,
             final ItemStack lockedItem,
             final ItemStack appliedItem,
@@ -79,6 +80,7 @@ public class ArmorItem extends WrappedGuiItem {
             final int dye) {
         super(material);
         this.id = id;
+        this.name = name;
         this.lockedItem = lockedItem;
         this.appliedItem = appliedItem;
         this.actions = new ArrayList<>();
@@ -90,6 +92,7 @@ public class ArmorItem extends WrappedGuiItem {
     public ArmorItem(
             @NotNull final Material material,
             final List<CosmeticGuiAction> actions,
+            final String name,
             final String id,
             final ItemStack lockedItem,
             final ItemStack appliedItem,
@@ -97,10 +100,11 @@ public class ArmorItem extends WrappedGuiItem {
             final Type type,
             final int dye) {
         super(material, null);
+        this.actions = actions;
         this.id = id;
+        this.name = name;
         this.lockedItem = lockedItem;
         this.appliedItem = appliedItem;
-        this.actions = new ArrayList<>();
         this.permission = permission;
         this.type = type;
         this.dye = dye;
@@ -109,6 +113,7 @@ public class ArmorItem extends WrappedGuiItem {
     public ArmorItem(
             @NotNull final ItemStack itemStack,
             final List<CosmeticGuiAction> actions,
+            final String name,
             final String id,
             final ItemStack lockedItem,
             final ItemStack appliedItem,
@@ -117,6 +122,7 @@ public class ArmorItem extends WrappedGuiItem {
             final boolean dyeable,
             final int dye) {
         super(itemStack, null);
+        this.name = name;
         this.id = id;
         this.lockedItem = lockedItem;
         this.appliedItem = appliedItem;
@@ -129,6 +135,7 @@ public class ArmorItem extends WrappedGuiItem {
 
     public ArmorItem(
             @NotNull final ItemStack itemStack,
+            final String name,
             final String id,
             final ItemStack lockedItem,
             final ItemStack appliedItem,
@@ -137,6 +144,7 @@ public class ArmorItem extends WrappedGuiItem {
             final boolean dyeable,
             final int dye) {
         super(itemStack);
+        this.name = name;
         this.id = id;
         this.lockedItem = lockedItem;
         this.appliedItem = appliedItem;
@@ -149,6 +157,7 @@ public class ArmorItem extends WrappedGuiItem {
 
     public ArmorItem(
             @NotNull final Material material,
+            final String name,
             final String id,
             final ItemStack lockedItem,
             final ItemStack appliedItem,
@@ -158,6 +167,7 @@ public class ArmorItem extends WrappedGuiItem {
             final int dye) {
         super(material);
         this.id = id;
+        this.name = name;
         this.lockedItem = lockedItem;
         this.appliedItem = appliedItem;
         this.actions = new ArrayList<>();
@@ -170,6 +180,7 @@ public class ArmorItem extends WrappedGuiItem {
     public ArmorItem(
             @NotNull final Material material,
             @Nullable final GuiAction<InventoryClickEvent> action,
+            final String name,
             final String id,
             final ItemStack lockedItem,
             final ItemStack appliedItem,
@@ -178,6 +189,7 @@ public class ArmorItem extends WrappedGuiItem {
             final boolean dyeable,
             final int dye) {
         super(material, action);
+        this.name = name;
         this.id = id;
         this.lockedItem = lockedItem;
         this.appliedItem = appliedItem;
@@ -190,6 +202,7 @@ public class ArmorItem extends WrappedGuiItem {
 
     protected ArmorItem(final ArmorItem armorItem) {
         super(armorItem.getItemStack().clone(), null);
+        this.name = armorItem.getName();
         this.id = armorItem.getId();
         this.lockedItem = armorItem.getLockedItem().clone();
         this.appliedItem = armorItem.getAppliedItem().clone();
@@ -209,6 +222,7 @@ public class ArmorItem extends WrappedGuiItem {
             return new BalloonItem(
                     new ItemStack(Material.AIR),
                     id,
+                    id,
                     new ItemStack(Material.AIR),
                     new ItemStack(Material.AIR),
                     "",
@@ -219,6 +233,7 @@ public class ArmorItem extends WrappedGuiItem {
         }
         return new ArmorItem(
                 new ItemStack(Material.AIR),
+                id,
                 id,
                 new ItemStack(Material.AIR),
                 new ItemStack(Material.AIR),
@@ -298,10 +313,8 @@ public class ArmorItem extends WrappedGuiItem {
         return new ArmorItem(this);
     }
 
-    public String getItemName() {
-        final ItemMeta itemMeta = this.getItemStack(Status.ALLOWED).getItemMeta();
-        if (itemMeta == null) return this.id;
-        return itemMeta.getDisplayName();
+    public String getName() {
+        return this.name;
     }
 
     public enum Type {

@@ -379,7 +379,10 @@ public class CosmeticsCommand extends CommandBase {
 
     @SubCommand("token")
     @Permission(io.github.fisher2911.hmccosmetics.message.Permission.GIVE_TOKEN)
-    public void token(final CommandSender sender, @Completion("#tokens") final String tokenId, @me.mattstudios.mf.annotations.Optional Player giveTo) {
+    public void token(
+            final CommandSender sender,
+            @Completion("#tokens") final String tokenId,
+            @Completion("#players") @me.mattstudios.mf.annotations.Optional Player giveTo) {
         if (!(sender instanceof Player) && giveTo == null) {
             this.messageHandler.sendMessage(
                     sender,
@@ -399,7 +402,7 @@ public class CosmeticsCommand extends CommandBase {
             return;
         }
         giveTo.getInventory().addItem(token.getItemStack().clone());
-        final String tokenName = token.getArmorItem().getItemName();
+        final String tokenName = token.getArmorItem().getName();
         this.messageHandler.sendMessage(
                 sender,
                 Messages.GAVE_TOKEN,

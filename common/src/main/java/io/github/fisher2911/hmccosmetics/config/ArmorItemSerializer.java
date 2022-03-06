@@ -30,8 +30,9 @@ public class ArmorItemSerializer implements TypeSerializer<WrappedGuiItem> {
     private ArmorItemSerializer() {
     }
 
-    private static final String ITEM = "item";
+    private static final String NAME = "name";
     private static final String LOCKED_LORE = "locked-lore";
+    private static final String APPLIED_LORE = "applied-lore";
     private static final String LOCKED_ITEM = "locked-item";
     private static final String APPLIED_ITEM = "applied-item";
     private static final String PERMISSION = "permission";
@@ -54,7 +55,9 @@ public class ArmorItemSerializer implements TypeSerializer<WrappedGuiItem> {
     @Override
     public WrappedGuiItem deserialize(final Type type, final ConfigurationNode source)
             throws SerializationException {
+        final ConfigurationNode nameNode = source.node(NAME);
         final ConfigurationNode lockedLoreNode = source.node(LOCKED_LORE);
+        final ConfigurationNode appliedLoreNode = source.node(APPLIED_LORE);
         final ConfigurationNode lockedItemNode = source.node(LOCKED_ITEM);
         final ConfigurationNode appliedItemNode = source.node(APPLIED_ITEM);
         final ConfigurationNode permissionNode = source.node(PERMISSION);
@@ -76,7 +79,12 @@ public class ArmorItemSerializer implements TypeSerializer<WrappedGuiItem> {
             lockedItem = ItemBuilder.from(itemStack.clone()).lore(lockedLore).build();
         }
         ItemStack appliedItem = ItemSerializer.INSTANCE.deserialize(ItemStack.class, appliedItemNode);
-        if (appliedItem == null) appliedItem = itemStack.clone();
+        if (appliedItem == null) {
+            final List<String> appliedLore = Utils.replaceIfNull(appliedLoreNode.getList(String.class),
+                            new ArrayList<String>()).
+                    stream().map(StringUtils::parseStringToString).collect(Collectors.toList());
+            appliedItem = ItemBuilder.from(itemStack.clone()).lore(appliedLore).build();
+        }
 
         final boolean dyeable = dyeableNode.getBoolean();
 
@@ -95,6 +103,7 @@ public class ArmorItemSerializer implements TypeSerializer<WrappedGuiItem> {
                 return new BalloonItem(
                         itemStack,
                         actions,
+                        Utils.replaceIfNull(nameNode.getString(), ""),
                         Utils.replaceIfNull(idNode.getString(), ""),
                         lockedItem,
                         appliedItem,
@@ -109,6 +118,7 @@ public class ArmorItemSerializer implements TypeSerializer<WrappedGuiItem> {
             return new ArmorItem(
                     itemStack,
                     actions,
+                    Utils.replaceIfNull(nameNode.getString(), ""),
                     Utils.replaceIfNull(idNode.getString(), ""),
                     lockedItem,
                     appliedItem,
