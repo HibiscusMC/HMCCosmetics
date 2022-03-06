@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "io.github.fisher2911"
-version = "1.10.0-BETA"
+version = "1.10.0"
 description = "Intuitive, easy-to-use cosmetics plugin, designed for servers using resource packs.\n"
 
 repositories {
@@ -73,8 +73,6 @@ tasks {
         dependencies {
             exclude(dependency("org.yaml:snakeyaml"))
         }
-
-        destinationDirectory.set(file("D:\\paper-1.18.1\\plugins"))
     }
 
     javadoc {
