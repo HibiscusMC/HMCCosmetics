@@ -47,7 +47,6 @@ public class HookManager {
         final OraxenHook oraxenHook = new OraxenHook();
         final ItemsAdderHook itemsAdderHook = new ItemsAdderHook();
         final CitizensHook citizensHook = new CitizensHook(this.plugin);
-        final ModelEngineHook modelEngineHook = new ModelEngineHook();
         if (pluginManager.getPlugin("Oraxen") != null) {
             itemHookMap.put(oraxenHook.getIdentifier(), oraxenHook);
         }
@@ -63,6 +62,7 @@ public class HookManager {
             this.citizensHook = null;
         }
         if (pluginManager.getPlugin("ModelEngine") != null) {
+            final ModelEngineHook modelEngineHook = new ModelEngineHook();
             this.registerHook(modelEngineHook.getClass());
             this.modelEngineHook = modelEngineHook;
         } else {

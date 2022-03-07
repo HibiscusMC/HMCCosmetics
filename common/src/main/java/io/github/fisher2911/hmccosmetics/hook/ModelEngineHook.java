@@ -3,26 +3,32 @@ package io.github.fisher2911.hmccosmetics.hook;
 import com.ticxo.modelengine.api.ModelEngineAPI;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
-import com.ticxo.modelengine.api.model.base.BaseEntity;
-import io.github.fisher2911.hmccosmetics.HMCCosmetics;
-import org.bukkit.Bukkit;
+import io.github.fisher2911.hmccosmetics.hook.entity.BalloonEntity;
+import io.github.fisher2911.hmccosmetics.hook.entity.MEGEntity;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
 public class ModelEngineHook implements Hook {
 
+    public ModelEngineHook() {
+    }
+
     private static final String ID = "model-engine";
 
-    public void spawnModel(final String id, final BaseEntity<?> entity) {
-        if (ModelEngineAPI.getModeledEntity(entity.getUniqueId()) != null) return;
+    public void spawnModel(final String id, final BalloonEntity entity) {
+        this.spawnModel(id, new MEGEntity(entity));
+    }
+
+    public void spawnModel(final String id, final MEGEntity entity) {
+        if (ModelEngineAPI.getModeledEntity(entity.getUuid()) != null) return;
         final ActiveModel model = ModelEngineAPI.createActiveModel(id);
         ModeledEntity modeledEntity = ModelEngineAPI.api.getModelManager().createModeledEntity(entity);
         modeledEntity.addActiveModel(model);
     }
 
-    public void addPlayerToModel(final Player player, final String id, final BaseEntity<?> entity) {
-        final ModeledEntity model = ModelEngineAPI.getModeledEntity(entity.getUniqueId());
+    public void addPlayerToModel(final Player player, final String id, final BalloonEntity entity) {
+        final ModeledEntity model = ModelEngineAPI.getModeledEntity(entity.getUuid());
         if (model == null) {
             this.spawnModel(id, entity);
             return;

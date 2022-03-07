@@ -73,6 +73,9 @@ tasks {
         dependencies {
             exclude(dependency("org.yaml:snakeyaml"))
         }
+
+        // todo - remove (Testing only)
+        destinationDirectory.set(file("D:\\paper-1.18.1\\plugins"))
     }
 
     javadoc {
@@ -83,6 +86,7 @@ tasks {
         duplicatesStrategy = DuplicatesStrategy.INCLUDE
         filteringCharset = Charsets.UTF_8.name()
     }
+
 }
 
 java {

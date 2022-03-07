@@ -31,7 +31,6 @@ import java.util.UUID;
 
 public abstract class BaseUser<T> {
 
-    private final HMCCosmetics plugin;
     protected final T id;
     protected final EntityIds entityIds;
     protected final BalloonEntity balloon;
@@ -47,8 +46,7 @@ public abstract class BaseUser<T> {
         this.id = id;
         this.entityIds = entityIds;
         this.playerArmor = playerArmor;
-        this.plugin = HMCCosmetics.getPlugin(HMCCosmetics.class);
-        this.balloon = new BalloonEntity(UUID.randomUUID(), -1);
+        this.balloon = new BalloonEntity(UUID.randomUUID(), -1, EntityType.PUFFERFISH);
     }
 
     @Nullable
@@ -99,7 +97,7 @@ public abstract class BaseUser<T> {
     protected void despawnBalloon() {
         final HookManager hookManager = HookManager.getInstance();
         if (!hookManager.isEnabled(ModelEngineHook.class)) return;
-        hookManager.getModelEngineHook().remove(this.balloon.getUniqueId());
+        hookManager.getModelEngineHook().remove(this.balloon.getUuid());
         PacketManager.sendPacketToOnline(PacketManager.getEntityDestroyPacket(this.getBalloonId()));
         this.viewingBalloon.clear();
     }
@@ -107,7 +105,7 @@ public abstract class BaseUser<T> {
     protected void despawnBalloon(final Player other) {
         final HookManager hookManager = HookManager.getInstance();
         if (!hookManager.isEnabled(ModelEngineHook.class)) return;
-        hookManager.getModelEngineHook().removePlayerFromModel(other, this.balloon.getUniqueId());
+        hookManager.getModelEngineHook().removePlayerFromModel(other, this.balloon.getUuid());
         PacketManager.sendPacket(other, PacketManager.getEntityDestroyPacket(this.getBalloonId()));
         this.viewingBalloon.remove(other.getUniqueId());
         if (this.viewingBalloon.isEmpty()) {
