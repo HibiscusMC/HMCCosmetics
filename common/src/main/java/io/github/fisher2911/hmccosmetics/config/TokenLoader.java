@@ -47,6 +47,7 @@ public class TokenLoader {
                 final ArmorItem armorItem = this.cosmeticManager.getArmorItem(id);
                 if (armorItem == null) {
                     this.plugin.getLogger().severe("Could not find armor item for token: " + id + " with id: " + id);
+                    continue;
                 }
                 final List<String> commands = node.node(COMMANDS_PATH).getList(String.class);
                 this.cosmeticManager.addToken(new Token(itemStack, armorItem, commands));
