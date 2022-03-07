@@ -181,8 +181,9 @@ public abstract class BaseUser<T> {
         final boolean inViewDistance = this.isInViewDistance(location, other.getLocation(), settings.getCosmeticSettings());
         final boolean shouldShow = shouldShow(other);
         final UUID otherUUID = other.getUniqueId();
+        final boolean hasBackpack = !this.playerArmor.getArmorItem(ArmorItem.Type.BACKPACK).isEmpty();
         if (!this.viewingArmorStand.contains(otherUUID)) {
-            if (!inViewDistance || !shouldShow) {
+            if (!inViewDistance || !shouldShow || !hasBackpack) {
                 if (this.viewingBalloon.contains(otherUUID)) {
                     this.despawnAttached(other);
                 }
@@ -190,7 +191,7 @@ public abstract class BaseUser<T> {
             }
             this.spawnArmorStand(other, location);
             this.viewingArmorStand.add(otherUUID);
-        } else if (!inViewDistance || !shouldShow) {
+        } else if (!inViewDistance || !shouldShow || !hasBackpack) {
             this.despawnAttached(other);
             if (this.viewingBalloon.contains(otherUUID)) {
                 this.despawnBalloon(other);
