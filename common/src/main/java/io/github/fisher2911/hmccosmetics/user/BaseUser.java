@@ -94,12 +94,13 @@ public abstract class BaseUser<T> {
         this.updateOutsideCosmetics(other, location, settings);
     }
 
-    protected void despawnBalloon() {
+    public void despawnBalloon() {
         final HookManager hookManager = HookManager.getInstance();
         if (!hookManager.isEnabled(ModelEngineHook.class)) return;
         hookManager.getModelEngineHook().remove(this.balloon.getUuid());
         PacketManager.sendPacketToOnline(PacketManager.getEntityDestroyPacket(this.getBalloonId()));
         this.viewingBalloon.clear();
+        this.balloon.setAlive(false);
     }
 
     protected void despawnBalloon(final Player other) {
@@ -147,6 +148,8 @@ public abstract class BaseUser<T> {
     }
 
     protected void updateBalloon(final Player other, final Location location, final CosmeticSettings settings) {
+        final HookManager hookManager = HookManager.getInstance();
+        if (!hookManager.isEnabled(ModelEngineHook.class)) return;
         if (!this.viewingBalloon.contains(other.getUniqueId())) {
             this.spawnBalloon(other, location, settings);
             return;
@@ -155,6 +158,7 @@ public abstract class BaseUser<T> {
         final Location previous = this.balloon.getLocation();
         this.balloon.setLocation(actual);
         this.balloon.setVelocity(actual.clone().subtract(previous.clone()).toVector());
+        hookManager.getModelEngineHook().updateModel(this.balloon);
         PacketManager.sendPacket(
                 other,
                 PacketManager.getTeleportPacket(this.getBalloonId(), actual),
@@ -181,15 +185,18 @@ public abstract class BaseUser<T> {
         final UUID otherUUID = other.getUniqueId();
         final boolean hasBackpack = !this.playerArmor.getItem(ArmorItem.Type.BACKPACK).isEmpty();
         if (!this.viewingArmorStand.contains(otherUUID)) {
-            if (!inViewDistance || !shouldShow || !hasBackpack) {
+            if (!inViewDistance || !shouldShow) {
                 if (this.viewingBalloon.contains(otherUUID)) {
-                    this.despawnAttached(other);
+                    this.despawnBalloon(other);
                 }
+                this.despawnAttached();
                 return;
             }
-            this.spawnArmorStand(other, location);
-            this.viewingArmorStand.add(otherUUID);
-        } else if (!inViewDistance || !shouldShow || !hasBackpack) {
+            if (hasBackpack) {
+                this.spawnArmorStand(other, location);
+                this.viewingArmorStand.add(otherUUID);
+            }
+        } else if (!inViewDistance || !shouldShow) {
             this.despawnAttached(other);
             if (this.viewingBalloon.contains(otherUUID)) {
                 this.despawnBalloon(other);

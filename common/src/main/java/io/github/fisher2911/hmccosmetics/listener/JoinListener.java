@@ -55,6 +55,7 @@ public class JoinListener implements Listener {
             final Wardrobe wardrobe = user.getWardrobe();
 
             user.despawnAttached();
+            user.despawnBalloon();
 
             if (wardrobe.isActive()) {
                 Bukkit.getScheduler().runTaskAsynchronously(

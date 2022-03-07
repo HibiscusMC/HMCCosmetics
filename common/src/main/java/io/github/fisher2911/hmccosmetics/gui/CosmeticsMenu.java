@@ -3,9 +3,9 @@ package io.github.fisher2911.hmccosmetics.gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.config.ArmorItemSerializer;
+import io.github.fisher2911.hmccosmetics.config.CosmeticSettings;
 import io.github.fisher2911.hmccosmetics.config.DyeGuiSerializer;
 import io.github.fisher2911.hmccosmetics.config.GuiSerializer;
-import io.github.fisher2911.hmccosmetics.config.ItemSerializer;
 import io.github.fisher2911.hmccosmetics.config.TokenGuiSerializer;
 import io.github.fisher2911.hmccosmetics.cosmetic.CosmeticManager;
 import io.github.fisher2911.hmccosmetics.user.User;
@@ -21,10 +21,8 @@ import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -36,6 +34,7 @@ public class CosmeticsMenu {
     public static final String DEFAULT_TOKEN_MENU = "token-menu";
 
     private final HMCCosmetics plugin;
+    private final CosmeticSettings settings;
     private final CosmeticManager cosmeticManager;
 
     private final Map<String, CosmeticGui> guiMap = new HashMap<>();
@@ -44,6 +43,7 @@ public class CosmeticsMenu {
 
     public CosmeticsMenu(final HMCCosmetics plugin) {
         this.plugin = plugin;
+        this.settings = this.plugin.getSettings().getCosmeticSettings();
         this.cosmeticManager = this.plugin.getCosmeticManager();
     }
 
@@ -77,7 +77,7 @@ public class CosmeticsMenu {
     }
 
     public void openDefault(final HumanEntity humanEntity) {
-        this.openMenu(DEFAULT_MAIN_MENU, humanEntity);
+        this.openMenu(this.settings.getDefaultMenu(), humanEntity);
     }
 
     public void reload() {
@@ -100,7 +100,7 @@ public class CosmeticsMenu {
         final Wardrobe wardrobe = user.getWardrobe();
         if (wardrobe.isActive()) user = wardrobe;
 
-        final CosmeticGui gui = this.getGui(DEFAULT_DYE_MENU);
+        final CosmeticGui gui = this.getGui(this.settings.getDefaultMenu());
 
         if (gui instanceof final DyeSelectorGui dyeSelectorGui) {
             dyeSelectorGui.getGui(user, type).open(player);
@@ -126,9 +126,9 @@ public class CosmeticsMenu {
 
         if (!Path.of(this.plugin.getDataFolder().getPath(),
                 "menus",
-                DEFAULT_MAIN_MENU + ".yml").toFile().exists()) {
+                this.settings.getDefaultMenu() + ".yml").toFile().exists()) {
             this.plugin.saveResource(
-                    new File("menus", DEFAULT_MAIN_MENU + ".yml").getPath(),
+                    new File("menus", this.settings.getDefaultMenu() + ".yml").getPath(),
                     false
             );
         }

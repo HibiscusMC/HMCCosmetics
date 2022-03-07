@@ -48,6 +48,12 @@ public class MEGEntity implements BaseEntity<MEGEntity> {
         this.alive = true;
     }
 
+    public void update(final BalloonEntity entity) {
+        this.velocity = entity.getVelocity();
+        this.location = entity.getLocation();
+        this.alive = entity.isAlive();
+    }
+
     public UUID getUuid() {
         return uuid;
     }
@@ -72,194 +78,194 @@ public class MEGEntity implements BaseEntity<MEGEntity> {
         return entityData;
     }
 
-    //@Override
+    @Override
     public MEGEntity getBase() {
         return this;
     }
 
-    //@Override
+    @Override
     public Location getLocation() {
         return this.location;
     }
 
-    //@Override
+    @Override
     public Vector getVelocity() {
         return velocity;
     }
 
-    //@Override
+    @Override
     public boolean isOnGround() {
         return false;
     }
 
-    //@Override
+    @Override
     public World getWorld() {
         return this.location.getWorld();
     }
 
-    //@Override
+    @Override
     public List<Entity> getNearbyEntities(final double v, final double v1, final double v2) {
         return Collections.emptyList();
     }
 
-    //@Override
+    @Override
     public int getEntityId() {
         return -1;
     }
 
-    //@Override
+    @Override
     public void remove() {
         this.alive = false;
     }
 
-    //@Override
+    @Override
     public boolean isCustomNameVisible() {
         return false;
     }
 
-    //@Override
+    @Override
     public boolean isDead() {
         return !this.alive;
     }
 
-    //@Override
+    @Override
     public UUID getUniqueId() {
         return this.uuid;
     }
 
-    //@Override
+    @Override
     public EntityType getType() {
         return EntityType.PUFFERFISH;
     }
 
-    //@Override
+    @Override
     public boolean isInvulnerable() {
         return true;
     }
 
-    //@Override
+    @Override
     public boolean hasGravity() {
         return false;
     }
 
-    //@Override
+    @Override
     public void setGravity(final boolean flag) {
 
     }
 
-    //@Override
+    @Override
     public double getHealth() {
         return 1;
     }
 
-    //@Override
+    @Override
     public double getMaxHealth() {
         return 1;
     }
 
-    //@Override
+    @Override
     public String getCustomName() {
         return null;
     }
 
-    //@Override
+    @Override
     public void setCustomName(final String s) {
 
     }
 
-    //@Override
+    @Override
     public double getMovementSpeed() {
         return 0;
     }
 
-    //@Override
+    @Override
     public ItemStack getItemInMainHand() {
         return null;
     }
 
-    //@Override
+    @Override
     public ItemStack getItemInOffHand() {
         return null;
     }
 
-    //@Override
+    @Override
     public boolean isLivingEntity() {
         return false;
     }
 
-    //@Override
+    @Override
     public void addPotionEffect(final PotionEffect potion) {
 
     }
 
-    //@Override
+    @Override
     public void removePotionEffect(final PotionEffectType potion) {
 
     }
 
-    //@Override
+    @Override
     public void setEntitySize(final float width, final float height, final float eye) {
 
     }
 
-    //@Override
+    @Override
     public void sendDespawnPacket(final ModeledEntity modeledEntity) {
 
     }
 
-    //@Override
+    @Override
     public void sendSpawnPacket(final ModeledEntity modeledEntity) {
 
     }
 
-    //@Override
+    @Override
     public double getLastX() {
         return this.location.getX();
     }
 
-    //@Override
+    @Override
     public double getLastY() {
         return this.location.getY();
     }
 
-    //@Override
+    @Override
     public double getLastZ() {
         return this.location.getZ();
     }
 
-    //@Override
+    @Override
     public double getWantedX() {
         return this.location.getX();
     }
 
-    //@Override
+    @Override
     public double getWantedY() {
         return this.location.getY();
     }
 
-    //@Override
+    @Override
     public double getWantedZ() {
         return this.location.getZ();
     }
 
-    //@Override
+    @Override
     public void saveModelList(final Map<String, ActiveModel> models) {
 
     }
 
-    //@Override
+    @Override
     public void saveModelInfo(final ModeledEntity model) {
 
     }
 
-    //@Override
+    @Override
     public List<String> getModelList() {
         return Collections.emptyList();
     }
 
     final EntityData entityData = new EntityData();
 
-    //@Override
+    @Override
     public EntityData loadModelInfo() {
         return this.entityData;
     }

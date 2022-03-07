@@ -19,6 +19,13 @@ public class Utils {
         });
     }
 
+    public static <T> T replaceIf(final @Nullable T original, final T replacement, final @Nullable T... checks) {
+        for (final T check : checks) {
+            if (original == check) return replacement;
+        }
+        return original;
+    }
+
     /**
      * @param original Object to be checked if null
      * @param replacement Object returned if original is null

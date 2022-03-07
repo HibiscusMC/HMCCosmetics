@@ -1,27 +1,29 @@
 package io.github.fisher2911.hmccosmetics.config;
 
-import org.bukkit.Bukkit;
+import io.github.fisher2911.hmccosmetics.gui.CosmeticsMenu;
+import io.github.fisher2911.hmccosmetics.util.Utils;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.util.Vector;
-import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 @ConfigSerializable
 public class CosmeticSettings {
 
-    private static final transient String COSMETIC_SETTINGS_PATH = "cosmetic-settings";
-    private static final transient String REQUIRE_EMPTY_HELMET_PATH = "require-empty-helmet";
-    private static final transient String REQUIRE_EMPTY_OFF_HAND_PATH = "require-empty-off-hand";
-    private static final transient String REQUIRE_EMPTY_CHEST_PLATE_PATH = "require-empty-chest-plate";
-    private static final transient String REQUIRE_EMPTY_PANTS_PATH = "require-empty-pants";
-    private static final transient String REQUIRE_EMPTY_BOOTS_PATH = "require-empty-boots";
-    private static final transient String BALLOON_OFFSET = "balloon-offset";
+    private static final String DEFAULT_MENU = "default-menu";
+    private static final String COSMETIC_SETTINGS_PATH = "cosmetic-settings";
+    private static final String REQUIRE_EMPTY_HELMET_PATH = "require-empty-helmet";
+    private static final String REQUIRE_EMPTY_OFF_HAND_PATH = "require-empty-off-hand";
+    private static final String REQUIRE_EMPTY_CHEST_PLATE_PATH = "require-empty-chest-plate";
+    private static final String REQUIRE_EMPTY_PANTS_PATH = "require-empty-pants";
+    private static final String REQUIRE_EMPTY_BOOTS_PATH = "require-empty-boots";
+    private static final String BALLOON_OFFSET = "balloon-offset";
 
     private static final transient String LOOK_DOWN_PITCH_PATH = "look-down-backpack-remove";
     private static final String VIEW_DISTANCE_PATH = "view-distance";
 
+    private String defaultMenu;
     private boolean requireEmptyHelmet;
     private boolean requireEmptyOffHand;
     private boolean requireEmptyChestPlate;
@@ -32,6 +34,7 @@ public class CosmeticSettings {
     private Vector balloonOffset;
 
     public void load(final FileConfiguration config) {
+        this.defaultMenu = Utils.replaceIf(config.getString(DEFAULT_MENU), CosmeticsMenu.DEFAULT_MAIN_MENU, null, "");
         this.requireEmptyHelmet = config.getBoolean(COSMETIC_SETTINGS_PATH + "." + REQUIRE_EMPTY_HELMET_PATH);
         this.requireEmptyOffHand = config.getBoolean(COSMETIC_SETTINGS_PATH + "." + REQUIRE_EMPTY_OFF_HAND_PATH);
         this.requireEmptyChestPlate = config.getBoolean(COSMETIC_SETTINGS_PATH + "." + REQUIRE_EMPTY_CHEST_PLATE_PATH);
@@ -102,6 +105,10 @@ public class CosmeticSettings {
 
     public int getViewDistance() {
         return viewDistance;
+    }
+
+    public String getDefaultMenu() {
+        return defaultMenu;
     }
 
     public boolean requireEmpty(final EquipmentSlot slot) {

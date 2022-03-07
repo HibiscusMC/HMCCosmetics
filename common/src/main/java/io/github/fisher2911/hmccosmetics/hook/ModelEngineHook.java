@@ -16,6 +16,14 @@ public class ModelEngineHook implements Hook {
 
     private static final String ID = "model-engine";
 
+    public void updateModel(final BalloonEntity entity) {
+        final ModeledEntity model = ModelEngineAPI.getModeledEntity(entity.getUuid());
+
+        if (model == null) return;
+
+        if (model.getEntity() instanceof final MEGEntity e) e.update(entity);
+    }
+
     public void spawnModel(final String id, final BalloonEntity entity) {
         this.spawnModel(id, new MEGEntity(entity));
     }

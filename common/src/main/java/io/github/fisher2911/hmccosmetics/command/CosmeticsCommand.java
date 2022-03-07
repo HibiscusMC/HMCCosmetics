@@ -1,6 +1,7 @@
 package io.github.fisher2911.hmccosmetics.command;
 
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
+import io.github.fisher2911.hmccosmetics.config.CosmeticSettings;
 import io.github.fisher2911.hmccosmetics.config.Settings;
 import io.github.fisher2911.hmccosmetics.config.WardrobeSettings;
 import io.github.fisher2911.hmccosmetics.cosmetic.CosmeticManager;
@@ -42,6 +43,7 @@ public class CosmeticsCommand extends CommandBase {
     private final CosmeticsMenu cosmeticsMenu;
     private final CosmeticManager cosmeticManager;
     private final Settings settings;
+    private final CosmeticSettings cosmeticSettings;
 
     public CosmeticsCommand(final HMCCosmetics plugin) {
         this.plugin = plugin;
@@ -50,19 +52,20 @@ public class CosmeticsCommand extends CommandBase {
         this.cosmeticsMenu = this.plugin.getCosmeticsMenu();
         this.cosmeticManager = this.plugin.getCosmeticManager();
         this.settings = this.plugin.getSettings();
+        this.cosmeticSettings = this.settings.getCosmeticSettings();
     }
 
     @Default
     @Permission(io.github.fisher2911.hmccosmetics.message.Permission.DEFAULT_COMMAND)
     public void defaultCommand(final Player player) {
-        this.defaultCommand(player, CosmeticsMenu.DEFAULT_MAIN_MENU);
+        this.defaultCommand(player, this.cosmeticSettings.getDefaultMenu());
     }
 
     @SubCommand("menu")
     @Permission(io.github.fisher2911.hmccosmetics.message.Permission.DEFAULT_COMMAND)
     public void defaultCommand(final Player player, @Completion("#menus") @me.mattstudios.mf.annotations.Optional String menu) {
         final Optional<User> optionalUser = this.userManager.get(player.getUniqueId());
-        if (menu == null) menu = CosmeticsMenu.DEFAULT_MAIN_MENU;
+        if (menu == null) menu = this.cosmeticSettings.getDefaultMenu();
         if (optionalUser.isEmpty()) {
             this.cosmeticsMenu.openMenu(menu, player);
             return;

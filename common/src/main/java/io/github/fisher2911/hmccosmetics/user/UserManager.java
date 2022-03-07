@@ -182,7 +182,7 @@ public class UserManager {
         return itemStack;
     }
 
-    public void setItem(final BaseUser user, final ArmorItem armorItem) {
+    public void setItem(final BaseUser<?> user, final ArmorItem armorItem) {
         ArmorItem previous = user.getPlayerArmor().getItem(armorItem.getType());
 
         final CosmeticChangeEvent event =
@@ -190,12 +190,12 @@ public class UserManager {
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) return;
 
+        final ArmorItem.Type type = armorItem.getType();
+        if (type == ArmorItem.Type.BALLOON) user.despawnBalloon();
         user.setItem(event.getCosmeticItem().getArmorItem());
         Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () -> {
-            switch (armorItem.getType()) {
-                case HAT, OFF_HAND, CHEST_PLATE, PANTS, BOOTS -> {
-                    this.updateCosmetics(user);
-                }
+            switch (type) {
+                case HAT, OFF_HAND, CHEST_PLATE, PANTS, BOOTS -> this.updateCosmetics(user);
                 case BACKPACK -> {
                     if (user instanceof Wardrobe) user.updateOutsideCosmetics(settings);
                 }
