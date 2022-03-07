@@ -27,7 +27,7 @@ public class LocationSerializer implements TypeSerializer<Location> {
     @Override
     @Nullable
     public Location deserialize(final Type type, final ConfigurationNode source) throws SerializationException {
-        final World world = Bukkit.getWorld(WORLD);
+        final World world = Bukkit.getWorld(source.node(WORLD).getString());
         if (world == null) return null;
         return new Location(
                 world,
