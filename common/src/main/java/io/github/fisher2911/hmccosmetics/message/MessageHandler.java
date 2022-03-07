@@ -67,7 +67,7 @@ public class MessageHandler {
         final String message = this.getPapiPlaceholders(
                 sender,
                 Placeholder.applyPlaceholders(this.getMessage(key), placeholders)
-        );
+        ).replaceAll("[&§]", "");
 
         if (message.isBlank()) return;
 

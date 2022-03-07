@@ -120,6 +120,7 @@ public class CosmeticsMenu {
 
     public void load() {
         this.guiMap.clear();
+        this.cosmeticManager.clearTokens();
         final File file = Path.of(this.plugin.getDataFolder().getPath(),
                 "menus").toFile();
 

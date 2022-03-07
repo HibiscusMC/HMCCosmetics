@@ -64,4 +64,8 @@ public class CosmeticManager {
     public boolean isToken(final ItemStack itemStack) {
         return Keys.hasKey(itemStack, Keys.TOKEN_KEY, PersistentDataType.STRING);
     }
+
+    public void clearTokens() {
+        this.tokenMap.clear();
+    }
 }

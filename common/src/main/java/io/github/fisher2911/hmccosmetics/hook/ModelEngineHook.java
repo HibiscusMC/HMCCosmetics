@@ -46,7 +46,7 @@ public class ModelEngineHook implements Hook {
         if (entity == null) return;
 
         for (final Player player : entity.getPlayerInRange()) {
-            entity.removePlayer(player);
+            entity.removePlayerAsync(player);
         }
 
         entity.getEntity().remove();
