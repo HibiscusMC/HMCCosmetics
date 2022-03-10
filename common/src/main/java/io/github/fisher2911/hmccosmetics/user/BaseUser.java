@@ -189,7 +189,6 @@ public abstract class BaseUser<T> {
                 if (this.viewingBalloon.contains(otherUUID)) {
                     this.despawnBalloon(other);
                 }
-                this.despawnAttached();
                 return;
             }
             if (hasBackpack) {
