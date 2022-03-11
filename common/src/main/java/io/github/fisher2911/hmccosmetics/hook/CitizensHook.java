@@ -5,15 +5,10 @@ import io.github.fisher2911.hmccosmetics.concurrent.Threads;
 import io.github.fisher2911.hmccosmetics.config.Settings;
 import io.github.fisher2911.hmccosmetics.database.Database;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
-import io.github.fisher2911.hmccosmetics.hook.Hook;
 import io.github.fisher2911.hmccosmetics.task.InfiniteTask;
 import io.github.fisher2911.hmccosmetics.user.NPCUser;
 import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.event.NPCDeathEvent;
-import net.citizensnpcs.api.event.NPCDespawnEvent;
-import net.citizensnpcs.api.event.NPCRemoveEvent;
-import net.citizensnpcs.api.event.NPCSpawnEvent;
-import net.citizensnpcs.api.event.PlayerCreateNPCEvent;
+import net.citizensnpcs.api.event.*;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -23,11 +18,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class CitizensHook implements Hook, Listener {
@@ -74,11 +65,13 @@ public class CitizensHook implements Hook, Listener {
         final NPC npc = CitizensAPI.getNPCRegistry().getById(id);
         if (npc == null) return false;
         final NPCUser user = this.npcs.get(npc.getId());
+        final Entity entity = npc.getEntity();
+        if (entity == null) return false;
         if (user == null) {
             Threads.getInstance().execute(() -> {
                 this.database.loadNPCUser(
                         npc.getId(),
-                        npc.getEntity(),
+                        entity,
                         npcUser ->
                                 Bukkit.getScheduler().runTask(
                                         this.plugin,
@@ -133,12 +126,12 @@ public class CitizensHook implements Hook, Listener {
 
     private void loadNpc(final NPC npc) {
         if (Bukkit.getPlayer(npc.getUniqueId()) != null) return;
-        if (npc.getEntity() == null) return;
-
+        final Entity entity = npc.getEntity();
+        if (entity == null) return;
         Bukkit.getScheduler().runTaskLater(this.plugin,
                 () -> Threads.getInstance().execute(() -> this.database.loadNPCUser(
                         npc.getId(),
-                        npc.getEntity(),
+                        entity,
                         user -> Bukkit.getScheduler().runTask(
                                 this.plugin,
                                 () -> {
