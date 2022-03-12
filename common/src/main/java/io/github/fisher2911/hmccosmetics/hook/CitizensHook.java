@@ -123,7 +123,7 @@ public class CitizensHook implements Hook, Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onNpcLoad(final PlayerCreateNPCEvent event) {
-       this.loadNpc(event.getNPC());
+        this.loadNpc(event.getNPC());
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
@@ -133,12 +133,13 @@ public class CitizensHook implements Hook, Listener {
 
     private void loadNpc(final NPC npc) {
         if (Bukkit.getPlayer(npc.getUniqueId()) != null) return;
-        if (npc.getEntity() == null) return;
+        final Entity entity = npc.getEntity();
+        if (entity == null) return;
 
         Bukkit.getScheduler().runTaskLater(this.plugin,
                 () -> Threads.getInstance().execute(() -> this.database.loadNPCUser(
                         npc.getId(),
-                        npc.getEntity(),
+                        entity,
                         user -> Bukkit.getScheduler().runTask(
                                 this.plugin,
                                 () -> {

@@ -3,7 +3,6 @@ package io.github.fisher2911.hmccosmetics.user;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.Pair;
-import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.config.CosmeticSettings;
 import io.github.fisher2911.hmccosmetics.config.Settings;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
@@ -46,7 +45,11 @@ public abstract class BaseUser<T> {
         this.id = id;
         this.entityIds = entityIds;
         this.playerArmor = playerArmor;
-        this.balloon = new BalloonEntity(UUID.randomUUID(), -1, EntityType.PUFFERFISH);
+        if (!HookManager.getInstance().isEnabled(ModelEngineHook.class)) {
+            this.balloon = null;
+        } else {
+            this.balloon = new BalloonEntity(UUID.randomUUID(), -1, EntityType.PUFFERFISH);
+        }
     }
 
     @Nullable
@@ -97,7 +100,7 @@ public abstract class BaseUser<T> {
     public void despawnBalloon() {
         final HookManager hookManager = HookManager.getInstance();
         if (!hookManager.isEnabled(ModelEngineHook.class)) return;
-        hookManager.getModelEngineHook().remove(this.balloon.getUuid());
+        this.balloon.remove();
         PacketManager.sendPacketToOnline(PacketManager.getEntityDestroyPacket(this.getBalloonId()));
         this.viewingBalloon.clear();
         this.balloon.setAlive(false);
@@ -106,7 +109,7 @@ public abstract class BaseUser<T> {
     protected void despawnBalloon(final Player other) {
         final HookManager hookManager = HookManager.getInstance();
         if (!hookManager.isEnabled(ModelEngineHook.class)) return;
-        hookManager.getModelEngineHook().removePlayerFromModel(other, this.balloon.getUuid());
+        this.balloon.removePlayerFromModel(other);
         PacketManager.sendPacket(other, PacketManager.getEntityDestroyPacket(this.getBalloonId()));
         this.viewingBalloon.remove(other.getUniqueId());
         if (this.viewingBalloon.isEmpty()) {
@@ -127,9 +130,8 @@ public abstract class BaseUser<T> {
         if (!this.viewingBalloon.contains(other.getUniqueId())) {
             this.viewingBalloon.add(other.getUniqueId());
             this.balloon.setLocation(actual);
-            final ModelEngineHook hook = hookManager.getModelEngineHook();
-            hook.spawnModel(id, this.balloon);
-            hook.addPlayerToModel(other, id, this.balloon);
+            this.balloon.spawnModel(id);
+            this.balloon.addPlayerToModel(other, id);
         }
         this.updateBalloon(other, location, settings);
         PacketManager.sendPacket(
@@ -158,7 +160,8 @@ public abstract class BaseUser<T> {
         final Location previous = this.balloon.getLocation();
         this.balloon.setLocation(actual);
         this.balloon.setVelocity(actual.clone().subtract(previous.clone()).toVector());
-        hookManager.getModelEngineHook().updateModel(this.balloon);
+//        hookManager.getModelEngineHook().updateModel(this.balloon);
+        this.balloon.updateModel();
         PacketManager.sendPacket(
                 other,
                 PacketManager.getTeleportPacket(this.getBalloonId(), actual),

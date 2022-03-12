@@ -22,6 +22,7 @@ public class MEGEntity implements BaseEntity<MEGEntity> {
 
     private final UUID uuid;
     private final int entityId;
+    private final EntityType entityType;
     private Vector velocity = new Vector(0, 0, 0);
     private Location location;
     private boolean alive;
@@ -29,22 +30,25 @@ public class MEGEntity implements BaseEntity<MEGEntity> {
     public MEGEntity(final BalloonEntity entity) {
         this.uuid = entity.getUuid();
         this.entityId = entity.getEntityId();
+        this.entityType = entity.getType();
         this.velocity = entity.getVelocity();
         this.location = entity.getLocation();
         this.alive = entity.isAlive();
     }
 
-    protected MEGEntity(final UUID uuid, final int entityId, final Vector velocity, final Location location, final boolean alive) {
+    protected MEGEntity(final UUID uuid, final int entityId, final EntityType entityType, final Vector velocity, final Location location, final boolean alive) {
         this.uuid = uuid;
         this.entityId = entityId;
+        this.entityType = entityType;
         this.velocity = velocity;
         this.location = location;
         this.alive = alive;
     }
 
-    protected MEGEntity(final UUID uuid, final int entityId) {
+    protected MEGEntity(final UUID uuid, final int entityId, final EntityType entityType) {
         this.uuid = uuid;
         this.entityId = entityId;
+        this.entityType = entityType;
         this.alive = true;
     }
 
