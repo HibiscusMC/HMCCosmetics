@@ -5,7 +5,6 @@ import io.github.fisher2911.hmccosmetics.concurrent.Threads;
 import io.github.fisher2911.hmccosmetics.config.Settings;
 import io.github.fisher2911.hmccosmetics.database.Database;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
-import io.github.fisher2911.hmccosmetics.hook.Hook;
 import io.github.fisher2911.hmccosmetics.task.InfiniteTask;
 import io.github.fisher2911.hmccosmetics.user.NPCUser;
 import net.citizensnpcs.api.CitizensAPI;
@@ -75,20 +74,18 @@ public class CitizensHook implements Hook, Listener {
         if (npc == null) return false;
         final NPCUser user = this.npcs.get(npc.getId());
         if (user == null) {
-            Threads.getInstance().execute(() -> {
-                this.database.loadNPCUser(
-                        npc.getId(),
-                        npc.getEntity(),
-                        npcUser ->
-                                Bukkit.getScheduler().runTask(
-                                        this.plugin,
-                                        () -> {
-                                            this.npcs.put(npc.getId(), npcUser);
-                                            this.setNpcCosmetic(npcUser, armorItem);
-                                        }
-                                )
-                );
-            });
+            Threads.getInstance().execute(() -> this.database.loadNPCUser(
+                    npc.getId(),
+                    npc.getEntity(),
+                    npcUser ->
+                            Bukkit.getScheduler().runTask(
+                                    this.plugin,
+                                    () -> {
+                                        this.npcs.put(npc.getId(), npcUser);
+                                        this.setNpcCosmetic(npcUser, armorItem);
+                                    }
+                            )
+            ));
             return true;
         }
         return this.setNpcCosmetic(user, armorItem);
