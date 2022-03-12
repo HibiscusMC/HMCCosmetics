@@ -2,6 +2,7 @@ package io.github.fisher2911.hmccosmetics.config;
 
 import dev.triumphteam.gui.guis.GuiItem;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
+import io.github.fisher2911.hmccosmetics.cosmetic.CosmeticManager;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.gui.CosmeticGui;
 import io.github.fisher2911.hmccosmetics.message.Message;
@@ -39,6 +40,7 @@ public class ActionSerializer implements TypeSerializer<List<CosmeticGuiAction>>
     private static final String OPEN_MENU = "open-menu";
     private static final String SET_ITEMS = "set-items";
     private static final String REMOVE_COSMETICS = "remove-cosmetics";
+    private static final String SET_COSMETICS = "set-cosmetics";
     private static final String SEND_MESSAGE = "send-message";
     private static final String SEND_MESSAGES = "send-messages";
     private static final String SEND_COMMAND = "send-command";
@@ -94,11 +96,13 @@ public class ActionSerializer implements TypeSerializer<List<CosmeticGuiAction>>
         final ConfigurationNode openMenuNode = node.node(OPEN_MENU);
         final ConfigurationNode setItemsNode = node.node(SET_ITEMS);
         final ConfigurationNode removeItemsNode = node.node(REMOVE_COSMETICS);
+        final ConfigurationNode setCosmeticsNode = node.node(SET_COSMETICS);
         final ConfigurationNode soundNode = node.node(SOUND);
 
         final String openMenu = openMenuNode.getString();
 
         final List<ArmorItem.Type> removeCosmeticTypes = this.loadRemoveTypes(removeItemsNode);
+        final List<String> setCosmetics = this.loadSetCosmetics(setCosmeticsNode);
 
         final ClickType click = Utils.stringToEnum(clickType, ClickType.class, ClickType.UNKNOWN);
         final Map<Integer, GuiItem> setItems = this.loadSetItems(setItemsNode);
@@ -122,6 +126,12 @@ public class ActionSerializer implements TypeSerializer<List<CosmeticGuiAction>>
                     final Optional<User> optionalUser = userManager.get(player.getUniqueId());
                     if (optionalUser.isEmpty()) return;
                     final User user = optionalUser.get();
+                    final CosmeticManager cosmeticManager = plugin.getCosmeticManager();
+                    for (final String id : setCosmetics) {
+                        final ArmorItem armorItem = cosmeticManager.getArmorItem(id);
+                        if (armorItem == null) continue;
+                        userManager.setItem(user, armorItem);
+                    }
                     for (final ArmorItem.Type type : removeCosmeticTypes) {
                         userManager.removeItem(user, type);
                     }
@@ -253,6 +263,14 @@ public class ActionSerializer implements TypeSerializer<List<CosmeticGuiAction>>
             return SoundSerializer.INSTANCE.deserialize(SoundData.class, node);
         } catch (final ConfigurateException exception) {
             return null;
+        }
+    }
+
+    private List<String> loadSetCosmetics(final ConfigurationNode node) {
+        try {
+            return node.getList(String.class);
+        } catch (final ConfigurateException exception) {
+            return new ArrayList<>();
         }
     }
 
