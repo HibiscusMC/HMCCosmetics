@@ -21,8 +21,10 @@ import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -157,10 +159,10 @@ public class CosmeticsMenu {
             return;
         }
 
-        final File[] files = file.listFiles();
+        final List<File> files = this.getSubFiles(file);
 
-        if (files == null) {
-            this.plugin.getLogger().severe("Files are null");
+        if (files.isEmpty()) {
+            this.plugin.getLogger().severe("No GUI files found.");
             return;
         }
 
@@ -226,5 +228,20 @@ public class CosmeticsMenu {
             }
 
         }
+    }
+
+    private List<File> getSubFiles(final File dir) {
+        final List<File> files = new ArrayList<>();
+        if (!dir.isDirectory()) return files;
+        final File[] arr = dir.listFiles();
+        if (arr == null) return files;
+        for (final File file : arr) {
+            if (file.isDirectory()) {
+                files.addAll(this.getSubFiles(file));
+                continue;
+            }
+            files.add(file);
+        }
+        return files;
     }
 }
