@@ -50,4 +50,3 @@ body:
       description: "Run `version` in your console and paste the output."
     validations:
       required: true
-diff --git a/.github/ISSUE_TEMPLATE/bug-report.md b/.github/ISSUE_TEMPLATE/bug-report.md
