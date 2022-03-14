@@ -1,6 +1,6 @@
 name: Bug Report
 description: Create a bug report to help us keep track of all bugs that have to be fixed
-title: "[BUG] <title>"
+title: "[BUG] <name for bug>"
 labels: [bug]
 
 body:
