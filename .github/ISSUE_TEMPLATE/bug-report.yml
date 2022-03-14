@@ -50,3 +50,13 @@ body:
       description: "Run `version` in your console and paste the output."
     validations:
       required: true
+  - type: "dropdown"
+    id: "type"
+    attributes:
+      label: "How breaking is the bug?"
+      options:
+        - "Breaking Bug - Plugin unusable"
+        - "Non-breaking Bug - Plugin still usable, but certain features unavailable"
+        - "Minor Bug - Plugin completely functional, but features have non-working aspects"
+    validations:
+      required: true
