@@ -1,13 +1,8 @@
 package io.github.fisher2911.hmccosmetics.gui;
 
-import com.comphenix.protocol.wrappers.EnumWrappers;
 import dev.triumphteam.gui.components.GuiAction;
 import io.github.fisher2911.hmccosmetics.config.CosmeticGuiAction;
 import io.github.fisher2911.hmccosmetics.util.builder.ColorBuilder;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -15,6 +10,9 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ArmorItem extends WrappedGuiItem {
 
@@ -338,13 +336,13 @@ public class ArmorItem extends WrappedGuiItem {
         }
 
         @Nullable
-        public static Type fromWrapper(EnumWrappers.ItemSlot slot) {
+        public static Type fromWrapper(EquipmentSlot slot) {
             return switch (slot) {
                 case HEAD -> Type.HAT;
                 case CHEST -> Type.CHEST_PLATE;
                 case LEGS -> Type.PANTS;
                 case FEET -> Type.BOOTS;
-                case OFFHAND -> Type.OFF_HAND;
+                case OFF_HAND -> Type.OFF_HAND;
                 default -> null;
             };
         }

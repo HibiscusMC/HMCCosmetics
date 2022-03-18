@@ -6,9 +6,9 @@ import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.concurrent.Threads;
-import io.github.fisher2911.hmccosmetics.database.dao.ArmorItemDAO;
-import io.github.fisher2911.hmccosmetics.database.dao.CitizenDAO;
-import io.github.fisher2911.hmccosmetics.database.dao.UserDAO;
+import io.github.fisher2911.hmccosmetics.dao.ArmorItemDAO;
+import io.github.fisher2911.hmccosmetics.dao.CitizenDAO;
+import io.github.fisher2911.hmccosmetics.dao.UserDAO;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
 import io.github.fisher2911.hmccosmetics.user.EntityIds;
@@ -20,11 +20,8 @@ import org.bukkit.entity.Entity;
 
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Random;
 import java.util.SplittableRandom;
 import java.util.UUID;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 public class Database {

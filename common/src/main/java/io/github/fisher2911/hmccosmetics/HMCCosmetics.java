@@ -1,7 +1,6 @@
 package io.github.fisher2911.hmccosmetics;
 
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.ProtocolManager;
+import com.github.retrooper.packetevents.PacketEvents;
 import io.github.fisher2911.hmccosmetics.command.CosmeticsCommand;
 import io.github.fisher2911.hmccosmetics.concurrent.Threads;
 import io.github.fisher2911.hmccosmetics.config.Settings;
@@ -12,8 +11,8 @@ import io.github.fisher2911.hmccosmetics.database.DatabaseFactory;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.gui.CosmeticsMenu;
 import io.github.fisher2911.hmccosmetics.gui.Token;
-import io.github.fisher2911.hmccosmetics.hook.HookManager;
 import io.github.fisher2911.hmccosmetics.hook.CitizensHook;
+import io.github.fisher2911.hmccosmetics.hook.HookManager;
 import io.github.fisher2911.hmccosmetics.hook.item.ItemsAdderHook;
 import io.github.fisher2911.hmccosmetics.listener.ClickListener;
 import io.github.fisher2911.hmccosmetics.listener.CosmeticFixListener;
@@ -28,6 +27,13 @@ import io.github.fisher2911.hmccosmetics.message.Messages;
 import io.github.fisher2911.hmccosmetics.message.Translation;
 import io.github.fisher2911.hmccosmetics.task.TaskManager;
 import io.github.fisher2911.hmccosmetics.user.UserManager;
+import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
+import me.mattstudios.mf.base.CommandManager;
+import me.mattstudios.mf.base.CompletionHandler;
+import org.bstats.bukkit.Metrics;
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -38,18 +44,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import me.mattstudios.mf.base.CommandManager;
-import me.mattstudios.mf.base.CompletionHandler;
-import org.bstats.bukkit.Metrics;
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitTask;
-
 public class HMCCosmetics extends JavaPlugin {
 
     public static final Path PLUGIN_FOLDER = Paths.get("plugins", "HMCCosmetics");
 
-    private ProtocolManager protocolManager;
     private TaskManager taskManager;
     private Settings settings;
     private UserManager userManager;
@@ -63,11 +61,17 @@ public class HMCCosmetics extends JavaPlugin {
     private BukkitTask saveTask;
 
     @Override
+    public void onLoad() {
+        PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
+        PacketEvents.getAPI().getSettings().debug(true);
+        PacketEvents.getAPI().load();
+    }
+
+    @Override
     public void onEnable() {
+        PacketEvents.getAPI().init();
         final int pluginId = 13873;
         final Metrics metrics = new Metrics(this, pluginId);
-
-        this.protocolManager = ProtocolLibrary.getProtocolManager();
         this.taskManager = new TaskManager(this);
         this.taskManager.start();
         this.settings = new Settings(this);
@@ -106,6 +110,7 @@ public class HMCCosmetics extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        PacketEvents.getAPI().terminate();
         this.saveTask.cancel();
         this.database.saveAll();
         this.messageHandler.close();
@@ -235,10 +240,6 @@ public class HMCCosmetics extends JavaPlugin {
 
     public CosmeticsMenu getCosmeticsMenu() {
         return cosmeticsMenu;
-    }
-
-    public ProtocolManager getProtocolManager() {
-        return protocolManager;
     }
 
     public Database getDatabase() {

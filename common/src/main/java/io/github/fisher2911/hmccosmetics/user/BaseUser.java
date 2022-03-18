@@ -1,8 +1,9 @@
 package io.github.fisher2911.hmccosmetics.user;
 
-import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.wrappers.EnumWrappers;
-import com.comphenix.protocol.wrappers.Pair;
+
+import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes;
+import com.github.retrooper.packetevents.protocol.item.type.ItemTypes;
+import com.github.retrooper.packetevents.protocol.player.EquipmentSlot;
 import io.github.fisher2911.hmccosmetics.config.CosmeticSettings;
 import io.github.fisher2911.hmccosmetics.config.Settings;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
@@ -12,19 +13,17 @@ import io.github.fisher2911.hmccosmetics.hook.ModelEngineHook;
 import io.github.fisher2911.hmccosmetics.hook.entity.BalloonEntity;
 import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
 import io.github.fisher2911.hmccosmetics.packet.PacketManager;
+import io.github.retrooper.packetevents.util.SpigotDataHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
@@ -101,7 +100,7 @@ public abstract class BaseUser<T> {
         final HookManager hookManager = HookManager.getInstance();
         if (!hookManager.isEnabled(ModelEngineHook.class)) return;
         this.balloon.remove();
-        PacketManager.sendPacketToOnline(PacketManager.getEntityDestroyPacket(this.getBalloonId()));
+        PacketManager.sendEntityDestroyPacket(this.getBalloonId(), Bukkit.getOnlinePlayers());
         this.viewingBalloon.clear();
         this.balloon.setAlive(false);
     }
@@ -110,7 +109,7 @@ public abstract class BaseUser<T> {
         final HookManager hookManager = HookManager.getInstance();
         if (!hookManager.isEnabled(ModelEngineHook.class)) return;
         this.balloon.removePlayerFromModel(other);
-        PacketManager.sendPacket(other, PacketManager.getEntityDestroyPacket(this.getBalloonId()));
+        PacketManager.sendEntityDestroyPacket(this.getBalloonId(), other);
         this.viewingBalloon.remove(other.getUniqueId());
         if (this.viewingBalloon.isEmpty()) {
             this.despawnBalloon();
@@ -134,19 +133,10 @@ public abstract class BaseUser<T> {
             this.balloon.addPlayerToModel(other, id);
         }
         this.updateBalloon(other, location, settings);
-        PacketManager.sendPacket(
-                other,
-                PacketManager.getEntitySpawnPacket(
-                        actual,
-                        this.getBalloonId(),
-                        this.balloon.getType()
-                ),
-                PacketManager.getInvisibilityPacket(this.getBalloonId()),
-                PacketManager.getLeashPacket(
-                        this.getBalloonId(),
-                        this.getEntityId()
-                )
-        );
+        final int balloonId = this.getBalloonId();
+        PacketManager.sendEntitySpawnPacket(actual, balloonId, EntityTypes.PUFFERFISH, other);
+        PacketManager.sendInvisibilityPacket(balloonId, other);
+        PacketManager.sendLeashPacket(balloonId, this.getEntityId(), other);
     }
 
     protected void updateBalloon(final Player other, final Location location, final CosmeticSettings settings) {
@@ -162,16 +152,13 @@ public abstract class BaseUser<T> {
         this.balloon.setVelocity(actual.clone().subtract(previous.clone()).toVector());
 //        hookManager.getModelEngineHook().updateModel(this.balloon);
         this.balloon.updateModel();
-        PacketManager.sendPacket(
-                other,
-                PacketManager.getTeleportPacket(this.getBalloonId(), actual),
-                PacketManager.getLeashPacket(this.getBalloonId(), this.getEntityId())
-        );
+        final int balloonId = this.getBalloonId();
+        PacketManager.sendTeleportPacket(balloonId, actual, false, other);
+        PacketManager.sendLeashPacket(balloonId, this.getEntityId(), other);
     }
 
     private void spawnArmorStand(final Player other, final Location location) {
-        final PacketContainer packet = PacketManager.getEntitySpawnPacket(location, this.getArmorStandId(), EntityType.ARMOR_STAND);
-        PacketManager.sendPacket(other, packet);
+        PacketManager.sendEntitySpawnPacket(location, this.getArmorStandId(), EntityTypes.ARMOR_STAND, other);
     }
 
     public void updateOutsideCosmetics(final Settings settings) {
@@ -183,7 +170,7 @@ public abstract class BaseUser<T> {
     }
 
     public void updateOutsideCosmetics(final Player other, final Location location, final Settings settings) {
-        final boolean inViewDistance = this.isInViewDistance(location, other.getLocation(), settings.getCosmeticSettings());
+        final boolean inViewDistance = settings.getCosmeticSettings().isInViewDistance(location, other.getLocation());
         final boolean shouldShow = shouldShow(other);
         final UUID otherUUID = other.getUniqueId();
         final boolean hasBackpack = !this.playerArmor.getItem(ArmorItem.Type.BACKPACK).isEmpty();
@@ -212,40 +199,37 @@ public abstract class BaseUser<T> {
             this.despawnBalloon(other);
         }
 
-        final List<Pair<EnumWrappers.ItemSlot, ItemStack>> equipmentList = new ArrayList<>();
+        final List<com.github.retrooper.packetevents.protocol.player.Equipment> equipment = new ArrayList<>();
         final boolean hidden = !this.shouldShow(other);
-        if (hidden) {
-            equipmentList.add(new Pair<>(EnumWrappers.ItemSlot.HEAD,
-                    new ItemStack(Material.AIR)
+        final int lookDownPitch = settings.getCosmeticSettings().getLookDownPitch();
+        final boolean isLookingDown =
+                this.id.equals(other.getUniqueId()) && lookDownPitch
+                        != -1 &&
+                        this.isFacingDown(location, lookDownPitch);
+        if (hidden || isLookingDown) {
+            equipment.add(new com.github.retrooper.packetevents.protocol.player.Equipment(
+                    EquipmentSlot.HELMET,
+                    new com.github.retrooper.packetevents.protocol.item.ItemStack.Builder().
+                            type(ItemTypes.AIR).
+                            build()
             ));
         } else {
-            equipmentList.add(new Pair<>(EnumWrappers.ItemSlot.HEAD,
-                    this.playerArmor.getBackpack().getItemStack(ArmorItem.Status.APPLIED)
+            final com.github.retrooper.packetevents.protocol.item.ItemStack itemStack =
+                    SpigotDataHelper.fromBukkitItemStack(this.playerArmor.getBackpack().getItemStack(ArmorItem.Status.APPLIED));
+            equipment.add(new com.github.retrooper.packetevents.protocol.player.Equipment(
+                    EquipmentSlot.HELMET,
+                    itemStack
             ));
         }
 
         final int armorStandId = this.getArmorStandId();
-        final PacketContainer armorPacket = PacketManager.getEquipmentPacket(equipmentList, armorStandId);
-        final PacketContainer rotationPacket = PacketManager.getRotationPacket(armorStandId, location);
-        final PacketContainer ridingPacket = PacketManager.getRidingPacket(this.getEntityId(), armorStandId);
-        final PacketContainer armorStandMetaContainer = PacketManager.getArmorStandMetaContainer(armorStandId);
-
-        PacketManager.sendPacket(other, armorPacket, armorStandMetaContainer, rotationPacket, ridingPacket);
+        PacketManager.sendEquipmentPacket(equipment, armorStandId, other);
+        PacketManager.sendRotationPacket(armorStandId, location, false, other);
+        PacketManager.sendRidingPacket(this.getEntityId(), armorStandId, other);
+        PacketManager.sendArmorStandMetaContainer(armorStandId, other);
 
         if (hidden) return;
         this.updateBalloon(other, location, settings.getCosmeticSettings());
-
-        final int lookDownPitch = settings.getCosmeticSettings().getLookDownPitch();
-
-        if (lookDownPitch != -1 &&
-                this.isFacingDown(location, lookDownPitch)) {
-            equipmentList.set(0, new Pair<>(EnumWrappers.ItemSlot.HEAD,
-                    new ItemStack(Material.AIR)
-            ));
-
-            if (!this.id.equals(other.getUniqueId())) return;
-            PacketManager.sendPacket(other, PacketManager.getEquipmentPacket(equipmentList, armorStandId));
-        }
     }
 
     private boolean hasBalloon() {
@@ -255,22 +239,17 @@ public abstract class BaseUser<T> {
 
     public abstract boolean shouldShow(final Player other);
 
-    protected boolean isInViewDistance(final Location location, final Location other, final CosmeticSettings settings) {
-        if (!Objects.equals(other.getWorld(), location.getWorld())) return false;
-        return !(other.distanceSquared(location) > settings.getViewDistance() * settings.getViewDistance());
-    }
-
     protected boolean isFacingDown(final Location location, final int pitchLimit) {
         return location.getPitch() > pitchLimit;
     }
 
     public void despawnAttached(final Player other) {
-        PacketManager.sendPacket(other, PacketManager.getEntityDestroyPacket(this.getArmorStandId()));
+        PacketManager.sendEntityDestroyPacket(this.getArmorStandId(), other);
         this.viewingArmorStand.remove(other.getUniqueId());
     }
 
     public void despawnAttached() {
-        PacketManager.sendPacketToOnline(PacketManager.getEntityDestroyPacket(this.getArmorStandId()));
+        PacketManager.sendEntityDestroyPacket(this.getArmorStandId(), Bukkit.getOnlinePlayers());
         this.viewingArmorStand.clear();
     }
 

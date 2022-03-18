@@ -1,8 +1,5 @@
 package io.github.fisher2911.hmccosmetics.user;
 
-import com.comphenix.protocol.wrappers.EnumWrappers;
-import com.comphenix.protocol.wrappers.Pair;
-import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.api.CosmeticItem;
 import io.github.fisher2911.hmccosmetics.api.event.CosmeticChangeEvent;
@@ -18,6 +15,7 @@ import io.github.fisher2911.hmccosmetics.message.Translation;
 import io.github.fisher2911.hmccosmetics.packet.PacketManager;
 import io.github.fisher2911.hmccosmetics.task.InfiniteTask;
 import io.github.fisher2911.hmccosmetics.util.builder.ItemBuilder;
+import io.github.retrooper.packetevents.util.SpigotDataHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -49,7 +47,6 @@ public class UserManager {
 
     public void add(final User user) {
         this.userMap.put(user.getId(), user);
-        this.updateCosmetics(user);
     }
 
     public Optional<User> get(final UUID uuid) {
@@ -78,11 +75,11 @@ public class UserManager {
 
     public void startTeleportTask() {
         // throws an error on first load of registry if this isn't here
-        WrappedDataWatcher.Registry.get(Byte.class);
+//        WrappedDataWatcher.Registry.get(Byte.class);
         this.plugin.getTaskManager().submit(new InfiniteTask(
                 () -> {
                     for (final User user : this.userMap.values()) {
-                        user.updateOutsideCosmetics(this.plugin.getSettings());
+//                        user.updateOutsideCosmetics(this.plugin.getSettings());
                     }
                 }
         ));
@@ -92,7 +89,8 @@ public class UserManager {
         for (final User user : this.userMap.values()) {
             final Player p = user.getPlayer();
             if (p == null) continue;
-            user.updateOutsideCosmetics(player, p.getLocation(), this.settings);
+//            user.updateOutsideCosmetics(player, p.getLocation(), this.settings);
+            player.sendMessage("Resending cosmetics");
             this.updateCosmetics(user, player);
         }
     }
@@ -101,16 +99,14 @@ public class UserManager {
         this.get(uuid).ifPresent(this::updateCosmetics);
     }
 
-    public void updateCosmetics(final BaseUser user) {
+    public void updateCosmetics(final BaseUser<?> user) {
         for (final Player player : Bukkit.getOnlinePlayers()) {
             this.updateCosmetics(user, player);
         }
     }
 
-    public void updateCosmetics(final BaseUser user, final Player other) {
-//        final Player player = user.getPlayer();
+    public void updateCosmetics(final BaseUser<?> user, final Player other) {
         final Equipment equipment = user.getEquipment();
-
         for (final ArmorItem.Type type : ArmorItem.Type.values()) {
             if (type.getSlot() == null) continue;
             this.sendUpdatePacket(
@@ -123,7 +119,7 @@ public class UserManager {
     }
 
     private void sendUpdatePacket(
-            final BaseUser user,
+            final BaseUser<?> user,
             final Player other,
             final Equipment equipment,
             final ArmorItem.Type type) {
@@ -131,14 +127,14 @@ public class UserManager {
         final EquipmentSlot slot = type.getSlot();
         final ItemStack itemStack = this.getCosmeticItem(user, equipment, playerArmor.getItem(type), ArmorItem.Status.APPLIED, slot);
         if (itemStack != null && itemStack.equals(equipment.getItem(slot))) return;
-        final List<Pair<EnumWrappers.ItemSlot, ItemStack>> itemList = new ArrayList<>();
-        itemList.add(new Pair<>(EnumWrappers.ItemSlot.valueOf(slot.toString().replace("_", "")), itemStack));
-        PacketManager.sendPacket(
-                other,
-                PacketManager.getEquipmentPacket(
-                        itemList,
-                        user.getEntityId()
-                )
+        final List<com.github.retrooper.packetevents.protocol.player.Equipment> itemList = new ArrayList<>();
+        itemList.add(new com.github.retrooper.packetevents.protocol.player.Equipment(
+                PacketManager.fromBukkitSlot(slot), SpigotDataHelper.fromBukkitItemStack(itemStack)
+        ));
+        PacketManager.sendEquipmentPacket(
+                itemList,
+                user.getEntityId(),
+                other
         );
     }
 

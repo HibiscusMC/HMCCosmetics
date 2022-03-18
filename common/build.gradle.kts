@@ -22,22 +22,24 @@ repositories {
     maven("https://repo.jeff-media.de/maven2/")
     maven("https://repo.citizensnpcs.co")
     maven("https://mvn.lumine.io/repository/maven-public")
+    maven("https://jitpack.io/")
 }
 
 dependencies {
-    implementation(project(":1.16"))
-    implementation(project(":1.17"))
-    implementation(project(":1.18"))
-    implementation(project(":nms"))
+//    implementation(project(":1.16"))
+//    implementation(project(":1.17"))
+//    implementation(project(":1.18"))
+//    implementation(project(":nms"))
     compileOnly("com.mojang:authlib:1.5.25")
     compileOnly("org.spigotmc:spigot:1.16.5-R0.1-SNAPSHOT")
     compileOnly("org.jetbrains:annotations:22.0.0")
-    compileOnly("com.comphenix.protocol:ProtocolLib:4.7.0")
+//    compileOnly("com.comphenix.protocol:ProtocolLib:4.7.0")
     compileOnly("me.clip:placeholderapi:2.11.1")
     compileOnly("com.github.oraxen:oraxen:-SNAPSHOT")
     compileOnly("com.github.LoneDev6:API-ItemsAdder:2.5.4")
     compileOnly("net.citizensnpcs:citizens-main:2.0.29-SNAPSHOT")
     compileOnly("com.ticxo.modelengine:api:R2.4.1:")
+    implementation("com.github.retrooper.packetevents:spigot:2.0-SNAPSHOT")
     implementation("net.kyori:adventure-api:4.10.0")
     implementation ("net.kyori:adventure-text-minimessage:4.10.0-SNAPSHOT")
     implementation("net.kyori:adventure-platform-bukkit:4.0.1")
@@ -68,6 +70,7 @@ tasks {
         relocate("org.bstats", "io.github.fisher2911.hmccosmetics.bstats")
         relocate("com.zaxxer.hikaricp", "io.github.fisher2911.hmccosmetics.hikaricp")
         relocate("com.j256.ormlite", "io.github.fisher2911.hmccosmetics.ormlite")
+        relocate("com.github.retrooper.packetevents", "io.github.fisher2911.hmccosmetics.packetevents")
         archiveFileName.set("HMCCosmetics.jar")
 
         dependencies {
@@ -100,8 +103,8 @@ bukkit {
     apiVersion = "1.16"
     name = "HMCCosmetics"
     authors = listOf("MasterOfTheFish")
-    softDepend = listOf("Multiverse", "PlaceholderAPI", "Oraxen", "ItemsAdder", "Citizens", "ModelEngine")
-    depend = listOf("ProtocolLib")
+    softDepend = listOf("Multiverse", "PlaceholderAPI", "Oraxen", "ItemsAdder", "Citizens", "ModelEngine", "packetevents")
+//    depend = listOf("ProtocolLib")
     permissions {
         register("hmccosmetics.cmd.default") {
             default = BukkitPluginDescription.Permission.Default.OP

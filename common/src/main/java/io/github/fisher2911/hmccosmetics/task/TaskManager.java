@@ -33,6 +33,10 @@ public class TaskManager {
         this.tasks.add(task);
     }
 
+    public void submit(final Runnable runnable) {
+        this.submit(new ImmediateTask(runnable));
+    }
+
     public void end() {
         this.timer.cancel();
         for (final Task task : this.tasks) {

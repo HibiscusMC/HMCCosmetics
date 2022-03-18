@@ -1,252 +1,467 @@
 package io.github.fisher2911.hmccosmetics.packet;
 
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.ProtocolManager;
-import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.wrappers.EnumWrappers;
-import com.comphenix.protocol.wrappers.MinecraftKey;
-import com.comphenix.protocol.wrappers.Pair;
-import com.comphenix.protocol.wrappers.WrappedDataWatcher;
-import io.github.fisher2911.nms.PacketHelper;
-import io.github.fisher2911.nms.PacketHelper_1_16_R3;
-import io.github.fisher2911.nms.PacketHelper_1_17_R1;
-import io.github.fisher2911.nms.PacketHelper_1_18_R1;
+import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.protocol.entity.data.EntityData;
+import com.github.retrooper.packetevents.protocol.entity.data.EntityDataTypes;
+import com.github.retrooper.packetevents.protocol.entity.type.EntityType;
+import com.github.retrooper.packetevents.protocol.player.Equipment;
+import com.github.retrooper.packetevents.protocol.player.EquipmentSlot;
+import com.github.retrooper.packetevents.protocol.player.UserProfile;
+import com.github.retrooper.packetevents.util.Vector3d;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerAttachEntity;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerDestroyEntities;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityEquipment;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityHeadLook;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityMetadata;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityRelativeMove;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityRotation;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityTeleport;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPlayerInfo;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSetPassengers;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnLivingEntity;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnPlayer;
+import io.github.retrooper.packetevents.util.SpigotDataHelper;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
 public class PacketManager {
+//
+//    private static final PacketHelper PACKET_HELPER;
+//
+//    static {
+//        final String version = Bukkit.getVersion();
+//        if (version.contains("1.16")) {
+//            PACKET_HELPER = new PacketHelper_1_16_R3();
+//        } else if (version.contains("1.17")) {
+//            PACKET_HELPER = new PacketHelper_1_17_R1();
+//        } else if (version.contains("1.18")) {
+//            PACKET_HELPER = new PacketHelper_1_18_R1();
+//        } else {
+//            PACKET_HELPER = null;
+//        }
+//    }
 
-    private static final PacketHelper PACKET_HELPER;
+    public static void sendArmorStandMetaContainer(final int armorStandId, final Collection<? extends Player> sendTo) {
+        sendArmorStandMetaContainer(armorStandId, sendTo.toArray(new Player[0]));
+    }
 
-    static {
-        final String version = Bukkit.getVersion();
-        if (version.contains("1.16")) {
-            PACKET_HELPER = new PacketHelper_1_16_R3();
-        } else if (version.contains("1.17")) {
-            PACKET_HELPER = new PacketHelper_1_17_R1();
-        } else if (version.contains("1.18")) {
-            PACKET_HELPER = new PacketHelper_1_18_R1();
-        } else {
-            PACKET_HELPER = null;
+    public static void sendArmorStandMetaContainer(final int armorStandId, final Player... sendTo) {
+        for (final Player p : sendTo) {
+            PacketEvents.getAPI().getPlayerManager().sendPacket(p, new WrapperPlayServerEntityMetadata(
+                    armorStandId,
+                    List.of(
+                            new EntityData(0, EntityDataTypes.BYTE, (byte) 0x20),
+                            new EntityData(15, EntityDataTypes.BYTE, (byte) 0x10)
+                    )
+            ));
         }
-
     }
 
-    public static PacketContainer getArmorStandMetaContainer(final int armorStandId) {
-        if (PACKET_HELPER == null)
-            throw new IllegalStateException("This cannot be used in version: " + Bukkit.getVersion());
-        return PACKET_HELPER.getArmorStandMeta(armorStandId);
-    }
-
-    public static PacketContainer getEntitySpawnPacket(
-            final Location location,
-            final int entityId,
-            final EntityType entityType) {
-        return getEntitySpawnPacket(location, entityId, entityType, UUID.randomUUID());
-    }
-
-    public static PacketContainer getEntitySpawnPacket(
+    public static void sendEntitySpawnPacket(
             final Location location,
             final int entityId,
             final EntityType entityType,
-            final UUID uuid) {
-        final PacketContainer packet = new PacketContainer(PacketType.Play.Server.SPAWN_ENTITY);
-
-        // Entity ID
-        packet.getIntegers().write(0, entityId);
-        // Entity Type
-//        packet.getIntegers().write(6, 78);
-        // Set location
-        packet.getDoubles().write(0, location.getX());
-        packet.getDoubles().write(1, location.getY());
-        packet.getDoubles().write(2, location.getZ());
-        // Set yaw pitch
-        packet.getIntegers().write(4, (int) location.getPitch());
-        packet.getIntegers().write(5, (int) location.getYaw());
-        // Set UUID
-        packet.getUUIDs().write(0, uuid);
-
-        packet.getEntityTypeModifier().write(0, entityType);
-
-        return packet;
+            final Collection<? extends Player> sendTo) {
+        sendEntitySpawnPacket(location, entityId, entityType, sendTo.toArray(new Player[0]));
     }
 
-    public static PacketContainer getInvisibilityPacket(final int entityId) {
-        final PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
-        packet.getIntegers().write(0, entityId);
-
-        WrappedDataWatcher metaData = new WrappedDataWatcher();
-
-        final WrappedDataWatcher.Serializer byteSerializer = WrappedDataWatcher.Registry.get(Byte.class);
-
-        metaData.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(0, byteSerializer), (byte) (0x20));
-
-        packet.getWatchableCollectionModifier().write(0, metaData.getWatchableObjects());
-        return packet;
-    }
-
-    public static PacketContainer getTeleportPacket(final int entityId, final Location location) {
-        final PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_TELEPORT);
-        packet.getIntegers().write(0, entityId);
-        packet.getDoubles().write(0, location.getX()).write(1, location.getY()).write(2, location.getZ());
-        return packet;
-    }
-
-    public static PacketContainer getMovePacket(final int entityId, final Location from, final Location to) {
-        final PacketContainer packet = new PacketContainer(PacketType.Play.Server.REL_ENTITY_MOVE);
-        final short x = (short) ((to.getX() * 32 - from.getX() * 32) * 128);
-        final short y = (short) ((to.getY() * 32 - from.getY() * 32) * 128);
-        final short z = (short) ((to.getZ() * 32 - from.getZ() * 32) * 128);
-        packet.getIntegers().write(0, entityId);
-        packet.getShorts().write(0, x).write(1, y).write(2, y);
-        return packet;
-    }
-
-    public static PacketContainer getLeashPacket(final int balloonId, final int entityId) {
-        final PacketContainer packet = new PacketContainer(PacketType.Play.Server.ATTACH_ENTITY);
-        packet.getIntegers().write(0, balloonId).write(1, entityId);
-        return packet;
-    }
-
-    public static PacketContainer getEquipmentPacket(
-            final List<Pair<EnumWrappers.ItemSlot, ItemStack>> equipmentList,
-            final int entityId
-    ) {
-
-        final PacketContainer armorPacket = new PacketContainer(
-                PacketType.Play.Server.ENTITY_EQUIPMENT);
-        armorPacket.getIntegers().write(0, entityId);
-
-        try {
-            armorPacket.getSlotStackPairLists().write(0, equipmentList);
-            // for some reason ProtocolLib throws an error the first time this is called
-        } catch (final NullPointerException ignored) {}
-
-        return armorPacket;
-    }
-
-    public static PacketContainer getRotationPacket(final int entityId, final Location location) {
-        final PacketContainer rotationPacket = new PacketContainer(
-                PacketType.Play.Server.ENTITY_HEAD_ROTATION);
-
-        rotationPacket.getIntegers().write(0, entityId);
-        rotationPacket.getBytes().write(0, (byte) (location.getYaw() * 256 / 360));
-
-        return rotationPacket;
-    }
-
-    public static PacketContainer getLookPacket(final int entityId, final Location location) {
-        final PacketContainer rotationPacket = new PacketContainer(
-                PacketType.Play.Server.ENTITY_LOOK);
-
-        rotationPacket.getIntegers().write(0, entityId);
-        rotationPacket.getBytes().write(0, (byte) (location.getYaw() * 256 / 360));
-//        rotationPacket.getBytes().write(1, (byte) (location.getPitch() * 256 / 360));
-
-        return rotationPacket;
-    }
-
-    public static PacketContainer getRidingPacket(final int mountId, final int passengerId) {
-        final PacketContainer ridingPacket = new PacketContainer(PacketType.Play.Server.MOUNT);
-        ridingPacket.
-                getIntegers().
-                write(0, mountId);
-        ridingPacket.getIntegerArrays().write(0, new int[]{passengerId});
-
-        return ridingPacket;
-    }
-
-    public static PacketContainer getEntityDestroyPacket(final int entityId) {
-        return PACKET_HELPER.getDestroyPacket(entityId);
-    }
-
-    public static PacketContainer getSoundPacket(
-            final Player player,
+    public static void sendEntitySpawnPacket(
             final Location location,
-            final MinecraftKey name,
-            final float volume,
-            final float pitch,
-            final EnumWrappers.SoundCategory soundCategory
+            final int entityId,
+            final EntityType entityType,
+            final Player... sendTo) {
+        sendEntitySpawnPacket(location, entityId, entityType, UUID.randomUUID());
+    }
+
+    public static void sendEntitySpawnPacket(
+            final Location location,
+            final int entityId,
+            final EntityType entityType,
+            final UUID uuid,
+            final Collection<? extends Player> sendTo) {
+        sendEntitySpawnPacket(location, entityId, entityType, uuid, sendTo.toArray(new Player[0]));
+    }
+
+    public static void sendEntitySpawnPacket(
+            final Location location,
+            final int entityId,
+            final EntityType entityType,
+            final UUID uuid,
+            final Player... sendTo) {
+        for (final Player p : sendTo) {
+            PacketEvents.getAPI().getPlayerManager().sendPacket(p, new WrapperPlayServerSpawnLivingEntity(
+                    entityId,
+                    uuid,
+                    entityType,
+                    new Vector3d(location.getX(), location.getY(), location.getZ()),
+                    location.getYaw(),
+                    location.getPitch(),
+                    0f,
+                    Vector3d.zero(),
+                    Collections.emptyList()
+            ));
+        }
+    }
+
+    public static void sendInvisibilityPacket(final int entityId, final Collection<? extends Player> sendTo) {
+        sendInvisibilityPacket(entityId, sendTo.toArray(new Player[0]));
+    }
+
+    public static void sendInvisibilityPacket(final int entityId, final Player... sendTo) {
+        for (final Player p : sendTo) {
+            PacketEvents.getAPI().getPlayerManager().sendPacket(p, new WrapperPlayServerEntityMetadata(
+                    entityId,
+                    List.of(new EntityData(0, EntityDataTypes.BYTE, (byte) 0x20))
+            ));
+        }
+    }
+
+    public static void sendTeleportPacket(
+            final int entityId,
+            final Location location,
+            boolean onGround,
+            final Collection<? extends Player> sendTo
     ) {
-        final var manager = ProtocolLibrary.getProtocolManager();
-        final var packet = manager.createPacket(PacketType.Play.Server.CUSTOM_SOUND_EFFECT);
-
-        packet.getMinecraftKeys()
-                .write(
-                        0,
-                        name
-                );
-
-        packet.getSoundCategories()
-                .write(0, EnumWrappers.SoundCategory.valueOf(soundCategory.name()));
-
-        packet.getIntegers()
-                .write(0, location.getBlockX() * 8)
-                .write(
-                        1, location.getBlockY() * 8
-                )
-                .write(2, location.getBlockZ() * 8);
-
-        packet.getFloat()
-                .write(0, volume)
-                .write(1, pitch);
-
-        return packet;
+        sendTeleportPacket(entityId, location, onGround, sendTo.toArray(new Player[0]));
     }
 
-    public static PacketContainer getFakePlayerSpawnPacket(final Location location, final UUID uuid, final int entityId) throws IllegalStateException {
-        if (PACKET_HELPER == null)
-            throw new IllegalStateException("This cannot be used in version: " + Bukkit.getVersion());
-        return PACKET_HELPER.getPlayerSpawnPacket(location, uuid, entityId);
-    }
-
-    public static PacketContainer getFakePlayerInfoPacket(final Player player, final UUID uuid) throws IllegalStateException {
-        if (PACKET_HELPER == null)
-            throw new IllegalStateException("This cannot be used in version: " + Bukkit.getVersion());
-        return PACKET_HELPER.getPlayerInfoPacket(player, uuid);
-    }
-
-    public static PacketContainer getPlayerOverlayPacket(final int playerId) throws IllegalStateException {
-        if (PACKET_HELPER == null)
-            throw new IllegalStateException("This cannot be used in version: " + Bukkit.getVersion());
-        return PACKET_HELPER.getPlayerOverlayPacket(playerId);
-    }
-
-    public static PacketContainer getRemovePlayerPacket(final Player player, final UUID uuid, final int entityId) {
-        if (PACKET_HELPER == null)
-            throw new IllegalStateException("This cannot be used in version: " + Bukkit.getVersion());
-        return PACKET_HELPER.getPlayerRemovePacket(player, uuid, entityId);
-    }
-
-    public static PacketContainer getSpectatePacket(final int entityId) {
-        final PacketContainer packetContainer = new PacketContainer(PacketType.Play.Server.CAMERA);
-        packetContainer.getIntegers().write(0, entityId);
-        return packetContainer;
-    }
-
-    public static void sendPacket(final Player to, final PacketContainer... packets) {
-        final ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
-        try {
-            for (final PacketContainer packet : packets) {
-                protocolManager.sendServerPacket(to, packet);
-            }
-        } catch (final InvocationTargetException exception) {
-            exception.printStackTrace();
+    public static void sendTeleportPacket(
+            final int entityId,
+            final Location location,
+            boolean onGround,
+            final Player... sendTo
+    ) {
+        for (final Player p : sendTo) {
+            PacketEvents.getAPI().getPlayerManager().sendPacket(p, new WrapperPlayServerEntityTeleport(
+                    entityId,
+                    new Vector3d(location.getX(), location.getY(), location.getZ()),
+                    location.getYaw(),
+                    location.getPitch(),
+                    onGround
+            ));
         }
     }
 
-    public static void sendPacketToOnline(final PacketContainer... packets) {
-        for (final Player player : Bukkit.getOnlinePlayers()) {
-            sendPacket(player, packets);
+    public static void sendMovePacket(
+            final int entityId,
+            final Location from,
+            final Location to,
+            final boolean onGround,
+            final Collection<? extends Player> sendTo
+    ) {
+        sendMovePacket(entityId, from, to, onGround, sendTo.toArray(new Player[0]));
+    }
+
+    public static void sendMovePacket(
+            final int entityId,
+            final Location from,
+            final Location to,
+            final boolean onGround,
+            final Player... sendTo
+    ) {
+        for (final Player p : sendTo) {
+            PacketEvents.getAPI().getPlayerManager().sendPacket(p, new WrapperPlayServerEntityRelativeMove(
+                    entityId,
+                    to.getX() - from.getX(),
+                    to.getY() - from.getY(),
+                    to.getZ() - from.getZ(),
+                    onGround
+            ));
         }
     }
 
+    public static void sendLeashPacket(
+            final int balloonId,
+            final int entityId,
+            final Collection<? extends Player> sendTo
+    ) {
+        sendLeashPacket(balloonId, entityId, sendTo.toArray(new Player[0]));
+    }
+
+    public static void sendLeashPacket(
+            final int balloonId,
+            final int entityId,
+            final Player... sendTo
+    ) {
+        for (final Player p : sendTo) {
+            PacketEvents.getAPI().getPlayerManager().sendPacket(p, new WrapperPlayServerAttachEntity(
+                    balloonId,
+                    entityId,
+                    true
+            ));
+        }
+    }
+
+    public static void sendEquipmentPacket(
+            final List<Equipment> equipmentList,
+            final int entityId,
+            final Collection<? extends Player> sendTo
+    ) {
+        sendEquipmentPacket(equipmentList, entityId, sendTo.toArray(new Player[0]));
+    }
+
+    public static void sendEquipmentPacket(
+            final List<Equipment> equipmentList,
+            final int entityId,
+            final Player... sendTo
+    ) {
+        for (final Equipment equipment : equipmentList) {
+            final ItemStack itemStack = SpigotDataHelper.toBukkitItemStack(equipment.getItem());
+        }
+        for (final Player p : sendTo) {
+            PacketEvents.getAPI().getPlayerManager().sendPacket(p, new WrapperPlayServerEntityEquipment(
+                    entityId,
+                    equipmentList
+            ));
+        }
+    }
+
+    public static void sendRotationPacket(
+            final int entityId,
+            final Location location,
+            final boolean onGround,
+            final Collection<? extends Player> sendTo
+    ) {
+        sendRotationPacket(entityId, location, onGround, sendTo.toArray(new Player[0]));
+    }
+
+    public static void sendRotationPacket(
+            final int entityId,
+            final Location location,
+            final boolean onGround,
+            final Player... sendTo
+    ) {
+        for (final Player p : sendTo) {
+            PacketEvents.getAPI().getPlayerManager().sendPacket(p, new WrapperPlayServerEntityRotation(
+                    entityId,
+                    location.getYaw(),
+                    location.getPitch(),
+                    onGround
+            ));
+        }
+    }
+
+    public static void sendLookPacket(
+            final int entityId,
+            final Location location,
+            final Collection<? extends Player> sendTo
+    ) {
+        sendLookPacket(entityId, location, sendTo.toArray(new Player[0]));
+    }
+
+    public static void sendLookPacket(
+            final int entityId,
+            final Location location,
+            final Player... sendTo
+    ) {
+        for (final Player p : sendTo) {
+            PacketEvents.getAPI().getPlayerManager().sendPacket(p, new WrapperPlayServerEntityHeadLook(
+                    entityId,
+                    location.getYaw()
+            ));
+        }
+    }
+
+    public static void sendRidingPacket(
+            final int mountId,
+            final int passengerId,
+            final Collection<? extends Player> sendTo
+    ) {
+        sendRidingPacket(mountId, passengerId, sendTo.toArray(new Player[0]));
+    }
+
+    public static void sendRidingPacket(
+            final int mountId,
+            final int passengerId,
+            final Player... sendTo
+    ) {
+        for (final Player p : sendTo) {
+            PacketEvents.getAPI().getPlayerManager().sendPacket(p, new WrapperPlayServerSetPassengers(
+                    mountId,
+                    new int[]{passengerId}
+            ));
+        }
+    }
+
+    public static void sendEntityDestroyPacket(final int entityId, final Collection<? extends Player> sendTo) {
+        sendEntityDestroyPacket(entityId, sendTo.toArray(new Player[0]));
+    }
+
+    public static void sendEntityDestroyPacket(final int entityId, final Player... sendTo) {
+        for (final Player p : sendTo) {
+            PacketEvents.getAPI().getPlayerManager().sendPacket(p, new WrapperPlayServerDestroyEntities(entityId));
+        }
+    }
+
+//    public static void sendSoundPacket(
+//            final Player player,
+//            final Location location,
+//            final MinecraftKey name,
+//            final float volume,
+//            final float pitch,
+//            final EnumWrappers.SoundCategory soundCategory,
+//            final Player...sendTo
+//    ) {
+//        final var packet = new WrapperPlayServerSoundEffect(
+//
+//        );
+//        final var manager = ProtocolLibrary.getProtocolManager();
+//        final var packet = manager.createPacket(PacketType.Play.Server.CUSTOM_SOUND_EFFECT);
+//
+//        packet.getMinecraftKeys()
+//                .write(
+//                        0,
+//                        name
+//                );
+//
+//        packet.getSoundCategories()
+//                .write(0, EnumWrappers.SoundCategory.valueOf(soundCategory.name()));
+//
+//        packet.getIntegers()
+//                .write(0, location.getBlockX() * 8)
+//                .write(
+//                        1, location.getBlockY() * 8
+//                )
+//                .write(2, location.getBlockZ() * 8);
+//
+//        packet.getFloat()
+//                .write(0, volume)
+//                .write(1, pitch);
+//
+//        return packet;
+//    }
+
+    public static void sendFakePlayerSpawnPacket(
+            final Location location,
+            final UUID uuid,
+            final int entityId,
+            final Collection<? extends Player> sendTo
+    ) {
+        sendFakePlayerSpawnPacket(location, uuid, entityId, sendTo.toArray(new Player[0]));
+    }
+
+    public static void sendFakePlayerSpawnPacket(
+            final Location location,
+            final UUID uuid,
+            final int entityId,
+            final Player... sendTo
+    ) {
+        for (final Player p : sendTo) {
+            PacketEvents.getAPI().getPlayerManager().sendPacket(p, new WrapperPlayServerSpawnPlayer(
+                    entityId,
+                    uuid,
+                    new com.github.retrooper.packetevents.protocol.world.Location(
+                            location.getX(),
+                            location.getY(),
+                            location.getZ(),
+                            location.getYaw(),
+                            location.getPitch()
+                    )
+            ));
+        }
+    }
+
+    public static void sendFakePlayerInfoPacket(
+            final Player player,
+            final UUID uuid,
+            final Collection<? extends Player> sendTo
+    ) {
+        sendFakePlayerInfoPacket(player, uuid, sendTo.toArray(new Player[0]));
+    }
+
+    public static void sendFakePlayerInfoPacket(
+            final Player player,
+            final UUID uuid,
+            final Player... sendTo
+    ) {
+        for (final Player p : sendTo) {
+            PacketEvents.getAPI().getPlayerManager().sendPacket(p, new WrapperPlayServerPlayerInfo(
+                    WrapperPlayServerPlayerInfo.Action.ADD_PLAYER,
+                    new WrapperPlayServerPlayerInfo.PlayerData(
+                            Component.empty(),
+                            new UserProfile(
+                                    uuid,
+                                    player.getDisplayName()
+                            ),
+                            com.github.retrooper.packetevents.protocol.player.GameMode.SURVIVAL,
+                            0
+                    )
+            ));
+        }
+    }
+
+    public static void sendPlayerOverlayPacket(
+            final int playerId,
+            final Collection<? extends Player> sendTo
+    ) {
+        sendPlayerOverlayPacket(playerId, sendTo.toArray(new Player[0]));
+    }
+
+    public static void sendPlayerOverlayPacket(
+            final int playerId,
+            final Player... sendTo
+    ) {
+        final byte mask = 0x01 | 0x02 | 0x04 | 0x08 | 0x010 | 0x020 | 0x40;
+        for (final Player p : sendTo) {
+            PacketEvents.getAPI().getPlayerManager().sendPacket(p, new WrapperPlayServerEntityMetadata(
+                    playerId,
+                    List.of(
+                            new EntityData(17, EntityDataTypes.BYTE,  mask),
+                            new EntityData(15, EntityDataTypes.BYTE, (byte) 0x10)
+                    )
+            ));
+        }
+    }
+
+    public static void sendRemovePlayerPacket(
+            final Player player,
+            final UUID uuid,
+            final Collection<? extends Player> sendTo
+    ) {
+        sendRemovePlayerPacket(player, uuid, sendTo.toArray(new Player[0]));
+    }
+
+    public static void sendRemovePlayerPacket(
+            final Player player,
+            final UUID uuid,
+            final Player... sendTo
+    ) {
+        for (final Player p : sendTo) {
+            PacketEvents.getAPI().getPlayerManager().sendPacket(p, new WrapperPlayServerPlayerInfo(
+                    WrapperPlayServerPlayerInfo.Action.REMOVE_PLAYER,
+                    new WrapperPlayServerPlayerInfo.PlayerData(
+                            Component.empty(),
+                            new UserProfile(
+                                    uuid,
+                                    player.getDisplayName()
+                            ),
+                            com.github.retrooper.packetevents.protocol.player.GameMode.SURVIVAL,
+                            0
+                    )
+            ));
+        }
+    }
+
+    public static void sendSpectatePacket(final int entityId) {
+
+    }
+
+    public static EquipmentSlot fromBukkitSlot(final org.bukkit.inventory.EquipmentSlot slot) {
+        return switch (slot) {
+            case HEAD -> EquipmentSlot.HELMET;
+            case CHEST -> EquipmentSlot.CHESTPLATE;
+            case LEGS -> EquipmentSlot.LEGGINGS;
+            case FEET -> EquipmentSlot.BOOTS;
+            case HAND -> EquipmentSlot.MAINHAND;
+            case OFF_HAND -> EquipmentSlot.OFFHAND;
+        };
+    }
 }

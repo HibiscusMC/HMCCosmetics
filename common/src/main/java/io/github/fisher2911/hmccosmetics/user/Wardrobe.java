@@ -1,6 +1,5 @@
 package io.github.fisher2911.hmccosmetics.user;
 
-import com.comphenix.protocol.events.PacketContainer;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.config.WardrobeSettings;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
@@ -16,7 +15,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -89,28 +87,18 @@ public class Wardrobe extends User {
             return;
         }
 
-        final PacketContainer playerSpawnPacket = PacketManager.getFakePlayerSpawnPacket(
-                this.currentLocation,
-                this.getId(),
-                this.getEntityId()
-        );
-        final PacketContainer playerInfoPacket = PacketManager.getFakePlayerInfoPacket(
-                viewer,
-                this.getId()
-        );
 
 
         Bukkit.getScheduler().runTaskLaterAsynchronously(
                 this.plugin,
                 () -> {
-                    PacketManager.sendPacket(viewer, playerInfoPacket, playerSpawnPacket);
+                    final int entityId = this.getEntityId();
+                    PacketManager.sendFakePlayerSpawnPacket(this.currentLocation, this.getId(), entityId, viewer);
+                    PacketManager.sendFakePlayerInfoPacket(viewer, this.getId(), viewer);
                     this.updateOutsideCosmetics(viewer, this.currentLocation, plugin.getSettings());
-                    PacketManager.sendPacket(
-                            viewer,
-                            PacketManager.getLookPacket(this.getEntityId(), this.currentLocation),
-                            PacketManager.getRotationPacket(this.getEntityId(), this.currentLocation),
-                            PacketManager.getPlayerOverlayPacket(this.getEntityId())
-                    );
+                    PacketManager.sendLookPacket(entityId, this.currentLocation, viewer);
+                    PacketManager.sendRotationPacket(entityId, this.currentLocation, true, viewer);
+                    PacketManager.sendPlayerOverlayPacket(entityId, viewer);
                 },
                 settings.getSpawnDelay()
         );
@@ -125,13 +113,9 @@ public class Wardrobe extends User {
         Bukkit.getScheduler().runTaskLaterAsynchronously(
                 this.plugin,
                 () -> {
-                    PacketManager.sendPacket(
-                            viewer,
-                            PacketManager.getEntityDestroyPacket(this.getEntityId()),
-                            PacketManager.getRemovePlayerPacket(viewer, this.id, this.getEntityId())
-                            // for spectator packets
-//                PacketManager.getEntityDestroyPacket(this.viewerId)
-                    );
+                    final int entityId = this.getEntityId();
+                    PacketManager.sendEntityDestroyPacket(entityId, viewer);
+                    PacketManager.sendRemovePlayerPacket(viewer, this.id, viewer);
                     this.despawnAttached();
                     this.despawnBalloon();
                     this.showPlayer(this.plugin.getUserManager());
@@ -170,19 +154,17 @@ public class Wardrobe extends User {
     private void startSpinTask(final Player player) {
         final AtomicInteger data = new AtomicInteger();
         final int rotationSpeed = this.plugin.getSettings().getWardrobeSettings().getRotationSpeed();
+        final int entityId = this.getEntityId();
         final Task task = new SupplierTask(
                 () -> {
                     if (this.currentLocation == null) return;
                     final Location location = this.currentLocation.clone();
                     final int yaw = data.get();
                     location.setYaw(yaw);
-                    PacketManager.sendPacket(player, PacketManager.getLookPacket(this.getEntityId(), location));
+                    PacketManager.sendLookPacket(entityId, location, player);
                     this.updateOutsideCosmetics(player, location, this.plugin.getSettings());
                     location.setYaw(this.getNextYaw(yaw - 30, rotationSpeed));
-                    PacketManager.sendPacket(
-                            player,
-                            PacketManager.getRotationPacket(this.getEntityId(), location)
-                    );
+                    PacketManager.sendRotationPacket(entityId, location, true, player);
                     data.set(this.getNextYaw(yaw, rotationSpeed));
                 },
                 () -> !this.spawned || this.currentLocation == null
