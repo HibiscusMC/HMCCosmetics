@@ -19,6 +19,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -53,6 +54,9 @@ public abstract class BaseUser<T> {
 
     @Nullable
     public abstract Location getLocation();
+
+    @Nullable
+    public abstract Vector getVelocity();
 
     public T getId() {
         return this.id;
@@ -120,7 +124,6 @@ public abstract class BaseUser<T> {
         final Location actual = location.clone().add(settings.getBalloonOffset());
         final World world = location.getWorld();
         if (world == null) return;
-
         final BalloonItem balloonItem = (BalloonItem) this.playerArmor.getItem(ArmorItem.Type.BALLOON);
         final String id = balloonItem.getModelId();
         final HookManager hookManager = HookManager.getInstance();
@@ -148,6 +151,8 @@ public abstract class BaseUser<T> {
         }
         final Location actual = location.clone().add(settings.getBalloonOffset());
         final Location previous = this.balloon.getLocation();
+        final Vector vector = this.getVelocity();
+        if (vector != null) actual.add(this.getVelocity().multiply(-1));
         this.balloon.setLocation(actual);
         this.balloon.setVelocity(actual.clone().subtract(previous.clone()).toVector());
 //        hookManager.getModelEngineHook().updateModel(this.balloon);
@@ -174,6 +179,7 @@ public abstract class BaseUser<T> {
         final boolean shouldShow = shouldShow(other);
         final UUID otherUUID = other.getUniqueId();
         final boolean hasBackpack = !this.playerArmor.getItem(ArmorItem.Type.BACKPACK).isEmpty();
+        other.sendMessage(this.viewingArmorStand.toString());
         if (!this.viewingArmorStand.contains(otherUUID)) {
             if (!inViewDistance || !shouldShow) {
                 if (this.viewingBalloon.contains(otherUUID)) {
@@ -213,6 +219,7 @@ public abstract class BaseUser<T> {
                             type(ItemTypes.AIR).
                             build()
             ));
+            other.sendMessage("Air");
         } else {
             final com.github.retrooper.packetevents.protocol.item.ItemStack itemStack =
                     SpigotDataHelper.fromBukkitItemStack(this.playerArmor.getBackpack().getItemStack(ArmorItem.Status.APPLIED));
@@ -220,6 +227,7 @@ public abstract class BaseUser<T> {
                     EquipmentSlot.HELMET,
                     itemStack
             ));
+            other.sendMessage("Added " + this.playerArmor.getBackpack().getItemStack(ArmorItem.Status.APPLIED).getType());
         }
 
         final int armorStandId = this.getArmorStandId();
@@ -227,6 +235,7 @@ public abstract class BaseUser<T> {
         PacketManager.sendRotationPacket(armorStandId, location, false, other);
         PacketManager.sendRidingPacket(this.getEntityId(), armorStandId, other);
         PacketManager.sendArmorStandMetaContainer(armorStandId, other);
+        other.sendMessage("Spawned equipment: " + hidden + " : " + shouldShow);
 
         if (hidden) return;
         this.updateBalloon(other, location, settings.getCosmeticSettings());

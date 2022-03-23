@@ -4,7 +4,6 @@ import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.api.CosmeticItem;
 import io.github.fisher2911.hmccosmetics.api.event.CosmeticChangeEvent;
 import io.github.fisher2911.hmccosmetics.concurrent.Threads;
-import io.github.fisher2911.hmccosmetics.config.CosmeticSettings;
 import io.github.fisher2911.hmccosmetics.config.Settings;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
@@ -17,7 +16,6 @@ import io.github.fisher2911.hmccosmetics.task.InfiniteTask;
 import io.github.fisher2911.hmccosmetics.util.builder.ItemBuilder;
 import io.github.retrooper.packetevents.util.SpigotDataHelper;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -79,7 +77,7 @@ public class UserManager {
         this.plugin.getTaskManager().submit(new InfiniteTask(
                 () -> {
                     for (final User user : this.userMap.values()) {
-//                        user.updateOutsideCosmetics(this.plugin.getSettings());
+                        user.updateOutsideCosmetics(this.plugin.getSettings());
                     }
                 }
         ));
@@ -125,7 +123,7 @@ public class UserManager {
             final ArmorItem.Type type) {
         final PlayerArmor playerArmor = user.getPlayerArmor();
         final EquipmentSlot slot = type.getSlot();
-        final ItemStack itemStack = this.getCosmeticItem(user, equipment, playerArmor.getItem(type), ArmorItem.Status.APPLIED, slot);
+        final ItemStack itemStack = this.getCosmeticItem(playerArmor.getItem(type), equipment.getItem(type.getSlot()), ArmorItem.Status.APPLIED, slot);
         if (itemStack != null && itemStack.equals(equipment.getItem(slot))) return;
         final List<com.github.retrooper.packetevents.protocol.player.Equipment> itemList = new ArrayList<>();
         itemList.add(new com.github.retrooper.packetevents.protocol.player.Equipment(
@@ -138,40 +136,29 @@ public class UserManager {
         );
     }
 
-    private ItemStack getCosmeticItem(
-            final BaseUser user,
-            final Equipment equipment,
+    public ItemStack getCosmeticItem(
             final ArmorItem armorItem,
+            final ItemStack wearing,
             final ArmorItem.Status status,
             final EquipmentSlot slot
     ) {
-        final CosmeticSettings cosmeticSettings = this.settings.getCosmeticSettings();
-
         final Map<String, String> placeholders = Map.of(Placeholder.ALLOWED, Translation.TRUE,
                 Placeholder.ENABLED, Translation.TRUE);
+
+        if (armorItem.isEmpty()) return wearing;
 
         ItemStack itemStack = ItemBuilder.from(armorItem.getItemStack(status)).
                 namePlaceholders(placeholders).
                 lorePlaceholders(placeholders).
                 build();
 
+        if (wearing == null) return itemStack;
 
-        final boolean isAir = itemStack.getType().isAir();
-        final boolean requireEmpty = cosmeticSettings.requireEmpty(slot);
+        final boolean isAir = wearing.getType().isAir();
+        final boolean requireEmpty = settings.getCosmeticSettings().requireEmpty(slot);
 
-
-        if (!isAir && (!requireEmpty || user instanceof Wardrobe)) {
-            return itemStack;
-        }
-
-        if (equipment == null) {
-            return itemStack;
-        }
-
-        final ItemStack equipped = equipment.getItem(slot);
-
-        if (equipped != null && (equipped.getType() != Material.AIR && !user.isWardrobeActive())) {
-            return equipped;
+        if (!isAir && requireEmpty) {
+            return wearing;
         }
 
         return itemStack;
@@ -192,6 +179,7 @@ public class UserManager {
             switch (type) {
                 case HAT, OFF_HAND, CHEST_PLATE, PANTS, BOOTS -> this.updateCosmetics(user);
                 case BACKPACK -> {
+                    user.despawnAttached();
                     if (user instanceof Wardrobe) user.updateOutsideCosmetics(settings);
                 }
             }
@@ -262,5 +250,37 @@ public class UserManager {
             case 5 -> EquipmentSlot.HEAD;
             default -> null;
         };
+    }
+
+    public void sendUpdatePacket(
+            final User user,
+            final ArmorItem armorItem,
+            final ItemStack wearing,
+            final ArmorItem.Type type) {
+            final EquipmentSlot slot = type.getSlot();
+            final ItemStack itemStack = this.getCosmeticItem(armorItem, wearing, ArmorItem.Status.APPLIED, slot);
+            final List<com.github.retrooper.packetevents.protocol.player.Equipment> itemList = new ArrayList<>();
+            itemList.add(PacketManager.getEquipment(itemStack, slot));
+            this.sendUpdatePacket(user, itemList);
+    }
+
+    public void sendUpdatePacket(
+            final User user,
+            List<com.github.retrooper.packetevents.protocol.player.Equipment> items) {
+        final Player player = user.getPlayer();
+        if (player == null) return;
+        final int entityId = user.getEntityId();
+        for (final User otherUser : this.userMap.values()) {
+            final Player other = otherUser.getPlayer();
+            if (other == null) continue;
+            if (!user.shouldShow(other)) continue;
+            if (!this.settings.getCosmeticSettings().isInViewDistance(player.getLocation(), other.getLocation())) continue;
+            PacketManager.sendEquipmentPacket(
+                    items,
+                    entityId,
+                    other
+            );
+        }
+
     }
 }

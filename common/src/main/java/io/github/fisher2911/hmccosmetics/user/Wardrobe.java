@@ -11,6 +11,7 @@ import io.github.fisher2911.hmccosmetics.task.TaskChain;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -201,6 +202,11 @@ public class Wardrobe extends User {
     @Nullable
     public Location getCurrentLocation() {
         return currentLocation;
+    }
+
+    @Override
+    public @Nullable Vector getVelocity() {
+        return new Vector();
     }
 
     @Override

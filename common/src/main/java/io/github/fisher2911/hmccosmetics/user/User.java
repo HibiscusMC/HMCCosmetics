@@ -12,8 +12,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.ref.WeakReference;
 import java.util.UUID;
 
 public class User extends BaseUser<UUID> {
@@ -21,18 +23,26 @@ public class User extends BaseUser<UUID> {
     protected Wardrobe wardrobe;
     private CosmeticGui openGui;
     private boolean hidden;
+    private WeakReference<Player> playerReference;
 
     public User(final UUID uuid, final PlayerArmor playerArmor, final Wardrobe wardrobe, final EntityIds entityIds) {
         super(uuid, playerArmor, entityIds);
         this.wardrobe = wardrobe;
+        this.playerReference = new WeakReference<>(Bukkit.getPlayer(uuid));
     }
 
     public User(final UUID uuid, final PlayerArmor playerArmor, final EntityIds entityIds) {
         super(uuid, playerArmor, entityIds);
+        this.playerReference = new WeakReference<>(Bukkit.getPlayer(uuid));
     }
 
     public @Nullable Player getPlayer() {
-        return Bukkit.getPlayer(this.getId());
+        Player player = this.playerReference.get();
+        if (player == null) {
+            player = Bukkit.getPlayer(this.getId());
+            if (player != null) this.playerReference = new WeakReference<>(player);
+        }
+        return player;
     }
 
     public Wardrobe getWardrobe() {
@@ -77,6 +87,14 @@ public class User extends BaseUser<UUID> {
         final Player player = this.getPlayer();
         if (player == null) return null;
         return player.getLocation();
+    }
+
+    @Override
+    @Nullable
+    public Vector getVelocity() {
+        final Player player = this.getPlayer();
+        if (player == null) return null;
+        return player.getVelocity();
     }
 
     @Override

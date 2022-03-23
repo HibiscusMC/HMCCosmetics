@@ -1,7 +1,6 @@
 package io.github.fisher2911.hmccosmetics.listener;
 
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
-import io.github.fisher2911.hmccosmetics.user.User;
 import io.github.fisher2911.hmccosmetics.user.UserManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -23,7 +22,10 @@ public class TeleportListener implements Listener {
     public void onPlayerTeleport(final PlayerTeleportEvent event) {
         final Player player = event.getPlayer();
 
-        this.userManager.get(player.getUniqueId()).ifPresent(User::despawnAttached);
+        this.userManager.get(player.getUniqueId()).ifPresent(user -> {
+            user.despawnBalloon();
+            user.despawnBalloon();
+        });
     }
 
 }

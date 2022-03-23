@@ -15,6 +15,8 @@ import io.github.fisher2911.hmccosmetics.user.EntityIds;
 import io.github.fisher2911.hmccosmetics.user.NPCUser;
 import io.github.fisher2911.hmccosmetics.user.User;
 import io.github.fisher2911.hmccosmetics.user.Wardrobe;
+import io.github.retrooper.packetevents.util.SpigotDataHelper;
+import io.github.retrooper.packetevents.util.SpigotReflectionUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 
@@ -32,7 +34,6 @@ public class Database {
     private final Dao<ArmorItemDAO, String> armorItemDao;
     private final ConnectionSource dataSource;
     private final DatabaseType databaseType;
-    private static final SplittableRandom RANDOM = new SplittableRandom();
 
     public Database(
             final HMCCosmetics plugin,
@@ -223,6 +224,6 @@ public class Database {
     }
 
     public static int getNextEntityId() {
-        return RANDOM.nextInt(50_000, 100_000);
+        return SpigotReflectionUtil.generateEntityId();
     }
 }

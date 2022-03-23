@@ -8,6 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
 public class NPCUser extends BaseUser<Integer> {
@@ -36,6 +37,15 @@ public class NPCUser extends BaseUser<Integer> {
         final Entity entity = npc.getEntity();
         if (entity == null) return null;
         return entity.getLocation();
+    }
+
+    @Override
+    public @Nullable Vector getVelocity() {
+        final NPC npc = this.getNpc();
+        if (npc == null) return null;
+        final Entity entity = npc.getEntity();
+        if (entity == null) return null;
+        return entity.getVelocity();
     }
 
     public boolean isValid() {

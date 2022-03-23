@@ -16,7 +16,8 @@ public class Equipment {
     public Equipment() {
     }
 
-    public static Equipment fromEntityEquipment(final EntityEquipment entityEquipment) {
+    public static Equipment fromEntityEquipment(@Nullable final EntityEquipment entityEquipment) {
+        if (entityEquipment == null) return new Equipment();
         final Equipment equipment = new Equipment();
         for (final EquipmentSlot slot : VALUES) {
             equipment.setItem(slot, entityEquipment.getItem(slot));

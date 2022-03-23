@@ -22,7 +22,6 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSp
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnPlayer;
 import io.github.retrooper.packetevents.util.SpigotDataHelper;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -55,7 +54,7 @@ public class PacketManager {
 
     public static void sendArmorStandMetaContainer(final int armorStandId, final Player... sendTo) {
         for (final Player p : sendTo) {
-            PacketEvents.getAPI().getPlayerManager().sendPacket(p, new WrapperPlayServerEntityMetadata(
+            PacketEvents.getAPI().getPlayerManager().sendPacketAsync(p, new WrapperPlayServerEntityMetadata(
                     armorStandId,
                     List.of(
                             new EntityData(0, EntityDataTypes.BYTE, (byte) 0x20),
@@ -78,7 +77,7 @@ public class PacketManager {
             final int entityId,
             final EntityType entityType,
             final Player... sendTo) {
-        sendEntitySpawnPacket(location, entityId, entityType, UUID.randomUUID());
+        sendEntitySpawnPacket(location, entityId, entityType, UUID.randomUUID(), sendTo);
     }
 
     public static void sendEntitySpawnPacket(
@@ -97,7 +96,7 @@ public class PacketManager {
             final UUID uuid,
             final Player... sendTo) {
         for (final Player p : sendTo) {
-            PacketEvents.getAPI().getPlayerManager().sendPacket(p, new WrapperPlayServerSpawnLivingEntity(
+            PacketEvents.getAPI().getPlayerManager().sendPacketAsync(p, new WrapperPlayServerSpawnLivingEntity(
                     entityId,
                     uuid,
                     entityType,
@@ -117,7 +116,7 @@ public class PacketManager {
 
     public static void sendInvisibilityPacket(final int entityId, final Player... sendTo) {
         for (final Player p : sendTo) {
-            PacketEvents.getAPI().getPlayerManager().sendPacket(p, new WrapperPlayServerEntityMetadata(
+            PacketEvents.getAPI().getPlayerManager().sendPacketAsync(p, new WrapperPlayServerEntityMetadata(
                     entityId,
                     List.of(new EntityData(0, EntityDataTypes.BYTE, (byte) 0x20))
             ));
@@ -140,7 +139,7 @@ public class PacketManager {
             final Player... sendTo
     ) {
         for (final Player p : sendTo) {
-            PacketEvents.getAPI().getPlayerManager().sendPacket(p, new WrapperPlayServerEntityTeleport(
+            PacketEvents.getAPI().getPlayerManager().sendPacketAsync(p, new WrapperPlayServerEntityTeleport(
                     entityId,
                     new Vector3d(location.getX(), location.getY(), location.getZ()),
                     location.getYaw(),
@@ -168,7 +167,7 @@ public class PacketManager {
             final Player... sendTo
     ) {
         for (final Player p : sendTo) {
-            PacketEvents.getAPI().getPlayerManager().sendPacket(p, new WrapperPlayServerEntityRelativeMove(
+            PacketEvents.getAPI().getPlayerManager().sendPacketAsync(p, new WrapperPlayServerEntityRelativeMove(
                     entityId,
                     to.getX() - from.getX(),
                     to.getY() - from.getY(),
@@ -192,7 +191,7 @@ public class PacketManager {
             final Player... sendTo
     ) {
         for (final Player p : sendTo) {
-            PacketEvents.getAPI().getPlayerManager().sendPacket(p, new WrapperPlayServerAttachEntity(
+            PacketEvents.getAPI().getPlayerManager().sendPacketAsync(p, new WrapperPlayServerAttachEntity(
                     balloonId,
                     entityId,
                     true
@@ -217,7 +216,7 @@ public class PacketManager {
             final ItemStack itemStack = SpigotDataHelper.toBukkitItemStack(equipment.getItem());
         }
         for (final Player p : sendTo) {
-            PacketEvents.getAPI().getPlayerManager().sendPacket(p, new WrapperPlayServerEntityEquipment(
+            PacketEvents.getAPI().getPlayerManager().sendPacketAsync(p, new WrapperPlayServerEntityEquipment(
                     entityId,
                     equipmentList
             ));
@@ -240,7 +239,7 @@ public class PacketManager {
             final Player... sendTo
     ) {
         for (final Player p : sendTo) {
-            PacketEvents.getAPI().getPlayerManager().sendPacket(p, new WrapperPlayServerEntityRotation(
+            PacketEvents.getAPI().getPlayerManager().sendPacketAsync(p, new WrapperPlayServerEntityRotation(
                     entityId,
                     location.getYaw(),
                     location.getPitch(),
@@ -263,7 +262,7 @@ public class PacketManager {
             final Player... sendTo
     ) {
         for (final Player p : sendTo) {
-            PacketEvents.getAPI().getPlayerManager().sendPacket(p, new WrapperPlayServerEntityHeadLook(
+            PacketEvents.getAPI().getPlayerManager().sendPacketAsync(p, new WrapperPlayServerEntityHeadLook(
                     entityId,
                     location.getYaw()
             ));
@@ -284,7 +283,7 @@ public class PacketManager {
             final Player... sendTo
     ) {
         for (final Player p : sendTo) {
-            PacketEvents.getAPI().getPlayerManager().sendPacket(p, new WrapperPlayServerSetPassengers(
+            PacketEvents.getAPI().getPlayerManager().sendPacketAsync(p, new WrapperPlayServerSetPassengers(
                     mountId,
                     new int[]{passengerId}
             ));
@@ -297,7 +296,7 @@ public class PacketManager {
 
     public static void sendEntityDestroyPacket(final int entityId, final Player... sendTo) {
         for (final Player p : sendTo) {
-            PacketEvents.getAPI().getPlayerManager().sendPacket(p, new WrapperPlayServerDestroyEntities(entityId));
+            PacketEvents.getAPI().getPlayerManager().sendPacketAsync(p, new WrapperPlayServerDestroyEntities(entityId));
         }
     }
 
@@ -355,7 +354,7 @@ public class PacketManager {
             final Player... sendTo
     ) {
         for (final Player p : sendTo) {
-            PacketEvents.getAPI().getPlayerManager().sendPacket(p, new WrapperPlayServerSpawnPlayer(
+            PacketEvents.getAPI().getPlayerManager().sendPacketAsync(p, new WrapperPlayServerSpawnPlayer(
                     entityId,
                     uuid,
                     new com.github.retrooper.packetevents.protocol.world.Location(
@@ -383,7 +382,7 @@ public class PacketManager {
             final Player... sendTo
     ) {
         for (final Player p : sendTo) {
-            PacketEvents.getAPI().getPlayerManager().sendPacket(p, new WrapperPlayServerPlayerInfo(
+            PacketEvents.getAPI().getPlayerManager().sendPacketAsync(p, new WrapperPlayServerPlayerInfo(
                     WrapperPlayServerPlayerInfo.Action.ADD_PLAYER,
                     new WrapperPlayServerPlayerInfo.PlayerData(
                             Component.empty(),
@@ -411,7 +410,7 @@ public class PacketManager {
     ) {
         final byte mask = 0x01 | 0x02 | 0x04 | 0x08 | 0x010 | 0x020 | 0x40;
         for (final Player p : sendTo) {
-            PacketEvents.getAPI().getPlayerManager().sendPacket(p, new WrapperPlayServerEntityMetadata(
+            PacketEvents.getAPI().getPlayerManager().sendPacketAsync(p, new WrapperPlayServerEntityMetadata(
                     playerId,
                     List.of(
                             new EntityData(17, EntityDataTypes.BYTE,  mask),
@@ -435,7 +434,7 @@ public class PacketManager {
             final Player... sendTo
     ) {
         for (final Player p : sendTo) {
-            PacketEvents.getAPI().getPlayerManager().sendPacket(p, new WrapperPlayServerPlayerInfo(
+            PacketEvents.getAPI().getPlayerManager().sendPacketAsync(p, new WrapperPlayServerPlayerInfo(
                     WrapperPlayServerPlayerInfo.Action.REMOVE_PLAYER,
                     new WrapperPlayServerPlayerInfo.PlayerData(
                             Component.empty(),
@@ -452,6 +451,23 @@ public class PacketManager {
 
     public static void sendSpectatePacket(final int entityId) {
 
+    }
+
+    public static com.github.retrooper.packetevents.protocol.player.Equipment getEquipment(
+            final ItemStack itemStack,
+            final org.bukkit.inventory.EquipmentSlot slot
+    ) {
+        return getEquipment(SpigotDataHelper.fromBukkitItemStack(itemStack), slot);
+    }
+
+    public static com.github.retrooper.packetevents.protocol.player.Equipment getEquipment(
+            final com.github.retrooper.packetevents.protocol.item.ItemStack itemStack,
+            final org.bukkit.inventory.EquipmentSlot slot
+    ) {
+        return new com.github.retrooper.packetevents.protocol.player.Equipment(
+                PacketManager.fromBukkitSlot(slot),
+                itemStack
+        );
     }
 
     public static EquipmentSlot fromBukkitSlot(final org.bukkit.inventory.EquipmentSlot slot) {
