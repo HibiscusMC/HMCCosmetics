@@ -155,7 +155,6 @@ public abstract class BaseUser<T> {
         if (vector != null) actual.add(this.getVelocity().multiply(-1));
         this.balloon.setLocation(actual);
         this.balloon.setVelocity(actual.clone().subtract(previous.clone()).toVector());
-//        hookManager.getModelEngineHook().updateModel(this.balloon);
         this.balloon.updateModel();
         final int balloonId = this.getBalloonId();
         PacketManager.sendTeleportPacket(balloonId, actual, false, other);
@@ -163,6 +162,7 @@ public abstract class BaseUser<T> {
     }
 
     private void spawnArmorStand(final Player other, final Location location) {
+        // todo
         PacketManager.sendEntitySpawnPacket(location, this.getArmorStandId(), EntityTypes.ARMOR_STAND, other);
     }
 
@@ -179,7 +179,6 @@ public abstract class BaseUser<T> {
         final boolean shouldShow = shouldShow(other);
         final UUID otherUUID = other.getUniqueId();
         final boolean hasBackpack = !this.playerArmor.getItem(ArmorItem.Type.BACKPACK).isEmpty();
-        other.sendMessage(this.viewingArmorStand.toString());
         if (!this.viewingArmorStand.contains(otherUUID)) {
             if (!inViewDistance || !shouldShow) {
                 if (this.viewingBalloon.contains(otherUUID)) {
@@ -219,7 +218,6 @@ public abstract class BaseUser<T> {
                             type(ItemTypes.AIR).
                             build()
             ));
-            other.sendMessage("Air");
         } else {
             final com.github.retrooper.packetevents.protocol.item.ItemStack itemStack =
                     SpigotDataHelper.fromBukkitItemStack(this.playerArmor.getBackpack().getItemStack(ArmorItem.Status.APPLIED));
@@ -227,15 +225,14 @@ public abstract class BaseUser<T> {
                     EquipmentSlot.HELMET,
                     itemStack
             ));
-            other.sendMessage("Added " + this.playerArmor.getBackpack().getItemStack(ArmorItem.Status.APPLIED).getType());
         }
 
         final int armorStandId = this.getArmorStandId();
         PacketManager.sendEquipmentPacket(equipment, armorStandId, other);
         PacketManager.sendRotationPacket(armorStandId, location, false, other);
+        PacketManager.sendLookPacket(armorStandId, location, other);
         PacketManager.sendRidingPacket(this.getEntityId(), armorStandId, other);
         PacketManager.sendArmorStandMetaContainer(armorStandId, other);
-        other.sendMessage("Spawned equipment: " + hidden + " : " + shouldShow);
 
         if (hidden) return;
         this.updateBalloon(other, location, settings.getCosmeticSettings());

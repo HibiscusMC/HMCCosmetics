@@ -36,7 +36,8 @@ public class JoinListener implements Listener {
                 user -> new TaskChain(this.plugin).chain(
                         () -> this.userManager.add(user)
                 ).chain(() -> {
-                    this.userManager.resendCosmetics(player);
+//                    this.userManager.resendCosmetics(player);
+//                    this.userManager.updateCosmetics(user);
                     final WardrobeSettings settings = this.plugin.getSettings().getWardrobeSettings();
                     if (settings.isAlwaysDisplay() && settings.getWardrobeLocation() != null) {
                         final Wardrobe wardrobe = user.getWardrobe();

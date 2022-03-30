@@ -39,7 +39,6 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -173,66 +172,6 @@ public class CosmeticFixListener implements Listener {
                 }
         );
     }
-//
-//    int i = 0;
-//
-//    private void updateIfDifferent(final Player player, final EntityEquipment previous) {
-//        i++;
-//        this.taskManager.submit(() -> {
-//            final int copy = i;
-//            final EntityEquipment equipment = player.getEquipment();
-//            if (equipment == null) return;
-//            if (this.equipmentEquals(equipment, previous)) {
-//                player.sendMessage("Same armor");
-//                return;
-//            }
-//            player.sendMessage("Different armor");
-//            final List<com.github.retrooper.packetevents.protocol.player.Equipment> equipmentList = new ArrayList<>();
-//            final Optional<User> optionalUser = this.userManager.get(player.getUniqueId());
-//            if (optionalUser.isEmpty()) return;
-//            final User user = optionalUser.get();
-//            final PlayerArmor playerArmor = user.getPlayerArmor();
-//            for (final ArmorItem item : playerArmor.getArmorItems()) {
-//                final EquipmentSlot slot = item.getType().getSlot();
-//                if (slot == null) continue;
-//                final ItemStack current = Utils.replaceIfNull(equipment.getItem(slot), new ItemStack(Material.AIR));
-//                equipmentList.add(
-//                        PacketManager.getEquipment(
-//                                this.userManager.getCosmeticItem(
-//                                        item,
-//                                        current,
-//                                        ArmorItem.Status.APPLIED,
-//                                        slot
-//                                ),
-//                                slot
-//                        )
-//                );
-//            }
-//            this.userManager.sendUpdatePacket(
-//                    user,
-//                    equipmentList
-//            );
-//        });
-//    }
-
-    private boolean equipmentEquals(final EntityEquipment first, final EntityEquipment second) {
-        if (first == null && second == null) {
-            return true;
-        }
-        if (first == null) {
-            return false;
-        }
-        if (second == null) {
-            return false;
-        }
-        for (final EquipmentSlot slot : EquipmentSlot.values()) {
-            final ItemStack i = first.getItem(slot);
-            final ItemStack i2 = second.getItem(slot);
-            if (i == null && i2 == null) continue;
-            if (!Objects.equals(first.getItem(slot), second.getItem(slot))) return false;
-        }
-        return true;
-    }
 
     private void updateOnClick(final Player player, final EquipmentSlot slot, final User user, final ArmorItem.Type type, final ItemStack current) {
         taskManager.submit(() -> {
@@ -247,7 +186,7 @@ public class CosmeticFixListener implements Listener {
             if (cosmetic != null && cosmetic.getType() != Material.AIR) equipment.setItem(slot, cosmetic);
 
             final List<com.github.retrooper.packetevents.protocol.player.Equipment> items =
-                    getItemList(user, equipment, Set.of(type));
+                    userManager.getItemList(user, equipment, Set.of(type));
             for (final Player other : Bukkit.getOnlinePlayers()) {
                 if (!settings.isInViewDistance(location, other.getLocation())) continue;
                 userManager.sendUpdatePacket(
@@ -390,33 +329,6 @@ public class CosmeticFixListener implements Listener {
                 type
         ), 1));
     }
-
-    private List<com.github.retrooper.packetevents.protocol.player.Equipment> getItemList(
-            final User user,
-            final Equipment equipment,
-            final Set<ArmorItem.Type> ignored
-    ) {
-        final PlayerArmor armor = user.getPlayerArmor();
-        final List<com.github.retrooper.packetevents.protocol.player.Equipment> items = new ArrayList<>();
-        for (final ArmorItem.Type type : ArmorItem.Type.values()) {
-            final EquipmentSlot slot = type.getSlot();
-            if (slot == null) continue;
-            if (ignored.contains(type)) {
-                items.add(PacketManager.getEquipment(equipment.getItem(slot), slot));
-                continue;
-            }
-            final ItemStack wearing = Utils.replaceIfNull(equipment.getItem(slot), new ItemStack(Material.AIR));
-            final ItemStack itemStack = this.userManager.getCosmeticItem(
-                    armor.getItem(type),
-                    wearing,
-                    ArmorItem.Status.APPLIED,
-                    slot
-            );
-            if (itemStack.getType() != Material.AIR) items.add(PacketManager.getEquipment(itemStack, slot));
-        }
-        return items;
-    }
-
 
     @Nullable
     private EquipmentSlot getArmorSlot(final Material material) {

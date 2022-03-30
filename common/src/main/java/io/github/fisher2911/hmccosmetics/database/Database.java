@@ -15,14 +15,12 @@ import io.github.fisher2911.hmccosmetics.user.EntityIds;
 import io.github.fisher2911.hmccosmetics.user.NPCUser;
 import io.github.fisher2911.hmccosmetics.user.User;
 import io.github.fisher2911.hmccosmetics.user.Wardrobe;
-import io.github.retrooper.packetevents.util.SpigotDataHelper;
 import io.github.retrooper.packetevents.util.SpigotReflectionUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 
 import java.sql.SQLException;
 import java.util.List;
-import java.util.SplittableRandom;
 import java.util.UUID;
 import java.util.function.Consumer;
 

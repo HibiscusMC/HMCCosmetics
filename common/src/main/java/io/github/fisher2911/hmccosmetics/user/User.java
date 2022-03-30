@@ -51,7 +51,7 @@ public class User extends BaseUser<UUID> {
 
     public boolean shouldShow(final Player other) {
         final Player player = this.getPlayer();
-        if (player == null) return false;
+        if (player == null || player.isDead()) return false;
         if (player.getUniqueId().equals(other.getUniqueId()) && this.hidden) return false;
         final ItemStack itemStack = player.getInventory().getItemInMainHand();
         if (itemStack != null && itemStack.getType() == Material.TRIDENT) {

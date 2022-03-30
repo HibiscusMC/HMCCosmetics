@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
 public class TeleportListener implements Listener {
@@ -23,7 +24,17 @@ public class TeleportListener implements Listener {
         final Player player = event.getPlayer();
 
         this.userManager.get(player.getUniqueId()).ifPresent(user -> {
+            user.despawnAttached();
             user.despawnBalloon();
+        });
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
+    public void onPlayerDeath(final PlayerDeathEvent event) {
+        final Player player = event.getEntity();
+
+        this.userManager.get(player.getUniqueId()).ifPresent(user -> {
+            user.despawnAttached();
             user.despawnBalloon();
         });
     }

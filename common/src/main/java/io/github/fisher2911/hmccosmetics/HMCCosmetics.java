@@ -63,7 +63,6 @@ public class HMCCosmetics extends JavaPlugin {
     @Override
     public void onLoad() {
         PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
-        PacketEvents.getAPI().getSettings().debug(true);
         PacketEvents.getAPI().load();
     }
 
