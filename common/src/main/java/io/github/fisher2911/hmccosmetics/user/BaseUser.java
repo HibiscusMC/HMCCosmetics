@@ -34,6 +34,8 @@ public abstract class BaseUser<T> {
     protected final EntityIds entityIds;
     protected final BalloonEntity balloon;
     protected final PlayerArmor playerArmor;
+    // for setting multiple items
+    protected boolean armorUpdated;
 
     protected ArmorItem lastSetItem = ArmorItem.empty(ArmorItem.Type.HAT);
 
@@ -103,8 +105,8 @@ public abstract class BaseUser<T> {
     public void despawnBalloon() {
         final HookManager hookManager = HookManager.getInstance();
         if (!hookManager.isEnabled(ModelEngineHook.class)) return;
-        this.balloon.remove();
         PacketManager.sendEntityDestroyPacket(this.getBalloonId(), Bukkit.getOnlinePlayers());
+        this.balloon.remove();
         this.viewingBalloon.clear();
         this.balloon.setAlive(false);
     }
@@ -128,6 +130,10 @@ public abstract class BaseUser<T> {
         final String id = balloonItem.getModelId();
         final HookManager hookManager = HookManager.getInstance();
         if (id.isBlank() || !hookManager.isEnabled(ModelEngineHook.class)) return;
+        if (this.balloon.isAlive()) {
+            this.updateBalloon(other, actual, settings);
+            return;
+        }
         this.balloon.setAlive(true);
         if (!this.viewingBalloon.contains(other.getUniqueId())) {
             this.viewingBalloon.add(other.getUniqueId());
@@ -135,18 +141,25 @@ public abstract class BaseUser<T> {
             this.balloon.spawnModel(id);
             this.balloon.addPlayerToModel(other, id);
         }
-        this.updateBalloon(other, location, settings);
         final int balloonId = this.getBalloonId();
         PacketManager.sendEntitySpawnPacket(actual, balloonId, EntityTypes.PUFFERFISH, other);
         PacketManager.sendInvisibilityPacket(balloonId, other);
         PacketManager.sendLeashPacket(balloonId, this.getEntityId(), other);
+        this.updateBalloon(other, location, settings);
     }
 
     protected void updateBalloon(final Player other, final Location location, final CosmeticSettings settings) {
         final HookManager hookManager = HookManager.getInstance();
         if (!hookManager.isEnabled(ModelEngineHook.class)) return;
+        final BalloonItem balloonItem = (BalloonItem) this.playerArmor.getItem(ArmorItem.Type.BALLOON);
+        if (balloonItem.isEmpty()) return;
         if (!this.viewingBalloon.contains(other.getUniqueId())) {
-            this.spawnBalloon(other, location, settings);
+            if (!this.balloon.isAlive()) {
+                this.spawnBalloon(other, location, settings);
+                return;
+            }
+            this.viewingBalloon.add(other.getUniqueId());
+            this.balloon.addPlayerToModel(other, balloonItem.getModelId());
             return;
         }
         final Location actual = location.clone().add(settings.getBalloonOffset());
@@ -162,8 +175,8 @@ public abstract class BaseUser<T> {
     }
 
     private void spawnArmorStand(final Player other, final Location location) {
-        // todo
         PacketManager.sendEntitySpawnPacket(location, this.getArmorStandId(), EntityTypes.ARMOR_STAND, other);
+        PacketManager.sendArmorStandMetaContainer(this.getArmorStandId(), other);
     }
 
     public void updateOutsideCosmetics(final Settings settings) {
@@ -172,6 +185,36 @@ public abstract class BaseUser<T> {
         for (final Player player : Bukkit.getOnlinePlayers()) {
             this.spawnOutsideCosmetics(player, location, settings);
         }
+    }
+
+    public void updateBackpack(final Player other, final Settings settings) {
+        final Location location = this.getLocation();
+        if (location == null) return;
+        final List<com.github.retrooper.packetevents.protocol.player.Equipment> equipment = new ArrayList<>();
+        final boolean hidden = !this.shouldShow(other);
+        final int lookDownPitch = settings.getCosmeticSettings().getLookDownPitch();
+        final boolean isLookingDown =
+                this.id.equals(other.getUniqueId()) && lookDownPitch
+                        != -1 &&
+                        this.isFacingDown(location, lookDownPitch);
+        if (hidden || isLookingDown) {
+            equipment.add(new com.github.retrooper.packetevents.protocol.player.Equipment(
+                    EquipmentSlot.HELMET,
+                    new com.github.retrooper.packetevents.protocol.item.ItemStack.Builder().
+                            type(ItemTypes.AIR).
+                            build()
+            ));
+        } else {
+            final com.github.retrooper.packetevents.protocol.item.ItemStack itemStack =
+                    SpigotDataHelper.fromBukkitItemStack(this.playerArmor.getBackpack().getItemStack(ArmorItem.Status.APPLIED));
+            equipment.add(new com.github.retrooper.packetevents.protocol.player.Equipment(
+                    EquipmentSlot.HELMET,
+                    itemStack
+            ));
+        }
+
+        final int armorStandId = this.getArmorStandId();
+        PacketManager.sendEquipmentPacket(equipment, armorStandId, other);
     }
 
     public void updateOutsideCosmetics(final Player other, final Location location, final Settings settings) {
@@ -228,11 +271,9 @@ public abstract class BaseUser<T> {
         }
 
         final int armorStandId = this.getArmorStandId();
-        PacketManager.sendEquipmentPacket(equipment, armorStandId, other);
         PacketManager.sendRotationPacket(armorStandId, location, false, other);
         PacketManager.sendLookPacket(armorStandId, location, other);
         PacketManager.sendRidingPacket(this.getEntityId(), armorStandId, other);
-        PacketManager.sendArmorStandMetaContainer(armorStandId, other);
 
         if (hidden) return;
         this.updateBalloon(other, location, settings.getCosmeticSettings());
@@ -271,4 +312,11 @@ public abstract class BaseUser<T> {
 
     public abstract boolean isWardrobeActive();
 
+    public boolean isArmorUpdated() {
+        return armorUpdated;
+    }
+
+    public void setArmorUpdated(boolean armorUpdated) {
+        this.armorUpdated = armorUpdated;
+    }
 }

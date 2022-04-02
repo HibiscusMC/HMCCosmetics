@@ -6,6 +6,8 @@ import com.github.retrooper.packetevents.protocol.entity.data.EntityDataTypes;
 import com.github.retrooper.packetevents.protocol.entity.type.EntityType;
 import com.github.retrooper.packetevents.protocol.player.Equipment;
 import com.github.retrooper.packetevents.protocol.player.EquipmentSlot;
+import com.github.retrooper.packetevents.protocol.player.GameMode;
+import com.github.retrooper.packetevents.protocol.player.TextureProperty;
 import com.github.retrooper.packetevents.protocol.player.UserProfile;
 import com.github.retrooper.packetevents.util.Vector3d;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerAttachEntity;
@@ -212,9 +214,6 @@ public class PacketManager {
             final int entityId,
             final Player... sendTo
     ) {
-        for (final Equipment equipment : equipmentList) {
-            final ItemStack itemStack = SpigotDataHelper.toBukkitItemStack(equipment.getItem());
-        }
         for (final Player p : sendTo) {
             PacketEvents.getAPI().getPlayerManager().sendPacketSilentlyAsync(p, new WrapperPlayServerEntityEquipment(
                     entityId,
@@ -369,30 +368,33 @@ public class PacketManager {
     }
 
     public static void sendFakePlayerInfoPacket(
-            final Player player,
+            final Player skinnedPlayer,
             final UUID uuid,
             final Collection<? extends Player> sendTo
     ) {
-        sendFakePlayerInfoPacket(player, uuid, sendTo.toArray(new Player[0]));
+        sendFakePlayerInfoPacket(skinnedPlayer, uuid, sendTo.toArray(new Player[0]));
     }
 
     public static void sendFakePlayerInfoPacket(
-            final Player player,
+            final Player skinnedPlayer,
             final UUID uuid,
             final Player... sendTo
     ) {
+        final List<TextureProperty> textures = PacketEvents.getAPI().getPlayerManager().getUser(skinnedPlayer).getProfile().getTextureProperties();
+        final WrapperPlayServerPlayerInfo.PlayerData data = new WrapperPlayServerPlayerInfo.PlayerData(
+                Component.text(""),
+                new UserProfile(
+                        uuid,
+                        "",
+                        textures
+                ),
+                GameMode.CREATIVE,
+                0
+        );
         for (final Player p : sendTo) {
             PacketEvents.getAPI().getPlayerManager().sendPacketSilentlyAsync(p, new WrapperPlayServerPlayerInfo(
                     WrapperPlayServerPlayerInfo.Action.ADD_PLAYER,
-                    new WrapperPlayServerPlayerInfo.PlayerData(
-                            Component.empty(),
-                            new UserProfile(
-                                    uuid,
-                                    player.getDisplayName()
-                            ),
-                            com.github.retrooper.packetevents.protocol.player.GameMode.SURVIVAL,
-                            0
-                    )
+                    data
             ));
         }
     }
@@ -413,7 +415,7 @@ public class PacketManager {
             PacketEvents.getAPI().getPlayerManager().sendPacketSilentlyAsync(p, new WrapperPlayServerEntityMetadata(
                     playerId,
                     List.of(
-                            new EntityData(17, EntityDataTypes.BYTE,  mask),
+                            new EntityData(17, EntityDataTypes.BYTE, mask),
                             new EntityData(15, EntityDataTypes.BYTE, (byte) 0x10)
                     )
             ));

@@ -133,11 +133,13 @@ public class DyeSelectorGui extends CosmeticGui {
             armorItem.setDye(colorItem.getColor().asRGB());
 
             if (user.isWardrobeActive()) {
-                this.plugin.getUserManager().setItem(user.getWardrobe(), armorItem);
+                this.plugin.getUserManager().setItem(user.getWardrobe(), armorItem, true);
             } else {
-                this.plugin.getUserManager().setItem(user, armorItem);
+                this.plugin.getUserManager().setItem(user, armorItem, true);
             }
-            colorItem.getAction().execute(event);
+            if (colorItem.getAction() != null) {
+                colorItem.getAction().execute(event);
+            }
             this.updateSelected(user, player);
         });
 

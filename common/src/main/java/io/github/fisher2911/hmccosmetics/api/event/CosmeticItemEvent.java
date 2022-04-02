@@ -17,6 +17,11 @@ public abstract class CosmeticItemEvent extends Event implements Cancellable {
         this.cancelled = false;
     }
 
+    public CosmeticItemEvent(final boolean isAsync, final CosmeticItem cosmeticItem) {
+        super(isAsync);
+        this.cosmeticItem = cosmeticItem;
+    }
+
     public static HandlerList getHandlerList() {
         return HANDLERS;
     }

@@ -56,29 +56,6 @@ public class Wardrobe extends User {
                         this.hidePlayer();
                     }
             ).execute();
-            // for if we ever switch to packets
-//            final Location viewerLocation = settings.getViewerLocation();
-//            final UUID viewerUUID = UUID.randomUUID();
-//            new TaskChain(this.plugin).chain(() -> {
-//                viewer.setGameMode(GameMode.SPECTATOR);
-//            }).chain(
-//                    () -> {
-//                        PacketManager.sendPacket(
-//                                viewer,
-//                                PacketManager.getEntitySpawnPacket(
-//                                        viewerLocation,
-//                                        this.viewerId,
-//                                        EntityType.ZOMBIE,
-//                                        viewerUUID
-//                                ),
-//                                PacketManager.getLookPacket(this.viewerId, viewerLocation),
-//                                PacketManager.getRotationPacket(this.viewerId, viewerLocation),
-//                                PacketManager.getSpectatePacket(this.viewerId)
-//                                );
-//                    },
-//                    true
-//            ).execute();
-
 
         } else if (this.currentLocation == null) {
             this.currentLocation = viewer.getLocation().clone();
@@ -88,24 +65,39 @@ public class Wardrobe extends User {
             return;
         }
 
-
+        this.setActive(true);
 
         Bukkit.getScheduler().runTaskLaterAsynchronously(
                 this.plugin,
                 () -> {
                     final int entityId = this.getEntityId();
-                    PacketManager.sendFakePlayerSpawnPacket(this.currentLocation, this.getId(), entityId, viewer);
                     PacketManager.sendFakePlayerInfoPacket(viewer, this.getId(), viewer);
-                    this.updateOutsideCosmetics(viewer, this.currentLocation, plugin.getSettings());
+                    PacketManager.sendFakePlayerSpawnPacket(this.currentLocation, this.getId(), entityId, viewer);
+//                    this.updateOutsideCosmetics(viewer, this.currentLocation, plugin.getSettings());
                     PacketManager.sendLookPacket(entityId, this.currentLocation, viewer);
                     PacketManager.sendRotationPacket(entityId, this.currentLocation, true, viewer);
                     PacketManager.sendPlayerOverlayPacket(entityId, viewer);
+                    final UserManager userManager = this.plugin.getUserManager();
+                    userManager.get(viewer.getUniqueId()).
+                            ifPresent(user -> {
+                                int index = 0;
+                                final Collection<ArmorItem> armorItems = user.getPlayerArmor().getArmorItems();
+                                for (final ArmorItem armorItem : armorItems) {
+                                    index++;
+                                    final boolean sendPacket = armorItems.size() == index;
+                                    userManager.setItem(
+                                            this,
+                                            armorItem,
+                                            sendPacket
+                                    );
+                                }
+                            });
+//                    PacketManager.sendEntitySpawnPacket(this.currentLocation, this.getEntityId(), EntityTypes.ZOMBIE, viewer);
+                    this.spawned = true;
+                    this.startSpinTask(viewer);
                 },
                 settings.getSpawnDelay()
         );
-
-        this.spawned = true;
-        this.startSpinTask(viewer);
     }
 
     public void despawnFakePlayer(final Player viewer, final UserManager userManager) {
@@ -114,13 +106,13 @@ public class Wardrobe extends User {
         Bukkit.getScheduler().runTaskLaterAsynchronously(
                 this.plugin,
                 () -> {
+                    this.spawned = false;
                     final int entityId = this.getEntityId();
-                    PacketManager.sendEntityDestroyPacket(entityId, viewer);
-                    PacketManager.sendRemovePlayerPacket(viewer, this.id, viewer);
                     this.despawnAttached();
                     this.despawnBalloon();
+                    PacketManager.sendEntityDestroyPacket(entityId, viewer);
+                    PacketManager.sendRemovePlayerPacket(viewer, this.id, viewer);
                     this.showPlayer(this.plugin.getUserManager());
-                    this.spawned = false;
                     this.cameraLocked = false;
                     this.currentLocation = null;
                     final Collection<ArmorItem> armorItems = new ArrayList<>(this.getPlayerArmor().getArmorItems());
@@ -129,9 +121,12 @@ public class Wardrobe extends User {
                         optionalUser.ifPresent(user -> Bukkit.getScheduler().runTask(
                                 plugin,
                                 () -> {
+                                    int index = 0;
                                     for (final ArmorItem armorItem : armorItems) {
+                                        index++;
+                                        final boolean sendPacket = armorItems.size() == index;
                                         if (!user.hasPermissionToUse(armorItem)) continue;
-                                        userManager.setItem(user, armorItem);
+                                        userManager.setItem(user, armorItem, sendPacket);
                                     }
                                 }
                         ));
@@ -243,8 +238,8 @@ public class Wardrobe extends User {
                         Bukkit.getScheduler().runTaskLaterAsynchronously(
                                 this.plugin,
                                 () -> {
-                                    optional.ifPresent(user -> userManager.updateCosmetics(user, player));
-                                    optionalUser.ifPresent(userManager::updateCosmetics);
+//                                    optional.ifPresent(user -> userManager.updateCosmetics(user, player));
+//                                    optionalUser.ifPresent(userManager::updateCosmetics);
                                 },
                                 1
                         );

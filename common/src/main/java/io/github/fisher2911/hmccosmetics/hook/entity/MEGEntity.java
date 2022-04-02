@@ -49,7 +49,7 @@ public class MEGEntity implements BaseEntity<MEGEntity> {
         this.uuid = uuid;
         this.entityId = entityId;
         this.entityType = entityType;
-        this.alive = true;
+        this.alive = false;
     }
 
     public void update(final BalloonEntity entity) {

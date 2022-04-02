@@ -18,16 +18,6 @@ public class TaskManager {
     }
 
     public void start() {
-//        this.timer = Bukkit.getScheduler().runTaskTimerAsynchronously(
-//                this.plugin,
-//                () -> tasks.removeIf(task -> {
-//                    task.run();
-//                    Bukkit.broadcastMessage("Task Size: " + this.tasks.size());
-//                    return task.isComplete();
-//                }),
-//                1,
-//                1
-//        );
         this.timer = Bukkit.getScheduler().runTaskTimerAsynchronously(
                 this.plugin,
                 () -> {

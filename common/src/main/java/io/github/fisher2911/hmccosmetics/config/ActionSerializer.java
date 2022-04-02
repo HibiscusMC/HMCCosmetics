@@ -102,7 +102,9 @@ public class ActionSerializer implements TypeSerializer<List<CosmeticGuiAction>>
         final String openMenu = openMenuNode.getString();
 
         final List<ArmorItem.Type> removeCosmeticTypes = this.loadRemoveTypes(removeItemsNode);
+        final int totalRemoveCosmetics = removeCosmeticTypes.size();
         final List<String> setCosmetics = this.loadSetCosmetics(setCosmeticsNode);
+        final int totalSetCosmetics = setCosmetics.size();
 
         final ClickType click = Utils.stringToEnum(clickType, ClickType.class, ClickType.UNKNOWN);
         final Map<Integer, GuiItem> setItems = this.loadSetItems(setItemsNode);
@@ -127,13 +129,19 @@ public class ActionSerializer implements TypeSerializer<List<CosmeticGuiAction>>
                     if (optionalUser.isEmpty()) return;
                     final User user = optionalUser.get();
                     final CosmeticManager cosmeticManager = plugin.getCosmeticManager();
+                    int index = 0;
                     for (final String id : setCosmetics) {
+                        index++;
+                        final boolean sendPacket = index == totalSetCosmetics ;
                         final ArmorItem armorItem = cosmeticManager.getArmorItem(id);
                         if (armorItem == null) continue;
-                        userManager.setItem(user, armorItem);
+                        userManager.setItem(user, armorItem, sendPacket);
                     }
+                    index = 0;
                     for (final ArmorItem.Type type : removeCosmeticTypes) {
-                        userManager.removeItem(user, type);
+                        index++;
+                        final boolean sendPacket = index == totalSetCosmetics ;
+                        userManager.removeItem(user, type, sendPacket);
                     }
                     final CosmeticGui gui = user.getOpenGui();
                     if (gui != null) {

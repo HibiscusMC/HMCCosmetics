@@ -46,7 +46,7 @@ public class HMCCosmeticsAPI {
             return false;
         }
 
-        userManager.setItem(userOptional.get(), cosmeticItem.getArmorItem());
+        userManager.setItem(userOptional.get(), cosmeticItem.getArmorItem(), true);
         return true;
     }
 

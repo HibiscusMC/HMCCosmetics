@@ -118,43 +118,8 @@ public class UserManager {
                 user,
                 this.getItemList(user, user.getEquipment(), Collections.emptySet())
         );
-//        for (final Player player : Bukkit.getOnlinePlayers()) {
-//            this.updateCosmetics(user, player);
-//        }
+
     }
-
-//    public void updateCosmetics(final BaseUser<?> user, final Player other) {
-//        final Equipment equipment = user.getEquipment();
-//        for (final ArmorItem.Type type : ArmorItem.Type.values()) {
-//            if (type.getSlot() == null) continue;
-//            this.sendUpdatePacket(
-//                    user,
-//                    other,
-//                    equipment,
-//                    type
-//            );
-//        }
-//    }
-
-//    private void sendUpdatePacket(
-//            final BaseUser<?> user,
-//            final Player other,
-//            final Equipment equipment,
-//            final ArmorItem.Type type) {
-//        final PlayerArmor playerArmor = user.getPlayerArmor();
-//        final EquipmentSlot slot = type.getSlot();
-//        final ItemStack itemStack = this.getCosmeticItem(playerArmor.getItem(type), equipment.getItem(type.getSlot()), ArmorItem.Status.APPLIED, slot);
-//        if (itemStack != null && itemStack.equals(equipment.getItem(slot))) return;
-//        final List<com.github.retrooper.packetevents.protocol.player.Equipment> itemList = new ArrayList<>();
-//        itemList.add(new com.github.retrooper.packetevents.protocol.player.Equipment(
-//                PacketManager.fromBukkitSlot(slot), SpigotDataHelper.fromBukkitItemStack(itemStack)
-//        ));
-//        PacketManager.sendEquipmentPacket(
-//                itemList,
-//                user.getEntityId(),
-//                other
-//        );
-//    }
 
     public ItemStack getCosmeticItem(
             final ArmorItem armorItem,
@@ -205,35 +170,40 @@ public class UserManager {
                     ArmorItem.Status.APPLIED,
                     slot
             );
-            if (itemStack.getType() != Material.AIR) items.add(PacketManager.getEquipment(itemStack, slot));
+            items.add(PacketManager.getEquipment(itemStack, slot));
         }
         return items;
     }
 
-    public void setItem(final BaseUser<?> user, final ArmorItem armorItem) {
+    public void setItem(final BaseUser<?> user, final ArmorItem armorItem, final boolean sendPacket) {
         ArmorItem previous = user.getPlayerArmor().getItem(armorItem.getType());
 
         final CosmeticChangeEvent event =
-                new CosmeticChangeEvent(new CosmeticItem(armorItem.copy()), new CosmeticItem(previous.copy()), user);
+                new CosmeticChangeEvent(
+                        !Bukkit.isPrimaryThread(),
+                        new CosmeticItem(armorItem.copy()),
+                        new CosmeticItem(previous.copy()),
+                        user
+                );
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) return;
 
         final ArmorItem.Type type = armorItem.getType();
         if (type == ArmorItem.Type.BALLOON) user.despawnBalloon();
         user.setItem(event.getCosmeticItem().getArmorItem());
+        if (!sendPacket) {
+            user.setArmorUpdated(false);
+            return;
+        }
+        user.setArmorUpdated(true);
         Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () -> {
-            switch (type) {
-                case HAT, OFF_HAND, CHEST_PLATE, PANTS, BOOTS -> this.updateCosmetics(user);
-                case BACKPACK -> {
-                    user.despawnAttached();
-                    if (user instanceof Wardrobe) user.updateOutsideCosmetics(settings);
-                }
-            }
+            this.updateCosmetics(user);
+            if (user instanceof Wardrobe) user.updateOutsideCosmetics(settings);
         });
     }
 
-    public void removeItem(final User user, final ArmorItem.Type type) {
-        this.setItem(user, ArmorItem.empty(type));
+    public void removeItem(final User user, final ArmorItem.Type type, final boolean sendPacket) {
+        this.setItem(user, ArmorItem.empty(type), sendPacket);
     }
 
     /**
@@ -247,7 +217,8 @@ public class UserManager {
             final User user,
             final ArmorItem armorItem,
             final Message removeMessage,
-            final Message setMessage) {
+            final Message setMessage,
+            final boolean sendPacket) {
         final Player player = user.getPlayer();
 
         final ArmorItem.Type type = armorItem.getType();
@@ -261,7 +232,7 @@ public class UserManager {
         final ArmorItem check = user.getPlayerArmor().getItem(type);
 
         if (armorItem.getId().equals(check.getId())) {
-            this.setItem(user, ArmorItem.empty(type));
+            this.setItem(user, ArmorItem.empty(type), sendPacket);
 
             messageHandler.sendMessage(
                     player,
@@ -271,7 +242,7 @@ public class UserManager {
             return empty;
         }
 
-        this.setItem(user, armorItem);
+        this.setItem(user, armorItem, sendPacket);
         messageHandler.sendMessage(
                 player,
                 setMessage
@@ -324,6 +295,7 @@ public class UserManager {
             if (other == null) continue;
             if (!user.shouldShow(other)) continue;
             if (!this.settings.getCosmeticSettings().isInViewDistance(location, other.getLocation())) continue;
+            user.updateBackpack(other, this.settings);
             PacketManager.sendEquipmentPacket(
                     items,
                     entityId,

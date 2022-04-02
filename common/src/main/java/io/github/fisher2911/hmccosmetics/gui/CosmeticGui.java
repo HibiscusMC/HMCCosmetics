@@ -12,8 +12,6 @@ import io.github.fisher2911.hmccosmetics.message.Placeholder;
 import io.github.fisher2911.hmccosmetics.user.User;
 import io.github.fisher2911.hmccosmetics.util.builder.ItemBuilder;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -100,7 +98,8 @@ public class CosmeticGui {
                 setUser,
                 armorItem,
                 Messages.getRemovedMessage(type),
-                Messages.getSetMessage(type)
+                Messages.getSetMessage(type),
+                true
         );
 
         if (!setTo.isEmpty()) {

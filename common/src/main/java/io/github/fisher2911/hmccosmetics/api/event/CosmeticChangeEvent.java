@@ -21,6 +21,12 @@ public class CosmeticChangeEvent extends CosmeticItemEvent {
         this.user = user;
     }
 
+    public CosmeticChangeEvent(final boolean isAsync, final CosmeticItem cosmeticItem, final CosmeticItem removed, final BaseUser<?> user) {
+        super(isAsync, cosmeticItem);
+        this.removed = removed;
+        this.user = user;
+    }
+
     public BaseUser<?> getUser() {
         return user;
     }

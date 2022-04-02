@@ -127,7 +127,7 @@ public class CosmeticsCommand extends CommandBase {
 
             this.setDyeColor(dyeColor, armorItem, player);
 
-            this.userManager.setItem(user, armorItem);
+            this.userManager.setItem(user, armorItem, true);
 
             this.messageHandler.sendMessage(
                     player,
@@ -186,7 +186,7 @@ public class CosmeticsCommand extends CommandBase {
 
         final Message setMessage = Messages.getSetMessage(armorItem.getType());
         final Message setOtherMessage = Messages.getSetOtherMessage(armorItem.getType());
-        this.userManager.setItem(user, armorItem);
+        this.userManager.setItem(user, armorItem, true);
         this.messageHandler.sendMessage(
                 player,
                 setMessage
@@ -219,7 +219,7 @@ public class CosmeticsCommand extends CommandBase {
             final ArmorItem.Type type = ArmorItem.Type.valueOf(typeString.toUpperCase());
 
             final Message setOtherMessage = Messages.getSetOtherMessage(type);
-            this.userManager.removeItem(user, type);
+            this.userManager.removeItem(user, type, true);
             this.messageHandler.sendMessage(
                     sender,
                     setOtherMessage,
@@ -286,14 +286,11 @@ public class CosmeticsCommand extends CommandBase {
             wardrobe.setCurrentLocation(null);
         }
 
-        wardrobe.setActive(true);
         settings.playOpenSound(player);
 
         final Player finalPlayer = player;
         new TaskChain(this.plugin).
-                chain(() -> {
-                    wardrobe.spawnFakePlayer(finalPlayer);
-                }, true).
+                chain(() -> wardrobe.spawnFakePlayer(finalPlayer), true).
                 chain(() -> {
 //                    this.cosmeticsMenu.openDefault(finalPlayer);
                     this.messageHandler.sendMessage(

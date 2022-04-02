@@ -3,12 +3,13 @@ package io.github.fisher2911.hmccosmetics.listener;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.user.User;
 import io.github.fisher2911.hmccosmetics.user.UserManager;
-import java.util.Optional;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerRespawnEvent;
+
+import java.util.Optional;
 
 public class RespawnListener implements Listener {
 
@@ -28,7 +29,6 @@ public class RespawnListener implements Listener {
             optionalUser.ifPresent(user -> {
                 user.despawnAttached();
                 this.userManager.updateCosmetics(user);
-                this.userManager.setItem(user, user.getPlayerArmor().getHat());
             });
         }, 1);
     }
