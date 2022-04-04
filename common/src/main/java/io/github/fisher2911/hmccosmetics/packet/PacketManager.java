@@ -299,6 +299,16 @@ public class PacketManager {
         }
     }
 
+    public static void sendCameraPacket(final int entityId, final Player... sendTo) {
+        for (final Player p : sendTo) {
+            PacketEvents.getAPI().getPlayerManager().sendPacketAsync(p, new WrapperPlayServerCamera(entityId));
+        }
+    }
+
+    public static void sendCameraPacket(final int entityId, final Collection<? extends Player> sendTo) {
+        sendCameraPacket(entityId, sendTo.toArray(new Player[0]));
+    }
+
 //    public static void sendSoundPacket(
 //            final Player player,
 //            final Location location,
@@ -449,10 +459,6 @@ public class PacketManager {
                     )
             ));
         }
-    }
-
-    public static void sendSpectatePacket(final int entityId) {
-
     }
 
     public static com.github.retrooper.packetevents.protocol.player.Equipment getEquipment(

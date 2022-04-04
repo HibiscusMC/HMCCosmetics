@@ -175,6 +175,14 @@ public class UserManager {
         return items;
     }
 
+    public List<com.github.retrooper.packetevents.protocol.player.Equipment> getEmptyItemList() {
+        final List<com.github.retrooper.packetevents.protocol.player.Equipment> items = new ArrayList<>();
+        for (final EquipmentSlot slot : EquipmentSlot.values()) {
+            items.add(PacketManager.getEquipment(new ItemStack(Material.AIR), slot));
+        }
+        return items;
+    }
+
     public void setItem(final BaseUser<?> user, final ArmorItem armorItem, final boolean sendPacket) {
         ArmorItem previous = user.getPlayerArmor().getItem(armorItem.getType());
 

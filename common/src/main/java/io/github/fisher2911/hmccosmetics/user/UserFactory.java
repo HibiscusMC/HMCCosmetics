@@ -25,8 +25,9 @@ public class UserFactory {
             final Class<T> type,
             final Entity entity,
             final int armorStandId,
-            final int balloonId
-            ) {
+            final int balloonId,
+            final int wardrobeViewerId
+    ) {
         final UUID uuid = entity.getUniqueId();
         final int entityId = entity.getEntityId();
         if (type.equals(User.class)) {
@@ -37,7 +38,8 @@ public class UserFactory {
                     new EntityIds(
                             entityId,
                             armorStandId,
-                            balloonId
+                            balloonId,
+                            wardrobeViewerId
                     )
             );
         }
@@ -51,7 +53,8 @@ public class UserFactory {
                     new EntityIds(
                             entityId,
                             armorStandId,
-                            balloonId
+                            balloonId,
+                            wardrobeViewerId
                     )
             );
         }

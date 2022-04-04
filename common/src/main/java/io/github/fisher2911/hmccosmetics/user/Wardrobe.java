@@ -1,5 +1,6 @@
 package io.github.fisher2911.hmccosmetics.user;
 
+import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.config.WardrobeSettings;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
@@ -25,10 +26,7 @@ public class Wardrobe extends User {
     private final HMCCosmetics plugin;
     private final UUID ownerUUID;
     private boolean active;
-    private boolean cameraLocked;
-
     private boolean spawned;
-
     private Location currentLocation;
 
     public Wardrobe(
@@ -46,38 +44,53 @@ public class Wardrobe extends User {
     }
 
     public void spawnFakePlayer(final Player viewer) {
+        final UserManager userManager = this.plugin.getUserManager();
         final WardrobeSettings settings = this.plugin.getSettings().getWardrobeSettings();
-        if (settings.inDistanceOfStatic(viewer.getLocation())) {
-            this.currentLocation = settings.getWardrobeLocation();
-            new TaskChain(this.plugin).chain(
-                    () -> {
-                        viewer.teleport(settings.getViewerLocation());
-                        this.cameraLocked = true;
-                        this.hidePlayer();
-                    }
-            ).execute();
-
-        } else if (this.currentLocation == null) {
-            this.currentLocation = viewer.getLocation().clone();
-            this.currentLocation.setPitch(0);
-            this.currentLocation.setYaw(0);
-        } else if (this.spawned) {
-            return;
-        }
-
-        this.setActive(true);
 
         Bukkit.getScheduler().runTaskLaterAsynchronously(
                 this.plugin,
                 () -> {
+                    if (settings.inDistanceOfStatic(viewer.getLocation())) {
+                        this.currentLocation = settings.getWardrobeLocation();
+                        userManager.get(viewer.getUniqueId()).ifPresent(user -> userManager.sendUpdatePacket(user, userManager.getEmptyItemList()));
+                        PacketManager.sendEntitySpawnPacket(
+                                settings.getViewerLocation(),
+                                this.entityIds.wardrobeViewer(),
+                                EntityTypes.ARMOR_STAND,
+                                viewer
+                        );
+                        PacketManager.sendCameraPacket(
+                                this.entityIds.wardrobeViewer(),
+                                viewer
+                        );
+                        PacketManager.sendInvisibilityPacket(
+                                this.entityIds.wardrobeViewer(),
+                                viewer
+                        );
+                        PacketManager.sendLookPacket(
+                                this.entityIds.wardrobeViewer(),
+                                settings.getViewerLocation(),
+                                viewer
+                        );
+                        PacketManager.sendInvisibilityPacket(
+                                viewer.getEntityId(),
+                                viewer
+                        );
+                        this.hidePlayer();
+                        this.setActive(true);
+                    } else if (this.currentLocation == null) {
+                        this.currentLocation = viewer.getLocation().clone();
+                        this.currentLocation.setPitch(0);
+                        this.currentLocation.setYaw(0);
+                    } else if (this.spawned) {
+                        return;
+                    }
                     final int entityId = this.getEntityId();
                     PacketManager.sendFakePlayerInfoPacket(viewer, this.getId(), viewer);
                     PacketManager.sendFakePlayerSpawnPacket(this.currentLocation, this.getId(), entityId, viewer);
-//                    this.updateOutsideCosmetics(viewer, this.currentLocation, plugin.getSettings());
                     PacketManager.sendLookPacket(entityId, this.currentLocation, viewer);
                     PacketManager.sendRotationPacket(entityId, this.currentLocation, true, viewer);
                     PacketManager.sendPlayerOverlayPacket(entityId, viewer);
-                    final UserManager userManager = this.plugin.getUserManager();
                     userManager.get(viewer.getUniqueId()).
                             ifPresent(user -> {
                                 int index = 0;
@@ -112,9 +125,15 @@ public class Wardrobe extends User {
                     this.despawnBalloon();
                     PacketManager.sendEntityDestroyPacket(entityId, viewer);
                     PacketManager.sendRemovePlayerPacket(viewer, this.id, viewer);
+                    PacketManager.sendEntityDestroyPacket(
+                            this.entityIds.wardrobeViewer(),
+                            viewer
+                    );
+                    PacketManager.sendCameraPacket(
+                            viewer.getEntityId(),
+                            viewer
+                    );
                     this.showPlayer(this.plugin.getUserManager());
-                    this.cameraLocked = false;
-                    this.currentLocation = null;
                     final Collection<ArmorItem> armorItems = new ArrayList<>(this.getPlayerArmor().getArmorItems());
                     if (settings.isApplyCosmeticsOnClose()) {
                         final Optional<User> optionalUser = userManager.get(this.ownerUUID);
@@ -132,16 +151,22 @@ public class Wardrobe extends User {
                         ));
                     }
                     this.getPlayerArmor().clear();
-                    Bukkit.getScheduler().runTask(this.plugin, () -> {
-                        if (viewer == null || !viewer.isOnline()) return;
-                        viewer.teleport(settings.getLeaveLocation());
-                    });
-
-                    if (settings.isAlwaysDisplay()) {
-                        this.currentLocation = settings.getWardrobeLocation();
-                        if (this.currentLocation == null) return;
-                        this.spawnFakePlayer(viewer);
-                    }
+                    new TaskChain(this.plugin).chain(
+                                    () -> {
+                                        if (!viewer.isOnline()) return;
+                                        if (!this.currentLocation.equals(settings.getWardrobeLocation())) return;
+                                        this.currentLocation = null;
+                                        if (settings.isAlwaysDisplay()) {
+                                            this.currentLocation = settings.getWardrobeLocation();
+                                            if (this.currentLocation == null) return;
+                                            this.spawnFakePlayer(viewer);
+                                        }
+                                    },
+                                    true
+                            ).chain(
+                                    () -> viewer.teleport(settings.getLeaveLocation())
+                            ).
+                            execute();
                 },
                 settings.getDespawnDelay()
         );
@@ -171,10 +196,6 @@ public class Wardrobe extends User {
     private int getNextYaw(final int current, final int rotationSpeed) {
         if (current + rotationSpeed > 179) return -179;
         return current + rotationSpeed;
-    }
-
-    public boolean isCameraLocked() {
-        return this.active && this.cameraLocked;
     }
 
     @Override

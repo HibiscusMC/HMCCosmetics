@@ -17,11 +17,10 @@ import io.github.fisher2911.hmccosmetics.hook.item.ItemsAdderHook;
 import io.github.fisher2911.hmccosmetics.listener.ClickListener;
 import io.github.fisher2911.hmccosmetics.listener.CosmeticFixListener;
 import io.github.fisher2911.hmccosmetics.listener.JoinListener;
-import io.github.fisher2911.hmccosmetics.listener.MoveListener;
 import io.github.fisher2911.hmccosmetics.listener.PlayerShiftListener;
 import io.github.fisher2911.hmccosmetics.listener.RespawnListener;
 import io.github.fisher2911.hmccosmetics.listener.TeleportListener;
-import io.github.fisher2911.hmccosmetics.listener.WardrobeClickListener;
+import io.github.fisher2911.hmccosmetics.listener.WardrobeListener;
 import io.github.fisher2911.hmccosmetics.message.MessageHandler;
 import io.github.fisher2911.hmccosmetics.message.Messages;
 import io.github.fisher2911.hmccosmetics.message.Translation;
@@ -127,8 +126,7 @@ public class HMCCosmetics extends JavaPlugin {
                         new RespawnListener(this),
                         new CosmeticFixListener(this),
                         new PlayerShiftListener(this),
-                        new MoveListener(this),
-                        new WardrobeClickListener(this)
+                        new WardrobeListener(this)
                 ).
                 forEach(
                         listener -> this.getServer().getPluginManager()

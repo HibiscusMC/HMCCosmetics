@@ -63,6 +63,7 @@ public class Database {
         final UUID uuid = entity.getUniqueId();
         final int armorStandId = getNextEntityId();
         final int balloonId = getNextEntityId();
+        final int wardrobeViewerId = getNextEntityId();
         final Wardrobe wardrobe = this.createNewWardrobe(uuid);
         Threads.getInstance().execute(
                 () -> {
@@ -80,7 +81,8 @@ public class Database {
                                 new EntityIds(
                                         entity.getEntityId(),
                                         armorStandId,
-                                        balloonId
+                                        balloonId,
+                                        wardrobeViewerId
                                 ),
                                 armorItems,
                                 wardrobe
@@ -97,13 +99,14 @@ public class Database {
                 uuid,
                 PlayerArmor.empty(),
                 wardrobe,
-                new EntityIds(entity.getEntityId(), armorStandId, balloonId)
+                new EntityIds(entity.getEntityId(), armorStandId, balloonId, wardrobeViewerId)
         ));
     }
 
     public void loadNPCUser(final int id, final Entity entity, final Consumer<NPCUser> onComplete) {
         final int armorStandId = getNextEntityId();
         final int balloonId = getNextEntityId();
+        final int wardrobeViewerId = getNextEntityId();
         Threads.getInstance().execute(
                 () -> {
                     try {
@@ -120,7 +123,8 @@ public class Database {
                                 new EntityIds(
                                         entity.getEntityId(),
                                         armorStandId,
-                                        balloonId
+                                        balloonId,
+                                        wardrobeViewerId
                                 ),
                                 armorItems
                         );
@@ -137,7 +141,7 @@ public class Database {
         onComplete.accept(new NPCUser(
                 id,
                 PlayerArmor.empty(),
-                new EntityIds(entity.getEntityId(), armorStandId, balloonId)
+                new EntityIds(entity.getEntityId(), armorStandId, balloonId, wardrobeViewerId)
                 )
         );
     }
@@ -213,6 +217,7 @@ public class Database {
                 ownerUUID,
                 PlayerArmor.empty(),
                 new EntityIds(
+                        getNextEntityId(),
                         getNextEntityId(),
                         getNextEntityId(),
                         getNextEntityId()

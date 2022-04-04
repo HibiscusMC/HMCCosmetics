@@ -53,6 +53,7 @@ public class User extends BaseUser<UUID> {
         final Player player = this.getPlayer();
         if (player == null || player.isDead()) return false;
         if (player.getUniqueId().equals(other.getUniqueId()) && this.hidden) return false;
+        if (this.isWardrobeActive()) return false;
         final ItemStack itemStack = player.getInventory().getItemInMainHand();
         if (itemStack != null && itemStack.getType() == Material.TRIDENT) {
             final ItemMeta itemMeta = itemStack.getItemMeta();

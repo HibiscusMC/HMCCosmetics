@@ -6,16 +6,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import javax.swing.*;
-
-public class WardrobeClickListener implements Listener {
+public class WardrobeListener implements Listener {
 
     private final HMCCosmetics plugin;
     private final UserManager userManager;
 
-    public WardrobeClickListener(final HMCCosmetics plugin) {
+    public WardrobeListener(final HMCCosmetics plugin) {
         this.plugin = plugin;
         this.userManager = this.plugin.getUserManager();
     }
@@ -30,5 +29,13 @@ public class WardrobeClickListener implements Listener {
                     this.plugin.getCosmeticsMenu().openDefault(player);
                 }
         );
+    }
+
+    @EventHandler
+    public void onDamage(final EntityDamageEvent event) {
+        if (!(event.getEntity() instanceof final Player player)) return;
+        this.userManager.get(player.getUniqueId()).ifPresent(user -> {
+            if (user.isWardrobeActive()) event.setCancelled(true);
+        });
     }
 }

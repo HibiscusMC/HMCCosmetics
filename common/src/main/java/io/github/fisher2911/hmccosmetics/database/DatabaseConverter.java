@@ -5,6 +5,7 @@ import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
 import io.github.fisher2911.hmccosmetics.user.EntityIds;
 import io.github.fisher2911.hmccosmetics.user.User;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,8 +19,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
-
-import org.bukkit.configuration.file.YamlConfiguration;
 
 public class DatabaseConverter {
 
@@ -93,6 +92,7 @@ public class DatabaseConverter {
                             this.database.createNewWardrobe(uuid),
                             new EntityIds(
                                     -1,
+                                    Database.getNextEntityId(),
                                     Database.getNextEntityId(),
                                     Database.getNextEntityId()
                             )

@@ -29,6 +29,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
@@ -100,6 +101,13 @@ public class CosmeticFixListener implements Listener {
     }
 
     @EventHandler
+    public void onHoldItem(final PlayerItemHeldEvent event) {
+        this.userManager.get(event.getPlayer().getUniqueId()).ifPresent(user -> {
+          if (user.isWardrobeActive()) event.setCancelled(true);
+        });
+    }
+
+    @EventHandler
     public void onShiftClick(final InventoryClickEvent event) {
         if (event.getClick() != ClickType.SHIFT_LEFT && event.getClick() != ClickType.SHIFT_RIGHT) return;
         if (!(event.getWhoClicked() instanceof final Player player)) return;
@@ -143,17 +151,6 @@ public class CosmeticFixListener implements Listener {
                         final WrapperPlayClientClickWindow.WindowClickType clickType = packet.getWindowClickType();
                         EquipmentSlot slot = getPacketArmorSlot(slotClicked);
                         if (slot == null) {
-//                            final Equipment equipment = ;
-//                            final var itemList = ;
-//                            player.sendMessage("Sending delayed task");
-//                            taskManager.submit(new DelayedTask(() -> {
-//                                userManager.sendUpdatePacket(
-//                                        player.getEntityId(),
-//                                        player,
-//                                        getItemList(user, Equipment.fromEntityEquipment(player.getEquipment()), Collections.emptySet())
-//                                );
-//                                player.sendMessage("In delayed task");
-//                            }, 40));
                             return;
                         }
                         final EntityEquipment entityEquipment = player.getEquipment();
