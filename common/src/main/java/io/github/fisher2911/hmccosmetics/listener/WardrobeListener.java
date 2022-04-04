@@ -1,13 +1,16 @@
 package io.github.fisher2911.hmccosmetics.listener;
 
+import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.event.PacketListenerAbstract;
+import com.github.retrooper.packetevents.event.PacketReceiveEvent;
+import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.user.UserManager;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
 
 public class WardrobeListener implements Listener {
 
@@ -17,18 +20,21 @@ public class WardrobeListener implements Listener {
     public WardrobeListener(final HMCCosmetics plugin) {
         this.plugin = plugin;
         this.userManager = this.plugin.getUserManager();
-    }
-
-    @EventHandler
-    public void onPunch(final PlayerInteractEvent event) {
-        final Player player = event.getPlayer();
-        final Action action = event.getAction();
-        if (action != Action.LEFT_CLICK_AIR && action != Action.LEFT_CLICK_BLOCK) return;
-        this.userManager.get(player.getUniqueId()).ifPresent(user -> {
-                    if (!user.getWardrobe().isActive()) return;
-                    this.plugin.getCosmeticsMenu().openDefault(player);
-                }
-        );
+        PacketEvents.getAPI().getEventManager().registerListener(
+                new PacketListenerAbstract() {
+                    @Override
+                    public void onPacketReceive(PacketReceiveEvent event) {
+                        if (event.getPacketType() != PacketType.Play.Client.ANIMATION) return;
+                        if (!(event.getPlayer() instanceof final Player player)) return;
+                        WardrobeListener.this.userManager.get(player.getUniqueId()).ifPresent(user -> {
+                                    if (!user.getWardrobe().isActive()) return;
+                                    Bukkit.getScheduler().runTask(plugin, () -> {
+                                        WardrobeListener.this.plugin.getCosmeticsMenu().openDefault(player);
+                                    });
+                                }
+                        );
+                    }
+                });
     }
 
     @EventHandler

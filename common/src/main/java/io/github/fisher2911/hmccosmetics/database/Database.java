@@ -139,9 +139,9 @@ public class Database {
                 });
 
         onComplete.accept(new NPCUser(
-                id,
-                PlayerArmor.empty(),
-                new EntityIds(entity.getEntityId(), armorStandId, balloonId, wardrobeViewerId)
+                        id,
+                        PlayerArmor.empty(),
+                        new EntityIds(entity.getEntityId(), armorStandId, balloonId, wardrobeViewerId)
                 )
         );
     }

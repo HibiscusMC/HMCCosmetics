@@ -301,7 +301,7 @@ public class PacketManager {
 
     public static void sendCameraPacket(final int entityId, final Player... sendTo) {
         for (final Player p : sendTo) {
-            PacketEvents.getAPI().getPlayerManager().sendPacketAsync(p, new WrapperPlayServerCamera(entityId));
+            PacketEvents.getAPI().getPlayerManager().sendPacketSilentlyAsync(p, new WrapperPlayServerCamera(entityId));
         }
     }
 
