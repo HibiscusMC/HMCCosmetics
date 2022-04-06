@@ -125,8 +125,6 @@ public class Wardrobe extends User {
                 () -> {
                     this.spawned = false;
                     final int entityId = this.getEntityId();
-                    this.despawnAttached();
-                    this.despawnBalloon();
                     PacketManager.sendEntityDestroyPacket(entityId, viewer);
                     PacketManager.sendRemovePlayerPacket(viewer, this.id, viewer);
                     PacketManager.sendEntityDestroyPacket(
@@ -169,7 +167,10 @@ public class Wardrobe extends User {
                                     true
                             ).chain(
                                     () -> viewer.teleport(settings.getLeaveLocation())
-                            ).
+                            ).chain(() -> {
+                                this.despawnAttached();
+                                this.despawnBalloon();
+                            }, true).
                             execute();
                 },
                 settings.getDespawnDelay()

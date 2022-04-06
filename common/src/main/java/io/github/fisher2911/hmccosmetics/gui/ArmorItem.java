@@ -348,6 +348,18 @@ public class ArmorItem extends WrappedGuiItem {
         }
 
         @Nullable
+        public static Type fromPacketSlot(final com.github.retrooper.packetevents.protocol.player.EquipmentSlot slot) {
+            return switch (slot) {
+                case HELMET -> Type.HAT;
+                case CHESTPLATE -> Type.CHEST_PLATE;
+                case LEGGINGS -> Type.PANTS;
+                case BOOTS -> Type.BOOTS;
+                case OFFHAND -> Type.OFF_HAND;
+                default -> null;
+            };
+        }
+
+        @Nullable
         public static Type fromEquipmentSlot(final EquipmentSlot slot) {
             for (final Type type : values()) {
                 if (type.getSlot() == slot) return type;

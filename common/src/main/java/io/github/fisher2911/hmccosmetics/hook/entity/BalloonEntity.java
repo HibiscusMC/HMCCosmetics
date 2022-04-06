@@ -117,8 +117,7 @@ public class BalloonEntity {
             entity.removePlayerAsync(player);
         }
 
-        entity.getEntity().remove();
-
         ModelEngineAPI.api.getModelManager().removeModeledEntity(this.getUuid());
+        entity.getEntity().remove();
     }
 }

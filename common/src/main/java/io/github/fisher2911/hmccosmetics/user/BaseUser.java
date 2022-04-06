@@ -105,10 +105,10 @@ public abstract class BaseUser<T> {
     public void despawnBalloon() {
         final HookManager hookManager = HookManager.getInstance();
         if (!hookManager.isEnabled(ModelEngineHook.class)) return;
-        PacketManager.sendEntityDestroyPacket(this.getBalloonId(), Bukkit.getOnlinePlayers());
         this.balloon.remove();
         this.viewingBalloon.clear();
         this.balloon.setAlive(false);
+        PacketManager.sendEntityDestroyPacket(this.getBalloonId(), Bukkit.getOnlinePlayers());
     }
 
     protected void despawnBalloon(final Player other) {

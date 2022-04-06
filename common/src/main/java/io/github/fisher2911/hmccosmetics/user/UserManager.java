@@ -298,6 +298,7 @@ public class UserManager {
         final Location location = user.getLocation();
         if (location == null) return;
         final int entityId = user.getEntityId();
+        if (items.isEmpty()) return;
         for (final User otherUser : this.userMap.values()) {
             final Player other = otherUser.getPlayer();
             if (other == null) continue;

@@ -488,4 +488,5 @@ public class PacketManager {
             case OFF_HAND -> EquipmentSlot.OFFHAND;
         };
     }
+
 }
