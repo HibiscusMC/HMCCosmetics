@@ -63,7 +63,9 @@ public class CosmeticsCommand extends CommandBase {
 
     @SubCommand("menu")
     @Permission(io.github.fisher2911.hmccosmetics.message.Permission.DEFAULT_COMMAND)
-    public void defaultCommand(final Player player, @Completion("#menus") @me.mattstudios.mf.annotations.Optional String menu) {
+    public void defaultCommand(
+            final Player player,
+            @Completion("#menus") @me.mattstudios.mf.annotations.Optional String menu) {
         final Optional<User> optionalUser = this.userManager.get(player.getUniqueId());
         if (menu == null) menu = this.cosmeticSettings.getDefaultMenu();
         if (optionalUser.isEmpty()) {
@@ -201,8 +203,11 @@ public class CosmeticsCommand extends CommandBase {
 
     @SubCommand("remove")
     @Permission(io.github.fisher2911.hmccosmetics.message.Permission.SET_COSMETIC_COMMAND)
-    public void removeCommand(final CommandSender sender,
-                              @Completion("#players") final Player player, @Completion("#types") String typeString) {
+    public void removeCommand(
+            final CommandSender sender,
+            @Completion("#players") final Player player,
+            @Completion("#types") String typeString
+    ) {
         final Optional<User> userOptional = this.userManager.get(player.getUniqueId());
 
         if (userOptional.isEmpty()) {
@@ -233,22 +238,35 @@ public class CosmeticsCommand extends CommandBase {
 
     @SubCommand("wardrobe")
     @Permission(io.github.fisher2911.hmccosmetics.message.Permission.WARDROBE)
-    public void openWardrobe(Player player, @me.mattstudios.mf.annotations.Optional final Player other) {
+    public void openWardrobe(
+            CommandSender sender,
+            @me.mattstudios.mf.annotations.Optional final Player other
+    ) {
+        Player player = null;
         if (other != null) {
-            if (!player.hasPermission(io.github.fisher2911.hmccosmetics.message.Permission.OPEN_OTHER_WARDROBE)) {
+            if (!sender.hasPermission(io.github.fisher2911.hmccosmetics.message.Permission.OPEN_OTHER_WARDROBE)) {
                 this.messageHandler.sendMessage(
-                        player,
+                        sender,
                         Messages.NO_PERMISSION
                 );
                 return;
             }
             this.messageHandler.sendMessage(
-                    player,
+                    sender,
                     Messages.OPENED_OTHER_WARDROBE,
                     Map.of(Placeholder.PLAYER, other.getName())
             );
             player = other;
+        } else if (!(sender instanceof final Player p)) {
+            this.messageHandler.sendMessage(
+                    sender,
+                    Messages.MUST_BE_PLAYER
+            );
+            return;
+        } else {
+            player = p;
         }
+
         final Optional<User> optionalUser = this.plugin.getUserManager().get(player.getUniqueId());
         if (optionalUser.isEmpty()) return;
 
