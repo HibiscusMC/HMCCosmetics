@@ -274,7 +274,7 @@ public abstract class BaseUser<T> {
         PacketManager.sendRotationPacket(armorStandId, location, false, other);
         PacketManager.sendLookPacket(armorStandId, location, other);
         PacketManager.sendRidingPacket(this.getEntityId(), armorStandId, other);
-
+        PacketManager.sendEquipmentPacket(equipment, armorStandId, other);
         if (hidden) return;
         this.updateBalloon(other, location, settings.getCosmeticSettings());
     }
