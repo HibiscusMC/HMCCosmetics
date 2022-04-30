@@ -38,6 +38,7 @@ public class ActionSerializer implements TypeSerializer<List<CosmeticGuiAction>>
     private static final HMCCosmetics plugin;
 
     private static final String OPEN_MENU = "open-menu";
+    private static final String CLOSE_MENU = "close-menu";
     private static final String SET_ITEMS = "set-items";
     private static final String REMOVE_COSMETICS = "remove-cosmetics";
     private static final String SET_COSMETICS = "set-cosmetics";
@@ -98,6 +99,7 @@ public class ActionSerializer implements TypeSerializer<List<CosmeticGuiAction>>
         final ConfigurationNode removeItemsNode = node.node(REMOVE_COSMETICS);
         final ConfigurationNode setCosmeticsNode = node.node(SET_COSMETICS);
         final ConfigurationNode soundNode = node.node(SOUND);
+        final boolean closeMenu = node.node(CLOSE_MENU).getBoolean(false);
 
         final String openMenu = openMenuNode.getString();
 
@@ -150,6 +152,7 @@ public class ActionSerializer implements TypeSerializer<List<CosmeticGuiAction>>
                             gui.updateItem(entry.getKey(), item, user, player);
                         }
                     }
+                    if (closeMenu) player.closeInventory();
                 }
         );
     }
