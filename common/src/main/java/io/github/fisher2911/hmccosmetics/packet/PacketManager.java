@@ -56,7 +56,7 @@ public class PacketManager {
 
     public static void sendArmorStandMetaContainer(final int armorStandId, final Player... sendTo) {
         for (final Player p : sendTo) {
-            PacketEvents.getAPI().getPlayerManager().sendPacketSilentlyAsync(p, new WrapperPlayServerEntityMetadata(
+            PacketEvents.getAPI().getPlayerManager().sendPacketAsync(p, new WrapperPlayServerEntityMetadata(
                     armorStandId,
                     List.of(
                             new EntityData(0, EntityDataTypes.BYTE, (byte) 0x20),
@@ -98,7 +98,7 @@ public class PacketManager {
             final UUID uuid,
             final Player... sendTo) {
         for (final Player p : sendTo) {
-            PacketEvents.getAPI().getPlayerManager().sendPacketSilentlyAsync(p, new WrapperPlayServerSpawnLivingEntity(
+            PacketEvents.getAPI().getPlayerManager().sendPacketAsync(p, new WrapperPlayServerSpawnLivingEntity(
                     entityId,
                     uuid,
                     entityType,
@@ -118,7 +118,7 @@ public class PacketManager {
 
     public static void sendInvisibilityPacket(final int entityId, final Player... sendTo) {
         for (final Player p : sendTo) {
-            PacketEvents.getAPI().getPlayerManager().sendPacketSilentlyAsync(p, new WrapperPlayServerEntityMetadata(
+            PacketEvents.getAPI().getPlayerManager().sendPacketAsync(p, new WrapperPlayServerEntityMetadata(
                     entityId,
                     List.of(new EntityData(0, EntityDataTypes.BYTE, (byte) 0x20))
             ));
@@ -141,7 +141,7 @@ public class PacketManager {
             final Player... sendTo
     ) {
         for (final Player p : sendTo) {
-            PacketEvents.getAPI().getPlayerManager().sendPacketSilentlyAsync(p, new WrapperPlayServerEntityTeleport(
+            PacketEvents.getAPI().getPlayerManager().sendPacketAsync(p, new WrapperPlayServerEntityTeleport(
                     entityId,
                     new Vector3d(location.getX(), location.getY(), location.getZ()),
                     location.getYaw(),
@@ -169,7 +169,7 @@ public class PacketManager {
             final Player... sendTo
     ) {
         for (final Player p : sendTo) {
-            PacketEvents.getAPI().getPlayerManager().sendPacketSilentlyAsync(p, new WrapperPlayServerEntityRelativeMove(
+            PacketEvents.getAPI().getPlayerManager().sendPacketAsync(p, new WrapperPlayServerEntityRelativeMove(
                     entityId,
                     to.getX() - from.getX(),
                     to.getY() - from.getY(),
@@ -193,7 +193,7 @@ public class PacketManager {
             final Player... sendTo
     ) {
         for (final Player p : sendTo) {
-            PacketEvents.getAPI().getPlayerManager().sendPacketSilentlyAsync(p, new WrapperPlayServerAttachEntity(
+            PacketEvents.getAPI().getPlayerManager().sendPacketAsync(p, new WrapperPlayServerAttachEntity(
                     balloonId,
                     entityId,
                     true
@@ -215,7 +215,7 @@ public class PacketManager {
             final Player... sendTo
     ) {
         for (final Player p : sendTo) {
-            PacketEvents.getAPI().getPlayerManager().sendPacketSilentlyAsync(p, new WrapperPlayServerEntityEquipment(
+            PacketEvents.getAPI().getPlayerManager().sendPacketAsync(p, new WrapperPlayServerEntityEquipment(
                     entityId,
                     equipmentList
             ));
@@ -238,7 +238,7 @@ public class PacketManager {
             final Player... sendTo
     ) {
         for (final Player p : sendTo) {
-            PacketEvents.getAPI().getPlayerManager().sendPacketSilentlyAsync(p, new WrapperPlayServerEntityRotation(
+            PacketEvents.getAPI().getPlayerManager().sendPacketAsync(p, new WrapperPlayServerEntityRotation(
                     entityId,
                     location.getYaw(),
                     location.getPitch(),
@@ -261,7 +261,7 @@ public class PacketManager {
             final Player... sendTo
     ) {
         for (final Player p : sendTo) {
-            PacketEvents.getAPI().getPlayerManager().sendPacketSilentlyAsync(p, new WrapperPlayServerEntityHeadLook(
+            PacketEvents.getAPI().getPlayerManager().sendPacketAsync(p, new WrapperPlayServerEntityHeadLook(
                     entityId,
                     location.getYaw()
             ));
@@ -282,7 +282,7 @@ public class PacketManager {
             final Player... sendTo
     ) {
         for (final Player p : sendTo) {
-            PacketEvents.getAPI().getPlayerManager().sendPacketSilentlyAsync(p, new WrapperPlayServerSetPassengers(
+            PacketEvents.getAPI().getPlayerManager().sendPacketAsync(p, new WrapperPlayServerSetPassengers(
                     mountId,
                     new int[]{passengerId}
             ));
@@ -295,13 +295,13 @@ public class PacketManager {
 
     public static void sendEntityDestroyPacket(final int entityId, final Player... sendTo) {
         for (final Player p : sendTo) {
-            PacketEvents.getAPI().getPlayerManager().sendPacketSilentlyAsync(p, new WrapperPlayServerDestroyEntities(entityId));
+            PacketEvents.getAPI().getPlayerManager().sendPacketAsync(p, new WrapperPlayServerDestroyEntities(entityId));
         }
     }
 
     public static void sendCameraPacket(final int entityId, final Player... sendTo) {
         for (final Player p : sendTo) {
-            PacketEvents.getAPI().getPlayerManager().sendPacketSilentlyAsync(p, new WrapperPlayServerCamera(entityId));
+            PacketEvents.getAPI().getPlayerManager().sendPacketAsync(p, new WrapperPlayServerCamera(entityId));
         }
     }
 
@@ -363,7 +363,7 @@ public class PacketManager {
             final Player... sendTo
     ) {
         for (final Player p : sendTo) {
-            PacketEvents.getAPI().getPlayerManager().sendPacketSilentlyAsync(p, new WrapperPlayServerSpawnPlayer(
+            PacketEvents.getAPI().getPlayerManager().sendPacketAsync(p, new WrapperPlayServerSpawnPlayer(
                     entityId,
                     uuid,
                     new com.github.retrooper.packetevents.protocol.world.Location(
@@ -402,7 +402,7 @@ public class PacketManager {
                 0
         );
         for (final Player p : sendTo) {
-            PacketEvents.getAPI().getPlayerManager().sendPacketSilentlyAsync(p, new WrapperPlayServerPlayerInfo(
+            PacketEvents.getAPI().getPlayerManager().sendPacketAsync(p, new WrapperPlayServerPlayerInfo(
                     WrapperPlayServerPlayerInfo.Action.ADD_PLAYER,
                     data
             ));
@@ -422,7 +422,7 @@ public class PacketManager {
     ) {
         final byte mask = 0x01 | 0x02 | 0x04 | 0x08 | 0x010 | 0x020 | 0x40;
         for (final Player p : sendTo) {
-            PacketEvents.getAPI().getPlayerManager().sendPacketSilentlyAsync(p, new WrapperPlayServerEntityMetadata(
+            PacketEvents.getAPI().getPlayerManager().sendPacketAsync(p, new WrapperPlayServerEntityMetadata(
                     playerId,
                     List.of(
                             new EntityData(17, EntityDataTypes.BYTE, mask),
@@ -446,7 +446,7 @@ public class PacketManager {
             final Player... sendTo
     ) {
         for (final Player p : sendTo) {
-            PacketEvents.getAPI().getPlayerManager().sendPacketSilentlyAsync(p, new WrapperPlayServerPlayerInfo(
+            PacketEvents.getAPI().getPlayerManager().sendPacketAsync(p, new WrapperPlayServerPlayerInfo(
                     WrapperPlayServerPlayerInfo.Action.REMOVE_PLAYER,
                     new WrapperPlayServerPlayerInfo.PlayerData(
                             Component.empty(),
