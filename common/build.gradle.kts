@@ -38,7 +38,7 @@ dependencies {
     compileOnly("com.github.oraxen:oraxen:-SNAPSHOT")
     compileOnly("com.github.LoneDev6:API-ItemsAdder:2.5.4")
     compileOnly("net.citizensnpcs:citizens-main:2.0.29-SNAPSHOT")
-    compileOnly("com.ticxo.modelengine:api:R2.4.1:")
+    compileOnly("com.ticxo.modelengine:api:R2.5.0:")
     implementation("com.github.retrooper.packetevents:spigot:2.0-SNAPSHOT")
     implementation("net.kyori:adventure-api:4.10.0")
     implementation ("net.kyori:adventure-text-minimessage:4.10.0-SNAPSHOT")
@@ -71,6 +71,7 @@ tasks {
         relocate("com.zaxxer.hikaricp", "io.github.fisher2911.hmccosmetics.hikaricp")
         relocate("com.j256.ormlite", "io.github.fisher2911.hmccosmetics.ormlite")
         relocate("com.github.retrooper.packetevents", "io.github.fisher2911.hmccosmetics.packetevents")
+        relocate("io.github.retrooper.packetevents", "io.github.fisher2911.hmccosmetics.packetevents")
         archiveFileName.set("HMCCosmetics.jar")
 
         dependencies {
