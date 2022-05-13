@@ -59,15 +59,15 @@ public class HMCCosmetics extends JavaPlugin {
 
     private BukkitTask saveTask;
 
+    /* // commented because PacketEvents is no longer shaded
     @Override
     public void onLoad() {
         PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
         PacketEvents.getAPI().load();
     }
-
+*/
     @Override
     public void onEnable() {
-        PacketEvents.getAPI().init();
         final int pluginId = 13873;
         final Metrics metrics = new Metrics(this, pluginId);
         this.taskManager = new TaskManager(this);
