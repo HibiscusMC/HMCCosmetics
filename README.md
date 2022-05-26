@@ -14,7 +14,7 @@ HMCCosmetics is an intuitive, easy-to-use cosmetics plugin, designed for servers
 
 ### Requirements
 
-- ProtocolLib
+- [packetevents 2.0](https://github.com/retrooper/packetevents)
 
 ### Download
 
