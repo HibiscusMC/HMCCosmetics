@@ -1,7 +1,6 @@
 package io.github.fisher2911.hmccosmetics.inventory;
 
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
-import org.bukkit.Bukkit;
 
 import java.util.Collection;
 import java.util.EnumMap;
@@ -35,9 +34,9 @@ public class PlayerArmor {
         return this.getItem(ArmorItem.Type.HAT);
     }
 
-    public ArmorItem getBackpack() {
-        return this.getItem(ArmorItem.Type.BACKPACK);
-    }
+//    public ArmorItem getBackpack() {
+//        return this.getItem(ArmorItem.Type.BACKPACK);
+//    }
 
     public ArmorItem getOffHand() {
         return this.getItem(ArmorItem.Type.OFF_HAND);

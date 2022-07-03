@@ -25,14 +25,14 @@ public class User extends BaseUser<UUID> {
     private boolean hidden;
     private WeakReference<Player> playerReference;
 
-    public User(final UUID uuid, final PlayerArmor playerArmor, final Wardrobe wardrobe, final EntityIds entityIds) {
-        super(uuid, playerArmor, entityIds);
+    public User(final UUID uuid, final PlayerArmor playerArmor, Backpack backpack, final Wardrobe wardrobe, final EntityIds entityIds) {
+        super(uuid, playerArmor, backpack, entityIds);
         this.wardrobe = wardrobe;
         this.playerReference = new WeakReference<>(Bukkit.getPlayer(uuid));
     }
 
-    public User(final UUID uuid, final PlayerArmor playerArmor, final EntityIds entityIds) {
-        super(uuid, playerArmor, entityIds);
+    public User(final UUID uuid, final PlayerArmor playerArmor, Backpack backpack, final EntityIds entityIds) {
+        super(uuid, playerArmor, backpack, entityIds);
         this.playerReference = new WeakReference<>(Bukkit.getPlayer(uuid));
     }
 

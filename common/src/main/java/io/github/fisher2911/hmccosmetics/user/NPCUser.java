@@ -15,13 +15,13 @@ public class NPCUser extends BaseUser<Integer> {
 
     private final CitizensHook hook;
 
-    public NPCUser(final int id, final PlayerArmor playerArmor, final EntityIds entityIds) {
-        super(id, playerArmor, entityIds);
+    public NPCUser(final int id, final PlayerArmor playerArmor, Backpack backpack, final EntityIds entityIds) {
+        super(id, playerArmor, backpack, entityIds);
         this.hook = HookManager.getInstance().getCitizensHook();
     }
 
-    public NPCUser(final PlayerArmor playerArmor, final NPC npc, final EntityIds entityIds) {
-        this(npc.getId(), playerArmor, entityIds);
+    public NPCUser(final PlayerArmor playerArmor, Backpack backpack, final NPC npc, final EntityIds entityIds) {
+        this(npc.getId(), playerArmor, backpack, entityIds);
     }
 
     @Nullable

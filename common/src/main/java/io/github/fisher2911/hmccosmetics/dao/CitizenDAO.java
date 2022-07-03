@@ -5,6 +5,7 @@ import com.j256.ormlite.table.DatabaseTable;
 import io.github.fisher2911.hmccosmetics.cosmetic.CosmeticManager;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
+import io.github.fisher2911.hmccosmetics.user.Backpack;
 import io.github.fisher2911.hmccosmetics.user.EntityIds;
 import io.github.fisher2911.hmccosmetics.user.NPCUser;
 import org.jetbrains.annotations.Nullable;
@@ -33,7 +34,8 @@ public class CitizenDAO {
         public NPCUser toUser(
                 final CosmeticManager cosmeticManager,
                 final EntityIds entityIds,
-                final List<ArmorItemDAO> armorItems
+                final List<ArmorItemDAO> armorItems,
+                Backpack backpack
         ) {
             final PlayerArmor playerArmor = PlayerArmor.empty();
 
@@ -45,7 +47,7 @@ public class CitizenDAO {
                 playerArmor.setItem(armorItem);
             }
 
-            return new NPCUser(this.citizensId, playerArmor, entityIds);
+            return new NPCUser(this.citizensId, playerArmor, backpack, entityIds);
         }
 
     @Override

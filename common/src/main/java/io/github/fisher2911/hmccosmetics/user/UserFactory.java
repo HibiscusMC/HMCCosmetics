@@ -25,6 +25,7 @@ public class UserFactory {
             final Class<T> type,
             final Entity entity,
             final int armorStandId,
+            final int firstPersonId,
             final int balloonId,
             final int wardrobeViewerId
     ) {
@@ -34,10 +35,12 @@ public class UserFactory {
             return (T) new User(
                     uuid,
                     PlayerArmor.empty(),
+                    new Backpack(armorStandId, firstPersonId),
                     plugin.getDatabase().createNewWardrobe(uuid),
                     new EntityIds(
                             entityId,
                             armorStandId,
+                            firstPersonId,
                             balloonId,
                             wardrobeViewerId
                     )
@@ -50,9 +53,11 @@ public class UserFactory {
             return (T) new NPCUser(
                     citizensId,
                     PlayerArmor.empty(),
+                    new Backpack(armorStandId, firstPersonId),
                     new EntityIds(
                             entityId,
                             armorStandId,
+                            firstPersonId,
                             balloonId,
                             wardrobeViewerId
                     )

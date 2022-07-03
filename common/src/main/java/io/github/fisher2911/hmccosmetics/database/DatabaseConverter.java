@@ -3,6 +3,7 @@ package io.github.fisher2911.hmccosmetics.database;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
+import io.github.fisher2911.hmccosmetics.user.Backpack;
 import io.github.fisher2911.hmccosmetics.user.EntityIds;
 import io.github.fisher2911.hmccosmetics.user.User;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -86,13 +87,17 @@ public class DatabaseConverter {
                 while (results.next()) {
                     final PlayerArmor playerArmor = PlayerArmor.empty();
                     final UUID uuid = UUID.fromString(results.getString(1));
+                    final int armorStandId = Database.getNextEntityId();
+                    final int firstPersonId = Database.getNextEntityId();
                     final User user = new User(
                             uuid,
                             playerArmor,
+                            new Backpack(armorStandId, firstPersonId),
                             this.database.createNewWardrobe(uuid),
                             new EntityIds(
                                     -1,
-                                    Database.getNextEntityId(),
+                                    armorStandId,
+                                    firstPersonId,
                                     Database.getNextEntityId(),
                                     Database.getNextEntityId()
                             )

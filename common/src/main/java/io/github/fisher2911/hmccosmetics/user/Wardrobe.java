@@ -34,9 +34,10 @@ public class Wardrobe extends User {
             final UUID uuid,
             final UUID ownerUUID,
             final PlayerArmor playerArmor,
+            final Backpack backpack,
             final EntityIds entityIds,
             final boolean active) {
-        super(uuid, playerArmor, entityIds);
+        super(uuid, playerArmor, backpack, entityIds);
         this.plugin = plugin;
         this.ownerUUID = ownerUUID;
         this.active = active;

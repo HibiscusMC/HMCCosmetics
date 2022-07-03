@@ -18,7 +18,7 @@ import io.github.fisher2911.hmccosmetics.user.Equipment;
 import io.github.fisher2911.hmccosmetics.user.User;
 import io.github.fisher2911.hmccosmetics.user.UserManager;
 import io.github.fisher2911.hmccosmetics.util.Utils;
-import io.github.retrooper.packetevents.util.SpigotDataHelper;
+import io.github.retrooper.packetevents.util.SpigotConversionUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -193,7 +193,7 @@ public class CosmeticFixListener implements Listener {
             final ArmorItem.Type t = ArmorItem.Type.fromPacketSlot(s);
             if (t == null) return false;
             final ArmorItem armorItem = user.getPlayerArmor().getItem(t);
-            final ItemStack i = SpigotDataHelper.toBukkitItemStack(e.getItem());
+            final ItemStack i = SpigotConversionUtil.toBukkitItemStack(e.getItem());
             return armorItem.isEmpty() && i.equals(equipment.getItem(t.getSlot()));
         });
         for (final Player other : Bukkit.getOnlinePlayers()) {
@@ -231,15 +231,15 @@ public class CosmeticFixListener implements Listener {
                                 if (packetSlot == -1) continue;
                                 if (packetSlot >= size) continue;
 
-                                final ItemStack current = SpigotDataHelper.toBukkitItemStack(itemStacks.get(packetSlot));
+                                final ItemStack current = SpigotConversionUtil.toBukkitItemStack(itemStacks.get(packetSlot));
                                 final com.github.retrooper.packetevents.protocol.item.ItemStack setTo =
-                                        SpigotDataHelper.fromBukkitItemStack(userManager.getCosmeticItem(
+                                        SpigotConversionUtil.fromBukkitItemStack(userManager.getCosmeticItem(
                                                 armorItem,
                                                 current,
                                                 ArmorItem.Status.APPLIED,
                                                 slot
                                         ));
-                                if (SpigotDataHelper.fromBukkitItemStack(current).equals(setTo)) continue;
+                                if (SpigotConversionUtil.fromBukkitItemStack(current).equals(setTo)) continue;
                                 equipmentList.add(PacketManager.getEquipment(setTo, slot));
                             }
                             userManager.sendUpdatePacket(

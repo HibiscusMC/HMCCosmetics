@@ -128,7 +128,7 @@ public class Messages {
     public static Message getSetMessage(final ArmorItem.Type type) {
         return switch (type) {
             case HAT -> Messages.SET_HAT;
-            case BACKPACK -> Messages.SET_BACKPACK;
+            case BACKPACK, SELF_BACKPACK -> Messages.SET_BACKPACK;
             case OFF_HAND -> Messages.SET_OFF_HAND;
             case CHEST_PLATE -> Messages.SET_CHEST_PLATE;
             case PANTS -> Messages.SET_PANTS;
@@ -140,7 +140,7 @@ public class Messages {
     public static Message getRemovedMessage(final ArmorItem.Type type) {
         return switch (type) {
             case HAT -> Messages.REMOVED_HAT;
-            case BACKPACK -> Messages.REMOVED_BACKPACK;
+            case BACKPACK, SELF_BACKPACK -> Messages.REMOVED_BACKPACK;
             case OFF_HAND -> Messages.REMOVED_OFF_HAND;
             case CHEST_PLATE -> Messages.REMOVED_CHEST_PLATE;
             case PANTS -> Messages.REMOVED_PANTS;
@@ -152,7 +152,7 @@ public class Messages {
     public static Message getSetOtherMessage(final ArmorItem.Type type) {
         return switch (type) {
             case HAT -> Messages.SET_OTHER_HAT;
-            case BACKPACK -> Messages.SET_OTHER_BACKPACK;
+            case BACKPACK, SELF_BACKPACK -> Messages.SET_OTHER_BACKPACK;
             case OFF_HAND -> Messages.SET_OTHER_OFF_HAND;
             case CHEST_PLATE -> Messages.SET_OTHER_CHEST_PLATE;
             case PANTS -> Messages.SET_OTHER_PANTS;

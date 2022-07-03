@@ -5,6 +5,7 @@ import com.j256.ormlite.table.DatabaseTable;
 import io.github.fisher2911.hmccosmetics.cosmetic.CosmeticManager;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
+import io.github.fisher2911.hmccosmetics.user.Backpack;
 import io.github.fisher2911.hmccosmetics.user.EntityIds;
 import io.github.fisher2911.hmccosmetics.user.User;
 import io.github.fisher2911.hmccosmetics.user.Wardrobe;
@@ -36,6 +37,7 @@ public class UserDAO {
             final CosmeticManager cosmeticManager,
             final EntityIds entityIds,
             final List<ArmorItemDAO> armorItems,
+            final Backpack backpack,
             final Wardrobe wardrobe
     ) {
         final PlayerArmor playerArmor = PlayerArmor.empty();
@@ -48,7 +50,7 @@ public class UserDAO {
             playerArmor.setItem(armorItem);
         }
 
-        return new User(this.uuid, playerArmor, wardrobe, entityIds);
+        return new User(this.uuid, playerArmor, backpack, wardrobe, entityIds);
     }
 
     @Override

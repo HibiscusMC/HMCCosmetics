@@ -1,16 +1,25 @@
 package io.github.fisher2911.hmccosmetics.cosmetic;
 
+import io.github.fisher2911.hmccosmetics.HMCCosmetics;
+import io.github.fisher2911.hmccosmetics.config.ArmorItemSerializer;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.gui.Token;
+import io.github.fisher2911.hmccosmetics.gui.WrappedGuiItem;
 import io.github.fisher2911.hmccosmetics.util.Keys;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.Nullable;
+import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Map;
 
 public class CosmeticManager {
+
+    private final Path ITEMS_PATH = Path.of(HMCCosmetics.getPlugin(HMCCosmetics.class).getDataFolder().getPath(), "items.yml");
 
     private final Map<String, Token> tokenMap;
     private final Map<String, ArmorItem> armorItemMap;
@@ -67,5 +76,37 @@ public class CosmeticManager {
 
     public void clearTokens() {
         this.tokenMap.clear();
+    }
+
+    public void clearItems() {
+        this.armorItemMap.clear();
+    }
+
+    public void load() {
+        this.clearItems();
+        try {
+            final File file = ITEMS_PATH.toFile();
+            if (!file.exists()) {
+                file.getParentFile().mkdirs();
+                file.createNewFile();
+            }
+            final YamlConfigurationLoader loader = YamlConfigurationLoader.
+                    builder().
+                    path(ITEMS_PATH).
+                    defaultOptions(opts ->
+                            opts.serializers(build ->
+                                    build.register(WrappedGuiItem.class, ArmorItemSerializer.INSTANCE))
+                    )
+                    .build();
+            for (var node : loader.load().childrenMap().values()) {
+                final WrappedGuiItem item = ArmorItemSerializer.INSTANCE.deserialize(WrappedGuiItem.class, node);
+                if (item instanceof ArmorItem armorItem) {
+                    armorItem.setAction(null);
+                    this.armorItemMap.put(armorItem.getId(), armorItem);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

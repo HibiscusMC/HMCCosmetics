@@ -2,8 +2,6 @@ package io.github.fisher2911.hmccosmetics.user;
 
 
 import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes;
-import com.github.retrooper.packetevents.protocol.item.type.ItemTypes;
-import com.github.retrooper.packetevents.protocol.player.EquipmentSlot;
 import io.github.fisher2911.hmccosmetics.config.CosmeticSettings;
 import io.github.fisher2911.hmccosmetics.config.Settings;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
@@ -13,7 +11,6 @@ import io.github.fisher2911.hmccosmetics.hook.ModelEngineHook;
 import io.github.fisher2911.hmccosmetics.hook.entity.BalloonEntity;
 import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
 import io.github.fisher2911.hmccosmetics.packet.PacketManager;
-import io.github.retrooper.packetevents.util.SpigotDataHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -22,9 +19,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -34,6 +29,7 @@ public abstract class BaseUser<T> {
     protected final EntityIds entityIds;
     protected final BalloonEntity balloon;
     protected final PlayerArmor playerArmor;
+    protected final Backpack backpack;
     // for setting multiple items
     protected boolean armorUpdated;
 
@@ -43,10 +39,11 @@ public abstract class BaseUser<T> {
     protected final Set<UUID> viewingArmorStand = new HashSet<>();
     protected final Set<UUID> viewingBalloon = new HashSet<>();
 
-    public BaseUser(final T id, final PlayerArmor playerArmor, final EntityIds entityIds) {
+    public BaseUser(final T id, final PlayerArmor playerArmor, final Backpack backpack, final EntityIds entityIds) {
         this.id = id;
         this.entityIds = entityIds;
         this.playerArmor = playerArmor;
+        this.backpack = backpack;
         if (!HookManager.getInstance().isEnabled(ModelEngineHook.class)) {
             this.balloon = null;
         } else {
@@ -174,9 +171,8 @@ public abstract class BaseUser<T> {
         PacketManager.sendLeashPacket(balloonId, this.getEntityId(), other);
     }
 
-    private void spawnArmorStand(final Player other, final Location location) {
-        PacketManager.sendEntitySpawnPacket(location, this.getArmorStandId(), EntityTypes.ARMOR_STAND, other);
-        PacketManager.sendArmorStandMetaContainer(this.getArmorStandId(), other);
+    private void spawnArmorStand(final Player other, final Location location, Settings settings) {
+        this.backpack.spawn(this, other, location, settings);
     }
 
     public void updateOutsideCosmetics(final Settings settings) {
@@ -188,33 +184,7 @@ public abstract class BaseUser<T> {
     }
 
     public void updateBackpack(final Player other, final Settings settings) {
-        final Location location = this.getLocation();
-        if (location == null) return;
-        final List<com.github.retrooper.packetevents.protocol.player.Equipment> equipment = new ArrayList<>();
-        final boolean hidden = !this.shouldShow(other);
-        final int lookDownPitch = settings.getCosmeticSettings().getLookDownPitch();
-        final boolean isLookingDown =
-                this.id.equals(other.getUniqueId()) && lookDownPitch
-                        != -1 &&
-                        this.isFacingDown(location, lookDownPitch);
-        if (hidden || isLookingDown) {
-            equipment.add(new com.github.retrooper.packetevents.protocol.player.Equipment(
-                    EquipmentSlot.HELMET,
-                    new com.github.retrooper.packetevents.protocol.item.ItemStack.Builder().
-                            type(ItemTypes.AIR).
-                            build()
-            ));
-        } else {
-            final com.github.retrooper.packetevents.protocol.item.ItemStack itemStack =
-                    SpigotDataHelper.fromBukkitItemStack(this.playerArmor.getBackpack().getItemStack(ArmorItem.Status.APPLIED));
-            equipment.add(new com.github.retrooper.packetevents.protocol.player.Equipment(
-                    EquipmentSlot.HELMET,
-                    itemStack
-            ));
-        }
-
-        final int armorStandId = this.getArmorStandId();
-        PacketManager.sendEquipmentPacket(equipment, armorStandId, other);
+        this.backpack.updateBackpack(this, other, settings);
     }
 
     public void updateOutsideCosmetics(final Player other, final Location location, final Settings settings) {
@@ -230,7 +200,7 @@ public abstract class BaseUser<T> {
                 return;
             }
             if (hasBackpack) {
-                this.spawnArmorStand(other, location);
+                this.spawnArmorStand(other, location, settings);
                 this.viewingArmorStand.add(otherUUID);
             }
         } else if (!inViewDistance || !shouldShow) {
@@ -247,34 +217,8 @@ public abstract class BaseUser<T> {
             this.despawnBalloon(other);
         }
 
-        final List<com.github.retrooper.packetevents.protocol.player.Equipment> equipment = new ArrayList<>();
+        this.updateBackpack(other, settings);
         final boolean hidden = !this.shouldShow(other);
-        final int lookDownPitch = settings.getCosmeticSettings().getLookDownPitch();
-        final boolean isLookingDown =
-                this.id.equals(other.getUniqueId()) && lookDownPitch
-                        != -1 &&
-                        this.isFacingDown(location, lookDownPitch);
-        if (hidden || isLookingDown) {
-            equipment.add(new com.github.retrooper.packetevents.protocol.player.Equipment(
-                    EquipmentSlot.HELMET,
-                    new com.github.retrooper.packetevents.protocol.item.ItemStack.Builder().
-                            type(ItemTypes.AIR).
-                            build()
-            ));
-        } else {
-            final com.github.retrooper.packetevents.protocol.item.ItemStack itemStack =
-                    SpigotDataHelper.fromBukkitItemStack(this.playerArmor.getBackpack().getItemStack(ArmorItem.Status.APPLIED));
-            equipment.add(new com.github.retrooper.packetevents.protocol.player.Equipment(
-                    EquipmentSlot.HELMET,
-                    itemStack
-            ));
-        }
-
-        final int armorStandId = this.getArmorStandId();
-        PacketManager.sendRotationPacket(armorStandId, location, false, other);
-        PacketManager.sendLookPacket(armorStandId, location, other);
-        PacketManager.sendRidingPacket(this.getEntityId(), armorStandId, other);
-        PacketManager.sendEquipmentPacket(equipment, armorStandId, other);
         if (hidden) return;
         this.updateBalloon(other, location, settings.getCosmeticSettings());
     }
@@ -291,12 +235,12 @@ public abstract class BaseUser<T> {
     }
 
     public void despawnAttached(final Player other) {
-        PacketManager.sendEntityDestroyPacket(this.getArmorStandId(), other);
+        this.backpack.despawn(other);
         this.viewingArmorStand.remove(other.getUniqueId());
     }
 
     public void despawnAttached() {
-        PacketManager.sendEntityDestroyPacket(this.getArmorStandId(), Bukkit.getOnlinePlayers());
+        this.backpack.despawn();
         this.viewingArmorStand.clear();
     }
 

@@ -11,10 +11,11 @@ public class EntityIds {
         this.ids = ids;
     }
 
-    public EntityIds(final int self, final int armorStand, final int balloon, final int wardrobeViewer) {
+    public EntityIds(final int self, final int armorStand, final int firstPersonId, final int balloon, final int wardrobeViewer) {
         final Map<Type, Integer> ids = new EnumMap<>(Type.class);
         ids.put(Type.SELF, self);
         ids.put(Type.ARMOR_STAND, armorStand);
+        ids.put(Type.FIRST_PERSON_ARMOR_STAND, firstPersonId);
         ids.put(Type.BALLOON, balloon);
         ids.put(Type.WARDROBE_VIEWER, wardrobeViewer);
         this.ids = ids;
@@ -26,6 +27,10 @@ public class EntityIds {
 
     public int armorStand() {
         return this.ids.getOrDefault(Type.ARMOR_STAND, -1);
+    }
+
+    public int firstPersonArmorStand() {
+        return this.ids.getOrDefault(Type.FIRST_PERSON_ARMOR_STAND, -1);
     }
 
     public int balloon() {
@@ -40,6 +45,7 @@ public class EntityIds {
 
         SELF,
         ARMOR_STAND,
+        FIRST_PERSON_ARMOR_STAND,
         BALLOON,
         WARDROBE_VIEWER
 

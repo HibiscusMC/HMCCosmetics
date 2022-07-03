@@ -22,6 +22,7 @@ public class CosmeticSettings {
     private static final String REQUIRE_EMPTY_PANTS_PATH = "require-empty-pants";
     private static final String REQUIRE_EMPTY_BOOTS_PATH = "require-empty-boots";
     private static final String BALLOON_OFFSET = "balloon-offset";
+    private static final String FIRST_PERSON_BACKPACK_MODE = "first-person-backpack-mode";
 
     private static final transient String LOOK_DOWN_PITCH_PATH = "look-down-backpack-remove";
     private static final String VIEW_DISTANCE_PATH = "view-distance";
@@ -35,6 +36,7 @@ public class CosmeticSettings {
     private int lookDownPitch;
     private int viewDistance;
     private Vector balloonOffset;
+    private boolean firstPersonBackpackMode;
 
     public void load(final FileConfiguration config) {
         this.defaultMenu = Utils.replaceIf(config.getString(DEFAULT_MENU), CosmeticsMenu.DEFAULT_MAIN_MENU, null, "");
@@ -46,6 +48,8 @@ public class CosmeticSettings {
 
         this.lookDownPitch = config.getInt(COSMETIC_SETTINGS_PATH + "." + LOOK_DOWN_PITCH_PATH);
         this.viewDistance = config.getInt(COSMETIC_SETTINGS_PATH + "." + VIEW_DISTANCE_PATH);
+
+        this.firstPersonBackpackMode = config.getBoolean(COSMETIC_SETTINGS_PATH + "." + FIRST_PERSON_BACKPACK_MODE, false);
 
         final var balloonSection = config.getConfigurationSection(COSMETIC_SETTINGS_PATH + "." + BALLOON_OFFSET);
 
@@ -112,6 +116,10 @@ public class CosmeticSettings {
 
     public String getDefaultMenu() {
         return defaultMenu;
+    }
+
+    public boolean isFirstPersonBackpackMode() {
+        return firstPersonBackpackMode;
     }
 
     public boolean requireEmpty(final EquipmentSlot slot) {
