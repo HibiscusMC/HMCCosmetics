@@ -490,7 +490,7 @@ public class PacketManager {
     public static EquipmentSlot fromBukkitSlot(final org.bukkit.inventory.EquipmentSlot slot) {
         return switch (slot) {
             case HEAD -> EquipmentSlot.HELMET;
-            case CHEST -> EquipmentSlot.CHESTPLATE;
+            case CHEST -> com.github.retrooper.packetevents.protocol.player.EquipmentSlot.CHESTPLATE;
             case LEGS -> EquipmentSlot.LEGGINGS;
             case FEET -> EquipmentSlot.BOOTS;
             case HAND -> EquipmentSlot.MAINHAND;

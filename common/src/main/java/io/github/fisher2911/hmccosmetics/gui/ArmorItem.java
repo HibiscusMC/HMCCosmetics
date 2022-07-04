@@ -319,6 +319,7 @@ public class ArmorItem extends WrappedGuiItem {
 
         HAT(EquipmentSlot.HEAD),
         BACKPACK(null),
+        SELF_BACKPACK(null),
         BALLOON(null),
         OFF_HAND(EquipmentSlot.OFF_HAND),
         CHEST_PLATE(EquipmentSlot.CHEST),
@@ -349,14 +350,28 @@ public class ArmorItem extends WrappedGuiItem {
 
         @Nullable
         public static Type fromPacketSlot(final com.github.retrooper.packetevents.protocol.player.EquipmentSlot slot) {
-            return switch (slot) {
-                case HELMET -> Type.HAT;
-                case CHESTPLATE -> Type.CHEST_PLATE;
-                case LEGGINGS -> Type.PANTS;
-                case BOOTS -> Type.BOOTS;
-                case OFFHAND -> Type.OFF_HAND;
-                default -> null;
-            };
+            // compiler bug????
+//            return switch (slot) {
+//                case HELMET -> Type.HAT;
+//                case CHESTPLATE -> Type.CHEST_PLATE;
+//                case LEGGINGS -> Type.PANTS;
+//                case BOOTS -> Type.BOOTS;
+//                case OFFHAND -> Type.OFF_HAND;
+//                default -> null;
+//            };
+            if (slot == com.github.retrooper.packetevents.protocol.player.EquipmentSlot.HELMET) {
+                return Type.HAT;
+            } else if (slot == com.github.retrooper.packetevents.protocol.player.EquipmentSlot.CHESTPLATE) {
+                return Type.CHEST_PLATE;
+            } else if (slot == com.github.retrooper.packetevents.protocol.player.EquipmentSlot.LEGGINGS) {
+                return Type.PANTS;
+            } else if (slot == com.github.retrooper.packetevents.protocol.player.EquipmentSlot.BOOTS) {
+                return Type.BOOTS;
+            } else if (slot == com.github.retrooper.packetevents.protocol.player.EquipmentSlot.OFFHAND) {
+                return Type.OFF_HAND;
+            } else {
+                return null;
+            }
         }
 
         @Nullable
