@@ -109,6 +109,8 @@ public class Backpack {
 
         PacketManager.sendEquipmentPacket(equipment, this.armorStandID, other);
         PacketManager.sendArmorStandMetaContainer(this.armorStandID, other);
+        PacketManager.sendRotationPacket(this.armorStandID, location, false, other);
+        PacketManager.sendLookPacket(this.armorStandID, location, other);
         if (!isSelf) {
             PacketManager.sendRidingPacket(owner.getEntityId(), this.armorStandID, other);
             return;
@@ -123,8 +125,6 @@ public class Backpack {
             }
         }
         PacketManager.sendRidingPacket(IDs.get(IDs.size() - 1), this.armorStandID, other);
-        PacketManager.sendRotationPacket(this.armorStandID, location, false, other);
-        PacketManager.sendLookPacket(this.armorStandID, location, other);
     }
 
 }
