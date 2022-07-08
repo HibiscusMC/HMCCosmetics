@@ -3,6 +3,7 @@ package io.github.fisher2911.hmccosmetics.packet;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.protocol.entity.data.EntityData;
 import com.github.retrooper.packetevents.protocol.entity.data.EntityDataTypes;
+import com.github.retrooper.packetevents.protocol.entity.pose.EntityPose;
 import com.github.retrooper.packetevents.protocol.entity.type.EntityType;
 import com.github.retrooper.packetevents.protocol.player.Equipment;
 import com.github.retrooper.packetevents.protocol.player.EquipmentSlot;
@@ -19,8 +20,10 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEn
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityRelativeMove;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityRotation;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityTeleport;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityVelocity;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPlayerInfo;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSetPassengers;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnEntity;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnLivingEntity;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnPlayer;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
@@ -34,6 +37,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public class PacketManager {
@@ -65,6 +69,58 @@ public class PacketManager {
                             new EntityData(0, EntityDataTypes.BYTE, (byte) 0x20),
                             new EntityData(15, EntityDataTypes.BYTE, (byte) 0x10)
                     )
+            ));
+        }
+    }
+
+    public static void sendCloudMetaData(int entityId, Player... sendTo) {
+        for (final Player p : sendTo) {
+            sendPacketAsync(p, new WrapperPlayServerEntityMetadata(
+                    entityId,
+                    List.of(
+                            new EntityData(0, EntityDataTypes.BYTE, (byte) 0),
+                            new EntityData(2, EntityDataTypes.OPTIONAL_COMPONENT, Optional.empty()),
+                            new EntityData(6, EntityDataTypes.ENTITY_POSE, EntityPose.STANDING),
+                            new EntityData(4, EntityDataTypes.BOOLEAN, false),
+                            new EntityData(8, EntityDataTypes.FLOAT, 0.0f),
+                            new EntityData(9, EntityDataTypes.INT, 0),
+                            new EntityData(11, EntityDataTypes.PARTICLE, 21),
+                            new EntityData(10, EntityDataTypes.BOOLEAN, false),
+                            new EntityData(1, EntityDataTypes.INT, 300),
+                            new EntityData(3, EntityDataTypes.BOOLEAN, false),
+                            new EntityData(7, EntityDataTypes.INT, 0),
+                            new EntityData(5, EntityDataTypes.BOOLEAN, false)
+                    )
+            ));
+        }
+    }
+
+    public static void sendVelocityPacket(final int entityId, Player... sendTo) {
+        for (final Player p : sendTo) {
+            sendPacketAsync(p, new WrapperPlayServerEntityVelocity(
+                    entityId,
+                    new Vector3d(0.5, 0.5, 0.5)
+            ));
+        }
+    }
+
+    public static void sendRelativeMovePacket(final int entityId, Player... sendTo) {
+        for (final Player p : sendTo) {
+            sendPacketAsync(p, new WrapperPlayServerEntityRelativeMove(
+                    entityId,
+                    0.0,
+                    0.0,
+                    0.0,
+                    false
+            ));
+        }
+    }
+
+    public static void sendHeadLookPacket(final int entityId, Player... sendTo) {
+        for (final Player p : sendTo) {
+            sendPacketAsync(p, new WrapperPlayServerEntityHeadLook(
+                    entityId,
+                    0
             ));
         }
     }
@@ -111,6 +167,28 @@ public class PacketManager {
                     0f,
                     Vector3d.zero(),
                     Collections.emptyList()
+            ));
+        }
+    }
+
+    public static void sendEntityNotLivingSpawnPacket(
+            final Location location,
+            final int entityId,
+            final EntityType entityType,
+            final UUID uuid,
+            int data,
+            final Player... sendTo) {
+        for (final Player p : sendTo) {
+            sendPacketAsync(p, new WrapperPlayServerSpawnEntity(
+                    entityId,
+                    Optional.of(uuid),
+                    entityType,
+                    new Vector3d(location.getX(), location.getY(), location.getZ()),
+                    0,
+                    0,
+                    0f,
+                    data,
+                    Optional.of(Vector3d.zero())
             ));
         }
     }
@@ -470,6 +548,13 @@ public class PacketManager {
         );
     }
 
+    public static void sendPacketAsyncSilently(final Player player, final PacketWrapper<?> packet) {
+        Bukkit.getScheduler().runTaskAsynchronously(HMCCosmetics.getPlugin(HMCCosmetics.class), () ->
+                PacketEvents.getAPI().getPlayerManager().sendPacketSilently(player, packet)
+        );
+    }
+
+
     public static com.github.retrooper.packetevents.protocol.player.Equipment getEquipment(
             final ItemStack itemStack,
             final org.bukkit.inventory.EquipmentSlot slot
@@ -490,11 +575,11 @@ public class PacketManager {
     public static EquipmentSlot fromBukkitSlot(final org.bukkit.inventory.EquipmentSlot slot) {
         return switch (slot) {
             case HEAD -> EquipmentSlot.HELMET;
-            case CHEST -> EquipmentSlot.CHESTPLATE;
+            case CHEST -> EquipmentSlot.CHEST_PLATE;
             case LEGS -> EquipmentSlot.LEGGINGS;
             case FEET -> EquipmentSlot.BOOTS;
-            case HAND -> EquipmentSlot.MAINHAND;
-            case OFF_HAND -> EquipmentSlot.OFFHAND;
+            case HAND -> EquipmentSlot.MAIN_HAND;
+            case OFF_HAND -> EquipmentSlot.OFF_HAND;
         };
     }
 

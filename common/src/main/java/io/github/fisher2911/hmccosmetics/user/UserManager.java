@@ -118,7 +118,6 @@ public class UserManager {
                 user,
                 this.getItemList(user, user.getEquipment(), Collections.emptySet())
         );
-
     }
 
     public ItemStack getCosmeticItem(

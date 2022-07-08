@@ -63,7 +63,6 @@ public class Database {
     public void loadUser(final Entity entity, final Consumer<User> onComplete) {
         final UUID uuid = entity.getUniqueId();
         final int armorStandId = getNextEntityId();
-        final int firstPersonId = getNextEntityId();
         final int balloonId = getNextEntityId();
         final int wardrobeViewerId = getNextEntityId();
         final Wardrobe wardrobe = this.createNewWardrobe(uuid);
@@ -83,12 +82,11 @@ public class Database {
                                 new EntityIds(
                                         entity.getEntityId(),
                                         armorStandId,
-                                        firstPersonId,
                                         balloonId,
                                         wardrobeViewerId
                                 ),
                                 armorItems,
-                                new Backpack(armorStandId,  firstPersonId),
+                                new Backpack(this.plugin, armorStandId),
                                 wardrobe
                         );
                         Bukkit.getScheduler().runTask(this.plugin,
@@ -102,15 +100,14 @@ public class Database {
         onComplete.accept(new User(
                 uuid,
                 PlayerArmor.empty(),
-                new Backpack(armorStandId, firstPersonId),
+                new Backpack(this.plugin, armorStandId),
                 wardrobe,
-                new EntityIds(entity.getEntityId(), armorStandId, firstPersonId, balloonId, wardrobeViewerId)
+                new EntityIds(entity.getEntityId(), armorStandId, balloonId, wardrobeViewerId)
         ));
     }
 
     public void loadNPCUser(final int id, final Entity entity, final Consumer<NPCUser> onComplete) {
         final int armorStandId = getNextEntityId();
-        final int firstPersonId = getNextEntityId();
         final int balloonId = getNextEntityId();
         final int wardrobeViewerId = getNextEntityId();
         Threads.getInstance().execute(
@@ -129,12 +126,11 @@ public class Database {
                                 new EntityIds(
                                         entity.getEntityId(),
                                         armorStandId,
-                                        firstPersonId,
                                         balloonId,
                                         wardrobeViewerId
                                 ),
                                 armorItems,
-                                new Backpack(armorStandId,  firstPersonId)
+                                new Backpack(this.plugin, armorStandId)
                         );
 
                         Bukkit.getScheduler().runTask(this.plugin,
@@ -149,8 +145,8 @@ public class Database {
         onComplete.accept(new NPCUser(
                         id,
                         PlayerArmor.empty(),
-                        new Backpack(armorStandId, firstPersonId),
-                        new EntityIds(entity.getEntityId(), armorStandId, firstPersonId, balloonId, wardrobeViewerId)
+                        new Backpack(this.plugin, armorStandId),
+                        new EntityIds(entity.getEntityId(), armorStandId, balloonId, wardrobeViewerId)
                 )
         );
     }
@@ -221,17 +217,15 @@ public class Database {
 
     public Wardrobe createNewWardrobe(final UUID ownerUUID) {
         final int armorStandId = getNextEntityId();
-        final int firstPersonId = getNextEntityId();
         return new Wardrobe(
                 this.plugin,
                 UUID.randomUUID(),
                 ownerUUID,
                 PlayerArmor.empty(),
-                new Backpack(armorStandId, firstPersonId),
+                new Backpack(this.plugin, armorStandId),
                 new EntityIds(
                         getNextEntityId(),
                         armorStandId,
-                        firstPersonId,
                         getNextEntityId(),
                         getNextEntityId()
                 ),

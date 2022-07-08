@@ -12,11 +12,9 @@ import java.util.UUID;
 public class UserFactory {
 
     private static final HMCCosmetics plugin;
-    private static final UserManager userManager;
 
     static {
         plugin = HMCCosmetics.getPlugin(HMCCosmetics.class);
-        userManager = plugin.getUserManager();
     }
 
     @SuppressWarnings("unchecked")
@@ -25,7 +23,6 @@ public class UserFactory {
             final Class<T> type,
             final Entity entity,
             final int armorStandId,
-            final int firstPersonId,
             final int balloonId,
             final int wardrobeViewerId
     ) {
@@ -35,12 +32,11 @@ public class UserFactory {
             return (T) new User(
                     uuid,
                     PlayerArmor.empty(),
-                    new Backpack(armorStandId, firstPersonId),
+                    new Backpack(plugin, armorStandId),
                     plugin.getDatabase().createNewWardrobe(uuid),
                     new EntityIds(
                             entityId,
                             armorStandId,
-                            firstPersonId,
                             balloonId,
                             wardrobeViewerId
                     )
@@ -53,11 +49,10 @@ public class UserFactory {
             return (T) new NPCUser(
                     citizensId,
                     PlayerArmor.empty(),
-                    new Backpack(armorStandId, firstPersonId),
+                    new Backpack(plugin, armorStandId),
                     new EntityIds(
                             entityId,
                             armorStandId,
-                            firstPersonId,
                             balloonId,
                             wardrobeViewerId
                     )

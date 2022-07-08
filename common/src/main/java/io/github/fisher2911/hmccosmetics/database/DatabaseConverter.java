@@ -88,16 +88,14 @@ public class DatabaseConverter {
                     final PlayerArmor playerArmor = PlayerArmor.empty();
                     final UUID uuid = UUID.fromString(results.getString(1));
                     final int armorStandId = Database.getNextEntityId();
-                    final int firstPersonId = Database.getNextEntityId();
                     final User user = new User(
                             uuid,
                             playerArmor,
-                            new Backpack(armorStandId, firstPersonId),
+                            new Backpack(this.plugin, armorStandId),
                             this.database.createNewWardrobe(uuid),
                             new EntityIds(
                                     -1,
                                     armorStandId,
-                                    firstPersonId,
                                     Database.getNextEntityId(),
                                     Database.getNextEntityId()
                             )

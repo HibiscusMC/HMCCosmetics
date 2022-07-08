@@ -350,28 +350,14 @@ public class ArmorItem extends WrappedGuiItem {
 
         @Nullable
         public static Type fromPacketSlot(final com.github.retrooper.packetevents.protocol.player.EquipmentSlot slot) {
-            // compiler bug????
-//            return switch (slot) {
-//                case HELMET -> Type.HAT;
-//                case CHESTPLATE -> Type.CHEST_PLATE;
-//                case LEGGINGS -> Type.PANTS;
-//                case BOOTS -> Type.BOOTS;
-//                case OFFHAND -> Type.OFF_HAND;
-//                default -> null;
-//            };
-            if (slot == com.github.retrooper.packetevents.protocol.player.EquipmentSlot.HELMET) {
-                return Type.HAT;
-            } else if (slot == com.github.retrooper.packetevents.protocol.player.EquipmentSlot.CHESTPLATE) {
-                return Type.CHEST_PLATE;
-            } else if (slot == com.github.retrooper.packetevents.protocol.player.EquipmentSlot.LEGGINGS) {
-                return Type.PANTS;
-            } else if (slot == com.github.retrooper.packetevents.protocol.player.EquipmentSlot.BOOTS) {
-                return Type.BOOTS;
-            } else if (slot == com.github.retrooper.packetevents.protocol.player.EquipmentSlot.OFFHAND) {
-                return Type.OFF_HAND;
-            } else {
-                return null;
-            }
+            return switch (slot) {
+                case HELMET -> Type.HAT;
+                case CHEST_PLATE -> Type.CHEST_PLATE;
+                case LEGGINGS -> Type.PANTS;
+                case BOOTS -> Type.BOOTS;
+                case OFF_HAND -> Type.OFF_HAND;
+                default -> null;
+            };
         }
 
         @Nullable

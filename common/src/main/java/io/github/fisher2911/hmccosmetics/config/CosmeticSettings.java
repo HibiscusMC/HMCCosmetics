@@ -26,6 +26,7 @@ public class CosmeticSettings {
 
     private static final transient String LOOK_DOWN_PITCH_PATH = "look-down-backpack-remove";
     private static final String VIEW_DISTANCE_PATH = "view-distance";
+    private static final String PARTICLE_COUNT = "particle-count";
 
     private String defaultMenu;
     private boolean requireEmptyHelmet;
@@ -37,8 +38,10 @@ public class CosmeticSettings {
     private int viewDistance;
     private Vector balloonOffset;
     private boolean firstPersonBackpackMode;
+    private int particleCount;
 
     public void load(final FileConfiguration config) {
+        this.particleCount = config.getInt(PARTICLE_COUNT, 1);
         this.defaultMenu = Utils.replaceIf(config.getString(DEFAULT_MENU), CosmeticsMenu.DEFAULT_MAIN_MENU, null, "");
         this.requireEmptyHelmet = config.getBoolean(COSMETIC_SETTINGS_PATH + "." + REQUIRE_EMPTY_HELMET_PATH);
         this.requireEmptyOffHand = config.getBoolean(COSMETIC_SETTINGS_PATH + "." + REQUIRE_EMPTY_OFF_HAND_PATH);
@@ -56,6 +59,10 @@ public class CosmeticSettings {
         if (balloonSection != null) {
             this.balloonOffset = loadVector(balloonSection);
         }
+    }
+
+    public int getParticleCount() {
+        return particleCount;
     }
 
     private Vector loadVector(final ConfigurationSection section) {
