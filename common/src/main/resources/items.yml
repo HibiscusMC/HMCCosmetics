@@ -1,0 +1,28 @@
+1:
+  material: PAPER
+  name: "<blue>Backpack"
+  lore:
+    - ""
+    - "<gray>Enabled: <#6D9DC5>%enabled%"
+    - "<gray>Allowed: <#6D9DC5>%allowed%"
+  locked-lore:
+    - "<red>You do not own this item!"
+  amount: 1
+  model-data: 8
+  type: SELF_BACKPACK
+  permission: ""
+  id: backpack_self
+2:
+  material: PAPER
+  name: "<blue>Future Wings"
+  lore:
+    - ""
+    - "<gray>Enabled: <#6D9DC5>%enabled%"
+    - "<gray>Allowed: <#6D9DC5>%allowed%"
+  locked-lore:
+    - "<red>You do not own this item!"
+  amount: 1
+  model-data: 10
+  type: SELF_BACKPACK
+  permission: ""
+  id: future_wings_self
