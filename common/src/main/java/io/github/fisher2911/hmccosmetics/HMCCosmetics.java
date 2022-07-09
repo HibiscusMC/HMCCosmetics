@@ -26,7 +26,6 @@ import io.github.fisher2911.hmccosmetics.message.Messages;
 import io.github.fisher2911.hmccosmetics.message.Translation;
 import io.github.fisher2911.hmccosmetics.task.TaskManager;
 import io.github.fisher2911.hmccosmetics.user.UserManager;
-import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import me.mattstudios.mf.base.CommandManager;
 import me.mattstudios.mf.base.CompletionHandler;
 import org.bstats.bukkit.Metrics;
@@ -75,7 +74,7 @@ public class HMCCosmetics extends JavaPlugin {
         this.settings = new Settings(this);
         this.messageHandler = new MessageHandler(this);
         this.userManager = new UserManager(this);
-        this.cosmeticManager = new CosmeticManager(new HashMap<>(), new HashMap<>());
+        this.cosmeticManager = new CosmeticManager(new HashMap<>(), new HashMap<>(), new HashMap<>());
         this.cosmeticsMenu = new CosmeticsMenu(this);
         this.tokenLoader = new TokenLoader(this);
 

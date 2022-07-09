@@ -23,10 +23,12 @@ public class CosmeticManager {
 
     private final Map<String, Token> tokenMap;
     private final Map<String, ArmorItem> armorItemMap;
+    private final Map<String, Integer> backpackParticleCounts;
 
-    public CosmeticManager(final Map<String, Token> tokenMap, final Map<String, ArmorItem> armorItemMap) {
+    public CosmeticManager(final Map<String, Token> tokenMap, final Map<String, ArmorItem> armorItemMap, final Map<String, Integer> backpackParticleCounts) {
         this.tokenMap = tokenMap;
         this.armorItemMap = armorItemMap;
+        this.backpackParticleCounts = backpackParticleCounts;
     }
 
     @Nullable
@@ -82,6 +84,16 @@ public class CosmeticManager {
         this.armorItemMap.clear();
     }
 
+    public int getBackpackParticleCount(final String id) {
+        return this.backpackParticleCounts.getOrDefault(id, 0);
+    }
+
+    public int getBackpackParticleCount(final ArmorItem armorItem) {
+        return this.getBackpackParticleCount(armorItem.getId());
+    }
+
+    private static final String PARTICLE_COUNT = "particle-count";
+
     public void load() {
         this.clearItems();
         try {
@@ -102,6 +114,10 @@ public class CosmeticManager {
                 final WrappedGuiItem item = ArmorItemSerializer.INSTANCE.deserialize(WrappedGuiItem.class, node);
                 if (item instanceof ArmorItem armorItem) {
                     armorItem.setAction(null);
+                    if (armorItem.getType() == ArmorItem.Type.SELF_BACKPACK) {
+                        final int particleCount = node.node(PARTICLE_COUNT).getInt(0);
+                        this.backpackParticleCounts.put(armorItem.getId(), particleCount);
+                    }
                     this.armorItemMap.put(armorItem.getId(), armorItem);
                 }
             }

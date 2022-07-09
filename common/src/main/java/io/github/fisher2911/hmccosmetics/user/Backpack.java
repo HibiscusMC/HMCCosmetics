@@ -22,13 +22,13 @@ public class Backpack {
     private final HMCCosmetics plugin;
     private final int armorStandID;
     private final int particleCount = HMCCosmetics.getPlugin(HMCCosmetics.class).getSettings().getCosmeticSettings().getParticleCount();
-    private final List<Integer> IDs = new ArrayList<>();
+    private final List<Integer> particleIDS = new ArrayList<>();
 
     public Backpack(HMCCosmetics plugin, int armorStandID) {
         this.plugin = plugin;
         this.armorStandID = armorStandID;
         for (int i = 0; i < particleCount; i++) {
-            IDs.add(SpigotReflectionUtil.generateEntityId());
+            particleIDS.add(SpigotReflectionUtil.generateEntityId());
         }
     }
 
@@ -41,6 +41,21 @@ public class Backpack {
         this.spawnForSelf(other, location);
     }
 
+    private void updateIds(BaseUser<?> owner) {
+        final ArmorItem selfBackpack = owner.getPlayerArmor().getItem(ArmorItem.Type.SELF_BACKPACK);
+        if (selfBackpack.isEmpty()) return;
+        final int particleCount = this.plugin.getCosmeticManager().getBackpackParticleCount(selfBackpack);
+        final int currentSize = this.particleIDS.size();
+        if (currentSize == particleCount) return;
+        if (currentSize < particleCount) {
+            for (int i = currentSize; i < particleCount; i++) {
+                this.particleIDS.add(SpigotReflectionUtil.generateEntityId());
+            }
+            return;
+        }
+        this.particleIDS.subList(particleCount, currentSize).clear();
+    }
+
     private void spawnForOther(BaseUser<?> owner, Player other, Location location) {
         PacketManager.sendEntitySpawnPacket(location, this.armorStandID, EntityTypes.ARMOR_STAND, other);
         PacketManager.sendArmorStandMetaContainer(this.armorStandID, other);
@@ -48,7 +63,7 @@ public class Backpack {
     }
 
     private void spawnForSelf(Player other, Location location) {
-        for (final int id : this.IDs) {
+        for (final int id : this.particleIDS) {
             PacketManager.sendEntityNotLivingSpawnPacket(
                     location,
                     id,
@@ -63,14 +78,14 @@ public class Backpack {
 
     public void despawn(Player player) {
         PacketManager.sendEntityDestroyPacket(this.armorStandID, player);
-        for (Integer id : this.IDs) {
+        for (Integer id : this.particleIDS) {
             PacketManager.sendEntityDestroyPacket(id, player);
         }
     }
 
     public void despawn() {
         PacketManager.sendEntityDestroyPacket(this.armorStandID, Bukkit.getOnlinePlayers());
-        for (Integer id : this.IDs) {
+        for (Integer id : this.particleIDS) {
             PacketManager.sendEntityDestroyPacket(id, Bukkit.getOnlinePlayers());
         }
     }
@@ -106,7 +121,6 @@ public class Backpack {
                 itemStack
         ));
 
-
         PacketManager.sendEquipmentPacket(equipment, this.armorStandID, other);
         PacketManager.sendArmorStandMetaContainer(this.armorStandID, other);
         PacketManager.sendRotationPacket(this.armorStandID, location, false, other);
@@ -115,16 +129,16 @@ public class Backpack {
             PacketManager.sendRidingPacket(owner.getEntityId(), this.armorStandID, other);
             return;
         }
-        for (int i = 0; i < this.IDs.size(); i++) {
-            final int id = this.IDs.get(i);
+        for (int i = 0; i < this.particleIDS.size(); i++) {
+            final int id = this.particleIDS.get(i);
             PacketManager.sendCloudMetaData(id, other);
             if (i == 0) {
                 PacketManager.sendRidingPacket(owner.getEntityId(), id, other);
             } else {
-                PacketManager.sendRidingPacket(this.IDs.get(i - 1), id, other);
+                PacketManager.sendRidingPacket(this.particleIDS.get(i - 1), id, other);
             }
         }
-        PacketManager.sendRidingPacket(IDs.get(IDs.size() - 1), this.armorStandID, other);
+        PacketManager.sendRidingPacket(particleIDS.get(particleIDS.size() - 1), this.armorStandID, other);
     }
 
 }

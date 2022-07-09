@@ -52,6 +52,9 @@ public class PlayerArmor {
     }
 
     public ArmorItem setItem(final ArmorItem armorItem) {
+        if (armorItem.isEmpty() && armorItem.getType() == ArmorItem.Type.BACKPACK) {
+            this.armorItems.put(ArmorItem.Type.SELF_BACKPACK, armorItem);
+        }
         return this.armorItems.put(armorItem.getType(), armorItem);
     }
 

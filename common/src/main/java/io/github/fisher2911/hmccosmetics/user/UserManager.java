@@ -198,6 +198,9 @@ public class UserManager {
         final ArmorItem.Type type = armorItem.getType();
         if (type == ArmorItem.Type.BALLOON) user.despawnBalloon();
         user.setItem(event.getCosmeticItem().getArmorItem());
+        if (armorItem.getType() == ArmorItem.Type.BACKPACK && armorItem.isEmpty()) {
+            user.removeItem(ArmorItem.Type.SELF_BACKPACK);
+        }
         if (!sendPacket) {
             user.setArmorUpdated(false);
             return;
