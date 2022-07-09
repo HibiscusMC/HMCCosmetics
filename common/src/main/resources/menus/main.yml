@@ -11,7 +11,7 @@ items:
     locked-lore: # Lore displayed when the player does not have the correct permission.
       - "<red>You do not own this item!"
     applied-lore: # Lore displayed when the player has the cosmetic in their inventory.
-        - "<gray>My awesome <rainbow>Colorful Hat</rainbow>!"
+      - "<gray>My awesome <rainbow>Colorful Hat</rainbow>!"
     amount: 1
     model-data: 2 # CustomModelData Number
     type: HAT
@@ -36,10 +36,32 @@ items:
       - "<red>You do not own this item!"
     amount: 1
     model-data: 4
+    action:
+      equip:
+        any:
+          set-cosmetics: backpack_self
     type: BACKPACK
     permission: ""
     id: backpack
   3:
+    material: PAPER
+    name: "<#d24c9f>Future Wings"
+    lore:
+      - ""
+      - "<gray>Enabled: <#6D9DC5>%enabled%"
+      - "<gray>Allowed: <#6D9DC5>%allowed%"
+    locked-lore:
+      - "<red>You do not own this item!"
+    amount: 1
+    model-data: 9
+    action:
+      equip:
+        any:
+        set-cosmetics: future_wings_self
+    type: BACKPACK
+    permission: ""
+    id: future_wings
+  4:
     material: PAPER
     name: "<blue>Lantern Cosmetic"
     lore:
@@ -53,7 +75,7 @@ items:
     type: OFF_HAND
     permission: ""
     id: lantern_cosmetic
-  4:
+  5:
     material: PAPER
     name: "<blue>Baseball Hat"
     lore:
@@ -67,7 +89,7 @@ items:
     type: HAT
     permission: ""
     id: baseball_hat
-  5:
+  6:
     material: DIAMOND_CHESTPLATE
     name: "<blue>Cosmetic Chestplate"
     lore:
@@ -80,7 +102,7 @@ items:
     type: CHEST_PLATE
     permission: ""
     id: chestplate
-  6:
+  7:
     material: DIAMOND_LEGGINGS
     name: "<blue>Cosmetic Leggings"
     lore:
@@ -93,7 +115,7 @@ items:
     type: PANTS
     permission: ""
     id: pants
-  7:
+  10:
     material: DIAMOND_BOOTS
     name: "<blue>Cosmetic Boots"
     lore:
@@ -106,7 +128,7 @@ items:
     type: BOOTS
     permission: ""
     id: boots
-  10:
+  11:
     material: PAPER
     name: "<blue>Balloon"
     lore:

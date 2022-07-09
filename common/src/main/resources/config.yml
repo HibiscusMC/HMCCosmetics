@@ -5,6 +5,9 @@ cosmetic-settings:
   require-empty-chest-plate: false
   require-empty-pants: false
   require-empty-boots: false
+  # Disable if you don't want to use the first person backpack system
+  # See the wiki for more information
+  first-person-backpack-mode: true
 
   # The pitch the player must look down for the backpack to be removed
   # Set to -1 for no removal
