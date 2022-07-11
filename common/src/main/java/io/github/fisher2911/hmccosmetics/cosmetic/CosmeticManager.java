@@ -96,6 +96,7 @@ public class CosmeticManager {
 
     public void load() {
         this.clearItems();
+        this.backpackParticleCounts.clear();
         try {
             final File file = ITEMS_PATH.toFile();
             if (!file.exists()) {
@@ -115,7 +116,7 @@ public class CosmeticManager {
                 if (item instanceof ArmorItem armorItem) {
                     armorItem.setAction(null);
                     if (armorItem.getType() == ArmorItem.Type.SELF_BACKPACK) {
-                        final int particleCount = node.node(PARTICLE_COUNT).getInt(0);
+                        final int particleCount = node.node(PARTICLE_COUNT).getInt(5);
                         this.backpackParticleCounts.put(armorItem.getId(), particleCount);
                     }
                     this.armorItemMap.put(armorItem.getId(), armorItem);

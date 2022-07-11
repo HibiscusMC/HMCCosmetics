@@ -116,11 +116,11 @@ public class PacketManager {
         }
     }
 
-    public static void sendHeadLookPacket(final int entityId, Player... sendTo) {
+    public static void sendHeadLookPacket(int entityId, float yaw, Player... sendTo) {
         for (final Player p : sendTo) {
             sendPacketAsync(p, new WrapperPlayServerEntityHeadLook(
                     entityId,
-                    0
+                    yaw
             ));
         }
     }

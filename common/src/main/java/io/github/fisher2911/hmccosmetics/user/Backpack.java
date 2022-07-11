@@ -21,15 +21,11 @@ public class Backpack {
 
     private final HMCCosmetics plugin;
     private final int armorStandID;
-    private final int particleCount = HMCCosmetics.getPlugin(HMCCosmetics.class).getSettings().getCosmeticSettings().getParticleCount();
     private final List<Integer> particleIDS = new ArrayList<>();
 
     public Backpack(HMCCosmetics plugin, int armorStandID) {
         this.plugin = plugin;
         this.armorStandID = armorStandID;
-        for (int i = 0; i < particleCount; i++) {
-            particleIDS.add(SpigotReflectionUtil.generateEntityId());
-        }
     }
 
     public void spawn(BaseUser<?> owner, Player other, Location location, Settings settings) {
@@ -38,6 +34,7 @@ public class Backpack {
             this.spawnForOther(owner, other, location);
             return;
         }
+        this.updateIds(owner);
         this.spawnForSelf(other, location);
     }
 
@@ -125,7 +122,7 @@ public class Backpack {
         PacketManager.sendArmorStandMetaContainer(this.armorStandID, other);
         PacketManager.sendRotationPacket(this.armorStandID, location, false, other);
         PacketManager.sendLookPacket(this.armorStandID, location, other);
-        if (!isSelf) {
+        if (!isSelf || !firstPersonMode || this.particleIDS.size() == 0)  {;
             PacketManager.sendRidingPacket(owner.getEntityId(), this.armorStandID, other);
             return;
         }
