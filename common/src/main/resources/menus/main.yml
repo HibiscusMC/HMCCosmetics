@@ -57,7 +57,7 @@ items:
     action:
       equip:
         any:
-        set-cosmetics: future_wings_self
+          set-cosmetics: future_wings_self
     type: BACKPACK
     permission: ""
     id: future_wings
