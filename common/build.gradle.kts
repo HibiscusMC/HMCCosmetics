@@ -21,7 +21,13 @@ repositories {
     maven("https://mvnrepository.com/artifact/com.zaxxer/HikariCP")
     maven("https://repo.jeff-media.de/maven2/")
     maven("https://repo.citizensnpcs.co")
-    maven("https://mvn.lumine.io/repository/maven-public")
+    //maven("https://mvn.lumine.io/repository/maven-public")
+    maven {
+        url = uri("https://mvn.lumine.io/repository/maven-public")
+        metadataSources {
+            artifact()
+        }
+    }
     maven("https://jitpack.io/")
 }
 
@@ -38,7 +44,7 @@ dependencies {
     compileOnly("com.github.oraxen:oraxen:-SNAPSHOT")
     compileOnly("com.github.LoneDev6:API-ItemsAdder:2.5.4")
     compileOnly("net.citizensnpcs:citizens-main:2.0.29-SNAPSHOT")
-    compileOnly("com.ticxo.modelengine:api:R2.5.0:")
+    compileOnly("com.ticxo.modelengine:api:R2.5.0")
     compileOnly("com.github.retrooper.packetevents:spigot:2.0-SNAPSHOT")
     implementation("net.kyori:adventure-api:4.10.0")
     implementation ("net.kyori:adventure-text-minimessage:4.10.0-SNAPSHOT")
