@@ -139,7 +139,6 @@ public class PacketManager {
             final UUID uuid,
             final Player... sendTo) {
         for (final Player p : sendTo) {
-            Bukkit.broadcastMessage(entityType.toString());
             sendPacketAsync(p, new WrapperPlayServerSpawnEntity(
                     entityId,
                     Optional.of(uuid),
