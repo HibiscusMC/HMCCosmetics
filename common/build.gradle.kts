@@ -74,7 +74,7 @@ tasks {
         relocate("net.kyori.adventure", "io.github.fisher2911.hmccosmetics.adventure")
         relocate("org.spongepowered.configurate", "io.github.fisher2911.hmccosmetics.configurate")
         relocate("org.bstats", "io.github.fisher2911.hmccosmetics.bstats")
-        relocate("com.zaxxer.hikaricp", "io.github.fisher2911.hmccosmetics.hikaricp")
+        relocate("com.zaxxer.hikari", "io.github.fisher2911.hmccosmetics.hikaricp")
         relocate("com.j256.ormlite", "io.github.fisher2911.hmccosmetics.ormlite")
         //relocate("com.github.retrooper.packetevents", "io.github.fisher2911.hmccosmetics.packetevents")
         //relocate("io.github.retrooper.packetevents", "io.github.fisher2911.hmccosmetics.packetevents")
