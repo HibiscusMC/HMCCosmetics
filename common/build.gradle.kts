@@ -39,7 +39,7 @@ dependencies {
     compileOnly("com.mojang:authlib:1.5.25")
     compileOnly("org.spigotmc:spigot:1.16.5-R0.1-SNAPSHOT")
     compileOnly("org.jetbrains:annotations:22.0.0")
-//    compileOnly("com.comphenix.protocol:ProtocolLib:4.7.0")
+    compileOnly("com.comphenix.protocol:ProtocolLib:4.8.0")
     compileOnly("me.clip:placeholderapi:2.11.1")
     compileOnly("com.github.oraxen:oraxen:-SNAPSHOT")
     compileOnly("com.github.LoneDev6:API-ItemsAdder:2.5.4")
