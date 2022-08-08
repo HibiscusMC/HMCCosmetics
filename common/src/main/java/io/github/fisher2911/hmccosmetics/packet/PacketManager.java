@@ -1,5 +1,8 @@
 package io.github.fisher2911.hmccosmetics.packet;
 
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.events.PacketContainer;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.protocol.entity.data.EntityData;
 import com.github.retrooper.packetevents.protocol.entity.data.EntityDataTypes;
@@ -17,6 +20,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -45,13 +49,13 @@ public class PacketManager {
 
     public static void sendArmorStandMetaContainer(final int armorStandId, final Player... sendTo) {
         for (final Player p : sendTo) {
-            sendPacketAsync(p, new WrapperPlayServerEntityMetadata(
-                    armorStandId,
-                    List.of(
+            PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
+            packet.setMeta(String.valueOf(armorStandId), List.of(
                             new EntityData(0, EntityDataTypes.BYTE, (byte) 0x20),
                             new EntityData(15, EntityDataTypes.BYTE, (byte) 0x10)
                     )
-            ));
+            );
+            sendPacketAsync(p, packet);
         }
     }
 
@@ -524,10 +528,21 @@ public class PacketManager {
         }
     }
 
+    @Deprecated
     public static void sendPacketAsync(final Player player, final PacketWrapper<?> packet) {
         Bukkit.getScheduler().runTaskAsynchronously(HMCCosmetics.getPlugin(HMCCosmetics.class), () ->
                 PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet)
         );
+    }
+
+    public static void sendPacketAsync(final Player player, final PacketContainer packet) {
+        Bukkit.getScheduler().runTaskAsynchronously(HMCCosmetics.getPlugin(HMCCosmetics.class), () -> {
+            try {
+                ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+            } catch (InvocationTargetException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     public static void sendPacketAsyncSilently(final Player player, final PacketWrapper<?> packet) {
