@@ -1,21 +1,20 @@
 package io.github.fisher2911.hmccosmetics.user;
 
-import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes;
-import com.github.retrooper.packetevents.protocol.item.type.ItemTypes;
-import com.github.retrooper.packetevents.protocol.player.EquipmentSlot;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.config.Settings;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.packet.PacketManager;
-import io.github.retrooper.packetevents.util.SpigotConversionUtil;
-import io.github.retrooper.packetevents.util.SpigotReflectionUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Backpack {
 
@@ -46,7 +45,7 @@ public class Backpack {
         if (currentSize == particleCount) return;
         if (currentSize < particleCount) {
             for (int i = currentSize; i < particleCount; i++) {
-                this.particleIDS.add(SpigotReflectionUtil.generateEntityId());
+                this.particleIDS.add(new AtomicInteger().incrementAndGet());
             }
             return;
         }
@@ -54,7 +53,7 @@ public class Backpack {
     }
 
     private void spawnForOther(BaseUser<?> owner, Player other, Location location) {
-        PacketManager.sendEntitySpawnPacket(location, this.armorStandID, EntityTypes.ARMOR_STAND, other);
+        PacketManager.sendEntitySpawnPacket(location, this.armorStandID, EntityType.ARMOR_STAND, other);
         PacketManager.sendArmorStandMetaContainer(this.armorStandID, other);
         PacketManager.sendRidingPacket(owner.getEntityId(), this.armorStandID, other);
     }
@@ -64,13 +63,13 @@ public class Backpack {
             PacketManager.sendEntityNotLivingSpawnPacket(
                     location,
                     id,
-                    EntityTypes.AREA_EFFECT_CLOUD,
+                    EntityType.AREA_EFFECT_CLOUD,
                     UUID.randomUUID(),
                     0,
                     other
             );
         }
-        PacketManager.sendEntitySpawnPacket(location, this.armorStandID, EntityTypes.ARMOR_STAND, other);
+        PacketManager.sendEntitySpawnPacket(location, this.armorStandID, EntityType.ARMOR_STAND, other);
     }
 
     public void despawn(Player player) {
@@ -93,7 +92,7 @@ public class Backpack {
         final boolean isSelf = owner.getId().equals(other.getUniqueId());
         final boolean firstPersonMode = settings.getCosmeticSettings().isFirstPersonBackpackMode();
         final ArmorItem.Type type = isSelf && firstPersonMode ? ArmorItem.Type.SELF_BACKPACK : ArmorItem.Type.BACKPACK;
-        final List<com.github.retrooper.packetevents.protocol.player.Equipment> equipment = new ArrayList<>();
+        //final List<com.github.retrooper.packetevents.protocol.player.Equipment> equipment = new ArrayList<>();
         final int lookDownPitch = settings.getCosmeticSettings().getLookDownPitch();
         final boolean hidden = !owner.shouldShow(other);
         final boolean isLookingDown =
@@ -101,23 +100,20 @@ public class Backpack {
                         isSelf &&
                         lookDownPitch != -1 &&
                         owner.isFacingDown(location, lookDownPitch);
+        Equipment equipment = Equipment.fromEntityEquipment(other.getEquipment());
         if (hidden || isLookingDown) {
-            equipment.add(new com.github.retrooper.packetevents.protocol.player.Equipment(
-                    EquipmentSlot.HELMET,
-                    new com.github.retrooper.packetevents.protocol.item.ItemStack.Builder().
-                            type(ItemTypes.AIR).
-                            build()
-            ));
             PacketManager.sendEquipmentPacket(equipment, this.armorStandID, other);
             return;
         }
-        final com.github.retrooper.packetevents.protocol.item.ItemStack itemStack =
-                SpigotConversionUtil.fromBukkitItemStack(owner.getPlayerArmor().getItem(type).getItemStack(ArmorItem.Status.APPLIED));
+        final ItemStack itemStack =
+                owner.getPlayerArmor().getItem(type).getItemStack(ArmorItem.Status.APPLIED);
+        /*
         equipment.add(new com.github.retrooper.packetevents.protocol.player.Equipment(
                 EquipmentSlot.HELMET,
                 itemStack
         ));
-
+         */
+        equipment.setItem(EquipmentSlot.HEAD, itemStack);
         PacketManager.sendEquipmentPacket(equipment, this.armorStandID, other);
         PacketManager.sendArmorStandMetaContainer(this.armorStandID, other);
         PacketManager.sendRotationPacket(this.armorStandID, location, false, other);

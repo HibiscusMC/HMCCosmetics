@@ -39,13 +39,13 @@ dependencies {
     compileOnly("com.mojang:authlib:1.5.25")
     compileOnly("org.spigotmc:spigot:1.16.5-R0.1-SNAPSHOT")
     compileOnly("org.jetbrains:annotations:22.0.0")
-    compileOnly("com.comphenix.protocol:ProtocolLib:4.8.0")
+    compileOnly("com.comphenix.protocol:ProtocolLib:5.0.0-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:2.11.1")
     compileOnly("com.github.oraxen:oraxen:-SNAPSHOT")
     compileOnly("com.github.LoneDev6:API-ItemsAdder:2.5.4")
     compileOnly("net.citizensnpcs:citizens-main:2.0.29-SNAPSHOT")
     compileOnly("com.ticxo.modelengine:api:R2.5.0")
-    compileOnly("com.github.retrooper.packetevents:spigot:2.0-SNAPSHOT")
+    //compileOnly("com.github.retrooper.packetevents:spigot:2.0-SNAPSHOT")
     implementation("net.kyori:adventure-api:4.10.0")
     implementation ("net.kyori:adventure-text-minimessage:4.10.0-SNAPSHOT")
     implementation("net.kyori:adventure-platform-bukkit:4.0.1")
@@ -111,7 +111,7 @@ bukkit {
     name = "HMCCosmetics"
     authors = listOf("MasterOfTheFish")
     softDepend = listOf("Multiverse", "PlaceholderAPI", "Oraxen", "ItemsAdder", "Citizens", "ModelEngine")
-    depend = listOf("packetevents")
+    depend = listOf("ProtocolLib")
     permissions {
         register("hmccosmetics.cmd.default") {
             default = BukkitPluginDescription.Permission.Default.OP

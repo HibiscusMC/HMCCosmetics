@@ -1,6 +1,5 @@
 package io.github.fisher2911.hmccosmetics;
 
-import com.github.retrooper.packetevents.PacketEvents;
 import io.github.fisher2911.hmccosmetics.command.CosmeticsCommand;
 import io.github.fisher2911.hmccosmetics.concurrent.Threads;
 import io.github.fisher2911.hmccosmetics.config.Settings;
@@ -107,7 +106,7 @@ public class HMCCosmetics extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        PacketEvents.getAPI().terminate();
+        //PacketEvents.getAPI().terminate();
         this.saveTask.cancel();
         this.database.saveAll();
         this.messageHandler.close();

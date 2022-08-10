@@ -1,26 +1,13 @@
 package io.github.fisher2911.hmccosmetics.listener;
 
-import com.github.retrooper.packetevents.PacketEvents;
-import com.github.retrooper.packetevents.event.PacketListenerAbstract;
-import com.github.retrooper.packetevents.event.PacketReceiveEvent;
-import com.github.retrooper.packetevents.event.PacketSendEvent;
-import com.github.retrooper.packetevents.protocol.packettype.PacketType;
-import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientClickWindow;
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerWindowItems;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.config.CosmeticSettings;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
-import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
-import io.github.fisher2911.hmccosmetics.packet.PacketManager;
 import io.github.fisher2911.hmccosmetics.task.DelayedTask;
 import io.github.fisher2911.hmccosmetics.task.TaskManager;
-import io.github.fisher2911.hmccosmetics.user.Equipment;
 import io.github.fisher2911.hmccosmetics.user.User;
 import io.github.fisher2911.hmccosmetics.user.UserManager;
-import io.github.fisher2911.hmccosmetics.util.Utils;
-import io.github.retrooper.packetevents.util.SpigotConversionUtil;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -36,10 +23,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.EnumSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -140,6 +124,7 @@ public class CosmeticFixListener implements Listener {
     }
 
     private void registerInventoryClickListener() {
+        /*
         PacketEvents.getAPI().getEventManager().registerListener(
                 new PacketListenerAbstract() {
                     @Override
@@ -173,9 +158,11 @@ public class CosmeticFixListener implements Listener {
                     }
                 }
         );
+         */
     }
 
     private void updateOnClick(final Player player, final EquipmentSlot slot, final User user, final ArmorItem.Type type, final ItemStack current) {
+        /*
         final Location location = player.getLocation();
         final Equipment equipment = Equipment.fromEntityEquipment(player.getEquipment());
         final ItemStack cosmetic = userManager.getCosmeticItem(
@@ -186,14 +173,14 @@ public class CosmeticFixListener implements Listener {
         );
         if (cosmetic != null && cosmetic.getType() != Material.AIR) equipment.setItem(slot, cosmetic);
 
-        final List<com.github.retrooper.packetevents.protocol.player.Equipment> items =
+        final List<Equipment> items =
                 userManager.getItemList(user, equipment, Collections.emptySet());
         items.removeIf(e -> {
-            final com.github.retrooper.packetevents.protocol.player.EquipmentSlot s = e.getSlot();
-            final ArmorItem.Type t = ArmorItem.Type.fromPacketSlot(s);
+            //final EquipmentSlot s = e.getSlot();
+            final ArmorItem.Type t = ArmorItem.Type.fromPacketSlot(slot);
             if (t == null) return false;
             final ArmorItem armorItem = user.getPlayerArmor().getItem(t);
-            final ItemStack i = SpigotConversionUtil.toBukkitItemStack(e.getItem());
+            final ItemStack i = e.getItem(slot);
             return armorItem.isEmpty() && i.equals(equipment.getItem(t.getSlot()));
         });
         for (final Player other : Bukkit.getOnlinePlayers()) {
@@ -203,9 +190,35 @@ public class CosmeticFixListener implements Listener {
                     items
             );
         }
+         */
     }
 
     private void registerMenuChangeListener() {
+        /*
+        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(HMCCosmetics.getPlugin(HMCCosmetics.class), ListenerPriority.NORMAL) {
+            @Override
+            public void onPacketReceiving(PacketEvent event) {
+                if (!event.getPacketType().equals(PacketType.Play.Server.WINDOW_ITEMS)) return;
+                if (event.getPlayer() == null) return;
+                WrapperPlayServerWindowItems wrapper = new WrapperPlayServerWindowItems(event.getPacket());
+                final int windowId = wrapper.getWindowId();
+
+                List<ItemStack> items = new ArrayList<>();
+                int count = items.size();
+                for (int i = 0; i < count; i++) {
+                    items.add(wrapper.getSlotData().get(count));
+                }
+
+
+                //final WrapperPlayServerWindowItems packet = new WrapperPlayServerWindowItems(event);
+
+
+
+                //final int windowId = packet.getWindowId();
+            }
+        });
+         */
+        /*
         PacketEvents.getAPI().getEventManager().registerListener(
                 new PacketListenerAbstract() {
                     @Override
@@ -214,7 +227,7 @@ public class CosmeticFixListener implements Listener {
                         final WrapperPlayServerWindowItems packet = new WrapperPlayServerWindowItems(event);
                         if (!(event.getPlayer() instanceof final Player player)) return;
                         final int windowId = packet.getWindowId();
-                        final List<com.github.retrooper.packetevents.protocol.item.ItemStack> itemStacks = packet.getItems();
+                        final List<ItemStack> itemStacks = packet.getItems();
                         taskManager.submit(() -> {
                             final Optional<User> optionalUser = userManager.get(player.getUniqueId());
                             if (optionalUser.isEmpty()) return;
@@ -222,7 +235,7 @@ public class CosmeticFixListener implements Listener {
                             if (windowId != 0) return;
                             final int size = itemStacks.size();
                             final PlayerArmor playerArmor = user.getPlayerArmor();
-                            final List<com.github.retrooper.packetevents.protocol.player.Equipment> equipmentList = new ArrayList<>();
+                            final List<Equipment> equipmentList = new ArrayList<>();
                             for (final ArmorItem armorItem : playerArmor.getArmorItems()) {
                                 final ArmorItem.Type type = armorItem.getType();
                                 final EquipmentSlot slot = type.getSlot();
@@ -231,15 +244,15 @@ public class CosmeticFixListener implements Listener {
                                 if (packetSlot == -1) continue;
                                 if (packetSlot >= size) continue;
 
-                                final ItemStack current = SpigotConversionUtil.toBukkitItemStack(itemStacks.get(packetSlot));
-                                final com.github.retrooper.packetevents.protocol.item.ItemStack setTo =
-                                        SpigotConversionUtil.fromBukkitItemStack(userManager.getCosmeticItem(
+                                final ItemStack current = (itemStacks.get(packetSlot));
+                                final ItemStack setTo =
+                                        (userManager.getCosmeticItem(
                                                 armorItem,
                                                 current,
                                                 ArmorItem.Status.APPLIED,
                                                 slot
                                         ));
-                                if (SpigotConversionUtil.fromBukkitItemStack(current).equals(setTo)) continue;
+                                if ((current).equals(setTo)) continue;
                                 equipmentList.add(PacketManager.getEquipment(setTo, slot));
                             }
                             userManager.sendUpdatePacket(
@@ -247,10 +260,11 @@ public class CosmeticFixListener implements Listener {
                                     equipmentList
                             );
                         });
-//                        packet.setItems(itemStacks);
+                        packet.setItems(itemStacks);
                     }
                 }
         );
+         */
     }
 
     private int getPacketArmorSlot(final EquipmentSlot slot) {

@@ -1,9 +1,5 @@
 package io.github.fisher2911.hmccosmetics.listener;
 
-import com.github.retrooper.packetevents.PacketEvents;
-import com.github.retrooper.packetevents.event.PacketListenerAbstract;
-import com.github.retrooper.packetevents.event.PacketReceiveEvent;
-import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.user.UserManager;
 import org.bukkit.Bukkit;
@@ -20,6 +16,8 @@ public class WardrobeListener implements Listener {
     public WardrobeListener(final HMCCosmetics plugin) {
         this.plugin = plugin;
         this.userManager = this.plugin.getUserManager();
+        // TODO: REDO this
+        /*
         PacketEvents.getAPI().getEventManager().registerListener(
                 new PacketListenerAbstract() {
                     @Override
@@ -35,6 +33,8 @@ public class WardrobeListener implements Listener {
                         );
                     }
                 });
+                
+         */
     }
 
     @EventHandler

@@ -1,6 +1,5 @@
 package io.github.fisher2911.hmccosmetics.user;
 
-import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.config.WardrobeSettings;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
@@ -11,6 +10,7 @@ import io.github.fisher2911.hmccosmetics.task.Task;
 import io.github.fisher2911.hmccosmetics.task.TaskChain;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
@@ -61,7 +61,7 @@ public class Wardrobe extends User {
                         PacketManager.sendEntitySpawnPacket(
                                 settings.getViewerLocation(),
                                 this.entityIds.wardrobeViewer(),
-                                EntityTypes.ARMOR_STAND,
+                                EntityType.ARMOR_STAND,
                                 viewer
                         );
                         PacketManager.sendCameraPacket(
