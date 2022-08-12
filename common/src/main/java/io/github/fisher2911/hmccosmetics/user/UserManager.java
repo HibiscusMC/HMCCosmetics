@@ -144,18 +144,21 @@ public class UserManager {
         return itemStack;
     }
 
-    public List<Equipment> getItemList(
+    public Equipment getItemList(
             final BaseUser<?> user,
             final Equipment equipment,
             final Set<ArmorItem.Type> ignored
     ) {
         final PlayerArmor armor = user.getPlayerArmor();
-        final List<Equipment> items = new ArrayList<>();
+        //final List<Equipment> items = new ArrayList<>();
+        //Equipment equip = new Equipment();
         for (final ArmorItem.Type type : ArmorItem.Type.values()) {
             final EquipmentSlot slot = type.getSlot();
             if (slot == null) continue;
             if (ignored.contains(type)) {
-                items.add(PacketManager.getEquipment(equipment.getItem(slot), slot));
+                Equipment item = PacketManager.getEquipment(equipment.getItem(slot), slot);
+                equipment.setItem(slot, item.getItem(slot));
+                //items.add(PacketManager.getEquipment(equipment.getItem(slot), slot));
                 continue;
             }
             final ItemStack wearing = Utils.replaceIfNull(equipment.getItem(slot), new ItemStack(Material.AIR));
@@ -165,9 +168,9 @@ public class UserManager {
                     ArmorItem.Status.APPLIED,
                     slot
             );
-            items.add(PacketManager.getEquipment(itemStack, slot));
+            equipment.setItem(slot, itemStack);
         }
-        return items;
+        return equipment;
     }
 
     public List<Equipment> getEmptyItemList() {
@@ -282,9 +285,10 @@ public class UserManager {
             final ArmorItem.Type type) {
         final EquipmentSlot slot = type.getSlot();
         final ItemStack itemStack = this.getCosmeticItem(armorItem, wearing, ArmorItem.Status.APPLIED, slot);
-        final List<Equipment> itemList = new ArrayList<>();
-        itemList.add(PacketManager.getEquipment(itemStack, slot));
+        //final List<Equipment> itemList = new ArrayList<>();
+        //itemList.add(PacketManager.getEquipment(itemStack, slot));
         Equipment equip = Equipment.fromEntityEquipment(user);
+        equip.setItem(slot, itemStack);
         this.sendUpdatePacket(user, equip);
     }
 
@@ -304,14 +308,7 @@ public class UserManager {
             if (!user.shouldShow(other)) continue;
             if (!this.settings.getCosmeticSettings().isInViewDistance(location, other.getLocation())) continue;
             user.updateBackpack(other, this.settings);
-            PacketManager.sendEquipmentPacket(user.getEquipment(), entityId, other);
-            /*
-            PacketManager.sendEquipmentPacket(
-                    items,
-                    entityId,
-                    other
-            );
-             */
+            PacketManager.sendEquipmentPacket(items, entityId, other);
         }
     }
 
@@ -329,12 +326,5 @@ public class UserManager {
         if (!user.shouldShow(other)) return;
         if (!this.settings.getCosmeticSettings().isInViewDistance(location, other.getLocation())) return;
         PacketManager.sendEquipmentPacket(items, entityId, other);
-        /*
-        PacketManager.sendEquipmentPacket(
-                items,
-                entityId,
-                other
-        );
-         */
     }
 }

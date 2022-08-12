@@ -67,4 +67,12 @@ public class Equipment {
     public Set<EquipmentSlot> keys() {
         return equipment.keySet();
     }
+
+    public void removeSlot(EquipmentSlot slot) {
+        equipment.remove(slot);
+    }
+
+    public void clear() {
+        equipment.clear();
+    }
 }

@@ -180,22 +180,34 @@ public class CosmeticFixListener implements Listener {
         );
         if (cosmetic != null && cosmetic.getType() != Material.AIR) equipment.setItem(slot, cosmetic);
 
-        final List<Equipment> items =
+        final Equipment items =
                 userManager.getItemList(user, equipment, Collections.emptySet());
-        items.removeIf(e -> {
+        for (EquipmentSlot e : items.keys()) {
             //final EquipmentSlot s = e.getSlot();
-            final ArmorItem.Type t = ArmorItem.Type.fromWrapper(slot);
-            if (t == null) return false;
+            final ArmorItem.Type t = ArmorItem.Type.fromWrapper(e);
+            ItemStack air = new ItemStack(Material.AIR);
+            if (t == null) {
+                equipment.setItem(e, air);
+                return;
+            }
             final ArmorItem armorItem = user.getPlayerArmor().getItem(t);
-            final ItemStack i = e.getItem(slot);
-            if (i == null) return false;
-            return armorItem.isEmpty() && i.equals(equipment.getItem(t.getSlot()));
-        });
+            final ItemStack i = equipment.getItem(e);
+            if (i == null) {
+                equipment.setItem(e, air);
+                return;
+            }
+            Boolean remove = armorItem.isEmpty() && i.equals(equipment.getItem(t.getSlot()));
+            if (remove) {
+                equipment.setItem(e, air);
+                return;
+            }
+            return;
+        }
         for (final Player other : Bukkit.getOnlinePlayers()) {
             if (!settings.isInViewDistance(location, other.getLocation())) continue;
             userManager.sendUpdatePacket(
                     user,
-                    user.getEquipment()
+                    equipment
             );
         }
     }
