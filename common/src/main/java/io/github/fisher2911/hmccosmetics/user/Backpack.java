@@ -6,10 +6,12 @@ import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.packet.PacketManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -93,28 +95,23 @@ public class Backpack {
         final boolean firstPersonMode = settings.getCosmeticSettings().isFirstPersonBackpackMode();
         final ArmorItem.Type type = isSelf && firstPersonMode ? ArmorItem.Type.SELF_BACKPACK : ArmorItem.Type.BACKPACK;
         //final List<com.github.retrooper.packetevents.protocol.player.Equipment> equipment = new ArrayList<>();
+        //Equipment equipment = owner.getEquipment();
         final int lookDownPitch = settings.getCosmeticSettings().getLookDownPitch();
         final boolean hidden = !owner.shouldShow(other);
+        ItemStack itemStack = owner.getPlayerArmor().getItem(type).getItemStack(ArmorItem.Status.APPLIED);
+        Equipment equip = new Equipment();
         final boolean isLookingDown =
                 !firstPersonMode &&
                         isSelf &&
                         lookDownPitch != -1 &&
                         owner.isFacingDown(location, lookDownPitch);
-        Equipment equipment = Equipment.fromEntityEquipment(other.getEquipment());
         if (hidden || isLookingDown) {
-            PacketManager.sendEquipmentPacket(equipment, this.armorStandID, other);
+            equip.setItem(EquipmentSlot.HEAD, new ItemStack(Material.AIR));
+            PacketManager.sendEquipmentPacket(equip, this.armorStandID, other);
             return;
         }
-        final ItemStack itemStack =
-                owner.getPlayerArmor().getItem(type).getItemStack(ArmorItem.Status.APPLIED);
-        /*
-        equipment.add(new com.github.retrooper.packetevents.protocol.player.Equipment(
-                EquipmentSlot.HELMET,
-                itemStack
-        ));
-         */
-        equipment.setItem(EquipmentSlot.HEAD, itemStack);
-        PacketManager.sendEquipmentPacket(equipment, this.armorStandID, other);
+        equip.setItem(EquipmentSlot.HEAD, itemStack);
+        PacketManager.sendEquipmentPacket(equip, this.armorStandID, other);
         PacketManager.sendArmorStandMetaContainer(this.armorStandID, other);
         PacketManager.sendRotationPacket(this.armorStandID, location, false, other);
         PacketManager.sendLookPacket(this.armorStandID, location, other);

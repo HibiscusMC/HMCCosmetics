@@ -10,8 +10,10 @@ import io.github.fisher2911.hmccosmetics.packet.wrappers.WrapperPlayServerRelEnt
 import io.github.fisher2911.hmccosmetics.user.Equipment;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.craftbukkit.libs.it.unimi.dsi.fastutil.ints.IntArrayList;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
@@ -42,12 +44,11 @@ public class PacketManager {
             PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
             packet.getIntegers().write(0, armorStandId);
             WrappedDataWatcher metadata = new WrappedDataWatcher();
+            //final WrappedDataWatcher.Serializer serializer = WrappedDataWatcher.Registry.get(Byte.class);
             if (metadata == null) return;
             // 0x10 & 0x20
-            WrappedDataWatcher.Serializer serializer = WrappedDataWatcher.Registry.get(Byte.class);
-            metadata.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(0, serializer), (byte) 0x20);
-            metadata.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(0, serializer), (byte) 0x10);
-            //metadata.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(0, WrappedDataWatcher.Registry.get(Byte.class)), (byte) 0x20);
+            metadata.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(0, WrappedDataWatcher.Registry.get(Byte.class)), (byte) 0x20);
+            metadata.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(15, WrappedDataWatcher.Registry.get(Byte.class)), (byte) 0x10);
             packet.getWatchableCollectionModifier().write(0, metadata.getWatchableObjects());
 
             sendPacketAsync(p, packet);
@@ -60,6 +61,7 @@ public class PacketManager {
             packet.getIntegers().write(0, entityId);
             WrappedDataWatcher wrapper = new WrappedDataWatcher();
             wrapper.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(0, WrappedDataWatcher.Registry.get(Byte.class)), (byte) 0x20);
+            wrapper.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(2, WrappedDataWatcher.Registry.get(Optional.class)), Optional.empty());
             wrapper.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(6, WrappedDataWatcher.Registry.get(EnumWrappers.EntityPose.class)), EnumWrappers.EntityPose.STANDING);
             wrapper.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(4, WrappedDataWatcher.Registry.get(Boolean.class)), false);
             wrapper.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(8, WrappedDataWatcher.Registry.get(Float.class)), 0.0f);
@@ -72,28 +74,9 @@ public class PacketManager {
             wrapper.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(1, WrappedDataWatcher.Registry.get(int.class)), 300);
             wrapper.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(7, WrappedDataWatcher.Registry.get(int.class)), 0);
             packet.getWatchableCollectionModifier().write(0, wrapper.getWatchableObjects());
-            /*
-            packet.setMeta(String.valueOf(entityId),
-                    List.of(
-                            new EntityData(2, EntityDataTypes.OPTIONAL_COMPONENT, Optional.empty()),
-                            new EntityData(11, EntityDataTypes.PARTICLE, 21),
-                            new EntityData(1, EntityDataTypes.INT, 300),
-                            new EntityData(7, EntityDataTypes.INT, 0)
-                    ));
-             */
             sendPacketAsync(p, packet);
         }
     }
-    /*
-    public static void sendVelocityPacket(final int entityId, Player... sendTo) {
-        for (final Player p : sendTo) {
-
-            PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_VELOCITY);
-            packet.setMeta(String.valueOf(entityId), new Vector3d(0.5, 0.5, 0.5));
-            sendPacketAsync(p, packet);
-        }
-    }
-     */
 
     public static void sendRelativeMovePacket(final int entityId, Player... sendTo) {
         for (final Player p : sendTo) {
@@ -150,37 +133,26 @@ public class PacketManager {
             final UUID uuid,
             final Player... sendTo) {
         for (final Player p : sendTo) {
-
             PacketContainer packet = new PacketContainer(PacketType.Play.Server.SPAWN_ENTITY);
-            // Why java... why...
-            io.github.fisher2911.hmccosmetics.packet.wrappers.WrapperPlayServerSpawnEntity wrapper = new io.github.fisher2911.hmccosmetics.packet.wrappers.WrapperPlayServerSpawnEntity(packet);
-            wrapper.setEntityID(entityId);
-            wrapper.setUniqueId(uuid);
-            wrapper.setType(entityType);
-            wrapper.setYaw(location.getYaw());
-            wrapper.setPitch(location.getPitch());
-            wrapper.setX(location.getX());
-            wrapper.setY(location.getY());
-            wrapper.setZ(location.getZ());
-            wrapper.setObjectData(0);
-            wrapper.setOptionalSpeedX(0);
-            wrapper.setOptionalSpeedY(0);
-            wrapper.setOptionalSpeedZ(0);
+            packet.getUUIDs().write(0, uuid);
+            packet.getIntegers().write(0, entityId);
+            packet.getEntityTypeModifier().write(0, entityType);
+            packet.getDoubles().
+                    write(0, location.getX()).
+                    write(1, location.getY()).
+                    write(2, location.getZ());
+            packet.getIntegers().write(1, 1);
+            p.sendMessage("Packet sent");
+            //packet.getIntegers().write(2, 0);
+            //packet.getIntegers().write(3, 0);
+            //packet.getIntegers().write(4, 0);
+            //packet.getIntegers().write(5, 0);
+            //packet.getIntegers().write(4, (int)(((location.getYaw() * 256.0F) / 360.0F)));
+            //packet.getIntegers().write(5, (int)(((location.getPitch() * 256.0F) / 360.0F)));
+            sendPacketAsync(p, packet);
 
-            sendPacketAsync(p, wrapper.getHandle());
-            /*
-            sendPacketAsync(p, new WrapperPlayServerSpawnEntity(
-                    entityId,
-                    Optional.of(uuid),
-                    entityType,
-                    new Vector3d(location.getX(), location.getY(), location.getZ()),
-                    location.getYaw(),
-                    location.getPitch(),
-                    0f,
-                    0,
-                    Optional.of(Vector3d.zero())
-            ));
-             */
+
+
         }
     }
 
@@ -333,21 +305,18 @@ public class PacketManager {
             final io.github.fisher2911.hmccosmetics.user.Equipment equipment,
             final int entityID,
             final Player... sendTo) {
-        List<PacketContainer> packets = new ArrayList<>();
+        // DONE: Fix Packet causing player disconnect! https://i.imgur.com/l4D6lmM.png
+        //List<PacketContainer> packets = new ArrayList<>();
         PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_EQUIPMENT);
-
-        for (org.bukkit.inventory.EquipmentSlot slot : equipment.values()) {
-            io.github.fisher2911.hmccosmetics.packet.wrappers.WrapperPlayServerEntityEquipment wrapper = new io.github.fisher2911.hmccosmetics.packet.wrappers.WrapperPlayServerEntityEquipment(packet);
-            EnumWrappers.ItemSlot is = itemBukkitSlot(slot);
-            wrapper.setSlot(is);
-            wrapper.setItem(equipment.getItem(slot));
-            packets.add(wrapper.getHandle());
+        packet.getIntegers().write(0, entityID);
+        List<Pair<EnumWrappers.ItemSlot, ItemStack>> list = new ArrayList<>();
+        for (EquipmentSlot slot : equipment.keys()) {
+            if (itemBukkitSlot(slot) != null) list.add(new Pair<>(itemBukkitSlot(slot), equipment.getItem(slot)));
         }
+        packet.getSlotStackPairLists().write(0, list);
+
         for (Player p : sendTo) {
-            for (PacketContainer pack : packets) {
-                // Why???
-                sendPacketAsync(p, pack);
-            }
+            sendPacketAsync(p, packet);
         }
     }
 
@@ -426,11 +395,8 @@ public class PacketManager {
     public static void sendEntityDestroyPacket(final int entityId, final Player... sendTo) {
         for (final Player p : sendTo) {
             PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_DESTROY);
-            if (packet.getIntegers().getValues().size() > 0) {
-                packet.getIntegers().write(0, entityId);
-                sendPacketAsync(p, packet);
-            }
-            //sendPacketAsync(p, new WrapperPlayServerDestroyEntities(entityId));
+            packet.getModifier().write(0, new IntArrayList(new int[]{entityId}));
+            sendPacketAsync(p, packet);
         }
     }
 
@@ -439,7 +405,6 @@ public class PacketManager {
             PacketContainer packet = new PacketContainer(PacketType.Play.Server.CAMERA);
             packet.getIntegers().write(0, entityId);
             sendPacketAsync(p, packet);
-            //sendPacketAsync(p, new WrapperPlayServerCamera(entityId));
         }
     }
 
@@ -542,6 +507,7 @@ public class PacketManager {
     ) {
         PacketContainer packet = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
         packet.getPlayerInfoAction().write(0, EnumWrappers.PlayerInfoAction.ADD_PLAYER);
+        //packet.getUUIDs().write(0, uuid);
         packet.getPlayerInfoDataLists().write(0, List.of(
                 new PlayerInfoData(WrappedGameProfile.fromPlayer(skinnedPlayer), 0, EnumWrappers.NativeGameMode.CREATIVE, WrappedChatComponent.fromText(skinnedPlayer.getName()))
         ));
@@ -586,27 +552,10 @@ public class PacketManager {
             PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
             packet.getIntegers().write(0, playerId);
             WrappedDataWatcher wrapper = new WrappedDataWatcher();
-            wrapper.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(17, WrappedDataWatcher.Registry.get(Byte.class)), (byte) mask);
+            wrapper.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(17, WrappedDataWatcher.Registry.get(Byte.class)), (byte) 0x20);
             wrapper.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(15, WrappedDataWatcher.Registry.get(Byte.class)), (byte) 0x10);
             packet.getWatchableCollectionModifier().write(0, wrapper.getWatchableObjects());
-            /*
-            packet.setMeta(String.valueOf(playerId), List.of(
-                            new EntityData(17, EntityDataTypes.BYTE, mask),
-                            new EntityData(15, EntityDataTypes.BYTE, (byte) 0x10)
-                    )
-            );
-
-             */
             sendPacketAsync(p, packet);
-            /*
-            sendPacketAsync(p, new WrapperPlayServerEntityMetadata(
-                    playerId,
-                    List.of(
-                            new EntityData(17, EntityDataTypes.BYTE, mask),
-                            new EntityData(15, EntityDataTypes.BYTE, (byte) 0x10)
-                    )
-            ));
-             */
         }
     }
 
@@ -626,6 +575,7 @@ public class PacketManager {
         for (final Player p : sendTo) {
             PacketContainer packet = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
             packet.getPlayerInfoAction().write(0, EnumWrappers.PlayerInfoAction.REMOVE_PLAYER);
+            packet.getUUIDs().write(0, uuid);
             packet.getPlayerInfoDataLists().write(0, List.of(
                     new PlayerInfoData(WrappedGameProfile.fromPlayer(player), 0, EnumWrappers.NativeGameMode.SURVIVAL, WrappedChatComponent.fromText(player.getName()))
             ));
@@ -683,40 +633,7 @@ public class PacketManager {
             case FEET -> EnumWrappers.ItemSlot.FEET;
             case HAND -> EnumWrappers.ItemSlot.MAINHAND;
             case OFF_HAND -> EnumWrappers.ItemSlot.OFFHAND;
+            default -> null;
         };
     }
-
-    public enum EntityData {
-
-        ON_FIRE((byte) 0x01),
-        CROUCHING((byte) 0x02),
-        SPRINTING((byte) 0x08),
-        SWIMMING((byte) 0x10),
-        INVISIBLE((byte) 0x20),
-        GLOWING((byte) 0x40),
-        ELYTRA_FLY((byte) 0x80);
-
-        final byte bitMask;
-
-        EntityData(byte bitMask) {
-            this.bitMask = bitMask;
-        }
-
-        public byte getBitMask() {
-            return bitMask;
-        }
-
-        public boolean isPresent(byte bits) {
-            return (this.bitMask & bits) == this.bitMask;
-        }
-
-        public byte setBit(byte bits) {
-            return (byte) (bits | this.bitMask);
-        }
-
-        public byte unsetBit(byte bits) {
-            return (byte) (bits & ~this.bitMask);
-        }
-    }
-
 }

@@ -241,6 +241,7 @@ public class WrapperPlayServerSpawnEntity extends AbstractPacket {
      */
     public void setYaw(float value) {
         handle.getIntegers().write(5, (int) (value * 256.0F / 360.0F));
+
     }
 
     /**

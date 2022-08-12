@@ -1,13 +1,25 @@
 package io.github.fisher2911.hmccosmetics.listener;
 
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.events.ListenerPriority;
+import com.comphenix.protocol.events.PacketAdapter;
+import com.comphenix.protocol.events.PacketEvent;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.config.CosmeticSettings;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
+import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
+import io.github.fisher2911.hmccosmetics.packet.PacketManager;
+import io.github.fisher2911.hmccosmetics.packet.wrappers.WrapperPlayClientWindowClick;
+import io.github.fisher2911.hmccosmetics.packet.wrappers.WrapperPlayServerWindowItems;
 import io.github.fisher2911.hmccosmetics.task.DelayedTask;
 import io.github.fisher2911.hmccosmetics.task.TaskManager;
+import io.github.fisher2911.hmccosmetics.user.Equipment;
 import io.github.fisher2911.hmccosmetics.user.User;
 import io.github.fisher2911.hmccosmetics.user.UserManager;
+import io.github.fisher2911.hmccosmetics.util.Utils;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -23,10 +35,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.EnumSet;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 public class CosmeticFixListener implements Listener {
 
@@ -124,45 +133,43 @@ public class CosmeticFixListener implements Listener {
     }
 
     private void registerInventoryClickListener() {
-        /*
-        PacketEvents.getAPI().getEventManager().registerListener(
-                new PacketListenerAbstract() {
-                    @Override
-                    public void onPacketReceive(PacketReceiveEvent event) {
-                        if (event.getPacketType() != PacketType.Play.Client.CLICK_WINDOW) return;
-                        final WrapperPlayClientClickWindow packet = new WrapperPlayClientClickWindow(event);
-                        if (packet.getWindowId() != 0) return;
-                        if (!(event.getPlayer() instanceof final Player player)) return;
-                        int slotClicked = packet.getSlot();
-                        taskManager.submit(() -> {
-                            final Optional<User> optionalUser = userManager.get(player.getUniqueId());
-                            if (optionalUser.isEmpty()) return;
-                            final User user = optionalUser.get();
-                            EquipmentSlot slot = getPacketArmorSlot(slotClicked);
-                            if (slot == null) {
-                                return;
-                            }
-                            final EntityEquipment entityEquipment = player.getEquipment();
-                            if (entityEquipment == null) return;
-                            final ItemStack current = Utils.replaceIfNull(entityEquipment.getItem(slot), new ItemStack(Material.AIR));
-                            final ArmorItem.Type type = ArmorItem.Type.fromEquipmentSlot(slot);
-                            if (type == null) return;
-                            updateOnClick(
-                                    player,
-                                    slot,
-                                    user,
-                                    type,
-                                    current
-                            );
-                        });
+        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(HMCCosmetics.getPlugin(HMCCosmetics.class), ListenerPriority.NORMAL, PacketType.Play.Client.WINDOW_CLICK) {
+            @Override
+            public void onPacketReceiving(PacketEvent event) {
+                Player player = event.getPlayer();
+                if (event.getPacketType() != PacketType.Play.Client.WINDOW_CLICK) return;
+                if (event.getPacket().getIntegers().read(0) != 0) return;
+                if (!(event.getPlayer() instanceof Player)) return;
+                int slotClicked = event.getPacket().getIntegers().read(0);
+                taskManager.submit(() -> {
+                    final Optional<User> optionalUser = userManager.get(player.getUniqueId());
+                    if (optionalUser.isEmpty()) return;
+                    final User user = optionalUser.get();
+                    EquipmentSlot slot = getPacketArmorSlot(slotClicked);
+                    if (slot == null) {
+                        return;
                     }
-                }
-        );
-         */
+                    final EntityEquipment entityEquipment = player.getEquipment();
+                    if (entityEquipment == null) return;
+                    final ItemStack current = Utils.replaceIfNull(entityEquipment.getItem(slot), new ItemStack(Material.AIR));
+                    final ArmorItem.Type type = ArmorItem.Type.fromEquipmentSlot(slot);
+                    if (type == null) return;
+                    updateOnClick(
+                            player,
+                            slot,
+                            user,
+                            type,
+                            current
+                    );
+                });
+
+                final WrapperPlayClientWindowClick packet = new WrapperPlayClientWindowClick();
+            }
+        });
     }
 
     private void updateOnClick(final Player player, final EquipmentSlot slot, final User user, final ArmorItem.Type type, final ItemStack current) {
-        /*
+
         final Location location = player.getLocation();
         final Equipment equipment = Equipment.fromEntityEquipment(player.getEquipment());
         final ItemStack cosmetic = userManager.getCosmeticItem(
@@ -177,37 +184,69 @@ public class CosmeticFixListener implements Listener {
                 userManager.getItemList(user, equipment, Collections.emptySet());
         items.removeIf(e -> {
             //final EquipmentSlot s = e.getSlot();
-            final ArmorItem.Type t = ArmorItem.Type.fromPacketSlot(slot);
+            final ArmorItem.Type t = ArmorItem.Type.fromWrapper(slot);
             if (t == null) return false;
             final ArmorItem armorItem = user.getPlayerArmor().getItem(t);
             final ItemStack i = e.getItem(slot);
+            if (i == null) return false;
             return armorItem.isEmpty() && i.equals(equipment.getItem(t.getSlot()));
         });
         for (final Player other : Bukkit.getOnlinePlayers()) {
             if (!settings.isInViewDistance(location, other.getLocation())) continue;
             userManager.sendUpdatePacket(
                     user,
-                    items
+                    user.getEquipment()
             );
         }
-         */
     }
 
     private void registerMenuChangeListener() {
-        /*
-        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(HMCCosmetics.getPlugin(HMCCosmetics.class), ListenerPriority.NORMAL) {
+        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(HMCCosmetics.getPlugin(HMCCosmetics.class), ListenerPriority.NORMAL, PacketType.Play.Server.WINDOW_ITEMS) {
             @Override
-            public void onPacketReceiving(PacketEvent event) {
+            public void onPacketSending(PacketEvent event) {
+                Player player = event.getPlayer();
                 if (!event.getPacketType().equals(PacketType.Play.Server.WINDOW_ITEMS)) return;
                 if (event.getPlayer() == null) return;
                 WrapperPlayServerWindowItems wrapper = new WrapperPlayServerWindowItems(event.getPacket());
+                if (!(event.getPlayer() instanceof Player)) return;
                 final int windowId = wrapper.getWindowId();
 
-                List<ItemStack> items = new ArrayList<>();
-                int count = items.size();
-                for (int i = 0; i < count; i++) {
-                    items.add(wrapper.getSlotData().get(count));
-                }
+                List<ItemStack> items = wrapper.getSlotData();
+                taskManager.submit(() -> {
+                    final Optional<User> optionalUser = userManager.get(player.getUniqueId());
+                    if (optionalUser.isEmpty()) return;
+                    final User user = optionalUser.get();
+                    if (windowId != 0) return;
+                    final int size = items.size();
+                    final PlayerArmor playerArmor = user.getPlayerArmor();
+                    final List<Equipment> equipmentList = new ArrayList<>();
+                    final Equipment equip = user.getEquipment();
+                    for (final ArmorItem armorItem : playerArmor.getArmorItems()) {
+                        final ArmorItem.Type type = armorItem.getType();
+                        final EquipmentSlot slot = type.getSlot();
+                        if (slot == null) continue;
+                        final int packetSlot = getPacketArmorSlot(slot);
+                        if (packetSlot == -1) continue;
+                        if (packetSlot >= size) continue;
+
+                        final ItemStack current = (items.get(packetSlot));
+                        final ItemStack setTo =
+                                (userManager.getCosmeticItem(
+                                        armorItem,
+                                        current,
+                                        ArmorItem.Status.APPLIED,
+                                        slot
+                                ));
+                        if ((current).equals(setTo)) continue;
+                        equipmentList.add(PacketManager.getEquipment(setTo, slot));
+                    }
+                    userManager.sendUpdatePacket(
+                            user,
+                            equip
+                    );
+                });
+
+
 
 
                 //final WrapperPlayServerWindowItems packet = new WrapperPlayServerWindowItems(event);
@@ -217,7 +256,7 @@ public class CosmeticFixListener implements Listener {
                 //final int windowId = packet.getWindowId();
             }
         });
-         */
+
         /*
         PacketEvents.getAPI().getEventManager().registerListener(
                 new PacketListenerAbstract() {

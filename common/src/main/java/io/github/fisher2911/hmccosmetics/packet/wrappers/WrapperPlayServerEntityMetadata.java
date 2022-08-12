@@ -1,40 +1,26 @@
 package io.github.fisher2911.hmccosmetics.packet.wrappers;
 
-import io.github.fisher2911.hmccosmetics.user.Equipment;
+import java.util.List;
+
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
-import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.ItemStack;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
-import com.comphenix.protocol.wrappers.EnumWrappers.ItemSlot;
+import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 
-import java.util.List;
-
-public class WrapperPlayServerEntityEquipment extends AbstractPacket {
+public class WrapperPlayServerEntityMetadata extends AbstractPacket {
     public static final PacketType TYPE =
-            PacketType.Play.Server.ENTITY_EQUIPMENT;
-    private List<Equipment> equipment;
+            PacketType.Play.Server.ENTITY_METADATA;
 
-    public WrapperPlayServerEntityEquipment() {
+    public WrapperPlayServerEntityMetadata() {
         super(new PacketContainer(TYPE), TYPE);
         handle.getModifier().writeDefaults();
     }
 
-    public WrapperPlayServerEntityEquipment(PacketContainer packet) {
+    public WrapperPlayServerEntityMetadata(PacketContainer packet) {
         super(packet, TYPE);
-    }
-
-    public void read() {
-
-    }
-
-    public WrapperPlayServerEntityEquipment(PacketContainer packet, int entityId, List<Equipment> equipment) {
-        super(packet, TYPE);
-        setEntityID(entityId);
-        this.equipment = equipment;
     }
 
     /**
@@ -77,35 +63,21 @@ public class WrapperPlayServerEntityEquipment extends AbstractPacket {
         return getEntity(event.getPlayer().getWorld());
     }
 
-    public ItemSlot getSlot() {
-        return handle.getItemSlots().read(0);
-    }
-
-    public void setSlot(ItemSlot value) {
-        if (handle.getItemSlots().getValues().size() > 0) {
-            handle.getItemSlots().write(0, value);
-        }
-    }
-
     /**
-     * Retrieve Item.
-     * <p>
-     * Notes: item in slot format
+     * Retrieve Metadata.
      *
-     * @return The current Item
+     * @return The current Metadata
      */
-    public ItemStack getItem() {
-        return handle.getItemModifier().read(0);
+    public List<WrappedWatchableObject> getMetadata() {
+        return handle.getWatchableCollectionModifier().read(0);
     }
 
     /**
-     * Set Item.
+     * Set Metadata.
      *
      * @param value - new value.
      */
-    public void setItem(ItemStack value) {
-        if (handle.getItemModifier().getValues().size() > 0) {
-            handle.getItemModifier().write(0, value);
-        }
+    public void setMetadata(List<WrappedWatchableObject> value) {
+        handle.getWatchableCollectionModifier().write(0, value);
     }
 }

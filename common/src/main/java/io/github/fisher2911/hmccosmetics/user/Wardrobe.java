@@ -54,7 +54,7 @@ public class Wardrobe extends User {
                     if (settings.inDistanceOfStatic(viewer.getLocation())) {
                         this.currentLocation = settings.getWardrobeLocation();
                         userManager.get(viewer.getUniqueId()).ifPresent(user -> {
-                            userManager.sendUpdatePacket(user, userManager.getEmptyItemList());
+                            userManager.sendUpdatePacket(user, user.getEquipment());
                             user.despawnAttached();
                             user.despawnBalloon();
                         });

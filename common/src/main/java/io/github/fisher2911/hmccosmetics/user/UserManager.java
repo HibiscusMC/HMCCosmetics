@@ -105,18 +105,14 @@ public class UserManager {
         this.sendUpdatePacket(
                 user,
                 other,
-                this.getItemList(
-                        user,
-                        user.getEquipment(),
-                        Collections.emptySet()
-                )
+                user.getEquipment()
         );
     }
 
     public void updateCosmetics(final BaseUser<?> user) {
         this.sendUpdatePacket(
                 user,
-                this.getItemList(user, user.getEquipment(), Collections.emptySet())
+                user.getEquipment()
         );
     }
 
@@ -288,26 +284,27 @@ public class UserManager {
         final ItemStack itemStack = this.getCosmeticItem(armorItem, wearing, ArmorItem.Status.APPLIED, slot);
         final List<Equipment> itemList = new ArrayList<>();
         itemList.add(PacketManager.getEquipment(itemStack, slot));
-        this.sendUpdatePacket(user, itemList);
+        Equipment equip = Equipment.fromEntityEquipment(user);
+        this.sendUpdatePacket(user, equip);
     }
 
     public void sendUpdatePacket(
             final BaseUser<?> user,
-            List<Equipment> items
+            Equipment items
     ) {
 //        final Player player = user.getPlayer();
 //        if (player == null) return;
         final Location location = user.getLocation();
         if (location == null) return;
         final int entityId = user.getEntityId();
-        if (items.isEmpty()) return;
+        if (items == null) return;
         for (final User otherUser : this.userMap.values()) {
             final Player other = otherUser.getPlayer();
             if (other == null) continue;
             if (!user.shouldShow(other)) continue;
             if (!this.settings.getCosmeticSettings().isInViewDistance(location, other.getLocation())) continue;
             user.updateBackpack(other, this.settings);
-            PacketManager.sendEquipmentPacket(Equipment.fromEntityEquipment(other.getEquipment()), entityId, other);
+            PacketManager.sendEquipmentPacket(user.getEquipment(), entityId, other);
             /*
             PacketManager.sendEquipmentPacket(
                     items,
@@ -321,7 +318,7 @@ public class UserManager {
     public void sendUpdatePacket(
             final BaseUser<?> user,
             final Player other,
-            List<Equipment> items
+            Equipment items
     ) {
 //        final Player player = user.getPlayer();
 //        if (player == null) return;
@@ -331,7 +328,7 @@ public class UserManager {
         if (other == null) return;
         if (!user.shouldShow(other)) return;
         if (!this.settings.getCosmeticSettings().isInViewDistance(location, other.getLocation())) return;
-        PacketManager.sendEquipmentPacket(Equipment.fromEntityEquipment(other.getEquipment()), entityId, other);
+        PacketManager.sendEquipmentPacket(items, entityId, other);
         /*
         PacketManager.sendEquipmentPacket(
                 items,
