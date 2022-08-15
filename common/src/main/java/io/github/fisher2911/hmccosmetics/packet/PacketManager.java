@@ -7,6 +7,7 @@ import com.comphenix.protocol.wrappers.*;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.packet.wrappers.WrapperPlayServerRelEntityMove;
 import io.github.fisher2911.hmccosmetics.packet.wrappers.WrapperPlayServerRelEntityMoveLook;
+import io.github.fisher2911.hmccosmetics.packet.wrappers.WrapperPlayServerSpawnEntity;
 import io.github.fisher2911.hmccosmetics.user.Equipment;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -381,7 +382,6 @@ public class PacketManager {
             final Player... sendTo
     ) {
         for (final Player p : sendTo) {
-
             PacketContainer packet = new PacketContainer(PacketType.Play.Server.MOUNT);
             packet.getIntegers().write(0, mountId);
             packet.getIntegerArrays().write(0, new int[]{passengerId});
@@ -469,14 +469,24 @@ public class PacketManager {
         for (final Player p : sendTo) {
             // Needs testing!!!
             PacketContainer packet = new PacketContainer(PacketType.Play.Server.SPAWN_ENTITY);
+            WrapperPlayServerSpawnEntity wrapper = new WrapperPlayServerSpawnEntity();
+            wrapper.setUniqueId(uuid);
+            wrapper.setEntityID(entityId);
+            wrapper.setY(location.getY());
+            wrapper.setX(location.getX());
+            wrapper.setZ(location.getZ());
+            //wrapper.setPitch((location.getPitch() * 360.F) / 256.0F);
+            //wrapper.setYaw((location.getYaw() * 360.F) / 256.0F);
+            /*
             packet.getIntegers().write(0, entityId);
             packet.getUUIDs().write(0, uuid);
             packet.getDoubles().write(0, location.getX())
                                .write(1, location.getY())
                                .write(2, location.getZ());
-            packet.getFloat().write(0, location.getYaw()).write(1, location.getPitch());
-
-            sendPacketAsync(p, packet);
+            packet.getIntegers().write(3, (int) ((location.getPitch() * 360.F) / 256.0F)).
+                    write(4, (int) ((location.getYaw() * 360.F) / 256.0F));
+             */
+            sendPacketAsync(p, wrapper.getHandle());
             /*
             sendPacketAsync(p, new WrapperPlayServerSpawnPlayer(
                     entityId,
@@ -509,8 +519,10 @@ public class PacketManager {
         PacketContainer packet = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
         packet.getPlayerInfoAction().write(0, EnumWrappers.PlayerInfoAction.ADD_PLAYER);
         //packet.getUUIDs().write(0, uuid);
+
+        PlayerInfoData data = new PlayerInfoData(WrappedGameProfile.fromPlayer(skinnedPlayer), 0, EnumWrappers.NativeGameMode.CREATIVE, WrappedChatComponent.fromText(""));
         packet.getPlayerInfoDataLists().write(0, List.of(
-                new PlayerInfoData(WrappedGameProfile.fromPlayer(skinnedPlayer), 0, EnumWrappers.NativeGameMode.CREATIVE, WrappedChatComponent.fromText(skinnedPlayer.getName()))
+                data
         ));
         /*
         final List<TextureProperty> textures = PacketEvents.getAPI().getPlayerManager().getUser(skinnedPlayer).getProfile().getTextureProperties();
@@ -576,7 +588,7 @@ public class PacketManager {
         for (final Player p : sendTo) {
             PacketContainer packet = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
             packet.getPlayerInfoAction().write(0, EnumWrappers.PlayerInfoAction.REMOVE_PLAYER);
-            packet.getUUIDs().write(0, uuid);
+            //packet.getUUIDs().write(0, uuid);
             packet.getPlayerInfoDataLists().write(0, List.of(
                     new PlayerInfoData(WrappedGameProfile.fromPlayer(player), 0, EnumWrappers.NativeGameMode.SURVIVAL, WrappedChatComponent.fromText(player.getName()))
             ));
