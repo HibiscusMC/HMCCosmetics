@@ -1,24 +1,23 @@
 package io.github.fisher2911.hmccosmetics.listener;
 
-import com.github.retrooper.packetevents.PacketEvents;
-import com.github.retrooper.packetevents.event.PacketListenerAbstract;
-import com.github.retrooper.packetevents.event.PacketReceiveEvent;
-import com.github.retrooper.packetevents.event.PacketSendEvent;
-import com.github.retrooper.packetevents.protocol.packettype.PacketType;
-import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientClickWindow;
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerWindowItems;
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.events.ListenerPriority;
+import com.comphenix.protocol.events.PacketAdapter;
+import com.comphenix.protocol.events.PacketEvent;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.config.CosmeticSettings;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.inventory.PlayerArmor;
 import io.github.fisher2911.hmccosmetics.packet.PacketManager;
+import io.github.fisher2911.hmccosmetics.packet.wrappers.WrapperPlayClientWindowClick;
+import io.github.fisher2911.hmccosmetics.packet.wrappers.WrapperPlayServerWindowItems;
 import io.github.fisher2911.hmccosmetics.task.DelayedTask;
 import io.github.fisher2911.hmccosmetics.task.TaskManager;
 import io.github.fisher2911.hmccosmetics.user.Equipment;
 import io.github.fisher2911.hmccosmetics.user.User;
 import io.github.fisher2911.hmccosmetics.user.UserManager;
 import io.github.fisher2911.hmccosmetics.util.Utils;
-import io.github.retrooper.packetevents.util.SpigotConversionUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -36,13 +35,8 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.logging.Level;
 
 public class CosmeticFixListener implements Listener {
 
@@ -140,117 +134,138 @@ public class CosmeticFixListener implements Listener {
     }
 
     private void registerInventoryClickListener() {
-        PacketEvents.getAPI().getEventManager().registerListener(
-                new PacketListenerAbstract() {
-                    @Override
-                    public void onPacketReceive(PacketReceiveEvent event) {
-                        if (event.getPacketType() != PacketType.Play.Client.CLICK_WINDOW) return;
-                        final WrapperPlayClientClickWindow packet = new WrapperPlayClientClickWindow(event);
-                        if (packet.getWindowId() != 0) return;
-                        if (!(event.getPlayer() instanceof final Player player)) return;
-                        int slotClicked = packet.getSlot();
-                        taskManager.submit(() -> {
-                            final Optional<User> optionalUser = userManager.get(player.getUniqueId());
-                            if (optionalUser.isEmpty()) return;
-                            final User user = optionalUser.get();
-                            EquipmentSlot slot = getPacketArmorSlot(slotClicked);
-                            if (slot == null) {
-                                return;
-                            }
-                            final EntityEquipment entityEquipment = player.getEquipment();
-                            if (entityEquipment == null) return;
-                            final ItemStack current = Utils.replaceIfNull(entityEquipment.getItem(slot), new ItemStack(Material.AIR));
-                            final ArmorItem.Type type = ArmorItem.Type.fromEquipmentSlot(slot);
-                            if (type == null) return;
-                            updateOnClick(
-                                    player,
-                                    slot,
-                                    user,
-                                    type,
-                                    current
-                            );
-                        });
+        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(HMCCosmetics.getPlugin(HMCCosmetics.class), ListenerPriority.NORMAL, PacketType.Play.Client.WINDOW_CLICK) {
+            @Override
+            public void onPacketReceiving(PacketEvent event) {
+                Player player = event.getPlayer();
+                if (event.getPacketType() != PacketType.Play.Client.WINDOW_CLICK) return;
+                if (event.getPacket().getIntegers().read(0) != 0) return;
+                if (!(event.getPlayer() instanceof Player)) return;
+                int slotClicked = event.getPacket().getIntegers().read(0);
+                taskManager.submit(() -> {
+                    final Optional<User> optionalUser = userManager.get(player.getUniqueId());
+                    if (optionalUser.isEmpty()) return;
+                    final User user = optionalUser.get();
+                    EquipmentSlot slot = getPacketArmorSlot(slotClicked);
+                    if (slot == null) {
+                        return;
                     }
-                }
-        );
+                    final EntityEquipment entityEquipment = player.getEquipment();
+                    if (entityEquipment == null) return;
+                    final ItemStack current = Utils.replaceIfNull(entityEquipment.getItem(slot), new ItemStack(Material.AIR));
+                    final ArmorItem.Type type = ArmorItem.Type.fromEquipmentSlot(slot);
+                    if (type == null) return;
+                    updateOnClick(
+                            player,
+                            slot,
+                            user,
+                            type,
+                            current
+                    );
+                });
+            }
+        });
     }
 
     private void updateOnClick(final Player player, final EquipmentSlot slot, final User user, final ArmorItem.Type type, final ItemStack current) {
+        //plugin.getLogger().log(Level.INFO, "updateOnClick (171)");
+
         final Location location = player.getLocation();
-        final Equipment equipment = Equipment.fromEntityEquipment(player.getEquipment());
+        final Equipment equipment = userManager.getItemList(user);
         final ItemStack cosmetic = userManager.getCosmeticItem(
                 user.getPlayerArmor().getItem(type),
                 current,
                 ArmorItem.Status.APPLIED,
                 slot
         );
+        //plugin.getLogger().log(Level.INFO, "Set cosmetic in " + slot + " to " + cosmetic);
         if (cosmetic != null && cosmetic.getType() != Material.AIR) equipment.setItem(slot, cosmetic);
+        //plugin.getLogger().log(Level.INFO, "Set cosmetic in " + slot + " to " + cosmetic + "(done)");
 
-        final List<com.github.retrooper.packetevents.protocol.player.Equipment> items =
+        final Equipment items =
                 userManager.getItemList(user, equipment, Collections.emptySet());
-        items.removeIf(e -> {
-            final com.github.retrooper.packetevents.protocol.player.EquipmentSlot s = e.getSlot();
-            final ArmorItem.Type t = ArmorItem.Type.fromPacketSlot(s);
-            if (t == null) return false;
+        for (EquipmentSlot e : items.keys()) {
+            //final EquipmentSlot s = e.getSlot();
+            final ArmorItem.Type t = ArmorItem.Type.fromWrapper(e);
+            ItemStack air = new ItemStack(Material.AIR);
+            if (t == null) {
+                //plugin.getLogger().log(Level.INFO, "T is null");
+                equipment.setItem(e, air);
+                return;
+            }
             final ArmorItem armorItem = user.getPlayerArmor().getItem(t);
-            final ItemStack i = SpigotConversionUtil.toBukkitItemStack(e.getItem());
-            return armorItem.isEmpty() && i.equals(equipment.getItem(t.getSlot()));
-        });
+            final ItemStack i = equipment.getItem(e);
+            if (i == null) {
+                //plugin.getLogger().log(Level.INFO, "I is null");
+                equipment.setItem(e, air);
+                return;
+            }
+            Boolean remove = armorItem.isEmpty() && i.equals(equipment.getItem(t.getSlot()));
+            if (remove) {
+                //plugin.getLogger().log(Level.INFO, "Boolean is true");
+                equipment.setItem(e, air);
+                return;
+            }
+            return;
+        }
         for (final Player other : Bukkit.getOnlinePlayers()) {
             if (!settings.isInViewDistance(location, other.getLocation())) continue;
             userManager.sendUpdatePacket(
                     user,
-                    items
+                    equipment
             );
         }
     }
 
     private void registerMenuChangeListener() {
-        PacketEvents.getAPI().getEventManager().registerListener(
-                new PacketListenerAbstract() {
-                    @Override
-                    public void onPacketSend(PacketSendEvent event) {
-                        if (event.getPacketType() != PacketType.Play.Server.WINDOW_ITEMS) return;
-                        final WrapperPlayServerWindowItems packet = new WrapperPlayServerWindowItems(event);
-                        if (!(event.getPlayer() instanceof final Player player)) return;
-                        final int windowId = packet.getWindowId();
-                        final List<com.github.retrooper.packetevents.protocol.item.ItemStack> itemStacks = packet.getItems();
-                        taskManager.submit(() -> {
-                            final Optional<User> optionalUser = userManager.get(player.getUniqueId());
-                            if (optionalUser.isEmpty()) return;
-                            final User user = optionalUser.get();
-                            if (windowId != 0) return;
-                            final int size = itemStacks.size();
-                            final PlayerArmor playerArmor = user.getPlayerArmor();
-                            final List<com.github.retrooper.packetevents.protocol.player.Equipment> equipmentList = new ArrayList<>();
-                            for (final ArmorItem armorItem : playerArmor.getArmorItems()) {
-                                final ArmorItem.Type type = armorItem.getType();
-                                final EquipmentSlot slot = type.getSlot();
-                                if (slot == null) continue;
-                                final int packetSlot = getPacketArmorSlot(slot);
-                                if (packetSlot == -1) continue;
-                                if (packetSlot >= size) continue;
+        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(HMCCosmetics.getPlugin(HMCCosmetics.class), ListenerPriority.NORMAL, PacketType.Play.Server.WINDOW_ITEMS) {
+            @Override
+            public void onPacketSending(PacketEvent event) {
+                Player player = event.getPlayer();
+                if (!event.getPacketType().equals(PacketType.Play.Server.WINDOW_ITEMS)) return;
+                if (event.getPlayer() == null) return;
+                WrapperPlayServerWindowItems wrapper = new WrapperPlayServerWindowItems(event.getPacket());
+                if (!(event.getPlayer() instanceof Player)) return;
+                final int windowId = wrapper.getWindowId();
 
-                                final ItemStack current = SpigotConversionUtil.toBukkitItemStack(itemStacks.get(packetSlot));
-                                final com.github.retrooper.packetevents.protocol.item.ItemStack setTo =
-                                        SpigotConversionUtil.fromBukkitItemStack(userManager.getCosmeticItem(
-                                                armorItem,
-                                                current,
-                                                ArmorItem.Status.APPLIED,
-                                                slot
-                                        ));
-                                if (SpigotConversionUtil.fromBukkitItemStack(current).equals(setTo)) continue;
-                                equipmentList.add(PacketManager.getEquipment(setTo, slot));
-                            }
-                            userManager.sendUpdatePacket(
-                                    user,
-                                    equipmentList
-                            );
-                        });
-//                        packet.setItems(itemStacks);
+                List<ItemStack> items = wrapper.getSlotData();
+                taskManager.submit(() -> {
+                    final Optional<User> optionalUser = userManager.get(player.getUniqueId());
+                    if (optionalUser.isEmpty()) return;
+                    final User user = optionalUser.get();
+                    if (windowId != 0) return;
+                    final int size = items.size();
+                    final PlayerArmor playerArmor = user.getPlayerArmor();
+                    //final List<Equipment> equipmentList = new ArrayList<>();
+                    final Equipment equip = userManager.getItemList(user);
+                    for (final ArmorItem armorItem : playerArmor.getArmorItems()) {
+                        final ArmorItem.Type type = armorItem.getType();
+                        final EquipmentSlot slot = type.getSlot();
+                        if (slot == null) continue;
+                        final int packetSlot = getPacketArmorSlot(slot);
+                        if (packetSlot == -1) continue;
+                        if (packetSlot >= size) continue;
+
+                        final ItemStack current = (items.get(packetSlot));
+                        final ItemStack setTo =
+                                (userManager.getCosmeticItem(
+                                        armorItem,
+                                        current,
+                                        ArmorItem.Status.APPLIED,
+                                        slot
+                                ));
+                        if ((current).equals(setTo)) continue;
+                        equip.setItem(slot, setTo);
+                        //plugin.getLogger().log(Level.INFO, "Setto " + setTo);
+                        //equipmentList.add(PacketManager.getEquipment(setTo, slot));
                     }
-                }
-        );
+                    userManager.sendUpdatePacket(
+                            user,
+                            equip
+                    );
+                });
+            }
+        });
     }
 
     private int getPacketArmorSlot(final EquipmentSlot slot) {
@@ -349,10 +364,11 @@ public class CosmeticFixListener implements Listener {
         }
         return null;
     }
-
+    /*
     private void fixCosmetics(final Player player) {
         Bukkit.getScheduler().runTaskLaterAsynchronously(this.plugin,
                 () -> this.userManager.updateCosmetics(player.getUniqueId()), 2);
     }
+     */
 
 }

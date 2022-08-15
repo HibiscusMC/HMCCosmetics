@@ -1,7 +1,6 @@
 package io.github.fisher2911.hmccosmetics.user;
 
 
-import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes;
 import io.github.fisher2911.hmccosmetics.config.CosmeticSettings;
 import io.github.fisher2911.hmccosmetics.config.Settings;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
@@ -139,7 +138,7 @@ public abstract class BaseUser<T> {
             this.balloon.addPlayerToModel(other, id);
         }
         final int balloonId = this.getBalloonId();
-        PacketManager.sendEntitySpawnPacket(actual, balloonId, EntityTypes.PUFFERFISH, other);
+        PacketManager.sendEntitySpawnPacket(actual, balloonId, EntityType.PUFFERFISH, other);
         PacketManager.sendInvisibilityPacket(balloonId, other);
         PacketManager.sendLeashPacket(balloonId, this.getEntityId(), other);
         this.updateBalloon(other, location, settings);

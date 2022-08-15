@@ -1,6 +1,6 @@
 package io.github.fisher2911.hmccosmetics.config;
 
-import com.github.retrooper.packetevents.protocol.sound.SoundCategory;
+import com.comphenix.protocol.wrappers.EnumWrappers;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
@@ -37,7 +37,7 @@ public class SoundSerializer implements TypeSerializer<SoundData>  {
         } else {
             soundData = new SoundData(
                     soundName,
-                    SoundCategory.valueOf(category),
+                    EnumWrappers.SoundCategory.valueOf(category),
                     volume,
                     pitch
             );

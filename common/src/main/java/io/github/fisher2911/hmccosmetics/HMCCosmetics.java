@@ -1,6 +1,7 @@
 package io.github.fisher2911.hmccosmetics;
 
-import com.github.retrooper.packetevents.PacketEvents;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
 import io.github.fisher2911.hmccosmetics.command.CosmeticsCommand;
 import io.github.fisher2911.hmccosmetics.concurrent.Threads;
 import io.github.fisher2911.hmccosmetics.config.Settings;
@@ -57,6 +58,7 @@ public class HMCCosmetics extends JavaPlugin {
     private Database database;
 
     private BukkitTask saveTask;
+    private ProtocolManager manager;
 
     /* // commented because PacketEvents is no longer shaded
     @Override
@@ -77,6 +79,7 @@ public class HMCCosmetics extends JavaPlugin {
         this.cosmeticManager = new CosmeticManager(new HashMap<>(), new HashMap<>(), new HashMap<>());
         this.cosmeticsMenu = new CosmeticsMenu(this);
         this.tokenLoader = new TokenLoader(this);
+        this.manager = ProtocolLibrary.getProtocolManager();
 
         this.userManager.startTeleportTask();
 
@@ -107,7 +110,7 @@ public class HMCCosmetics extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        PacketEvents.getAPI().terminate();
+        //PacketEvents.getAPI().terminate();
         this.saveTask.cancel();
         this.database.saveAll();
         this.messageHandler.close();
@@ -240,6 +243,9 @@ public class HMCCosmetics extends JavaPlugin {
 
     public Database getDatabase() {
         return database;
+    }
+    public ProtocolManager getProtocolManager() {
+        return manager;
     }
 
 }

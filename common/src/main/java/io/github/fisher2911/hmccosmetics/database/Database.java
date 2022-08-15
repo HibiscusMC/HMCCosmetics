@@ -16,13 +16,13 @@ import io.github.fisher2911.hmccosmetics.user.EntityIds;
 import io.github.fisher2911.hmccosmetics.user.NPCUser;
 import io.github.fisher2911.hmccosmetics.user.User;
 import io.github.fisher2911.hmccosmetics.user.Wardrobe;
-import io.github.retrooper.packetevents.util.SpigotReflectionUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 
 import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 public class Database {
@@ -234,6 +234,6 @@ public class Database {
     }
 
     public static int getNextEntityId() {
-        return SpigotReflectionUtil.generateEntityId();
+        return new AtomicInteger().incrementAndGet();
     }
 }

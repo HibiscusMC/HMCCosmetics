@@ -1,17 +1,17 @@
 package io.github.fisher2911.hmccosmetics.config;
 
-import com.github.retrooper.packetevents.protocol.sound.SoundCategory;
+import com.comphenix.protocol.wrappers.EnumWrappers;
 import net.minecraft.server.v1_16_R3.MinecraftKey;
 import org.bukkit.entity.Player;
 
 public class SoundData {
 
     private final String name;
-    private final SoundCategory soundCategory;
+    private final EnumWrappers.SoundCategory soundCategory;
     private final float volume;
     private final float pitch;
 
-    public SoundData(final String name, final SoundCategory soundCategory, final float volume, final float pitch) {
+    public SoundData(final String name, final EnumWrappers.SoundCategory soundCategory, final float volume, final float pitch) {
         this.name = name;
         this.soundCategory = soundCategory;
         this.volume = volume;
@@ -30,7 +30,7 @@ public class SoundData {
         return pitch;
     }
 
-    public SoundCategory getSoundCategory() {
+    public EnumWrappers.SoundCategory getSoundCategory() {
         return soundCategory;
     }
 

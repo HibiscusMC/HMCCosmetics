@@ -1,5 +1,6 @@
 package io.github.fisher2911.hmccosmetics.user;
 
+import com.comphenix.protocol.wrappers.EnumWrappers;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.api.CosmeticItem;
 import io.github.fisher2911.hmccosmetics.api.event.CosmeticChangeEvent;
@@ -105,18 +106,14 @@ public class UserManager {
         this.sendUpdatePacket(
                 user,
                 other,
-                this.getItemList(
-                        user,
-                        user.getEquipment(),
-                        Collections.emptySet()
-                )
+                getItemList(user)
         );
     }
 
     public void updateCosmetics(final BaseUser<?> user) {
         this.sendUpdatePacket(
                 user,
-                this.getItemList(user, user.getEquipment(), Collections.emptySet())
+                getItemList(user)
         );
     }
 
@@ -148,18 +145,27 @@ public class UserManager {
         return itemStack;
     }
 
-    public List<com.github.retrooper.packetevents.protocol.player.Equipment> getItemList(
+    public Equipment getItemList(
+            final BaseUser<?> user
+    ) {
+        return getItemList(user, new Equipment(), Collections.emptySet());
+    }
+
+    public Equipment getItemList(
             final BaseUser<?> user,
             final Equipment equipment,
             final Set<ArmorItem.Type> ignored
     ) {
         final PlayerArmor armor = user.getPlayerArmor();
-        final List<com.github.retrooper.packetevents.protocol.player.Equipment> items = new ArrayList<>();
+        //final List<Equipment> items = new ArrayList<>();
+        //Equipment equip = new Equipment();
         for (final ArmorItem.Type type : ArmorItem.Type.values()) {
             final EquipmentSlot slot = type.getSlot();
             if (slot == null) continue;
             if (ignored.contains(type)) {
-                items.add(PacketManager.getEquipment(equipment.getItem(slot), slot));
+                Equipment item = PacketManager.getEquipment(equipment.getItem(slot), slot);
+                equipment.setItem(slot, item.getItem(slot));
+                //items.add(PacketManager.getEquipment(equipment.getItem(slot), slot));
                 continue;
             }
             final ItemStack wearing = Utils.replaceIfNull(equipment.getItem(slot), new ItemStack(Material.AIR));
@@ -169,13 +175,13 @@ public class UserManager {
                     ArmorItem.Status.APPLIED,
                     slot
             );
-            items.add(PacketManager.getEquipment(itemStack, slot));
+            equipment.setItem(slot, itemStack);
         }
-        return items;
+        return equipment;
     }
 
-    public List<com.github.retrooper.packetevents.protocol.player.Equipment> getEmptyItemList() {
-        final List<com.github.retrooper.packetevents.protocol.player.Equipment> items = new ArrayList<>();
+    public List<Equipment> getEmptyItemList() {
+        final List<Equipment> items = new ArrayList<>();
         for (final EquipmentSlot slot : EquipmentSlot.values()) {
             items.add(PacketManager.getEquipment(new ItemStack(Material.AIR), slot));
         }
@@ -286,39 +292,38 @@ public class UserManager {
             final ArmorItem.Type type) {
         final EquipmentSlot slot = type.getSlot();
         final ItemStack itemStack = this.getCosmeticItem(armorItem, wearing, ArmorItem.Status.APPLIED, slot);
-        final List<com.github.retrooper.packetevents.protocol.player.Equipment> itemList = new ArrayList<>();
-        itemList.add(PacketManager.getEquipment(itemStack, slot));
-        this.sendUpdatePacket(user, itemList);
+        //final List<Equipment> itemList = new ArrayList<>();
+        //itemList.add(PacketManager.getEquipment(itemStack, slot));
+        Equipment equip = user.getEquipment();
+        equip.setItem(slot, itemStack);
+        this.sendUpdatePacket(user, equip);
     }
 
     public void sendUpdatePacket(
             final BaseUser<?> user,
-            List<com.github.retrooper.packetevents.protocol.player.Equipment> items
+            Equipment equipment
     ) {
 //        final Player player = user.getPlayer();
 //        if (player == null) return;
         final Location location = user.getLocation();
         if (location == null) return;
         final int entityId = user.getEntityId();
-        if (items.isEmpty()) return;
+        if (equipment == null) return;
         for (final User otherUser : this.userMap.values()) {
             final Player other = otherUser.getPlayer();
+            //other.sendMessage("Offhand Cosmetic (sendUpdatePacket) " + equipment.getItem(EquipmentSlot.OFF_HAND));
             if (other == null) continue;
             if (!user.shouldShow(other)) continue;
             if (!this.settings.getCosmeticSettings().isInViewDistance(location, other.getLocation())) continue;
             user.updateBackpack(other, this.settings);
-            PacketManager.sendEquipmentPacket(
-                    items,
-                    entityId,
-                    other
-            );
+            PacketManager.sendEquipmentPacket(equipment, entityId, other);
         }
     }
 
     public void sendUpdatePacket(
             final BaseUser<?> user,
             final Player other,
-            List<com.github.retrooper.packetevents.protocol.player.Equipment> items
+            Equipment equipment
     ) {
 //        final Player player = user.getPlayer();
 //        if (player == null) return;
@@ -328,10 +333,6 @@ public class UserManager {
         if (other == null) return;
         if (!user.shouldShow(other)) return;
         if (!this.settings.getCosmeticSettings().isInViewDistance(location, other.getLocation())) return;
-        PacketManager.sendEquipmentPacket(
-                items,
-                entityId,
-                other
-        );
+        PacketManager.sendEquipmentPacket(equipment, entityId, other);
     }
 }

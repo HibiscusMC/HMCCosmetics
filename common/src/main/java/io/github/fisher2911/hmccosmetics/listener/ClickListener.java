@@ -1,14 +1,18 @@
 package io.github.fisher2911.hmccosmetics.listener;
 
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
+import io.github.fisher2911.hmccosmetics.user.Equipment;
+import io.github.fisher2911.hmccosmetics.user.User;
 import io.github.fisher2911.hmccosmetics.user.UserManager;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.EquipmentSlot;
 
-import java.util.EnumSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class ClickListener implements Listener {
 
@@ -56,15 +60,18 @@ public class ClickListener implements Listener {
         this.plugin = plugin;
         this.userManager = this.plugin.getUserManager();
     }
+    /*
 
-//    @EventHandler
-//    public void onArmorSlotClick(final InventoryClickEvent event) {
-//        final int slot = event.getSlot();
-//        if (!(event.getWhoClicked() instanceof final Player player)) return;
-//        if (slot >= 36 && slot <= 40) {
-//            this.fixInventory(player);
-//        }
-//    }
+    @EventHandler
+    public void onArmorSlotClick(final InventoryClickEvent event) {
+        final int slot = event.getSlot();
+        if (!(event.getWhoClicked() instanceof Player)) return;
+        if (slot >= 36 && slot <= 40) {
+            this.fixInventory(((Player) event.getWhoClicked()).getPlayer());
+
+        }
+    }
+     */
 //
 //    @EventHandler
 //    public void onBlockClick(final PlayerInteractEvent event) {
@@ -102,22 +109,25 @@ public class ClickListener implements Listener {
 //        this.userManager.get(player.getUniqueId()).ifPresent(this::doRunnable);
 //    }
 //
-//    private void fixInventory(final Player player) {
-//        final Optional<User> optionalUser = this.userManager.get(player.getUniqueId());
-//
-//        if (optionalUser.isEmpty()) {
-//            return;
-//        }
-//
-//        this.doRunnable(optionalUser.get());
-//    }
-//
-//    private void doRunnable(final User user) {
-//        Bukkit.getScheduler().runTaskLaterAsynchronously(
-//                this.plugin, () -> this.userManager.updateCosmetics(user),
-//                1);
-//    }
-//
+    /*
+    private void fixInventory(final Player player) {
+        final Optional<User> optionalUser = this.userManager.get(player.getUniqueId());
+
+        if (optionalUser.isEmpty()) {
+            return;
+        }
+
+        this.doRunnable(optionalUser.get());
+    }
+
+    private void doRunnable(final User user) {
+        Equipment equip = this.userManager.getItemList(user, user.getEquipment(), Collections.emptySet());
+        Bukkit.getScheduler().runTaskLaterAsynchronously(
+                this.plugin, () -> this.userManager.sendUpdatePacket(user, equip),
+                1);
+    }
+     */
+
 //    private void checkFix(final Player player, final int clickedSlot, final ItemStack itemStack) {
 //        final EquipmentSlot slot = this.getArmorSlot(itemStack.getType());
 //        if (slot == null) return;
