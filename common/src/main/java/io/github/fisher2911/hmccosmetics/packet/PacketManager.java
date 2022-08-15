@@ -142,7 +142,7 @@ public class PacketManager {
                     write(1, location.getY()).
                     write(2, location.getZ());
             packet.getIntegers().write(1, 1);
-            p.sendMessage("Packet sent");
+            //p.sendMessage("Packet sent");
             //packet.getIntegers().write(2, 0);
             //packet.getIntegers().write(3, 0);
             //packet.getIntegers().write(4, 0);
@@ -313,9 +313,10 @@ public class PacketManager {
         for (EquipmentSlot slot : equipment.keys()) {
             if (itemBukkitSlot(slot) != null) list.add(new Pair<>(itemBukkitSlot(slot), equipment.getItem(slot)));
         }
+        if (list == null) return;
         packet.getSlotStackPairLists().write(0, list);
-
         for (Player p : sendTo) {
+            //p.sendMessage("Offhand Cosmetic: " + equipment.getItem(EquipmentSlot.OFF_HAND));
             sendPacketAsync(p, packet);
         }
     }

@@ -1,5 +1,6 @@
 package io.github.fisher2911.hmccosmetics.user;
 
+import com.comphenix.protocol.wrappers.EnumWrappers;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.api.CosmeticItem;
 import io.github.fisher2911.hmccosmetics.api.event.CosmeticChangeEvent;
@@ -105,14 +106,14 @@ public class UserManager {
         this.sendUpdatePacket(
                 user,
                 other,
-                user.getEquipment()
+                getItemList(user)
         );
     }
 
     public void updateCosmetics(final BaseUser<?> user) {
         this.sendUpdatePacket(
                 user,
-                user.getEquipment()
+                getItemList(user)
         );
     }
 
@@ -142,6 +143,12 @@ public class UserManager {
         }
 
         return itemStack;
+    }
+
+    public Equipment getItemList(
+            final BaseUser<?> user
+    ) {
+        return getItemList(user, new Equipment(), Collections.emptySet());
     }
 
     public Equipment getItemList(
@@ -287,35 +294,36 @@ public class UserManager {
         final ItemStack itemStack = this.getCosmeticItem(armorItem, wearing, ArmorItem.Status.APPLIED, slot);
         //final List<Equipment> itemList = new ArrayList<>();
         //itemList.add(PacketManager.getEquipment(itemStack, slot));
-        Equipment equip = Equipment.fromEntityEquipment(user);
+        Equipment equip = user.getEquipment();
         equip.setItem(slot, itemStack);
         this.sendUpdatePacket(user, equip);
     }
 
     public void sendUpdatePacket(
             final BaseUser<?> user,
-            Equipment items
+            Equipment equipment
     ) {
 //        final Player player = user.getPlayer();
 //        if (player == null) return;
         final Location location = user.getLocation();
         if (location == null) return;
         final int entityId = user.getEntityId();
-        if (items == null) return;
+        if (equipment == null) return;
         for (final User otherUser : this.userMap.values()) {
             final Player other = otherUser.getPlayer();
+            //other.sendMessage("Offhand Cosmetic (sendUpdatePacket) " + equipment.getItem(EquipmentSlot.OFF_HAND));
             if (other == null) continue;
             if (!user.shouldShow(other)) continue;
             if (!this.settings.getCosmeticSettings().isInViewDistance(location, other.getLocation())) continue;
             user.updateBackpack(other, this.settings);
-            PacketManager.sendEquipmentPacket(items, entityId, other);
+            PacketManager.sendEquipmentPacket(equipment, entityId, other);
         }
     }
 
     public void sendUpdatePacket(
             final BaseUser<?> user,
             final Player other,
-            Equipment items
+            Equipment equipment
     ) {
 //        final Player player = user.getPlayer();
 //        if (player == null) return;
@@ -325,6 +333,6 @@ public class UserManager {
         if (other == null) return;
         if (!user.shouldShow(other)) return;
         if (!this.settings.getCosmeticSettings().isInViewDistance(location, other.getLocation())) return;
-        PacketManager.sendEquipmentPacket(items, entityId, other);
+        PacketManager.sendEquipmentPacket(equipment, entityId, other);
     }
 }
