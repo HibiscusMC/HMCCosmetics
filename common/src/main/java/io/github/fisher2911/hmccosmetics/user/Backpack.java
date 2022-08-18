@@ -11,7 +11,6 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,6 +57,7 @@ public class Backpack {
         PacketManager.sendEntitySpawnPacket(location, this.armorStandID, EntityType.ARMOR_STAND, other);
         PacketManager.sendArmorStandMetaContainer(this.armorStandID, other);
         PacketManager.sendRidingPacket(owner.getEntityId(), this.armorStandID, other);
+        //PacketManager.sendRidingPacket(owner.getEntityId(), new int[]{this.armorStandID}, other);
     }
 
     private void spawnForSelf(Player other, Location location) {
@@ -115,8 +115,9 @@ public class Backpack {
         PacketManager.sendArmorStandMetaContainer(this.armorStandID, other);
         PacketManager.sendRotationPacket(this.armorStandID, location, false, other);
         PacketManager.sendLookPacket(this.armorStandID, location, other);
-        if (!isSelf || !firstPersonMode || this.particleIDS.size() == 0)  {;
+        if (!isSelf || !firstPersonMode || this.particleIDS.size() == 0)  {
             PacketManager.sendRidingPacket(owner.getEntityId(), this.armorStandID, other);
+            //PacketManager.sendRidingPacket(owner.getEntityId(), new int[]{this.armorStandID}, other);
             return;
         }
         for (int i = 0; i < this.particleIDS.size(); i++) {
@@ -130,5 +131,4 @@ public class Backpack {
         }
         PacketManager.sendRidingPacket(particleIDS.get(particleIDS.size() - 1), this.armorStandID, other);
     }
-
 }

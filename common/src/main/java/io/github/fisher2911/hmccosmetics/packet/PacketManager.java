@@ -5,9 +5,10 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.*;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
+import io.github.fisher2911.hmccosmetics.packet.wrappers.WrapperPlayServerNamedEntitySpawn;
+import io.github.fisher2911.hmccosmetics.packet.wrappers.WrapperPlayServerPlayerInfo;
 import io.github.fisher2911.hmccosmetics.packet.wrappers.WrapperPlayServerRelEntityMove;
 import io.github.fisher2911.hmccosmetics.packet.wrappers.WrapperPlayServerRelEntityMoveLook;
-import io.github.fisher2911.hmccosmetics.packet.wrappers.WrapperPlayServerSpawnEntity;
 import io.github.fisher2911.hmccosmetics.user.Equipment;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -40,9 +41,15 @@ public class PacketManager {
         sendArmorStandMetaContainer(armorStandId, sendTo.toArray(new Player[0]));
     }
 
+    /**
+     * Sends meta data for armor stands.
+     * @param armorStandId
+     * @param sendTo
+     */
     public static void sendArmorStandMetaContainer(final int armorStandId, final Player... sendTo) {
         for (final Player p : sendTo) {
             PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
+            packet.getModifier().writeDefaults();
             packet.getIntegers().write(0, armorStandId);
             WrappedDataWatcher metadata = new WrappedDataWatcher();
             //final WrappedDataWatcher.Serializer serializer = WrappedDataWatcher.Registry.get(Byte.class);
@@ -56,9 +63,15 @@ public class PacketManager {
         }
     }
 
+    /**
+     * Sends cloud meta data about an entity to a player (No idea what this means?)
+     * @param entityId
+     * @param sendTo
+     */
     public static void sendCloudMetaData(int entityId, Player... sendTo) {
         for (final Player p : sendTo) {
             PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
+            packet.getModifier().writeDefaults();
             packet.getIntegers().write(0, entityId);
             WrappedDataWatcher wrapper = new WrappedDataWatcher();
             wrapper.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(0, WrappedDataWatcher.Registry.get(Byte.class)), (byte) 0x20);
@@ -78,6 +91,12 @@ public class PacketManager {
             sendPacketAsync(p, packet);
         }
     }
+
+    /**
+     * Sends a movement packet relative to a position.
+     * @param entityId
+     * @param sendTo
+     */
 
     public static void sendRelativeMovePacket(final int entityId, Player... sendTo) {
         for (final Player p : sendTo) {
@@ -135,6 +154,7 @@ public class PacketManager {
             final Player... sendTo) {
         for (final Player p : sendTo) {
             PacketContainer packet = new PacketContainer(PacketType.Play.Server.SPAWN_ENTITY);
+            packet.getModifier().writeDefaults();
             packet.getUUIDs().write(0, uuid);
             packet.getIntegers().write(0, entityId);
             packet.getEntityTypeModifier().write(0, entityType);
@@ -142,7 +162,7 @@ public class PacketManager {
                     write(0, location.getX()).
                     write(1, location.getY()).
                     write(2, location.getZ());
-            packet.getIntegers().write(1, 1);
+            //packet.getIntegers().write(1, 1);
             //p.sendMessage("Packet sent");
             //packet.getIntegers().write(2, 0);
             //packet.getIntegers().write(3, 0);
@@ -151,9 +171,6 @@ public class PacketManager {
             //packet.getIntegers().write(4, (int)(((location.getYaw() * 256.0F) / 360.0F)));
             //packet.getIntegers().write(5, (int)(((location.getPitch() * 256.0F) / 360.0F)));
             sendPacketAsync(p, packet);
-
-
-
         }
     }
 
@@ -190,6 +207,7 @@ public class PacketManager {
         for (final Player p : sendTo) {
 
             PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
+            packet.getModifier().writeDefaults();
             packet.getIntegers().write(0, entityId);
             WrappedDataWatcher wrapper = new WrappedDataWatcher();
             wrapper.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(0, WrappedDataWatcher.Registry.get(Byte.class)), (byte) 0x20);
@@ -230,16 +248,6 @@ public class PacketManager {
             packet.getBytes().write(1, (byte) (location.getPitch() * 256.0F / 360.0F));
             packet.getBooleans().write(0, onGround);
             sendPacketAsync(p, packet);
-            /*
-            sendPacketAsync(p, new WrapperPlayServerEntityTeleport(
-                    entityId,
-                    new Vector3d(location.getX(), location.getY(), location.getZ()),
-                    location.getYaw(),
-                    location.getPitch(),
-                    onGround
-            ));
-
-             */
         }
     }
 
@@ -371,20 +379,13 @@ public class PacketManager {
     public static void sendRidingPacket(
             final int mountId,
             final int passengerId,
-            final Collection<? extends Player> sendTo
-    ) {
-        sendRidingPacket(mountId, passengerId, sendTo.toArray(new Player[0]));
-    }
-
-    public static void sendRidingPacket(
-            final int mountId,
-            final int passengerId,
             final Player... sendTo
     ) {
+        PacketContainer packet = new PacketContainer(PacketType.Play.Server.MOUNT);
+        packet.getIntegers().write(0, mountId);
+        packet.getIntegerArrays().write(0, new int[]{passengerId});
         for (final Player p : sendTo) {
-            PacketContainer packet = new PacketContainer(PacketType.Play.Server.MOUNT);
-            packet.getIntegers().write(0, mountId);
-            packet.getIntegerArrays().write(0, new int[]{passengerId});
+            p.sendMessage("MountID: " + mountId + " Passenger ID: " + new int[]{passengerId} + " / Raw Passenger: " + passengerId);
             sendPacketAsync(p, packet);
         }
     }
@@ -468,13 +469,31 @@ public class PacketManager {
     ) {
         for (final Player p : sendTo) {
             // Needs testing!!!
-            PacketContainer packet = new PacketContainer(PacketType.Play.Server.SPAWN_ENTITY);
+            //PacketContainer packet = new PacketContainer(PacketType.Play.Server.NAMED_ENTITY_SPAWN);
+            WrapperPlayServerNamedEntitySpawn wrapper = new WrapperPlayServerNamedEntitySpawn();
+            wrapper.setEntityID(entityId);
+            wrapper.setPlayerUUID(uuid);
+            wrapper.setPosition(location.toVector());
+            wrapper.setPitch(location.getPitch());
+            wrapper.setYaw(location.getYaw());
+            /*
+            packet.getModifier().writeDefaults();
+            //packet.getEntityTypeModifier().write(0, EntityType.PLAYER);
+            packet.getIntegers().write(0, entityId);
+            packet.getUUIDs().write(0, uuid);
+            packet.getDoubles().write(0, location.getX())
+                    .write(1, location.getY())
+                    .write(2, location.getZ());
+
+            /*
             WrapperPlayServerSpawnEntity wrapper = new WrapperPlayServerSpawnEntity();
             wrapper.setUniqueId(uuid);
             wrapper.setEntityID(entityId);
+            wrapper.setType(EntityType.PLAYER);
             wrapper.setY(location.getY());
             wrapper.setX(location.getX());
             wrapper.setZ(location.getZ());
+             */
             //wrapper.setPitch((location.getPitch() * 360.F) / 256.0F);
             //wrapper.setYaw((location.getYaw() * 360.F) / 256.0F);
             /*
@@ -516,14 +535,20 @@ public class PacketManager {
             final UUID uuid,
             final Player... sendTo
     ) {
-        PacketContainer packet = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
-        packet.getPlayerInfoAction().write(0, EnumWrappers.PlayerInfoAction.ADD_PLAYER);
-        //packet.getUUIDs().write(0, uuid);
+        //PacketContainer packet = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
+        WrapperPlayServerPlayerInfo info = new WrapperPlayServerPlayerInfo();
+        info.setAction(EnumWrappers.PlayerInfoAction.ADD_PLAYER);
 
-        PlayerInfoData data = new PlayerInfoData(WrappedGameProfile.fromPlayer(skinnedPlayer), 0, EnumWrappers.NativeGameMode.CREATIVE, WrappedChatComponent.fromText(""));
+        info.setData(List.of(new PlayerInfoData(new WrappedGameProfile(uuid, skinnedPlayer.getName()), 0, EnumWrappers.NativeGameMode.CREATIVE, WrappedChatComponent.fromText(skinnedPlayer.getName() + "-NPC"))));
+        /*
+        packet.getPlayerInfoAction().write(0, EnumWrappers.PlayerInfoAction.ADD_PLAYER);
+
+        PlayerInfoData data = new PlayerInfoData(WrappedGameProfile.fromPlayer(skinnedPlayer), -1, EnumWrappers.NativeGameMode.CREATIVE, WrappedChatComponent.fromText(""));
         packet.getPlayerInfoDataLists().write(0, List.of(
                 data
         ));
+
+         */
         /*
         final List<TextureProperty> textures = PacketEvents.getAPI().getPlayerManager().getUser(skinnedPlayer).getProfile().getTextureProperties();
         final WrapperPlayServerPlayerInfo.PlayerData data = new WrapperPlayServerPlayerInfo.PlayerData(
@@ -538,13 +563,7 @@ public class PacketManager {
         );
          */
         for (final Player p : sendTo) {
-            sendPacketAsync(p, packet);
-            /*
-            sendPacketAsync(p, new WrapperPlayServerPlayerInfo(
-                    WrapperPlayServerPlayerInfo.Action.ADD_PLAYER,
-                    data
-            ));
-             */
+            sendPacketAsync(p, info.getHandle());
         }
     }
 
@@ -563,6 +582,7 @@ public class PacketManager {
         for (final Player p : sendTo) {
 
             PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
+            packet.getModifier().writeDefaults();
             packet.getIntegers().write(0, playerId);
             WrappedDataWatcher wrapper = new WrappedDataWatcher();
             wrapper.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(17, WrappedDataWatcher.Registry.get(Byte.class)), (byte) 0x20);
@@ -590,7 +610,7 @@ public class PacketManager {
             packet.getPlayerInfoAction().write(0, EnumWrappers.PlayerInfoAction.REMOVE_PLAYER);
             //packet.getUUIDs().write(0, uuid);
             packet.getPlayerInfoDataLists().write(0, List.of(
-                    new PlayerInfoData(WrappedGameProfile.fromPlayer(player), 0, EnumWrappers.NativeGameMode.SURVIVAL, WrappedChatComponent.fromText(player.getName()))
+                    new PlayerInfoData(new WrappedGameProfile(uuid, uuid.toString()), 0, EnumWrappers.NativeGameMode.SURVIVAL, WrappedChatComponent.fromText(player.getName()))
             ));
             sendPacketAsync(p, packet);
             /*

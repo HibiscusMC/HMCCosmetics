@@ -54,7 +54,7 @@ public class Wardrobe extends User {
                     if (settings.inDistanceOfStatic(viewer.getLocation())) {
                         this.currentLocation = settings.getWardrobeLocation();
                         userManager.get(viewer.getUniqueId()).ifPresent(user -> {
-                            userManager.sendUpdatePacket(user, user.getEquipment());
+                            userManager.sendUpdatePacket(user, userManager.getItemList(user));
                             user.despawnAttached();
                             user.despawnBalloon();
                         });
@@ -126,8 +126,9 @@ public class Wardrobe extends User {
                 () -> {
                     this.spawned = false;
                     final int entityId = this.getEntityId();
-                    PacketManager.sendEntityDestroyPacket(entityId, viewer);
-                    PacketManager.sendRemovePlayerPacket(viewer, this.id, viewer);
+                    //PacketManager.sendEntityDestroyPacket(entityId, viewer);
+                    //PacketManager.sendRemovePlayerPacket(viewer, this.id, viewer);
+                    /*
                     PacketManager.sendEntityDestroyPacket(
                             this.entityIds.wardrobeViewer(),
                             viewer
@@ -136,6 +137,7 @@ public class Wardrobe extends User {
                             viewer.getEntityId(),
                             viewer
                     );
+                     */
                     this.showPlayer(this.plugin.getUserManager());
                     final Collection<ArmorItem> armorItems = new ArrayList<>(this.getPlayerArmor().getArmorItems());
                     if (settings.isApplyCosmeticsOnClose()) {
@@ -188,10 +190,10 @@ public class Wardrobe extends User {
                     final Location location = this.currentLocation.clone();
                     final int yaw = data.get();
                     location.setYaw(yaw);
-                    PacketManager.sendLookPacket(entityId, location, player);
+                    //PacketManager.sendLookPacket(entityId, location, player);
                     this.updateOutsideCosmetics(player, location, this.plugin.getSettings());
                     location.setYaw(this.getNextYaw(yaw - 30, rotationSpeed));
-                    PacketManager.sendRotationPacket(entityId, location, true, player);
+                    //PacketManager.sendRotationPacket(entityId, location, true, player);
                     data.set(this.getNextYaw(yaw, rotationSpeed));
                 },
                 () -> !this.spawned || this.currentLocation == null
