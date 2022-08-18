@@ -43,7 +43,7 @@ dependencies {
     compileOnly("me.clip:placeholderapi:2.11.1")
     compileOnly("com.github.oraxen:oraxen:-SNAPSHOT")
     compileOnly("com.github.LoneDev6:API-ItemsAdder:2.5.4")
-    compileOnly("net.citizensnpcs:citizens-main:2.0.29-SNAPSHOT")
+    compileOnly("net.citizensnpcs:citizens-main:2.0.30-SNAPSHOT")
     compileOnly("com.ticxo.modelengine:api:R2.5.0")
     //compileOnly("com.github.retrooper.packetevents:spigot:2.0-SNAPSHOT")
     implementation("net.kyori:adventure-api:4.10.0")
