@@ -586,7 +586,7 @@ public class PacketManager {
             packet.getModifier().writeDefaults();
             packet.getIntegers().write(0, playerId);
             WrappedDataWatcher wrapper = new WrappedDataWatcher();
-            wrapper.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(17, WrappedDataWatcher.Registry.get(Byte.class)), (byte) 0x20);
+            wrapper.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(17, WrappedDataWatcher.Registry.get(Byte.class)), mask);
             wrapper.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(15, WrappedDataWatcher.Registry.get(Byte.class)), (byte) 0x10);
             packet.getWatchableCollectionModifier().write(0, wrapper.getWatchableObjects());
             sendPacketAsync(p, packet);
