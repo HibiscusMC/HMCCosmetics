@@ -5,6 +5,7 @@ import io.github.fisher2911.hmccosmetics.config.CosmeticSettings;
 import io.github.fisher2911.hmccosmetics.config.Settings;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.gui.BalloonItem;
+import io.github.fisher2911.hmccosmetics.hook.CitizensHook;
 import io.github.fisher2911.hmccosmetics.hook.HookManager;
 import io.github.fisher2911.hmccosmetics.hook.ModelEngineHook;
 import io.github.fisher2911.hmccosmetics.hook.entity.BalloonEntity;

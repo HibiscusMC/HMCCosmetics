@@ -2,6 +2,7 @@ package io.github.fisher2911.hmccosmetics.user;
 
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.config.Settings;
+import io.github.fisher2911.hmccosmetics.database.Database;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
 import io.github.fisher2911.hmccosmetics.packet.PacketManager;
 import org.bukkit.Bukkit;
@@ -46,7 +47,7 @@ public class Backpack {
         if (currentSize == particleCount) return;
         if (currentSize < particleCount) {
             for (int i = currentSize; i < particleCount; i++) {
-                this.particleIDS.add(new AtomicInteger().incrementAndGet());
+                this.particleIDS.add(Database.getNextEntityId());
             }
             return;
         }
@@ -57,6 +58,7 @@ public class Backpack {
         PacketManager.sendEntitySpawnPacket(location, this.armorStandID, EntityType.ARMOR_STAND, other);
         PacketManager.sendArmorStandMetaContainer(this.armorStandID, other);
         PacketManager.sendRidingPacket(owner.getEntityId(), this.armorStandID, other);
+        plugin.getLogger().info("Sent spawnForOther. Mount: " + owner.getEntityId() + " | Armorstand: " + this.armorStandID);
         //PacketManager.sendRidingPacket(owner.getEntityId(), new int[]{this.armorStandID}, other);
     }
 
@@ -117,6 +119,7 @@ public class Backpack {
         PacketManager.sendLookPacket(this.armorStandID, location, other);
         if (!isSelf || !firstPersonMode || this.particleIDS.size() == 0)  {
             PacketManager.sendRidingPacket(owner.getEntityId(), this.armorStandID, other);
+            plugin.getLogger().info("Sent updateBackpack. Mount: " + owner.getEntityId() + " | Armorstand: " + this.armorStandID);
             //PacketManager.sendRidingPacket(owner.getEntityId(), new int[]{this.armorStandID}, other);
             return;
         }
@@ -130,5 +133,6 @@ public class Backpack {
             }
         }
         PacketManager.sendRidingPacket(particleIDS.get(particleIDS.size() - 1), this.armorStandID, other);
+        //plugin.getLogger().info("Sent updateBackpack Other. Mount: " + owner.getEntityId() + " | Armorstand: " + this.armorStandID);
     }
 }

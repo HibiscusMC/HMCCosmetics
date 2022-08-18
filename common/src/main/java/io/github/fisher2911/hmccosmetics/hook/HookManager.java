@@ -58,6 +58,7 @@ public class HookManager {
             this.registerHook(citizensHook.getClass());
             this.listeners.add(citizensHook);
             this.citizensHook = citizensHook;
+            this.plugin.getLogger().info("Successfully Hooked into Citizens!");
         } else {
             this.citizensHook = null;
         }

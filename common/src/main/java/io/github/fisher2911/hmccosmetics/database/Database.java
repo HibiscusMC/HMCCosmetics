@@ -20,7 +20,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 
 import java.sql.SQLException;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
@@ -234,6 +236,7 @@ public class Database {
     }
 
     public static int getNextEntityId() {
-        return new AtomicInteger().incrementAndGet();
+        Random random = new Random();
+        return random.nextInt(999999);
     }
 }

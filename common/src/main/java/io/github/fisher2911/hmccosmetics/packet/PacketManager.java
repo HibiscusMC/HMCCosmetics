@@ -5,6 +5,7 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.*;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
+import io.github.fisher2911.hmccosmetics.database.Database;
 import io.github.fisher2911.hmccosmetics.packet.wrappers.WrapperPlayServerNamedEntitySpawn;
 import io.github.fisher2911.hmccosmetics.packet.wrappers.WrapperPlayServerPlayerInfo;
 import io.github.fisher2911.hmccosmetics.packet.wrappers.WrapperPlayServerRelEntityMove;
@@ -385,7 +386,7 @@ public class PacketManager {
         packet.getIntegers().write(0, mountId);
         packet.getIntegerArrays().write(0, new int[]{passengerId});
         for (final Player p : sendTo) {
-            p.sendMessage("MountID: " + mountId + " Passenger ID: " + new int[]{passengerId} + " / Raw Passenger: " + passengerId);
+            //p.sendMessage("MountID: " + mountId + " / Raw Passenger: " + passengerId + " | Next Entity: " + Database.getNextEntityId());
             sendPacketAsync(p, packet);
         }
     }
