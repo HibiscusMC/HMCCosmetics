@@ -58,7 +58,7 @@ public class Backpack {
         PacketManager.sendEntitySpawnPacket(location, this.armorStandID, EntityType.ARMOR_STAND, other);
         PacketManager.sendArmorStandMetaContainer(this.armorStandID, other);
         PacketManager.sendRidingPacket(owner.getEntityId(), this.armorStandID, other);
-        plugin.getLogger().info("Sent spawnForOther. Mount: " + owner.getEntityId() + " | Armorstand: " + this.armorStandID);
+        //plugin.getLogger().info("Sent spawnForOther. Mount: " + owner.getEntityId() + " | Armorstand: " + this.armorStandID);
         //PacketManager.sendRidingPacket(owner.getEntityId(), new int[]{this.armorStandID}, other);
     }
 
@@ -119,7 +119,7 @@ public class Backpack {
         PacketManager.sendLookPacket(this.armorStandID, location, other);
         if (!isSelf || !firstPersonMode || this.particleIDS.size() == 0)  {
             PacketManager.sendRidingPacket(owner.getEntityId(), this.armorStandID, other);
-            plugin.getLogger().info("Sent updateBackpack. Mount: " + owner.getEntityId() + " | Armorstand: " + this.armorStandID);
+            //plugin.getLogger().info("Sent updateBackpack. Mount: " + owner.getEntityId() + " | Armorstand: " + this.armorStandID);
             //PacketManager.sendRidingPacket(owner.getEntityId(), new int[]{this.armorStandID}, other);
             return;
         }
