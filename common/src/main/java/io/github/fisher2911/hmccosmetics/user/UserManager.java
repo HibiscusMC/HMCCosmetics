@@ -148,7 +148,7 @@ public class UserManager {
     public Equipment getItemList(
             final BaseUser<?> user
     ) {
-        return getItemList(user, new Equipment(), Collections.emptySet());
+        return getItemList(user, user.getEquipment(), Collections.emptySet());
     }
 
     public Equipment getItemList(
@@ -157,15 +157,12 @@ public class UserManager {
             final Set<ArmorItem.Type> ignored
     ) {
         final PlayerArmor armor = user.getPlayerArmor();
-        //final List<Equipment> items = new ArrayList<>();
-        //Equipment equip = new Equipment();
         for (final ArmorItem.Type type : ArmorItem.Type.values()) {
             final EquipmentSlot slot = type.getSlot();
             if (slot == null) continue;
             if (ignored.contains(type)) {
                 Equipment item = PacketManager.getEquipment(equipment.getItem(slot), slot);
                 equipment.setItem(slot, item.getItem(slot));
-                //items.add(PacketManager.getEquipment(equipment.getItem(slot), slot));
                 continue;
             }
             final ItemStack wearing = Utils.replaceIfNull(equipment.getItem(slot), new ItemStack(Material.AIR));
@@ -179,7 +176,7 @@ public class UserManager {
         }
         return equipment;
     }
-
+    @Deprecated
     public List<Equipment> getEmptyItemList() {
         final List<Equipment> items = new ArrayList<>();
         for (final EquipmentSlot slot : EquipmentSlot.values()) {
@@ -311,7 +308,6 @@ public class UserManager {
         if (equipment == null) return;
         for (final User otherUser : this.userMap.values()) {
             final Player other = otherUser.getPlayer();
-            //other.sendMessage("Offhand Cosmetic (sendUpdatePacket) " + equipment.getItem(EquipmentSlot.OFF_HAND));
             if (other == null) continue;
             if (!user.shouldShow(other)) continue;
             if (!this.settings.getCosmeticSettings().isInViewDistance(location, other.getLocation())) continue;
