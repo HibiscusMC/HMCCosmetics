@@ -299,7 +299,7 @@ public class PacketManager {
             packet.getIntegers().write(0, balloonId);
             packet.getIntegers().write(1, entityId);
             // Leash?
-            packet.getBooleans().write(0, true);
+            //packet.getBooleans().write(0, true);
             /*
             sendPacketAsync(p, new WrapperPlayServerAttachEntity(
                     balloonId,
@@ -312,11 +312,9 @@ public class PacketManager {
     }
 
     public static void sendEquipmentPacket(
-            final io.github.fisher2911.hmccosmetics.user.Equipment equipment,
+            final Equipment equipment,
             final int entityID,
             final Player... sendTo) {
-        // DONE: Fix Packet causing player disconnect! https://i.imgur.com/l4D6lmM.png
-        //List<PacketContainer> packets = new ArrayList<>();
         PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_EQUIPMENT);
         packet.getIntegers().write(0, entityID);
         List<Pair<EnumWrappers.ItemSlot, ItemStack>> list = new ArrayList<>();
@@ -326,7 +324,6 @@ public class PacketManager {
         if (list == null) return;
         packet.getSlotStackPairLists().write(0, list);
         for (Player p : sendTo) {
-            //p.sendMessage("Offhand Cosmetic: " + equipment.getItem(EquipmentSlot.OFF_HAND));
             sendPacketAsync(p, packet);
         }
     }
