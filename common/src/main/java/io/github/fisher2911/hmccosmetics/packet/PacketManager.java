@@ -5,15 +5,16 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.*;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
-import io.github.fisher2911.hmccosmetics.database.Database;
 import io.github.fisher2911.hmccosmetics.packet.wrappers.WrapperPlayServerNamedEntitySpawn;
 import io.github.fisher2911.hmccosmetics.packet.wrappers.WrapperPlayServerPlayerInfo;
 import io.github.fisher2911.hmccosmetics.packet.wrappers.WrapperPlayServerRelEntityMove;
 import io.github.fisher2911.hmccosmetics.packet.wrappers.WrapperPlayServerRelEntityMoveLook;
 import io.github.fisher2911.hmccosmetics.user.Equipment;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.libs.it.unimi.dsi.fastutil.ints.IntArrayList;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
@@ -147,6 +148,14 @@ public class PacketManager {
         sendEntitySpawnPacket(location, entityId, entityType, uuid, sendTo.toArray(new Player[0]));
     }
 
+    /**
+     * "Spawns" an entity for players. This entity is fake and is mearly client side.
+     * @param location Location to spawn the entity.
+     * @param entityId The entityID that is being spawned.
+     * @param entityType The entity type that is being spawned.
+     * @param uuid The UUID of the entity being spawned.
+     * @param sendTo Whom to send the packet to.
+     */
     public static void sendEntitySpawnPacket(
             final Location location,
             final int entityId,
@@ -163,18 +172,13 @@ public class PacketManager {
                     write(0, location.getX()).
                     write(1, location.getY()).
                     write(2, location.getZ());
-            //packet.getIntegers().write(1, 1);
-            //p.sendMessage("Packet sent");
-            //packet.getIntegers().write(2, 0);
-            //packet.getIntegers().write(3, 0);
-            //packet.getIntegers().write(4, 0);
-            //packet.getIntegers().write(5, 0);
-            //packet.getIntegers().write(4, (int)(((location.getYaw() * 256.0F) / 360.0F)));
-            //packet.getIntegers().write(5, (int)(((location.getPitch() * 256.0F) / 360.0F)));
+            //Bukkit.getLogger().info("Yaw is : " + (location.getYaw()));
+            packet.getBytes().write(0, (byte) (location.getYaw()));
+            packet.getBytes().write(1, (byte) (location.getPitch()));
             sendPacketAsync(p, packet);
         }
     }
-
+    @Deprecated
     public static void sendEntityNotLivingSpawnPacket(
             final Location location,
             final int entityId,
@@ -204,9 +208,13 @@ public class PacketManager {
         sendInvisibilityPacket(entityId, sendTo.toArray(new Player[0]));
     }
 
+    /**
+     * Will make a entity invisible
+     * @param entityId Which entity will this affect?
+     * @param sendTo Whom to send the packet to
+     */
     public static void sendInvisibilityPacket(final int entityId, final Player... sendTo) {
         for (final Player p : sendTo) {
-
             PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
             packet.getModifier().writeDefaults();
             packet.getIntegers().write(0, entityId);
@@ -233,6 +241,13 @@ public class PacketManager {
         sendTeleportPacket(entityId, location, onGround, sendTo.toArray(new Player[0]));
     }
 
+    /**
+     * Used when a player is sent 8+ blocks.
+     * @param entityId Entity this affects
+     * @param location Location a player is being teleported to
+     * @param onGround If the packet is on the ground
+     * @param sendTo Whom to send the packet to
+     */
     public static void sendTeleportPacket(
             final int entityId,
             final Location location,
@@ -262,6 +277,14 @@ public class PacketManager {
         sendMovePacket(entityId, from, to, onGround, sendTo.toArray(new Player[0]));
     }
 
+    /**
+     * Sends a movement packet from one location to another
+     * @param entityId Entity this will affect
+     * @param from Previous location
+     * @param to New location
+     * @param onGround If the movement is on the ground
+     * @param sendTo Whom to send the packet to
+     */
     public static void sendMovePacket(
             final int entityId,
             final Location from,
@@ -289,6 +312,12 @@ public class PacketManager {
         sendLeashPacket(balloonId, entityId, sendTo.toArray(new Player[0]));
     }
 
+    /**
+     * Sends a leash packet, useful for balloons!
+     * @param balloonId Entity being leashed (ex. a horse)
+     * @param entityId Entity this is affecting (ex. a player)
+     * @param sendTo Whom to send the packet to
+     */
     public static void sendLeashPacket(
             final int balloonId,
             final int entityId,
@@ -311,6 +340,12 @@ public class PacketManager {
         }
     }
 
+    /**
+     * Useful for updating packet equipment on a player
+     * @param equipment The equipment that is being equiped for the player. THIS IS NOT REAL ARMOR, mearly packets. If a player attempts to remove their cosmetics, it will disappear.
+     * @param entityID Entity this will affect
+     * @param sendTo Whom to send the packet to
+     */
     public static void sendEquipmentPacket(
             final Equipment equipment,
             final int entityID,
@@ -337,6 +372,13 @@ public class PacketManager {
         sendRotationPacket(entityId, location, onGround, sendTo.toArray(new Player[0]));
     }
 
+    /**
+     * Sends a rotation packet for an entity
+     * @param entityId EntityID that rotates their head
+     * @param location Location/Vector that will be looked at
+     * @param onGround Whether it is on the ground or not.
+     * @param sendTo Whom to send the packet to
+     */
     public static void sendRotationPacket(
             final int entityId,
             final Location location,
@@ -361,19 +403,31 @@ public class PacketManager {
         sendLookPacket(entityId, location, sendTo.toArray(new Player[0]));
     }
 
+    /**
+     * Sends a look packet at a location
+     * @param entityId EntityID this packet affects
+     * @param location Location/Vector that an entity looks at.
+     * @param sendTo Whom to send the packet to
+     */
     public static void sendLookPacket(
             final int entityId,
             final Location location,
             final Player... sendTo
     ) {
         for (final Player p : sendTo) {
-            PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_HEAD_ROTATION);
+            PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_LOOK);
             packet.getIntegers().write(0, entityId);
-            packet.getBytes().write(0, (byte) location.getYaw());
+            packet.getBytes().write(0, (byte) (location.getYaw() * 256.0F / 360.0F));
             sendPacketAsync(p, packet);
         }
     }
 
+    /**
+     * Mostly to deal with backpacks, this deals with entities riding other entities.
+     * @param mountId The entity that is the "mount", ex. a player
+     * @param passengerId The entity that is riding the mount, ex. a armorstand for a backpack
+     * @param sendTo Whom to send the packet to
+     */
     public static void sendRidingPacket(
             final int mountId,
             final int passengerId,
@@ -387,11 +441,20 @@ public class PacketManager {
             sendPacketAsync(p, packet);
         }
     }
-
+    /**
+     * Destroys an entity from a player
+     * @param entityId The entity to delete for a player
+     * @param sendTo The players the packet should be sent to
+     */
     public static void sendEntityDestroyPacket(final int entityId, final Collection<? extends Player> sendTo) {
         sendEntityDestroyPacket(entityId, sendTo.toArray(new Player[0]));
     }
 
+    /**
+     * Destroys an entity from a player
+     * @param entityId The entity to delete for a player
+     * @param sendTo The players the packet should be sent to
+     */
     public static void sendEntityDestroyPacket(final int entityId, final Player... sendTo) {
         for (final Player p : sendTo) {
             PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_DESTROY);
@@ -400,6 +463,11 @@ public class PacketManager {
         }
     }
 
+    /**
+     * Sends a camera packet
+     * @param entityId The Entity ID that camera will go towards
+     * @param sendTo The players that will be sent this packet
+     */
     public static void sendCameraPacket(final int entityId, final Player... sendTo) {
         for (final Player p : sendTo) {
             PacketContainer packet = new PacketContainer(PacketType.Play.Server.CAMERA);
@@ -408,6 +476,24 @@ public class PacketManager {
         }
     }
 
+    /**
+     * Sends a camera packet
+     * @param entity The Entity that camera will go towards
+     * @param sendTo The players that will be sent this packet
+     */
+    public static void sendCameraPacket(final Entity entity, final Player... sendTo) {
+        for (final Player p : sendTo) {
+            PacketContainer packet = new PacketContainer(PacketType.Play.Server.CAMERA);
+            packet.getEntityModifier(p.getWorld()).write(0, entity);
+            sendPacketAsync(p, packet);
+        }
+    }
+
+    /**
+     * Sends a camera packet
+     * @param entityId The Entity ID that camera will go towards
+     * @param sendTo The players that will be sent this packet
+     */
     public static void sendCameraPacket(final int entityId, final Collection<? extends Player> sendTo) {
         sendCameraPacket(entityId, sendTo.toArray(new Player[0]));
     }
@@ -459,6 +545,13 @@ public class PacketManager {
         sendFakePlayerSpawnPacket(location, uuid, entityId, sendTo.toArray(new Player[0]));
     }
 
+    /**
+     *
+     * @param location Location of the fake player.
+     * @param uuid UUID of the fake player. Should be random.
+     * @param entityId The entityID that the entity will take on.
+     * @param sendTo Who should it send the packet to?
+     */
     public static void sendFakePlayerSpawnPacket(
             final Location location,
             final UUID uuid,
@@ -504,19 +597,6 @@ public class PacketManager {
                     write(4, (int) ((location.getYaw() * 360.F) / 256.0F));
              */
             sendPacketAsync(p, wrapper.getHandle());
-            /*
-            sendPacketAsync(p, new WrapperPlayServerSpawnPlayer(
-                    entityId,
-                    uuid,
-                    new com.github.retrooper.packetevents.protocol.world.Location(
-                            location.getX(),
-                            location.getY(),
-                            location.getZ(),
-                            location.getYaw(),
-                            location.getPitch()
-                    )
-            ));
-             */
         }
     }
 
@@ -528,38 +608,21 @@ public class PacketManager {
         sendFakePlayerInfoPacket(skinnedPlayer, uuid, sendTo.toArray(new Player[0]));
     }
 
+    /**
+     * Creates a fake player entity.
+     * @param skinnedPlayer The original player it bases itself off of.
+     * @param uuid UUID of the fake entity.
+     * @param sendTo Whom to send the packet to
+     */
     public static void sendFakePlayerInfoPacket(
             final Player skinnedPlayer,
             final UUID uuid,
             final Player... sendTo
     ) {
-        //PacketContainer packet = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
         WrapperPlayServerPlayerInfo info = new WrapperPlayServerPlayerInfo();
         info.setAction(EnumWrappers.PlayerInfoAction.ADD_PLAYER);
-
+        //WrappedProfilePublicKey key = WrappedProfilePublicKey.ofPlayer(skinnedPlayer);
         info.setData(List.of(new PlayerInfoData(new WrappedGameProfile(uuid, skinnedPlayer.getName()), 0, EnumWrappers.NativeGameMode.CREATIVE, WrappedChatComponent.fromText(skinnedPlayer.getName() + "-NPC"))));
-        /*
-        packet.getPlayerInfoAction().write(0, EnumWrappers.PlayerInfoAction.ADD_PLAYER);
-
-        PlayerInfoData data = new PlayerInfoData(WrappedGameProfile.fromPlayer(skinnedPlayer), -1, EnumWrappers.NativeGameMode.CREATIVE, WrappedChatComponent.fromText(""));
-        packet.getPlayerInfoDataLists().write(0, List.of(
-                data
-        ));
-
-         */
-        /*
-        final List<TextureProperty> textures = PacketEvents.getAPI().getPlayerManager().getUser(skinnedPlayer).getProfile().getTextureProperties();
-        final WrapperPlayServerPlayerInfo.PlayerData data = new WrapperPlayServerPlayerInfo.PlayerData(
-                Component.text(""),
-                new UserProfile(
-                        uuid,
-                        "",
-                        textures
-                ),
-                GameMode.CREATIVE,
-                0
-        );
-         */
         for (final Player p : sendTo) {
             sendPacketAsync(p, info.getHandle());
         }
@@ -572,10 +635,26 @@ public class PacketManager {
         sendPlayerOverlayPacket(playerId, sendTo.toArray(new Player[0]));
     }
 
+    /**
+     * Generates the overlay packet for entities.
+     * @param playerId The entity the packet is about
+     * @param sendTo Whom is sent the packet.
+     */
     public static void sendPlayerOverlayPacket(
             final int playerId,
             final Player... sendTo
     ) {
+        /*
+        0x01 = Is on fire
+        0x02 = Is courching
+        0x04 = Unusued
+        0x08 = Sprinting
+        0x10 = Is swimming
+        0x20 = Invisibile
+        0x40 = Is Glowing
+        0x80 = Is flying with an elytra
+         https://wiki.vg/Entity_metadata#Entity
+         */
         final byte mask = 0x01 | 0x02 | 0x04 | 0x08 | 0x010 | 0x020 | 0x40;
         for (final Player p : sendTo) {
 
@@ -598,43 +677,61 @@ public class PacketManager {
         sendRemovePlayerPacket(player, uuid, sendTo.toArray(new Player[0]));
     }
 
+    /**
+     * Removes a fake player from being seen by players.
+     * @param player Which gameprofile to wrap for removing the player.
+     * @param uuid What is the fake player UUID
+     * @param sendTo Whom to send the packet to
+     */
     public static void sendRemovePlayerPacket(
             final Player player,
             final UUID uuid,
             final Player... sendTo
     ) {
         for (final Player p : sendTo) {
-            PacketContainer packet = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
-            packet.getPlayerInfoAction().write(0, EnumWrappers.PlayerInfoAction.REMOVE_PLAYER);
-            //packet.getUUIDs().write(0, uuid);
-            packet.getPlayerInfoDataLists().write(0, List.of(
-                    new PlayerInfoData(new WrappedGameProfile(uuid, uuid.toString()), 0, EnumWrappers.NativeGameMode.SURVIVAL, WrappedChatComponent.fromText(player.getName()))
-            ));
-            sendPacketAsync(p, packet);
-            /*
-            sendPacketAsync(p, new WrapperPlayServerPlayerInfo(
-                    WrapperPlayServerPlayerInfo.Action.REMOVE_PLAYER,
-                    new WrapperPlayServerPlayerInfo.PlayerData(
-                            Component.empty(),
-                            new UserProfile(
-                                    uuid,
-                                    player.getDisplayName()
-                            ),
-                            com.github.retrooper.packetevents.protocol.player.GameMode.SURVIVAL,
-                            0
-                    )
-            ));
-             */
+            WrapperPlayServerPlayerInfo info = new WrapperPlayServerPlayerInfo();
+            info.setAction(EnumWrappers.PlayerInfoAction.REMOVE_PLAYER);
+            //WrappedProfilePublicKey key = WrappedProfilePublicKey.ofPlayer(player);
+            info.setData(List.of(new PlayerInfoData(new WrappedGameProfile(uuid, player.getName()), 0, EnumWrappers.NativeGameMode.CREATIVE, WrappedChatComponent.fromText(player.getName() + "-NPC"))));
+            sendPacketAsync(p, info.getHandle());
         }
     }
 
+    /**
+     * Sends a gamemode change packet to a player.
+     * @param player
+     * @param gamemode
+     */
+    public static void sendGameModeChange(
+            final Player player,
+            final GameMode gamemode
+            ) {
+        PacketContainer packet = new PacketContainer(PacketType.Play.Server.GAME_STATE_CHANGE);
+        packet.getGameStateIDs().write(0, convertGamemode(gamemode));
+        // What doest this even do?
+        packet.getFloat().write(0, 3f);
+        sendPacketAsync(player, packet);
+    }
+
+    /**
+     * This sends a packet to a player asyncronously, preventing clogging on the main thread.
+     * @param player Which player to send the packet to
+     * @param packet What packet to send to the player
+     */
     public static void sendPacketAsync(final Player player, final PacketContainer packet) {
         Bukkit.getScheduler().runTaskAsynchronously(HMCCosmetics.getPlugin(HMCCosmetics.class), () -> {
             ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
         });
     }
 
-    public static io.github.fisher2911.hmccosmetics.user.Equipment getEquipment(
+    /**
+     * Gets the equipment of a slot
+     * @param itemStack the ItemStack of a slot
+     * @param slot the slot to look at
+     * @return
+     */
+    // It works now, need to redo this sytem sometime in the future...
+    public static Equipment getEquipment(
             final ItemStack itemStack,
             final org.bukkit.inventory.EquipmentSlot slot
     ) {
@@ -655,8 +752,12 @@ public class PacketManager {
     }
      */
 
-
-    public static EnumWrappers.ItemSlot itemBukkitSlot(final org.bukkit.inventory.EquipmentSlot slot) {
+    /**
+     * Converts from the Bukkit item slots to ProtocolLib item slots. Will produce a null if an improper bukkit item slot is sent through
+     * @param slot The BUKKIT item slot to convert.
+     * @return The ProtocolLib item slot that is returned
+     */
+    public static EnumWrappers.ItemSlot itemBukkitSlot(final EquipmentSlot slot) {
         return switch (slot) {
             case HEAD -> EnumWrappers.ItemSlot.HEAD;
             case CHEST -> EnumWrappers.ItemSlot.CHEST;
@@ -665,6 +766,21 @@ public class PacketManager {
             case HAND -> EnumWrappers.ItemSlot.MAINHAND;
             case OFF_HAND -> EnumWrappers.ItemSlot.OFFHAND;
             default -> null;
+        };
+    }
+
+    /**
+     * Converts a bukkit gamemode into an integer for use in packets
+     * @param gamemode Bukkit gamemode to convert.
+     * @return int of the gamemode
+     */
+    public static int convertGamemode(final GameMode gamemode) {
+        return switch (gamemode) {
+            case SURVIVAL -> 0;
+            case CREATIVE -> 1;
+            case ADVENTURE -> 2;
+            case SPECTATOR -> 3;
+            default -> 0; // Just default to survival if it can't find anything
         };
     }
 }

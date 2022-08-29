@@ -176,14 +176,6 @@ public class UserManager {
         }
         return equipment;
     }
-    @Deprecated
-    public List<Equipment> getEmptyItemList() {
-        final List<Equipment> items = new ArrayList<>();
-        for (final EquipmentSlot slot : EquipmentSlot.values()) {
-            items.add(PacketManager.getEquipment(new ItemStack(Material.AIR), slot));
-        }
-        return items;
-    }
 
     public void setItem(final BaseUser<?> user, final ArmorItem armorItem, final boolean sendPacket) {
         ArmorItem previous = user.getPlayerArmor().getItem(armorItem.getType());
@@ -296,6 +288,11 @@ public class UserManager {
         this.sendUpdatePacket(user, equip);
     }
 
+    /**
+     * Sends a packet to a player "updating" their equipment.
+     * @param user The user having their equipment being updated.
+     * @param equipment The equipment that is being set on the player.
+     */
     public void sendUpdatePacket(
             final BaseUser<?> user,
             Equipment equipment

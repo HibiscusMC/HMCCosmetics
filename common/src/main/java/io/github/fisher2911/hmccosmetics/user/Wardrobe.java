@@ -10,8 +10,11 @@ import io.github.fisher2911.hmccosmetics.task.Task;
 import io.github.fisher2911.hmccosmetics.task.TaskChain;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
@@ -68,6 +71,7 @@ public class Wardrobe extends User {
                                 this.entityIds.wardrobeViewer(),
                                 viewer
                         );
+                        // This makes the player viewing the wardrobe invisible
                         PacketManager.sendInvisibilityPacket(
                                 this.entityIds.wardrobeViewer(),
                                 viewer
@@ -77,6 +81,7 @@ public class Wardrobe extends User {
                                 settings.getViewerLocation(),
                                 viewer
                         );
+                        // This make the person viewing the wardrobe invisible
                         PacketManager.sendInvisibilityPacket(
                                 viewer.getEntityId(),
                                 viewer
@@ -110,7 +115,7 @@ public class Wardrobe extends User {
                                     );
                                 }
                             });
-//                    PacketManager.sendEntitySpawnPacket(this.currentLocation, this.getEntityId(), EntityTypes.ZOMBIE, viewer);
+                    //PacketManager.sendEntitySpawnPacket(this.currentLocation, this.getEntityId(), EntityType.PLAYER, viewer);
                     this.spawned = true;
                     this.startSpinTask(viewer);
                 },
@@ -126,9 +131,8 @@ public class Wardrobe extends User {
                 () -> {
                     this.spawned = false;
                     final int entityId = this.getEntityId();
-                    //PacketManager.sendEntityDestroyPacket(entityId, viewer);
-                    //PacketManager.sendRemovePlayerPacket(viewer, this.id, viewer);
-                    /*
+                    PacketManager.sendEntityDestroyPacket(entityId, viewer);
+                    PacketManager.sendRemovePlayerPacket(viewer, this.id, viewer);
                     PacketManager.sendEntityDestroyPacket(
                             this.entityIds.wardrobeViewer(),
                             viewer
@@ -137,7 +141,6 @@ public class Wardrobe extends User {
                             viewer.getEntityId(),
                             viewer
                     );
-                     */
                     this.showPlayer(this.plugin.getUserManager());
                     final Collection<ArmorItem> armorItems = new ArrayList<>(this.getPlayerArmor().getArmorItems());
                     if (settings.isApplyCosmeticsOnClose()) {
@@ -190,10 +193,10 @@ public class Wardrobe extends User {
                     final Location location = this.currentLocation.clone();
                     final int yaw = data.get();
                     location.setYaw(yaw);
-                    //PacketManager.sendLookPacket(entityId, location, player);
+                    PacketManager.sendLookPacket(entityId, location, player);
                     this.updateOutsideCosmetics(player, location, this.plugin.getSettings());
                     location.setYaw(this.getNextYaw(yaw - 30, rotationSpeed));
-                    //PacketManager.sendRotationPacket(entityId, location, true, player);
+                    PacketManager.sendRotationPacket(entityId, location, true, player);
                     data.set(this.getNextYaw(yaw, rotationSpeed));
                 },
                 () -> !this.spawned || this.currentLocation == null
