@@ -172,9 +172,6 @@ public class PacketManager {
                     write(0, location.getX()).
                     write(1, location.getY()).
                     write(2, location.getZ());
-            //Bukkit.getLogger().info("Yaw is : " + (location.getYaw()));
-            packet.getBytes().write(0, (byte) (location.getYaw()));
-            packet.getBytes().write(1, (byte) (location.getPitch()));
             sendPacketAsync(p, packet);
         }
     }
@@ -221,13 +218,6 @@ public class PacketManager {
             WrappedDataWatcher wrapper = new WrappedDataWatcher();
             wrapper.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(0, WrappedDataWatcher.Registry.get(Byte.class)), (byte) 0x20);
             packet.getWatchableCollectionModifier().write(0, wrapper.getWatchableObjects());
-            //packet.setMeta(String.valueOf(entityId), List.of(new EntityData(0, EntityDataTypes.BYTE, (byte) 0x20)));
-            /*
-            sendPacketAsync(p, new WrapperPlayServerEntityMetadata(
-                    entityId,
-                    List.of(new EntityData(0, EntityDataTypes.BYTE, (byte) 0x20))
-            ));
-             */
             sendPacketAsync(p, packet);
         }
     }
@@ -415,7 +405,7 @@ public class PacketManager {
             final Player... sendTo
     ) {
         for (final Player p : sendTo) {
-            PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_LOOK);
+            PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_HEAD_ROTATION);
             packet.getIntegers().write(0, entityId);
             packet.getBytes().write(0, (byte) (location.getYaw() * 256.0F / 360.0F));
             sendPacketAsync(p, packet);
@@ -699,17 +689,29 @@ public class PacketManager {
 
     /**
      * Sends a gamemode change packet to a player.
-     * @param player
-     * @param gamemode
+     * @param player Player to change their gamemode.
+     * @param gamemode Bukkit gamemode to change it to
      */
     public static void sendGameModeChange(
             final Player player,
             final GameMode gamemode
             ) {
+        sendGameModeChange(player, convertGamemode(gamemode));
+    }
+
+    /**
+     * Sends a gamemode change packet to a player.
+     * @param player Player to change their gamemode.
+     * @param gamemode Gamemode value to change it to
+     */
+    public static void sendGameModeChange(
+            final Player player,
+            final int gamemode
+    ) {
         PacketContainer packet = new PacketContainer(PacketType.Play.Server.GAME_STATE_CHANGE);
-        packet.getGameStateIDs().write(0, convertGamemode(gamemode));
-        // What doest this even do?
-        packet.getFloat().write(0, 3f);
+        packet.getGameStateIDs().write(0, 3);
+        // Tells what event this is. This is a change gamemode event.
+        packet.getFloat().write(0, (float) gamemode);
         sendPacketAsync(player, packet);
     }
 
@@ -719,16 +721,15 @@ public class PacketManager {
      * @param packet What packet to send to the player
      */
     public static void sendPacketAsync(final Player player, final PacketContainer packet) {
-        Bukkit.getScheduler().runTaskAsynchronously(HMCCosmetics.getPlugin(HMCCosmetics.class), () -> {
-            ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
-        });
+        Bukkit.getScheduler().runTaskAsynchronously(HMCCosmetics.getPlugin(HMCCosmetics.class),
+                () -> ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet));
     }
 
     /**
      * Gets the equipment of a slot
      * @param itemStack the ItemStack of a slot
      * @param slot the slot to look at
-     * @return
+     * @return returns the equipment at a slot
      */
     // It works now, need to redo this sytem sometime in the future...
     public static Equipment getEquipment(
@@ -765,7 +766,6 @@ public class PacketManager {
             case FEET -> EnumWrappers.ItemSlot.FEET;
             case HAND -> EnumWrappers.ItemSlot.MAINHAND;
             case OFF_HAND -> EnumWrappers.ItemSlot.OFFHAND;
-            default -> null;
         };
     }
 
@@ -780,7 +780,6 @@ public class PacketManager {
             case CREATIVE -> 1;
             case ADVENTURE -> 2;
             case SPECTATOR -> 3;
-            default -> 0; // Just default to survival if it can't find anything
         };
     }
 }

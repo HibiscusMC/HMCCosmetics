@@ -9,6 +9,7 @@ import io.github.fisher2911.hmccosmetics.task.SupplierTask;
 import io.github.fisher2911.hmccosmetics.task.Task;
 import io.github.fisher2911.hmccosmetics.task.TaskChain;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -31,6 +32,7 @@ public class Wardrobe extends User {
     private boolean active;
     private boolean spawned;
     private Location currentLocation;
+    private GameMode originalGamemode;
 
     public Wardrobe(
             final HMCCosmetics plugin,
@@ -45,11 +47,21 @@ public class Wardrobe extends User {
         this.ownerUUID = ownerUUID;
         this.active = active;
         this.wardrobe = this;
+        this.originalGamemode = GameMode.SURVIVAL;
     }
 
     public void spawnFakePlayer(final Player viewer) {
         final UserManager userManager = this.plugin.getUserManager();
         final WardrobeSettings settings = this.plugin.getSettings().getWardrobeSettings();
+        this.originalGamemode = viewer.getGameMode();
+        Bukkit.getScheduler().runTask(this.plugin, () -> {
+            PacketManager.sendEntitySpawnPacket(
+                    settings.getViewerLocation(),
+                    this.entityIds.wardrobeViewer(),
+                    EntityType.ARMOR_STAND,
+                    viewer
+            );
+        });
 
         Bukkit.getScheduler().runTaskLaterAsynchronously(
                 this.plugin,
@@ -61,12 +73,6 @@ public class Wardrobe extends User {
                             user.despawnAttached();
                             user.despawnBalloon();
                         });
-                        PacketManager.sendEntitySpawnPacket(
-                                settings.getViewerLocation(),
-                                this.entityIds.wardrobeViewer(),
-                                EntityType.ARMOR_STAND,
-                                viewer
-                        );
                         PacketManager.sendCameraPacket(
                                 this.entityIds.wardrobeViewer(),
                                 viewer
@@ -85,6 +91,10 @@ public class Wardrobe extends User {
                         PacketManager.sendInvisibilityPacket(
                                 viewer.getEntityId(),
                                 viewer
+                        );
+                        PacketManager.sendGameModeChange(
+                                viewer,
+                                GameMode.SPECTATOR
                         );
                         this.hidePlayer();
                         this.setActive(true);
@@ -142,6 +152,9 @@ public class Wardrobe extends User {
                             viewer
                     );
                     this.showPlayer(this.plugin.getUserManager());
+                    PacketManager.sendGameModeChange(
+                            viewer, originalGamemode
+                    );
                     final Collection<ArmorItem> armorItems = new ArrayList<>(this.getPlayerArmor().getArmorItems());
                     if (settings.isApplyCosmeticsOnClose()) {
                         final Optional<User> optionalUser = userManager.get(this.ownerUUID);
@@ -176,8 +189,8 @@ public class Wardrobe extends User {
                             ).chain(() -> {
                                 this.despawnAttached();
                                 this.despawnBalloon();
-                            }, true).
-                            execute();
+                            }, true)
+                            .execute();
                 },
                 settings.getDespawnDelay()
         );
