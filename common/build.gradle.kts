@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "io.github.fisher2911"
-version = "1.12.0-BETA-3"
+version = "1.12.0-BETA-4"
 description = "Intuitive, easy-to-use cosmetics plugin, designed for servers using resource packs.\n"
 
 repositories {
