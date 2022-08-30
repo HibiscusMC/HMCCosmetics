@@ -120,7 +120,7 @@ public class Backpack {
         if (!isSelf || !firstPersonMode || this.particleIDS.size() == 0)  {
             PacketManager.sendRidingPacket(owner.getEntityId(), this.armorStandID, other);
             //plugin.getLogger().info("Sent updateBackpack. Mount: " + owner.getEntityId() + " | Armorstand: " + this.armorStandID);
-            //PacketManager.sendRidingPacket(owner.getEntityId(), new int[]{this.armorStandID}, other);
+            PacketManager.sendRidingPacket(owner.getEntityId(), this.armorStandID, other);
             return;
         }
         for (int i = 0; i < this.particleIDS.size(); i++) {

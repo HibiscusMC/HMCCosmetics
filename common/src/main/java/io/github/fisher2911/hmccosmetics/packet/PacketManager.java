@@ -611,8 +611,9 @@ public class PacketManager {
     ) {
         WrapperPlayServerPlayerInfo info = new WrapperPlayServerPlayerInfo();
         info.setAction(EnumWrappers.PlayerInfoAction.ADD_PLAYER);
-        //WrappedProfilePublicKey key = WrappedProfilePublicKey.ofPlayer(skinnedPlayer);
-        info.setData(List.of(new PlayerInfoData(new WrappedGameProfile(uuid, skinnedPlayer.getName()), 0, EnumWrappers.NativeGameMode.CREATIVE, WrappedChatComponent.fromText(skinnedPlayer.getName() + "-NPC"))));
+        WrappedGameProfile wrappedGameProfile = new WrappedGameProfile(uuid, skinnedPlayer.getName() + "-NPC");
+        wrappedGameProfile.getProperties().put("textures", getSkin(skinnedPlayer));
+        info.setData(List.of(new PlayerInfoData(wrappedGameProfile, 0, EnumWrappers.NativeGameMode.CREATIVE, WrappedChatComponent.fromText(skinnedPlayer.getName() + "-NPC"))));
         for (final Player p : sendTo) {
             sendPacketAsync(p, info.getHandle());
         }
@@ -681,7 +682,6 @@ public class PacketManager {
         for (final Player p : sendTo) {
             WrapperPlayServerPlayerInfo info = new WrapperPlayServerPlayerInfo();
             info.setAction(EnumWrappers.PlayerInfoAction.REMOVE_PLAYER);
-            //WrappedProfilePublicKey key = WrappedProfilePublicKey.ofPlayer(player);
             info.setData(List.of(new PlayerInfoData(new WrappedGameProfile(uuid, player.getName()), 0, EnumWrappers.NativeGameMode.CREATIVE, WrappedChatComponent.fromText(player.getName() + "-NPC"))));
             sendPacketAsync(p, info.getHandle());
         }
@@ -781,5 +781,15 @@ public class PacketManager {
             case ADVENTURE -> 2;
             case SPECTATOR -> 3;
         };
+    }
+
+    public static WrappedSignedProperty getSkin(Player player) {
+        WrappedSignedProperty skinData = WrappedGameProfile.fromPlayer(player).getProperties()
+                .get("textures").stream().findAny().orElse(null);
+
+        if (skinData == null)
+            throw new RuntimeException("Missing skin data");
+
+        return new WrappedSignedProperty("textures", skinData.getValue(), skinData.getSignature());
     }
 }
