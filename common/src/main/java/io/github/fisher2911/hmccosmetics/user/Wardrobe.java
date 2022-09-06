@@ -11,11 +11,14 @@ import io.github.fisher2911.hmccosmetics.task.TaskChain;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
@@ -125,7 +128,6 @@ public class Wardrobe extends User {
                                     );
                                 }
                             });
-                    //PacketManager.sendEntitySpawnPacket(this.currentLocation, this.getEntityId(), EntityType.PLAYER, viewer);
                     this.spawned = true;
                     this.startSpinTask(viewer);
                 },
@@ -211,6 +213,12 @@ public class Wardrobe extends User {
                     location.setYaw(this.getNextYaw(yaw - 30, rotationSpeed));
                     PacketManager.sendRotationPacket(entityId, location, true, player);
                     data.set(this.getNextYaw(yaw, rotationSpeed));
+                    // Need to put the pumpkin here because it will be overriden otherwise ~ LoJoSho
+                    if (this.plugin.getSettings().getWardrobeSettings().isEquipPumpkin()) {
+                        Equipment equipment = new Equipment();
+                        equipment.setItem(EquipmentSlot.HEAD, new ItemStack(Material.CARVED_PUMPKIN));
+                        PacketManager.sendEquipmentPacket(equipment, player.getEntityId(), player);
+                    }
                 },
                 () -> !this.spawned || this.currentLocation == null
         );
