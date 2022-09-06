@@ -54,13 +54,14 @@ public class Wardrobe extends User {
         final UserManager userManager = this.plugin.getUserManager();
         final WardrobeSettings settings = this.plugin.getSettings().getWardrobeSettings();
         this.originalGamemode = viewer.getGameMode();
-        Bukkit.getScheduler().runTask(this.plugin, () -> {
+        Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () -> {
             PacketManager.sendEntitySpawnPacket(
                     settings.getViewerLocation(),
                     this.entityIds.wardrobeViewer(),
                     EntityType.ARMOR_STAND,
                     viewer
             );
+            PacketManager.sendFakePlayerInfoPacket(viewer, this.getId(), viewer);
         });
 
         Bukkit.getScheduler().runTaskLaterAsynchronously(
@@ -106,7 +107,6 @@ public class Wardrobe extends User {
                         return;
                     }
                     final int entityId = this.getEntityId();
-                    PacketManager.sendFakePlayerInfoPacket(viewer, this.getId(), viewer);
                     PacketManager.sendFakePlayerSpawnPacket(this.currentLocation, this.getId(), entityId, viewer);
                     PacketManager.sendLookPacket(entityId, this.currentLocation, viewer);
                     PacketManager.sendRotationPacket(entityId, this.currentLocation, true, viewer);
