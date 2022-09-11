@@ -611,7 +611,7 @@ public class PacketManager {
     ) {
         WrapperPlayServerPlayerInfo info = new WrapperPlayServerPlayerInfo();
         info.setAction(EnumWrappers.PlayerInfoAction.ADD_PLAYER);
-        WrappedGameProfile wrappedGameProfile = new WrappedGameProfile(uuid, skinnedPlayer.getName() + "-NPC");
+        WrappedGameProfile wrappedGameProfile = new WrappedGameProfile(uuid, skinnedPlayer.getEntityId() + "-NPC");
         wrappedGameProfile.getProperties().put("textures", getSkin(skinnedPlayer));
         info.setData(List.of(new PlayerInfoData(wrappedGameProfile, 0, EnumWrappers.NativeGameMode.CREATIVE, WrappedChatComponent.fromText(skinnedPlayer.getName() + "-NPC"))));
         for (final Player p : sendTo) {
