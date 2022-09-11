@@ -63,9 +63,12 @@ public class HookManager {
             this.citizensHook = null;
         }
         if (pluginManager.getPlugin("ModelEngine") != null) {
-            final ModelEngineHook modelEngineHook = new ModelEngineHook();
-            this.registerHook(modelEngineHook.getClass());
-            this.modelEngineHook = modelEngineHook;
+            this.plugin.getLogger().info("ModelEngine has been detected, but is disabled in this build");
+            this.modelEngineHook = null;
+            // As of the new 3.0 betas, Model Engine integration is now outdated. Readd these lines once updated.
+            //final ModelEngineHook modelEngineHook = new ModelEngineHook();
+            //this.registerHook(modelEngineHook.getClass());
+            //this.modelEngineHook = modelEngineHook;
         } else {
             this.modelEngineHook = null;
         }
