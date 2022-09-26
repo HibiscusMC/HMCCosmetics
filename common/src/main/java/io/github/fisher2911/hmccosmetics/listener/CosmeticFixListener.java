@@ -142,7 +142,7 @@ public class CosmeticFixListener implements Listener {
                 int invTypeClicked = event.getPacket().getIntegers().read(0);
                 int slotClicked = event.getPacket().getIntegers().read(2);
 
-                plugin.getLogger().log(Level.INFO, "Slot Clicked: " + slotClicked + " | Type clicked: " + invTypeClicked);
+                //plugin.getLogger().log(Level.INFO, "Slot Clicked: " + slotClicked + " | Type clicked: " + invTypeClicked);
 
                 // Must be a player inventory.
                 if (invTypeClicked != 0) return;
