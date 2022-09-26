@@ -25,6 +25,7 @@ import io.github.fisher2911.hmccosmetics.listener.WardrobeListener;
 import io.github.fisher2911.hmccosmetics.message.MessageHandler;
 import io.github.fisher2911.hmccosmetics.message.Messages;
 import io.github.fisher2911.hmccosmetics.message.Translation;
+import io.github.fisher2911.hmccosmetics.packet.PacketManager;
 import io.github.fisher2911.hmccosmetics.task.TaskManager;
 import io.github.fisher2911.hmccosmetics.user.UserManager;
 import me.mattstudios.mf.base.CommandManager;
@@ -89,6 +90,7 @@ public class HMCCosmetics extends JavaPlugin {
             exception.printStackTrace();
         }
 
+        PacketManager.setupPackets();
         this.registerCommands();
         this.registerListeners();
 

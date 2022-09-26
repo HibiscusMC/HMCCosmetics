@@ -36,26 +36,6 @@ public class WardrobeListener implements Listener {
                 );
             }
         });
-
-        // TODO: REDO this
-        /*
-        PacketEvents.getAPI().getEventManager().registerListener(
-                new PacketListenerAbstract() {
-                    @Override
-                    public void onPacketReceive(PacketReceiveEvent event) {
-                        if (event.getPacketType() != PacketType.Play.Client.ANIMATION) return;
-                        if (!(event.getPlayer() instanceof final Player player)) return;
-                        WardrobeListener.this.userManager.get(player.getUniqueId()).ifPresent(user -> {
-                                    if (!user.getWardrobe().isActive()) return;
-                                    Bukkit.getScheduler().runTask(plugin, () -> {
-                                        WardrobeListener.this.plugin.getCosmeticsMenu().openDefault(player);
-                                    });
-                                }
-                        );
-                    }
-                });
-                
-         */
     }
 
     @EventHandler

@@ -1,5 +1,6 @@
 package io.github.fisher2911.hmccosmetics.user;
 
+import com.comphenix.protocol.wrappers.Vector3F;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.config.WardrobeSettings;
 import io.github.fisher2911.hmccosmetics.gui.ArmorItem;
@@ -12,11 +13,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
@@ -35,6 +33,7 @@ public class Wardrobe extends User {
     private boolean active;
     private boolean spawned;
     private Location currentLocation;
+    private Location enterLocation;
     private GameMode originalGamemode;
 
     public Wardrobe(
@@ -57,6 +56,7 @@ public class Wardrobe extends User {
         final UserManager userManager = this.plugin.getUserManager();
         final WardrobeSettings settings = this.plugin.getSettings().getWardrobeSettings();
         this.originalGamemode = viewer.getGameMode();
+        this.enterLocation = viewer.getLocation();
         Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () -> {
             PacketManager.sendEntitySpawnPacket(
                     settings.getViewerLocation(),
@@ -111,6 +111,7 @@ public class Wardrobe extends User {
                     }
                     final int entityId = this.getEntityId();
                     PacketManager.sendFakePlayerSpawnPacket(this.currentLocation, this.getId(), entityId, viewer);
+                    PacketManager.sendNewTeam(viewer, viewer);
                     PacketManager.sendLookPacket(entityId, this.currentLocation, viewer);
                     PacketManager.sendRotationPacket(entityId, this.currentLocation, true, viewer);
                     PacketManager.sendPlayerOverlayPacket(entityId, viewer);
@@ -129,7 +130,7 @@ public class Wardrobe extends User {
                                 }
                             });
                     this.spawned = true;
-                    this.startSpinTask(viewer);
+                    this.updateTask(viewer);
                 },
                 settings.getSpawnDelay()
         );
@@ -187,7 +188,13 @@ public class Wardrobe extends User {
                                     },
                                     true
                             ).chain(
-                                    () -> viewer.teleport(settings.getLeaveLocation())
+                                    () -> {
+                                        if (settings.isReturnLastLocation()) {
+                                            viewer.teleport(enterLocation);
+                                        } else {
+                                            viewer.teleport(settings.getLeaveLocation());
+                                        }
+                                    }
                             ).chain(() -> {
                                 this.despawnAttached();
                                 this.despawnBalloon();
@@ -198,9 +205,14 @@ public class Wardrobe extends User {
         );
     }
 
-    private void startSpinTask(final Player player) {
+    /**
+     * Used as an updater to send packets and other information to the player while they are in the wardrobe
+     * @param player
+     */
+    private void updateTask(final Player player) {
         final AtomicInteger data = new AtomicInteger();
         final int rotationSpeed = this.plugin.getSettings().getWardrobeSettings().getRotationSpeed();
+        final boolean equipPumpkin = this.plugin.getSettings().getWardrobeSettings().isEquipPumpkin();
         final int entityId = this.getEntityId();
         final Task task = new SupplierTask(
                 () -> {
@@ -208,13 +220,17 @@ public class Wardrobe extends User {
                     final Location location = this.currentLocation.clone();
                     final int yaw = data.get();
                     location.setYaw(yaw);
-                    PacketManager.sendLookPacket(entityId, location, player);
-                    this.updateOutsideCosmetics(player, location, this.plugin.getSettings());
+
                     location.setYaw(this.getNextYaw(yaw - 30, rotationSpeed));
+                    PacketManager.sendLookPacket(entityId, location, player);
+                    // This rotates the entire body of the NPC
                     PacketManager.sendRotationPacket(entityId, location, true, player);
+                    this.updateOutsideCosmetics(player, location, this.plugin.getSettings());
+
                     data.set(this.getNextYaw(yaw, rotationSpeed));
+                    
                     // Need to put the pumpkin here because it will be overriden otherwise ~ LoJoSho
-                    if (this.plugin.getSettings().getWardrobeSettings().isEquipPumpkin()) {
+                    if (equipPumpkin) {
                         Equipment equipment = new Equipment();
                         equipment.setItem(EquipmentSlot.HEAD, new ItemStack(Material.CARVED_PUMPKIN));
                         PacketManager.sendEquipmentPacket(equipment, player.getEntityId(), player);
@@ -226,8 +242,12 @@ public class Wardrobe extends User {
     }
 
     private int getNextYaw(final int current, final int rotationSpeed) {
-        if (current + rotationSpeed > 179) return -179;
-        return current + rotationSpeed;
+        int nextYaw = current + rotationSpeed;
+        if (nextYaw > 179) {
+            nextYaw = (current + rotationSpeed) - 358;
+            return nextYaw;
+        }
+        return nextYaw;
     }
 
     @Override

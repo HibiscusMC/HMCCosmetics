@@ -116,6 +116,7 @@ public class CosmeticFixListener implements Listener {
         if (type == null) return;
 
         this.taskManager.submit(() -> {
+
             final EntityEquipment equipment = player.getEquipment();
             final ItemStack current;
             if (equipment == null) {
@@ -138,10 +139,16 @@ public class CosmeticFixListener implements Listener {
             @Override
             public void onPacketReceiving(PacketEvent event) {
                 Player player = event.getPlayer();
-                if (event.getPacketType() != PacketType.Play.Client.WINDOW_CLICK) return;
-                if (event.getPacket().getIntegers().read(0) != 0) return;
+                int invTypeClicked = event.getPacket().getIntegers().read(0);
+                int slotClicked = event.getPacket().getIntegers().read(2);
+
+                plugin.getLogger().log(Level.INFO, "Slot Clicked: " + slotClicked + " | Type clicked: " + invTypeClicked);
+
+                // Must be a player inventory.
+                if (invTypeClicked != 0) return;
+                // -999 is when a player clicks outside their inventory. https://wiki.vg/Inventory#Player_Inventory
+                if (slotClicked == -999) return;
                 if (!(event.getPlayer() instanceof Player)) return;
-                int slotClicked = event.getPacket().getIntegers().read(0);
                 taskManager.submit(() -> {
                     final Optional<User> optionalUser = userManager.get(player.getUniqueId());
                     if (optionalUser.isEmpty()) return;
@@ -222,7 +229,6 @@ public class CosmeticFixListener implements Listener {
             @Override
             public void onPacketSending(PacketEvent event) {
                 Player player = event.getPlayer();
-                if (!event.getPacketType().equals(PacketType.Play.Server.WINDOW_ITEMS)) return;
                 if (event.getPlayer() == null) return;
                 WrapperPlayServerWindowItems wrapper = new WrapperPlayServerWindowItems(event.getPacket());
                 if (!(event.getPlayer() instanceof Player)) return;

@@ -96,8 +96,6 @@ public class Backpack {
         final boolean isSelf = owner.getId().equals(other.getUniqueId());
         final boolean firstPersonMode = settings.getCosmeticSettings().isFirstPersonBackpackMode();
         final ArmorItem.Type type = isSelf && firstPersonMode ? ArmorItem.Type.SELF_BACKPACK : ArmorItem.Type.BACKPACK;
-        //final List<com.github.retrooper.packetevents.protocol.player.Equipment> equipment = new ArrayList<>();
-        //Equipment equipment = owner.getEquipment();
         final int lookDownPitch = settings.getCosmeticSettings().getLookDownPitch();
         final boolean hidden = !owner.shouldShow(other);
         ItemStack itemStack = owner.getPlayerArmor().getItem(type).getItemStack(ArmorItem.Status.APPLIED);
@@ -120,7 +118,6 @@ public class Backpack {
         if (!isSelf || !firstPersonMode || this.particleIDS.size() == 0)  {
             PacketManager.sendRidingPacket(owner.getEntityId(), this.armorStandID, other);
             //plugin.getLogger().info("Sent updateBackpack. Mount: " + owner.getEntityId() + " | Armorstand: " + this.armorStandID);
-            PacketManager.sendRidingPacket(owner.getEntityId(), this.armorStandID, other);
             return;
         }
         for (int i = 0; i < this.particleIDS.size(); i++) {

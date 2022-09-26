@@ -14,6 +14,7 @@ import io.github.fisher2911.hmccosmetics.message.Placeholder;
 import io.github.fisher2911.hmccosmetics.message.Translation;
 import io.github.fisher2911.hmccosmetics.packet.PacketManager;
 import io.github.fisher2911.hmccosmetics.task.InfiniteTask;
+import io.github.fisher2911.hmccosmetics.util.PlayerUtils;
 import io.github.fisher2911.hmccosmetics.util.Utils;
 import io.github.fisher2911.hmccosmetics.util.builder.ItemBuilder;
 import org.bukkit.Bukkit;
@@ -161,7 +162,7 @@ public class UserManager {
             final EquipmentSlot slot = type.getSlot();
             if (slot == null) continue;
             if (ignored.contains(type)) {
-                Equipment item = PacketManager.getEquipment(equipment.getItem(slot), slot);
+                Equipment item = PlayerUtils.getEquipment(equipment.getItem(slot), slot);
                 equipment.setItem(slot, item.getItem(slot));
                 continue;
             }

@@ -47,7 +47,7 @@ public abstract class BaseUser<T> {
         if (!HookManager.getInstance().isEnabled(ModelEngineHook.class)) {
             this.balloon = null;
         } else {
-            this.balloon = new BalloonEntity(UUID.randomUUID(), -1, EntityType.PUFFERFISH);
+            this.balloon = new BalloonEntity(entityIds.balloon(), getLocation());
         }
     }
 

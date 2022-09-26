@@ -28,6 +28,7 @@ public class WardrobeSettings {
     private static final String VIEWER_LOCATION_PATH = "viewer-location";
     private static final String LEAVE_LOCATION_PATH = "leave-location";
     private static final String EQUIP_PUMPKIN_WARDROBE = "equip-pumpkin";
+    private static final String RETURN_LAST_LOCATION = "return-last-location";
 
     private final HMCCosmetics plugin;
 
@@ -41,6 +42,7 @@ public class WardrobeSettings {
     private int despawnDelay;
     private boolean applyCosmeticsOnClose;
     private boolean equipPumpkin;
+    private boolean returnLastLocation;
     private SoundData openSound;
     private SoundData closeSound;
     private Location wardrobeLocation;
@@ -74,6 +76,7 @@ public class WardrobeSettings {
             this.despawnDelay = source.node(DESPAWN_DELAY_PATH).getInt();
             this.applyCosmeticsOnClose = source.node(APPLY_COSMETICS_ON_CLOSE).getBoolean();
             this.equipPumpkin = source.node(EQUIP_PUMPKIN_WARDROBE).getBoolean();
+            this.returnLastLocation = source.node(RETURN_LAST_LOCATION).getBoolean();
             this.openSound = source.node(OPEN_SOUND).get(SoundData.class);
             this.closeSound = source.node(CLOSE_SOUND).get(SoundData.class);
             this.wardrobeLocation = source.node(STATIC_LOCATION_PATH).get(Location.class);
@@ -121,6 +124,9 @@ public class WardrobeSettings {
     }
     public boolean isEquipPumpkin() {
         return equipPumpkin;
+    }
+    public boolean isReturnLastLocation() {
+        return returnLastLocation;
     }
 
     public Location getWardrobeLocation() {

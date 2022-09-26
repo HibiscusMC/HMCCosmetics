@@ -37,6 +37,10 @@ public class User extends BaseUser<UUID> {
     }
 
     public @Nullable Player getPlayer() {
+        // Forwhatever reason, this was sometimes null. Just a fallback in case
+        if (this.playerReference == null) {
+            return Bukkit.getPlayer(this.getId());
+        }
         Player player = this.playerReference.get();
         if (player == null) {
             player = Bukkit.getPlayer(this.getId());

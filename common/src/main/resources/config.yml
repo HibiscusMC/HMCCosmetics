@@ -44,6 +44,8 @@ wardrobe:
   apply-cosmetics-on-close: true
   # Applies a pumpkin for an overlay of the player while in the wardrobe.
   equip-pumpkin: false
+  # Rather than having a set exit location, this will send the player back to where they entered the wardrobe.
+  return-last-location: false
   open-sound:
     sound: # Play a sound
       name: "minecraft:block.chain.break"

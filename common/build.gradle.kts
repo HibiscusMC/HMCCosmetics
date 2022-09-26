@@ -44,7 +44,7 @@ dependencies {
     compileOnly("com.github.oraxen:oraxen:-SNAPSHOT")
     compileOnly("com.github.LoneDev6:API-ItemsAdder:2.5.4")
     compileOnly("net.citizensnpcs:citizens-main:2.0.30-SNAPSHOT")
-    compileOnly("com.ticxo.modelengine:api:R2.5.0")
+    compileOnly("com.ticxo.modelengine:api:R3.0.0")
     //compileOnly("com.github.retrooper.packetevents:spigot:2.0-SNAPSHOT")
     implementation("net.kyori:adventure-api:4.11.0")
     implementation ("net.kyori:adventure-text-minimessage:4.11.0")
