@@ -65,6 +65,10 @@ public class Wardrobe extends User {
                     viewer
             );
             PacketManager.sendFakePlayerInfoPacket(viewer, this.getId(), viewer);
+            PacketManager.sendInvisibilityPacket(
+                    this.entityIds.wardrobeViewer(),
+                    viewer
+            );
         });
 
         Bukkit.getScheduler().runTaskLaterAsynchronously(

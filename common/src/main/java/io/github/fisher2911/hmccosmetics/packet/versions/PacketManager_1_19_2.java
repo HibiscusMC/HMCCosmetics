@@ -44,7 +44,6 @@ public class PacketManager_1_19_2 extends PacketBase {
             packet.getModifier().writeDefaults();
             packet.getIntegers().write(0, armorStandId);
             WrappedDataWatcher metadata = new WrappedDataWatcher();
-            //final WrappedDataWatcher.Serializer serializer = WrappedDataWatcher.Registry.get(Byte.class);
             if (metadata == null) return;
             // 0x10 & 0x20
             metadata.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(0, WrappedDataWatcher.Registry.get(Byte.class)), (byte) 0x20);

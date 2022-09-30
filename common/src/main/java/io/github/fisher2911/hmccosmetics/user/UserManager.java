@@ -258,7 +258,8 @@ public class UserManager {
 
     public void removeAll() {
         for (final var user : this.userMap.values()) {
-            user.despawnAttached();
+            // server is shutting down anyways when this is called
+            //user.despawnAttached();
         }
 
         this.userMap.clear();
@@ -284,7 +285,7 @@ public class UserManager {
         final ItemStack itemStack = this.getCosmeticItem(armorItem, wearing, ArmorItem.Status.APPLIED, slot);
         //final List<Equipment> itemList = new ArrayList<>();
         //itemList.add(PacketManager.getEquipment(itemStack, slot));
-        Equipment equip = user.getEquipment();
+        Equipment equip = new Equipment();
         equip.setItem(slot, itemStack);
         this.sendUpdatePacket(user, equip);
     }

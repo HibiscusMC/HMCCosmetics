@@ -142,8 +142,6 @@ public class CosmeticFixListener implements Listener {
                 int invTypeClicked = event.getPacket().getIntegers().read(0);
                 int slotClicked = event.getPacket().getIntegers().read(2);
 
-                //plugin.getLogger().log(Level.INFO, "Slot Clicked: " + slotClicked + " | Type clicked: " + invTypeClicked);
-
                 // Must be a player inventory.
                 if (invTypeClicked != 0) return;
                 // -999 is when a player clicks outside their inventory. https://wiki.vg/Inventory#Player_Inventory
@@ -178,7 +176,7 @@ public class CosmeticFixListener implements Listener {
         //plugin.getLogger().log(Level.INFO, "updateOnClick (171)");
 
         final Location location = player.getLocation();
-        final Equipment equipment = userManager.getItemList(user);
+        final Equipment equipment = new Equipment();
         final ItemStack cosmetic = userManager.getCosmeticItem(
                 user.getPlayerArmor().getItem(type),
                 current,
@@ -189,8 +187,8 @@ public class CosmeticFixListener implements Listener {
         if (cosmetic != null && cosmetic.getType() != Material.AIR) equipment.setItem(slot, cosmetic);
         //plugin.getLogger().log(Level.INFO, "Set cosmetic in " + slot + " to " + cosmetic + "(done)");
 
-        final Equipment items =
-                userManager.getItemList(user, equipment, Collections.emptySet());
+        /*
+        final Equipment items = userManager.getItemList(user, equipment, Collections.emptySet());
         for (EquipmentSlot e : items.keys()) {
             //final EquipmentSlot s = e.getSlot();
             final ArmorItem.Type t = ArmorItem.Type.fromWrapper(e);
@@ -215,6 +213,7 @@ public class CosmeticFixListener implements Listener {
             }
             return;
         }
+         */
         for (final Player other : Bukkit.getOnlinePlayers()) {
             if (!settings.isInViewDistance(location, other.getLocation())) continue;
             userManager.sendUpdatePacket(
@@ -242,7 +241,6 @@ public class CosmeticFixListener implements Listener {
                     if (windowId != 0) return;
                     final int size = items.size();
                     final PlayerArmor playerArmor = user.getPlayerArmor();
-                    //final List<Equipment> equipmentList = new ArrayList<>();
                     final Equipment equip = userManager.getItemList(user);
                     for (final ArmorItem armorItem : playerArmor.getArmorItems()) {
                         final ArmorItem.Type type = armorItem.getType();
@@ -262,8 +260,6 @@ public class CosmeticFixListener implements Listener {
                                 ));
                         if ((current).equals(setTo)) continue;
                         equip.setItem(slot, setTo);
-                        //plugin.getLogger().log(Level.INFO, "Setto " + setTo);
-                        //equipmentList.add(PacketManager.getEquipment(setTo, slot));
                     }
                     userManager.sendUpdatePacket(
                             user,

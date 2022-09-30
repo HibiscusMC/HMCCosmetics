@@ -1,5 +1,6 @@
 package io.github.fisher2911.hmccosmetics.listener;
 
+import com.comphenix.protocol.ProtocolLibrary;
 import io.github.fisher2911.hmccosmetics.HMCCosmetics;
 import io.github.fisher2911.hmccosmetics.config.WardrobeSettings;
 import io.github.fisher2911.hmccosmetics.database.Database;
@@ -13,6 +14,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.scheduler.BukkitScheduler;
 
 import java.util.Optional;
 
@@ -36,16 +38,18 @@ public class JoinListener implements Listener {
                 user -> new TaskChain(this.plugin).chain(
                         () -> this.userManager.add(user)
                 ).chain(() -> {
-//                    this.userManager.resendCosmetics(player);
-//                    this.userManager.updateCosmetics(user);
                     final WardrobeSettings settings = this.plugin.getSettings().getWardrobeSettings();
                     if (settings.isAlwaysDisplay() && settings.getWardrobeLocation() != null) {
                         final Wardrobe wardrobe = user.getWardrobe();
                         wardrobe.setCurrentLocation(settings.getWardrobeLocation());
                         wardrobe.spawnFakePlayer(player);
                     }
-                }, true).execute()
-        );
+                    // and finally, resend the cosmetics
+                    Bukkit.getScheduler().runTaskLaterAsynchronously(HMCCosmetics.getPlugin(HMCCosmetics.class),
+                            () -> {
+                                this.userManager.updateCosmetics(user);
+                            }, 20);
+                }, true).execute());
     }
 
     @EventHandler
