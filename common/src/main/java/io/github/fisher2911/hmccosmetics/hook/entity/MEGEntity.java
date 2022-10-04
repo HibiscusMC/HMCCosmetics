@@ -3,6 +3,9 @@ package io.github.fisher2911.hmccosmetics.hook.entity;
 import com.ticxo.modelengine.api.entity.BaseEntity;
 import com.ticxo.modelengine.api.generator.Hitbox;
 import com.ticxo.modelengine.api.model.IModel;
+import com.ticxo.modelengine.api.nms.entity.impl.DefaultBodyRotationController;
+import com.ticxo.modelengine.api.nms.entity.impl.EmptyRangeManager;
+import com.ticxo.modelengine.api.nms.entity.impl.ManualRangeManager;
 import com.ticxo.modelengine.api.nms.entity.wrapper.BodyRotationController;
 import com.ticxo.modelengine.api.nms.entity.wrapper.LookController;
 import com.ticxo.modelengine.api.nms.entity.wrapper.MoveController;
@@ -17,6 +20,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.util.Vector;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,6 +31,9 @@ public class MEGEntity implements BaseEntity {
     private Vector velocity = new Vector(0, 0, 0);
     private Location location;
     private boolean alive;
+    private BodyRotationController rotationController;
+    private List<Entity> passengers;
+    private RangeManager rangeManager;
 
     protected MEGEntity(final UUID uuid, final int entityId, final Vector velocity, final Location location, final boolean alive) {
         this.uuid = uuid;
@@ -34,6 +41,10 @@ public class MEGEntity implements BaseEntity {
         this.velocity = velocity;
         this.location = location;
         this.alive = alive;
+        this.rotationController = new DefaultBodyRotationController(this);
+        this.passengers = new ArrayList<>();
+        this.rangeManager = new EmptyRangeManager();
+        this.rangeManager.setRenderDistance(16);
     }
 
     protected MEGEntity(final UUID uuid, final int entityId) {
@@ -87,7 +98,7 @@ public class MEGEntity implements BaseEntity {
 
     @Override
     public BodyRotationController wrapBodyRotationControl() {
-        return null;
+        return this.rotationController;
     }
 
     @Override
@@ -97,12 +108,17 @@ public class MEGEntity implements BaseEntity {
 
     @Override
     public RangeManager wrapRangeManager(IModel model) {
-        return null;
+        return new ManualRangeManager(this, model);
     }
 
     @Override
     public RangeManager getRangeManager() {
-        return null;
+        if (this.rangeManager == null) {
+            RangeManager rangeMan = new EmptyRangeManager();
+            rangeMan.setRenderDistance(16);
+            return rangeMan;
+        }
+        return this.rangeManager;
     }
 
     @Override
@@ -167,7 +183,7 @@ public class MEGEntity implements BaseEntity {
 
     @Override
     public World getWorld() {
-        return null;
+        return this.getWorld();
     }
 
     @Override
@@ -217,7 +233,7 @@ public class MEGEntity implements BaseEntity {
 
     @Override
     public List<Entity> getPassengers() {
-        return null;
+        return this.passengers;
     }
 
     public Vector getVelocity() {

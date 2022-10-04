@@ -24,7 +24,7 @@ public class BalloonEntity {
     }
 
     public void updateModel() {
-        final ModeledEntity model = ModelEngineAPI.getModeledEntity(megEntity.getUniqueId());
+        final ModeledEntity model = ModelEngineAPI.api.getModeledEntity(megEntity.getUniqueId());
 
         if (model == null) return;
 
@@ -33,7 +33,7 @@ public class BalloonEntity {
 
     public void spawnModel(final String id) {
         HMCCosmetics.getPlugin(HMCCosmetics.class).getLogger().info("Attempting Spawning");
-        if (ModelEngineAPI.api.getModelRegistry().getBlueprint(id) != null) {
+        if (ModelEngineAPI.api.getModelRegistry().getBlueprint(id) == null) {
             HMCCosmetics.getPlugin(HMCCosmetics.class).getLogger().warning("Invalid Model Engine Blueprint " + id);
             HMCCosmetics.getPlugin(HMCCosmetics.class).getLogger().warning("Possible Blueprints" + ModelEngineAPI.api.getModelRegistry().getAllBlueprintId());
             return;
@@ -45,7 +45,7 @@ public class BalloonEntity {
     }
 
     public void remove() {
-        final ModeledEntity entity = ModelEngineAPI.getModeledEntity(megEntity.getUniqueId());
+        final ModeledEntity entity = ModelEngineAPI.api.getModeledEntity(megEntity.getUniqueId());
 
         if (entity == null) return;
 
@@ -53,24 +53,23 @@ public class BalloonEntity {
             entity.hideFromPlayer(player);
         }
 
-        ModelEngineAPI.removeModeledEntity(megEntity.getUniqueId());
+        //ModelEngineAPI.removeModeledEntity(megEntity.getUniqueId());
         entity.destroy();
     }
 
     public void addPlayerToModel(final Player player, final String id) {
-        final ModeledEntity model = ModelEngineAPI.getModeledEntity(megEntity.getUniqueId());
+        final ModeledEntity model = ModelEngineAPI.api.getModeledEntity(megEntity.getUniqueId());
         if (model == null) {
             this.spawnModel(id);
             return;
         }
-
-        if (model.getRangeManager().getPlayerInRange().contains(player)) return;
+        if (megEntity.getRangeManager().getPlayerInRange().contains(player)) return;
         model.showToPlayer(player);
         HMCCosmetics.getPlugin(HMCCosmetics.class).getLogger().info("Added " + player.getName() + " to " + id);
     }
 
     public void removePlayerFromModel(final Player player) {
-        final ModeledEntity model = ModelEngineAPI.getModeledEntity(megEntity.getUniqueId());
+        final ModeledEntity model = ModelEngineAPI.api.getModeledEntity(megEntity.getUniqueId());
 
         if (model == null) return;
 
