@@ -4,6 +4,7 @@ plugins {
     id("java")
     id("com.github.johnrengelman.shadow") version "7.1.1"
     id("net.minecrell.plugin-yml.bukkit") version "0.5.1"
+    id("io.papermc.paperweight.userdev") version "1.3.8"
 }
 
 group = "io.github.fisher2911"
@@ -36,8 +37,9 @@ dependencies {
 //    implementation(project(":1.17"))
 //    implementation(project(":1.18"))
 //    implementation(project(":nms"))
+    paperDevBundle("1.19.2-R0.1-SNAPSHOT")
     compileOnly("com.mojang:authlib:1.5.25")
-    compileOnly("org.spigotmc:spigot:1.16.5-R0.1-SNAPSHOT")
+    compileOnly("org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT")
     compileOnly("org.jetbrains:annotations:23.0.0")
     compileOnly("com.comphenix.protocol:ProtocolLib:5.0.0-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:2.11.1")
@@ -65,7 +67,7 @@ tasks {
 
     compileJava {
         options.encoding = Charsets.UTF_8.name()
-        options.release.set(16)
+        options.release.set(17)
     }
 
     shadowJar {
@@ -100,7 +102,7 @@ tasks {
 }
 
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(16
+    toolchain.languageVersion.set(JavaLanguageVersion.of(17
     ))
 }
 
