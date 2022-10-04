@@ -223,14 +223,12 @@ public class Wardrobe extends User {
                     if (this.currentLocation == null) return;
                     final Location location = this.currentLocation.clone();
                     final int yaw = data.get();
+
                     location.setYaw(yaw);
-
-                    location.setYaw(this.getNextYaw(yaw - 30, rotationSpeed));
                     PacketManager.sendLookPacket(entityId, location, player);
-                    // This rotates the entire body of the NPC
-                    PacketManager.sendRotationPacket(entityId, location, true, player);
                     this.updateOutsideCosmetics(player, location, this.plugin.getSettings());
-
+                    location.setYaw(this.getNextYaw(yaw - 30, rotationSpeed));
+                    PacketManager.sendRotationPacket(entityId, location, true, player);
                     data.set(this.getNextYaw(yaw, rotationSpeed));
                     
                     // Need to put the pumpkin here because it will be overriden otherwise ~ LoJoSho
