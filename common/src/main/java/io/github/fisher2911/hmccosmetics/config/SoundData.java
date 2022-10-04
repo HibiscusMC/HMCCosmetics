@@ -1,7 +1,7 @@
 package io.github.fisher2911.hmccosmetics.config;
 
 import com.comphenix.protocol.wrappers.EnumWrappers;
-import net.minecraft.server.v1_16_R3.MinecraftKey;
+import com.comphenix.protocol.wrappers.MinecraftKey;
 import org.bukkit.entity.Player;
 
 public class SoundData {
