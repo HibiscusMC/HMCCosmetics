@@ -32,7 +32,12 @@ public class BalloonEntity {
     }
 
     public void spawnModel(final String id) {
-        if (ModelEngineAPI.api.getModelRegistry().getBlueprint(id) != null) return;
+        HMCCosmetics.getPlugin(HMCCosmetics.class).getLogger().info("Attempting Spawning");
+        if (ModelEngineAPI.api.getModelRegistry().getBlueprint(id) != null) {
+            HMCCosmetics.getPlugin(HMCCosmetics.class).getLogger().warning("Invalid Model Engine Blueprint " + id);
+            HMCCosmetics.getPlugin(HMCCosmetics.class).getLogger().warning("Possible Blueprints" + ModelEngineAPI.api.getModelRegistry().getAllBlueprintId());
+            return;
+        }
         final ActiveModel model = ModelEngineAPI.api.createActiveModelImpl(ModelEngineAPI.getBlueprint(id));
         ModeledEntity modeledEntity = ModelEngineAPI.api.createModeledEntityImpl(megEntity);
         modeledEntity.addModel(model, false);
