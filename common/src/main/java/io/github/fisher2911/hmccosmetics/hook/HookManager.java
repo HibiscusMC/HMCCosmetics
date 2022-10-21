@@ -55,10 +55,13 @@ public class HookManager {
             this.listeners.add(itemsAdderHook);
         }
         if (pluginManager.getPlugin("Citizens") != null) {
+            this.citizensHook = null;
+            /*
             this.registerHook(citizensHook.getClass());
             this.listeners.add(citizensHook);
             this.citizensHook = citizensHook;
             this.plugin.getLogger().info("Successfully Hooked into Citizens!");
+             */
         } else {
             this.citizensHook = null;
         }
