@@ -1,5 +1,6 @@
 package com.hibiscusmc.hmccosmetics.entities;
 
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.level.Level;
 import org.bukkit.Location;

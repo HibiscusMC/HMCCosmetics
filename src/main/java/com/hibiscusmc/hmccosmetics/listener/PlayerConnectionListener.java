@@ -22,6 +22,7 @@ public class PlayerConnectionListener implements Listener {
         CosmeticUser user = CosmeticUsers.getUser(event.getPlayer());
         if (user.isInWardrobe()) user.leaveWardrobe();
         Database.save(user);
+        user.despawnBackpack();
         CosmeticUsers.removeUser(user.getUniqueId());
     }
 }

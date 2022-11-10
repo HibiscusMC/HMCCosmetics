@@ -24,6 +24,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -68,6 +69,13 @@ public class PlayerGameListener implements Listener {
 
         user.leaveWardrobe();
         event.getPlayer().sendMessage("Left Wardrobe");
+    }
+
+    @EventHandler
+    public void onPlayerTeleport(PlayerTeleportEvent event) {
+        CosmeticUser user = CosmeticUsers.getUser(event.getPlayer().getUniqueId());
+
+        user.updateCosmetic();
     }
 
     private void registerInventoryClickListener() {

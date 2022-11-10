@@ -33,7 +33,7 @@ public class CosmeticBackpackType extends Cosmetic {
         List<Player> sendTo = PlayerUtils.getNearbyPlayers(player.getLocation());
         Location loc = player.getLocation();
 
-        PacketManager.armorStandMetaPacket((Entity) user.getBackpackEntity(), sendTo);
+        PacketManager.armorStandMetaPacket(user.getBackpackEntity().getBukkitEntity(), sendTo);
         PacketManager.sendRotationPacket(user.getArmorstandId(), loc, false, sendTo);
         PacketManager.sendLookPacket(user.getArmorstandId(), loc, sendTo);
 

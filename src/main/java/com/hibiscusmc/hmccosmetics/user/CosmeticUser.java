@@ -7,8 +7,10 @@ import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBackpackType;
 import com.hibiscusmc.hmccosmetics.entities.InvisibleArmorstand;
 import com.hibiscusmc.hmccosmetics.util.PlayerUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
+import net.minecraft.world.entity.EquipmentSlot;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_19_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -52,7 +54,7 @@ public class CosmeticUser {
         playerCosmetics.put(cosmetic.getSlot(), cosmetic);
         if (cosmetic.getSlot() == CosmeticSlot.BACKPACK) {
             CosmeticBackpackType backpackType = (CosmeticBackpackType) cosmetic;
-            spawnBackpack();
+            spawnBackpack(backpackType);
         }
     }
 
@@ -121,15 +123,16 @@ public class CosmeticUser {
         }
     }
 
-    public void spawnBackpack() {
+    public void spawnBackpack(CosmeticBackpackType cosmeticBackpackType) {
         Player player = Bukkit.getPlayer(getUniqueId());
         List<Player> sentTo = PlayerUtils.getNearbyPlayers(player.getLocation());
 
         if (this.invisibleArmorstand != null) return;
         this.invisibleArmorstand = new InvisibleArmorstand(player.getLocation());
+        invisibleArmorstand.setItemSlot(EquipmentSlot.HEAD, CraftItemStack.asNMSCopy(cosmeticBackpackType.getBackpackItem()));
         ((CraftWorld) player.getWorld()).getHandle().addFreshEntity(invisibleArmorstand, CreatureSpawnEvent.SpawnReason.CUSTOM);
 
-        PacketManager.armorStandMetaPacket((Entity) invisibleArmorstand, sentTo);
+        PacketManager.armorStandMetaPacket(invisibleArmorstand.getBukkitEntity(), sentTo);
         PacketManager.ridingMountPacket(player.getEntityId(), invisibleArmorstand.getId(), sentTo);
 
         player.addPassenger(invisibleArmorstand.getBukkitEntity());
