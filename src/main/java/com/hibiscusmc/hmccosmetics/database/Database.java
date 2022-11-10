@@ -17,6 +17,10 @@ public class Database {
         // To be replaced when multiple systems exist
     }
 
+    public static void setup() {
+        data.setup();
+    }
+
     public static void save(CosmeticUser user) {
         data.save(user);
     }

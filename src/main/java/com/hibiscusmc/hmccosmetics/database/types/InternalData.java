@@ -15,6 +15,11 @@ import java.util.UUID;
 public class InternalData extends Data {
 
     @Override
+    public void setup() {
+        // Nothing
+    }
+
+    @Override
     public void save(CosmeticUser user) {
         Player player = Bukkit.getPlayer(user.getUniqueId());
         for (Cosmetic cosmetic : user.getCosmetic()) {

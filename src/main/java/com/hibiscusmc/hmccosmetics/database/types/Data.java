@@ -6,6 +6,10 @@ import java.util.UUID;
 
 public class Data {
 
+    public void setup() {
+
+    }
+
     public void save(CosmeticUser user) {
         // Override
     }
