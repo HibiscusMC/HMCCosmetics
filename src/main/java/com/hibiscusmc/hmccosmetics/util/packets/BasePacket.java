@@ -1,8 +1,6 @@
 package com.hibiscusmc.hmccosmetics.util.packets;
 
-import com.comphenix.protocol.ProtocolLib;
 import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.events.NetworkMarker;
 import com.comphenix.protocol.events.PacketContainer;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.server.level.ServerPlayer;

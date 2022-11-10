@@ -1,7 +1,5 @@
 package com.hibiscusmc.hmccosmetics.config;
 
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.util.Vector;
 import org.spongepowered.configurate.ConfigurationNode;
 

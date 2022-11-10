@@ -6,8 +6,6 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.google.common.base.Objects;
 import org.bukkit.entity.Player;
 
-import java.lang.reflect.InvocationTargetException;
-
 // Courtesy of Packet Wrapper
 public class AbstractPacket {
 

@@ -1,7 +1,6 @@
 package com.hibiscusmc.hmccosmetics.util;
 
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.EntityType;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.craftbukkit.v1_19_R1.CraftServer;

@@ -2,13 +2,7 @@ package com.hibiscusmc.hmccosmetics.user;
 
 import com.google.common.collect.HashBiMap;
 import com.hibiscusmc.hmccosmetics.util.ServerUtils;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
-import org.bukkit.Bukkit;
-import org.bukkit.NamespacedKey;
-import org.bukkit.Registry;
-import org.bukkit.craftbukkit.v1_19_R1.CraftServer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
