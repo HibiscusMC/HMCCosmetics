@@ -1,4 +1,12 @@
 default-menu: main
+database-settings:
+  type: INTERNAL # INTERNAL, MYSQL
+  mysql:
+    database: database
+    password: cherryBomb
+    port: 3306
+    host: localhost
+    user: username
 cosmetic-settings:
   require-empty-helmet: false
   require-empty-off-hand: false

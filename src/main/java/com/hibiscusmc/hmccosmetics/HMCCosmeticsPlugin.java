@@ -2,6 +2,7 @@ package com.hibiscusmc.hmccosmetics;
 
 import com.hibiscusmc.hmccosmetics.command.CosmeticCommand;
 import com.hibiscusmc.hmccosmetics.command.CosmeticCommandTabComplete;
+import com.hibiscusmc.hmccosmetics.config.DatabaseSettings;
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
 import com.hibiscusmc.hmccosmetics.config.serializer.ItemSerializer;
@@ -78,6 +79,7 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
         try {
             Settings.load(loader.load().node(""));
             WardrobeSettings.load(loader.load().node("wardrobe"));
+            DatabaseSettings.load(loader.load().node("database-settings"));
         } catch (ConfigurateException e) {
             throw new RuntimeException(e);
         }
