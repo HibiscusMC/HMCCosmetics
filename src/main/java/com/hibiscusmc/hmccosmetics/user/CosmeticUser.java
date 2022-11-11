@@ -134,7 +134,7 @@ public class CosmeticUser {
         ((CraftWorld) player.getWorld()).getHandle().addFreshEntity(invisibleArmorstand, CreatureSpawnEvent.SpawnReason.CUSTOM);
 
         PacketManager.armorStandMetaPacket(invisibleArmorstand.getBukkitEntity(), sentTo);
-        PacketManager.ridingMountPacket(player.getEntityId(), invisibleArmorstand.getId(), sentTo);
+        //PacketManager.ridingMountPacket(player.getEntityId(), invisibleArmorstand.getId(), sentTo);
 
         player.addPassenger(invisibleArmorstand.getBukkitEntity());
 

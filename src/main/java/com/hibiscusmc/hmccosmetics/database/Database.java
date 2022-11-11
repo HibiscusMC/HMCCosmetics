@@ -19,7 +19,7 @@ public class Database {
     public Database() {
         String databaseType = DatabaseSettings.getDatabaseType();
         switch (databaseType) {
-            case "INTERNAL_DATA":
+            case "INTERNAL":
                 data = INTERNAL_DATA;
             case "MYSQL":
                 data = MYSQL_DATA;

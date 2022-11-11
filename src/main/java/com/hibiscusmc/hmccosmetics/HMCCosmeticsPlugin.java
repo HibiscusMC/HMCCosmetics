@@ -31,8 +31,8 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
         instance = this;
 
         // File setup
+        saveDefaultConfig();
         if (!getDataFolder().exists()) {
-            saveDefaultConfig();
             saveResource("translations.yml", false);
             saveResource("messages.yml", false);
             saveResource("cosmetics/examplecosmetics.yml", false);

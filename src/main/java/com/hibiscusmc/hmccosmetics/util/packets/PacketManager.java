@@ -15,6 +15,7 @@ import com.hibiscusmc.hmccosmetics.util.packets.wrappers.WrapperPlayServerPlayer
 import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
+import net.minecraft.network.protocol.game.ClientboundRotateHeadPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
@@ -193,8 +194,8 @@ public class PacketManager extends BasePacket {
         float pitch = location.getPitch() * ROTATION_FACTOR;
         PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_LOOK);
         packet.getIntegers().write(0, entityId);
-        packet.getBytes().write(0, (byte) (location.getYaw() * ROTATION_FACTOR));
-        packet.getBytes().write(1, (byte) (location.getPitch() * ROTATION_FACTOR));
+        packet.getBytes().write(0, (byte) yaw);
+        packet.getBytes().write(1, (byte) pitch);
 
         //Bukkit.getLogger().info("DEBUG: Yaw: " + (location.getYaw() * ROTATION_FACTOR) + " | Original Yaw: " + location.getYaw());
         packet.getBooleans().write(0, onGround);
