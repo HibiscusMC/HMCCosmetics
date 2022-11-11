@@ -1,6 +1,7 @@
 package com.hibiscusmc.hmccosmetics.user;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
+import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBackpackType;
@@ -98,6 +99,10 @@ public class CosmeticUser {
     }
 
     public void enterWardrobe() {
+        if (!WardrobeSettings.inDistanceOfStatic(getPlayer().getLocation())) {
+            getPlayer().sendMessage("You are to far away!");
+            return;
+        }
         wardrobe = new Wardrobe(this);
         wardrobe.start();
     }

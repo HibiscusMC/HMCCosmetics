@@ -41,11 +41,6 @@ public class Wardrobe {
         player.sendMessage("NPC ID " + NPC_ID);
         player.sendMessage("armorstand id " + ARMORSTAND_ID);
 
-        if (!WardrobeSettings.inDistanceOfStatic(player.getLocation())) {
-            player.sendMessage("You are to far away!");
-            return;
-        }
-
         this.originalGamemode = player.getGameMode();
         if (WardrobeSettings.isReturnLastLocation()) {
             this.exitLocation = player.getLocation().clone();
