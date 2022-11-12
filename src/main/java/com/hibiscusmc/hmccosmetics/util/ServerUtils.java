@@ -4,7 +4,7 @@ import net.minecraft.server.level.ServerLevel;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.craftbukkit.v1_19_R1.CraftServer;
-import org.bukkit.entity.Entity;
+import org.jetbrains.annotations.Nullable;
 
 public class ServerUtils {
 
@@ -22,10 +22,13 @@ public class ServerUtils {
         };
     }
 
-    public static Entity getEntity(int entityId) {
-        return getNMSEntity(entityId).getBukkitEntity();
+    @Nullable
+    public static org.bukkit.entity.Entity getEntity(int entityId) {
+        net.minecraft.world.entity.Entity entity = getNMSEntity(entityId);
+        if (entity == null) return null;
+        return entity.getBukkitEntity();
     }
-
+    @Nullable
     public static net.minecraft.world.entity.Entity getNMSEntity(int entityId) {
         for (ServerLevel world : ((CraftServer) Bukkit.getServer()).getHandle().getServer().getAllLevels()) {
             net.minecraft.world.entity.Entity entity = world.getEntity(entityId);

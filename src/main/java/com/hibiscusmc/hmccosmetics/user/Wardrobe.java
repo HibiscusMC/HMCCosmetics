@@ -2,6 +2,7 @@ package com.hibiscusmc.hmccosmetics.user;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
+import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.util.ServerUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
 import net.minecraft.world.entity.Entity;
@@ -73,6 +74,12 @@ public class Wardrobe {
         PacketManager.sendLookPacket(NPC_ID, WardrobeSettings.getWardrobeLocation(), viewer);
         PacketManager.sendRotationPacket(NPC_ID, WardrobeSettings.getWardrobeLocation(), true, viewer);
 
+        // Misc
+
+        if (VIEWER.hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
+            PacketManager.ridingMountPacket(NPC_ID, VIEWER.getBackpackEntity().getId(), viewer);
+        }
+
         this.active = true;
         update();
 
@@ -102,6 +109,10 @@ public class Wardrobe {
         //PacketManager.sendEntityDestroyPacket(player.getEntityId(), viewer); // Success
         player.setGameMode(this.originalGamemode);
         VIEWER.showPlayer();
+
+        if (VIEWER.hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
+            PacketManager.ridingMountPacket(player.getEntityId(), VIEWER.getBackpackEntity().getId(), viewer);
+        }
 
         if (exitLocation == null) {
             player.teleport(player.getWorld().getSpawnLocation());
@@ -135,11 +146,21 @@ public class Wardrobe {
                 int rotationSpeed = 3;
                 location.setYaw(getNextYaw(yaw - 30, rotationSpeed));
                 PacketManager.sendRotationPacket(NPC_ID, location, true, viewer);
-                data.set(getNextYaw(yaw, rotationSpeed));
+                int nextyaw = getNextYaw(yaw, rotationSpeed);
+                data.set(nextyaw);
+
+                for (CosmeticSlot slot : CosmeticSlot.values()) {
+                    PacketManager.equipmentSlotUpdate(NPC_ID, VIEWER, slot, viewer);
+                }
+
+                if (VIEWER.hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
+                    PacketManager.ridingMountPacket(NPC_ID, VIEWER.getBackpackEntity().getId(), viewer);
+                    VIEWER.getBackpackEntity().getBukkitEntity().setRotation(nextyaw, 0);
+                }
             }
         };
 
-        runnable.runTaskTimer(HMCCosmeticsPlugin.getInstance(), 10, 0);
+        runnable.runTaskTimer(HMCCosmeticsPlugin.getInstance(), 0, 2);
     }
 
     private static int getNextYaw(final int current, final int rotationSpeed) {

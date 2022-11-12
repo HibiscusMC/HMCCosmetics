@@ -76,9 +76,18 @@ public class PacketManager extends BasePacket {
             List<Player> sendTo
     ) {
         CosmeticUser user = CosmeticUsers.getUser(player.getUniqueId());
-        equipmentSlotUpdate(user, cosmetic, sendTo);
+        equipmentSlotUpdate(player.getEntityId(), user, cosmetic, sendTo);
     }
     public static void equipmentSlotUpdate(
+            CosmeticUser user,
+            CosmeticSlot cosmeticSlot,
+            List<Player> sendTo
+    ) {
+        equipmentSlotUpdate(user.getPlayer().getEntityId(), user, cosmeticSlot, sendTo);
+    }
+
+    public static void equipmentSlotUpdate(
+            int entityId,
             CosmeticUser user,
             CosmeticSlot cosmeticSlot,
             List<Player> sendTo
@@ -101,45 +110,7 @@ public class PacketManager extends BasePacket {
 
         List<Pair<EquipmentSlot, ItemStack>> pairs = Collections.singletonList(pair);
 
-        Player player = user.getPlayer();
-        ClientboundSetEquipmentPacket packet = new ClientboundSetEquipmentPacket(player.getEntityId(), pairs);
-
-        for (Player p : sendTo) sendPacket(p, packet);
-    }
-
-    public static void equipmentSlotUpdate(
-            int entityId,
-            org.bukkit.inventory.EquipmentSlot slot,
-            org.bukkit.inventory.ItemStack item,
-            List<Player> sendTo
-    ) {
-        EquipmentSlot nmsSlot = CraftEquipmentSlot.getNMS(slot);
-        ItemStack nmsItem = CraftItemStack.asNMSCopy(item);
-
-        Pair<EquipmentSlot, ItemStack> pair = new Pair<>(nmsSlot, nmsItem);
-
-        List<Pair<EquipmentSlot, ItemStack>> pairs = Collections.singletonList(pair);
-
         ClientboundSetEquipmentPacket packet = new ClientboundSetEquipmentPacket(entityId, pairs);
-        for (Player p : sendTo) sendPacket(p, packet);
-    }
-
-    public static void armorstandEquipmentUpdate(
-            CosmeticUser user,
-            List<Player> sendTo
-    ) {
-        CosmeticBackpackType cosmeticBackpack = (CosmeticBackpackType) user.getCosmetic(CosmeticSlot.BACKPACK);
-
-        // Converting EquipmentSlot and ItemStack to NMS ones.
-        EquipmentSlot nmsSlot = CraftEquipmentSlot.getNMS(org.bukkit.inventory.EquipmentSlot.HEAD);
-        ItemStack nmsItem = CraftItemStack.asNMSCopy(cosmeticBackpack.getBackpackItem());
-
-        Pair<EquipmentSlot, ItemStack> pair = new Pair<>(nmsSlot, nmsItem);
-
-        List<Pair<EquipmentSlot, ItemStack>> pairs = Collections.singletonList(pair);
-
-        ClientboundSetEquipmentPacket packet = new ClientboundSetEquipmentPacket(user.getArmorstandId(), pairs);
-
         for (Player p : sendTo) sendPacket(p, packet);
     }
 

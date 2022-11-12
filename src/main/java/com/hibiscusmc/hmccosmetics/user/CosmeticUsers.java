@@ -5,6 +5,7 @@ import com.hibiscusmc.hmccosmetics.util.ServerUtils;
 import net.minecraft.world.entity.EntityType;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
@@ -25,14 +26,17 @@ public class CosmeticUsers {
         COSMETIC_USERS.remove(user);
     }
 
+    @Nullable
     public static CosmeticUser getUser(UUID uuid) {
         return COSMETIC_USERS.get(uuid);
     }
 
+    @Nullable
     public static CosmeticUser getUser(Player player) {
         return COSMETIC_USERS.get(player.getUniqueId());
     }
 
+    @Nullable
     public static CosmeticUser getUser(int entityId) {
         Entity entity = ServerUtils.getEntity(entityId);
         if (entity == null) return null;

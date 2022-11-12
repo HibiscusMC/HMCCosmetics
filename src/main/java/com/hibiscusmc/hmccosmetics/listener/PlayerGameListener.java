@@ -66,13 +66,11 @@ public class PlayerGameListener implements Listener {
     public void onPlayerShift(PlayerToggleSneakEvent event) {
         CosmeticUser user = CosmeticUsers.getUser(event.getPlayer().getUniqueId());
 
-        event.getPlayer().sendMessage("Shift");
         if (!event.isSneaking()) return;
         if (user == null) return;
         if (!user.isInWardrobe()) return;
 
         user.leaveWardrobe();
-        event.getPlayer().sendMessage("Left Wardrobe");
     }
 
     @EventHandler
@@ -85,9 +83,6 @@ public class PlayerGameListener implements Listener {
     @EventHandler
     public void onPlayerLook(PlayerMoveEvent event) {
         CosmeticUser user = CosmeticUsers.getUser(event.getPlayer().getUniqueId());
-
-        HMCCosmeticsPlugin.getInstance().getLogger().info("PlayerLookEvent");
-
         user.updateCosmetic(CosmeticSlot.BACKPACK);
     }
 

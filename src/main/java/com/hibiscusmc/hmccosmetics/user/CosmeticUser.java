@@ -138,7 +138,7 @@ public class CosmeticUser {
         invisibleArmorstand.setItemSlot(EquipmentSlot.HEAD, CraftItemStack.asNMSCopy(cosmeticBackpackType.getBackpackItem()));
         ((CraftWorld) player.getWorld()).getHandle().addFreshEntity(invisibleArmorstand, CreatureSpawnEvent.SpawnReason.CUSTOM);
 
-        PacketManager.armorStandMetaPacket(invisibleArmorstand.getBukkitEntity(), sentTo);
+        //PacketManager.armorStandMetaPacket(invisibleArmorstand.getBukkitEntity(), sentTo);
         //PacketManager.ridingMountPacket(player.getEntityId(), invisibleArmorstand.getId(), sentTo);
 
         player.addPassenger(invisibleArmorstand.getBukkitEntity());
