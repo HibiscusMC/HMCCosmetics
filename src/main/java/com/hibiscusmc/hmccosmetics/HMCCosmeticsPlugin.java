@@ -41,6 +41,16 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
 
         setup();
 
+        if (Settings.getConfigVersion() == 0) {
+            getLogger().severe("");
+            getLogger().severe("");
+            getLogger().severe("Improper Configuration Found (Config Version Does Not Exist!)");
+            getLogger().severe("Problems will happen with the plugin! Delete and regenerate a new one!");
+            getLogger().severe("");
+            getLogger().severe("");
+            return;
+        }
+
         // Commands
         getServer().getPluginCommand("cosmetic").setExecutor(new CosmeticCommand());
         getServer().getPluginCommand("cosmetic").setTabCompleter(new CosmeticCommandTabComplete());

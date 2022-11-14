@@ -7,6 +7,7 @@ public class Settings {
 
     // General Settings
     private static final String DEFAULT_MENU = "default-menu";
+    private static final String CONFIG_VERSION = "config-version";
     private static final String COSMETIC_SETTINGS_PATH = "cosmetic-settings";
     private static final String REQUIRE_EMPTY_HELMET_PATH = "require-empty-helmet";
     private static final String REQUIRE_EMPTY_OFF_HAND_PATH = "require-empty-off-hand";
@@ -21,6 +22,7 @@ public class Settings {
     private static final String PARTICLE_COUNT = "particle-count";
 
     private static String defaultMenu;
+    private static int configVersion;
     private static boolean requireEmptyHelmet;
     private static boolean requireEmptyOffHand;
     private static boolean requireEmptyChestPlate;
@@ -33,6 +35,7 @@ public class Settings {
     public static void load(ConfigurationNode source) {
 
         defaultMenu = source.node(DEFAULT_MENU).getString();
+        configVersion = source.node(CONFIG_VERSION).getInt(0);
 
         ConfigurationNode cosmeticSettings = source.node(COSMETIC_SETTINGS_PATH);
 
@@ -94,4 +97,7 @@ public class Settings {
         return defaultMenu;
     }
 
+    public static int getConfigVersion() {
+        return configVersion;
+    }
 }
