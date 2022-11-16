@@ -25,3 +25,6 @@ colorfulbackpack:
   item:
     material: PAPER
     model-data: 4
+colorfulballoon:
+  slot: BALLOON
+  model: green_balloon

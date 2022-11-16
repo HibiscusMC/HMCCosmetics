@@ -14,8 +14,6 @@ import org.bukkit.inventory.ItemStack;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 
-import java.util.List;
-
 public class CosmeticBackpackType extends Cosmetic {
 
     private ItemStack backpackItem;
@@ -29,7 +27,6 @@ public class CosmeticBackpackType extends Cosmetic {
     @Override
     public void update(CosmeticUser user) {
         Player player = Bukkit.getPlayer(user.getUniqueId());
-        List<Player> sendTo = PlayerUtils.getNearbyPlayers(player.getLocation());
         Location loc = player.getLocation().clone();
 
         user.getBackpackEntity().getBukkitLivingEntity().setRotation(loc.getYaw(), loc.getPitch());
