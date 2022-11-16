@@ -6,6 +6,7 @@ import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBackpackType;
 import com.hibiscusmc.hmccosmetics.entities.InvisibleArmorstand;
+import com.hibiscusmc.hmccosmetics.entities.MEGEntity;
 import com.hibiscusmc.hmccosmetics.util.PlayerUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -26,6 +27,7 @@ public class CosmeticUser {
     private HashMap<CosmeticSlot, Cosmetic> playerCosmetics = new HashMap<>();
     private Wardrobe wardrobe;
     private InvisibleArmorstand invisibleArmorstand;
+    private MEGEntity balloonEntity;
 
 
     public CosmeticUser(UUID uuid) {
@@ -50,6 +52,9 @@ public class CosmeticUser {
 
     public InvisibleArmorstand getBackpackEntity() {
         return this.invisibleArmorstand;
+    }
+    public MEGEntity getBalloonEntity() {
+        return this.balloonEntity;
     }
 
     public void addPlayerCosmetic(Cosmetic cosmetic) {

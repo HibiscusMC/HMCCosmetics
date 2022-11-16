@@ -17,6 +17,7 @@ bukkit {
     apiVersion = "1.19"
     authors = listOf("LoJoSho")
     depend = listOf("ProtocolLib")
+    softDepend = listOf("ModelEngine")
     version = "${project.version}"
 
     commands {
