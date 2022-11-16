@@ -41,6 +41,14 @@ public class Cosmetics {
         return COSMETICS.keySet();
     }
 
+    public static boolean hasCosmetic(String id) {
+        return COSMETICS.containsKey(id);
+    }
+
+    public static boolean hasCosmetic(Cosmetic cosmetic) {
+        return COSMETICS.containsValue(cosmetic);
+    }
+
     public static void setup() {
         COSMETICS.clear();
 
