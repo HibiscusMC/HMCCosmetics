@@ -11,8 +11,6 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.spongepowered.configurate.ConfigurationNode;
 
-import java.util.List;
-
 public class CosmeticBalloonType extends Cosmetic {
 
     private ModelBlueprint model;
