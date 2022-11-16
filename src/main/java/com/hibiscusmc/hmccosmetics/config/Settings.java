@@ -1,5 +1,6 @@
 package com.hibiscusmc.hmccosmetics.config;
 
+import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import org.bukkit.util.Vector;
 import org.spongepowered.configurate.ConfigurationNode;
 
@@ -36,6 +37,16 @@ public class Settings {
 
         defaultMenu = source.node(DEFAULT_MENU).getString();
         configVersion = source.node(CONFIG_VERSION).getInt(0);
+        if (configVersion == 0) {
+            HMCCosmeticsPlugin plugin = HMCCosmeticsPlugin.getInstance();
+            plugin.getLogger().severe("");
+            plugin.getLogger().severe("");
+            plugin.getLogger().severe("Improper Configuration Found (Config Version Does Not Exist!)");
+            plugin.getLogger().severe("Problems will happen with the plugin! Delete and regenerate a new one!");
+            plugin.getLogger().severe("");
+            plugin.getLogger().severe("");
+            return;
+        }
 
         ConfigurationNode cosmeticSettings = source.node(COSMETIC_SETTINGS_PATH);
 
@@ -47,7 +58,6 @@ public class Settings {
 
         lookDownPitch = cosmeticSettings.node(LOOK_DOWN_PITCH_PATH).getInt();
         viewDistance = cosmeticSettings.node(VIEW_DISTANCE_PATH).getInt();
-
 
         final var balloonSection = cosmeticSettings.node(BALLOON_OFFSET);
 
