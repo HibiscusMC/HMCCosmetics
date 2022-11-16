@@ -32,7 +32,7 @@ repositories {
     maven("https://papermc.io/repo/repository/maven-public/")
     maven("https://oss.sonatype.org/content/repositories/snapshots")
     maven("https://jitpack.io")
-    maven("https://repo.dmulloy2.net/repository/public/")
+    maven("https://repo.mineinabyss.com/releases/")
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
     maven("https://mvnrepository.com/artifact/com.zaxxer/HikariCP")
     maven("https://repo.citizensnpcs.co")
