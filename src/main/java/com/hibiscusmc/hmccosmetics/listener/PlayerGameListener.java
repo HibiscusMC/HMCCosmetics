@@ -80,7 +80,9 @@ public class PlayerGameListener implements Listener {
     @EventHandler
     public void onPlayerLook(PlayerMoveEvent event) {
         CosmeticUser user = CosmeticUsers.getUser(event.getPlayer().getUniqueId());
+        // Really need to look into optimization of this
         user.updateCosmetic(CosmeticSlot.BACKPACK);
+        user.updateCosmetic(CosmeticSlot.BALLOON);
     }
 
     private void registerInventoryClickListener() {
