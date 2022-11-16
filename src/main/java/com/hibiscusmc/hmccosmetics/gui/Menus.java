@@ -28,6 +28,14 @@ public class Menus {
         return MENUS.values();
     }
 
+    public static boolean hasMenu(String id) {
+        return MENUS.containsKey(id);
+    }
+
+    public static boolean hasMenu(Menu menu) {
+        return MENUS.containsValue(menu);
+    }
+
     public static List<String> getMenuNames() {
         List<String> names = new ArrayList<>();
 
