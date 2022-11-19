@@ -45,7 +45,6 @@ public class Settings {
             plugin.getLogger().severe("Problems will happen with the plugin! Delete and regenerate a new one!");
             plugin.getLogger().severe("");
             plugin.getLogger().severe("");
-            return;
         }
 
         ConfigurationNode cosmeticSettings = source.node(COSMETIC_SETTINGS_PATH);
@@ -61,9 +60,7 @@ public class Settings {
 
         final var balloonSection = cosmeticSettings.node(BALLOON_OFFSET);
 
-        if (balloonSection != null) {
-            balloonOffset = loadVector(balloonSection);
-        }
+        balloonOffset = loadVector(balloonSection);
     }
 
     private static Vector loadVector(final ConfigurationNode config) {
@@ -92,6 +89,7 @@ public class Settings {
     }
 
     public static Vector getBalloonOffset() {
+        if (balloonOffset == null) HMCCosmeticsPlugin.getInstance().getLogger().info("Shits null");
         return balloonOffset;
     }
 

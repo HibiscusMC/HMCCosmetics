@@ -5,15 +5,22 @@ import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBackpackType;
+import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
+import com.hibiscusmc.hmccosmetics.entities.BalloonEntity;
 import com.hibiscusmc.hmccosmetics.entities.InvisibleArmorstand;
 import com.hibiscusmc.hmccosmetics.entities.MEGEntity;
 import com.hibiscusmc.hmccosmetics.util.PlayerUtils;
+import com.ticxo.modelengine.api.ModelEngineAPI;
+import com.ticxo.modelengine.api.model.ActiveModel;
+import com.ticxo.modelengine.api.model.ModeledEntity;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_19_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.util.Vector;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -26,7 +33,7 @@ public class CosmeticUser {
     private HashMap<CosmeticSlot, Cosmetic> playerCosmetics = new HashMap<>();
     private Wardrobe wardrobe;
     private InvisibleArmorstand invisibleArmorstand;
-    private MEGEntity balloonEntity;
+    private BalloonEntity balloonEntity;
 
 
     public CosmeticUser(UUID uuid) {
@@ -52,7 +59,7 @@ public class CosmeticUser {
     public InvisibleArmorstand getBackpackEntity() {
         return this.invisibleArmorstand;
     }
-    public MEGEntity getBalloonEntity() {
+    public BalloonEntity getBalloonEntity() {
         return this.balloonEntity;
     }
 
@@ -62,11 +69,18 @@ public class CosmeticUser {
             CosmeticBackpackType backpackType = (CosmeticBackpackType) cosmetic;
             spawnBackpack(backpackType);
         }
+        if (cosmetic.getSlot() == CosmeticSlot.BALLOON) {
+            CosmeticBalloonType balloonType = (CosmeticBalloonType) cosmetic;
+            spawnBalloon(balloonType);
+        }
     }
 
     public void removeCosmeticSlot(CosmeticSlot slot) {
         if (slot == CosmeticSlot.BACKPACK) {
             despawnBackpack();
+        }
+        if (slot == CosmeticSlot.BALLOON) {
+            despawnBalloon();
         }
         playerCosmetics.remove(slot);
     }
@@ -147,6 +161,26 @@ public class CosmeticUser {
 
         player.addPassenger(invisibleArmorstand.getBukkitEntity());
 
+    }
+
+    public void spawnBalloon(CosmeticBalloonType cosmeticBalloonType) {
+        Player player = Bukkit.getPlayer(getUniqueId());
+        List<Player> sentTo = PlayerUtils.getNearbyPlayers(player.getLocation());
+
+        if (this.balloonEntity != null) return;
+        BalloonEntity balloonEntity1 = new BalloonEntity(Entity.nextEntityId(), player.getLocation());
+
+        balloonEntity1.spawnModel(cosmeticBalloonType.getModelName());
+        balloonEntity1.addPlayerToModel(player, cosmeticBalloonType.getModelName());
+
+        this.balloonEntity = balloonEntity1;
+    }
+
+    public void despawnBalloon() {
+        if (this.balloonEntity == null) return;
+
+        this.balloonEntity.remove();
+        this.balloonEntity = null;
     }
 
     public void despawnBackpack() {

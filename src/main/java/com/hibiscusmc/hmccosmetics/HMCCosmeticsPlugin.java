@@ -31,8 +31,8 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
         instance = this;
 
         // File setup
-        saveDefaultConfig();
         if (!getDataFolder().exists()) {
+            saveDefaultConfig();
             saveResource("translations.yml", false);
             saveResource("messages.yml", false);
             saveResource("cosmetics/examplecosmetics.yml", false);
@@ -77,7 +77,7 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
                         }))
                 .build();
         try {
-            Settings.load(loader.load().node(""));
+            Settings.load(loader.load());
             WardrobeSettings.load(loader.load().node("wardrobe"));
             DatabaseSettings.load(loader.load().node("database-settings"));
         } catch (ConfigurateException e) {

@@ -37,7 +37,7 @@ public class MEGEntity implements BaseEntity {
     private List<Entity> passengers;
     private RangeManager rangeManager;
 
-    protected MEGEntity(final UUID uuid, final int entityId, final Vector velocity, final Location location, final boolean alive) {
+    public MEGEntity(final UUID uuid, final int entityId, final Vector velocity, final Location location, final boolean alive) {
         this.uuid = uuid;
         this.entityId = entityId;
         this.velocity = velocity;
@@ -45,29 +45,20 @@ public class MEGEntity implements BaseEntity {
         this.alive = alive;
         this.rotationController = new DefaultBodyRotationController(this);
         this.passengers = new ArrayList<>();
-        this.rangeManager = new EmptyRangeManager();
-        this.rangeManager.setRenderDistance(16);
+        //this.rangeManager = new EmptyRangeManager();
+        //this.rangeManager.setRenderDistance(32);
     }
 
-    protected MEGEntity(final UUID uuid, final int entityId) {
+    public MEGEntity(final UUID uuid, final int entityId) {
         this.uuid = uuid;
         this.entityId = entityId;
         this.alive = false;
     }
 
-    public void update() {
-        this.velocity = getLocation().toVector();
-        this.location = getLocation();
-        this.alive = isAlive();
-    }
-
-
-    public void updateModel() {
-        final ModeledEntity model = ModelEngineAPI.api.getModeledEntity(getUniqueId());
-
-        if (model == null) return;
-
-        if (model.getBase() instanceof final MEGEntity e) e.update();
+    public void update(BalloonEntity entity) {
+        this.velocity = entity.getLocation().toVector();
+        this.location = entity.getLocation();
+        this.alive = entity.isAlive();
     }
 
     public void spawnModel(final String id) {

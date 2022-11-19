@@ -24,6 +24,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -318,5 +319,50 @@ public class PacketManager extends BasePacket {
 
         info.setData(List.of(new PlayerInfoData(new WrappedGameProfile(uuid, player.getName()), 0, EnumWrappers.NativeGameMode.CREATIVE, WrappedChatComponent.fromText(name))));
         for (final Player p : sendTo) sendPacket(p, info.getHandle());
+    }
+
+    /**
+     * Sends a leash packet, useful for balloons!
+     * @param leashedEntity Entity being leashed (ex. a horse)
+     * @param entityId Entity this is affecting (ex. a player)
+     * @param sendTo Whom to send the packet to
+     */
+    public static void sendLeashPacket(
+            final int leashedEntity,
+            final int entityId,
+            final List<Player> sendTo
+    ) {
+        for (final Player p : sendTo) {
+            PacketContainer packet = new PacketContainer(PacketType.Play.Server.ATTACH_ENTITY);
+            packet.getIntegers().write(0, leashedEntity);
+            packet.getIntegers().write(1, entityId);
+            sendPacket(p, packet);
+        }
+    }
+
+    /**
+     * Used when a player is sent 8+ blocks.
+     * @param entityId Entity this affects
+     * @param location Location a player is being teleported to
+     * @param onGround If the packet is on the ground
+     * @param sendTo Whom to send the packet to
+     */
+    public static void sendTeleportPacket(
+            final int entityId,
+            final Location location,
+            boolean onGround,
+            final List<Player> sendTo
+    ) {
+        PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_TELEPORT);
+        packet.getIntegers().write(0, entityId);
+        packet.getDoubles().write(0, location.getX());
+        packet.getDoubles().write(1, location.getY());
+        packet.getDoubles().write(2, location.getZ());
+        packet.getBytes().write(0, (byte) (location.getYaw() * 256.0F / 360.0F));
+        packet.getBytes().write(1, (byte) (location.getPitch() * 256.0F / 360.0F));
+        packet.getBooleans().write(0, onGround);
+        for (final Player p : sendTo) {
+            sendPacket(p, packet);
+        }
     }
 }
