@@ -14,11 +14,13 @@ import java.util.UUID;
 public class BalloonEntity {
 
     private final int balloonID;
+    private final UUID uniqueID;
     private final MEGEntity megEntity;
 
     public BalloonEntity(int balloonID, Location location) {
+        this.uniqueID = UUID.randomUUID();
         this.balloonID = balloonID;
-        this.megEntity = new MEGEntity(UUID.randomUUID(), balloonID, new Vector(0, 0, 0), location.add(Settings.getBalloonOffset()), false);
+        this.megEntity = new MEGEntity(UUID.randomUUID(), balloonID, new Vector(0, 0, 0), location, false);
     }
 
     public void updateModel() {
@@ -38,10 +40,9 @@ public class BalloonEntity {
             HMCCosmeticsPlugin.getInstance().getLogger().warning("Invalid Model Engine Blueprint " + id);
             return;
         }
-        HMCCosmeticsPlugin.getInstance().getLogger().warning("Possible Blueprints" + ModelEngineAPI.api.getModelRegistry().getAllBlueprintId());
+        //HMCCosmeticsPlugin.getInstance().getLogger().warning("Possible Blueprints" + ModelEngineAPI.api.getModelRegistry().getAllBlueprintId());
         ActiveModel model = ModelEngineAPI.api.createActiveModelImpl(ModelEngineAPI.api.getModelRegistry().getBlueprint(id));
         ModeledEntity modeledEntity = ModelEngineAPI.api.createModeledEntityImpl(megEntity);
-        modeledEntity.setRenderRadius(32);
         modeledEntity.addModel(model, false);
     }
 
@@ -54,14 +55,14 @@ public class BalloonEntity {
             entity.hideFromPlayer(player);
         }
 
-        ModelEngineAPI.removeModeledEntity(megEntity.getUniqueId());
+        //ModelEngineAPI.removeModeledEntity(megEntity.getUniqueId());
         entity.destroy();
     }
 
     public void addPlayerToModel(final Player player, final String id) {
         final ModeledEntity model = ModelEngineAPI.api.getModeledEntity(megEntity.getUniqueId());
         if (model == null) {
-            this.spawnModel(id);
+            spawnModel(id);
             return;
         }
         //if (megEntity.getRangeManager().getPlayerInRange().contains(player)) return;
@@ -79,6 +80,9 @@ public class BalloonEntity {
 
     public int getBalloonID() {
         return balloonID;
+    }
+    public UUID getBalloonUUID() {
+        return uniqueID;
     }
 
     public UUID getUniqueID() {

@@ -80,6 +80,7 @@ public class PlayerGameListener implements Listener {
     @EventHandler
     public void onPlayerLook(PlayerMoveEvent event) {
         CosmeticUser user = CosmeticUsers.getUser(event.getPlayer().getUniqueId());
+        if (user == null) return;
         // Really need to look into optimization of this
         user.updateCosmetic(CosmeticSlot.BACKPACK);
         user.updateCosmetic(CosmeticSlot.BALLOON);
@@ -142,13 +143,13 @@ public class PlayerGameListener implements Listener {
         ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(HMCCosmeticsPlugin.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Server.ENTITY_EQUIPMENT) {
             @Override
             public void onPacketSending(PacketEvent event) {
-                HMCCosmeticsPlugin.getInstance().getLogger().info("equipment packet is activated");
+                //HMCCosmeticsPlugin.getInstance().getLogger().info("equipment packet is activated");
                 Player player = event.getPlayer(); // Player that's sent
                 int entityID = event.getPacket().getIntegers().read(0);
                 // User
                 CosmeticUser user = CosmeticUsers.getUser(entityID);
                 if (user == null) {
-                    HMCCosmeticsPlugin.getInstance().getLogger().info("equipment packet is activated - user null");
+                    //HMCCosmeticsPlugin.getInstance().getLogger().info("equipment packet is activated - user null");
                     return;
                 }
 

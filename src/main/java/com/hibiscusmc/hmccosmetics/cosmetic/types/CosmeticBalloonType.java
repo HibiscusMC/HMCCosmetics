@@ -30,12 +30,17 @@ public class CosmeticBalloonType extends Cosmetic {
     public void update(CosmeticUser user) {
         Player player = Bukkit.getPlayer(user.getUniqueId());
 
-        user.getBalloonEntity().setLocation(player.getLocation().clone());
+        final Location actual = player.getLocation().clone().add(Settings.getBalloonOffset());
+        final Location previous = user.getBalloonEntity().getLocation();
+        final Vector vector = user.getBalloonEntity().getLocation().toVector();
+        if (vector != null) actual.add(user.getBalloonEntity().getLocation().toVector().multiply(-1));
 
+        user.getBalloonEntity().setLocation(actual);
+        user.getBalloonEntity().setVelocity(actual.clone().subtract(previous.clone()).toVector());
         user.getBalloonEntity().updateModel();
 
-        //PacketManager.sendTeleportPacket(user.getBalloonEntity().getBalloonID(), actual, false, PlayerUtils.getNearbyPlayers(player));
-        //PacketManager.sendLeashPacket(user.getBalloonEntity().getBalloonID(), player.getEntityId(), PlayerUtils.getNearbyPlayers(player));
+        PacketManager.sendTeleportPacket(user.getBalloonEntity().getBalloonID(), actual, false, PlayerUtils.getNearbyPlayers(player));
+        PacketManager.sendLeashPacket(user.getBalloonEntity().getBalloonID(), player.getEntityId(), PlayerUtils.getNearbyPlayers(player));
     }
 
     public String getModelName() {

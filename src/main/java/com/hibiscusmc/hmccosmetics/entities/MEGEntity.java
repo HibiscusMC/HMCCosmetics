@@ -25,6 +25,7 @@ import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public class MEGEntity implements BaseEntity {
@@ -45,8 +46,9 @@ public class MEGEntity implements BaseEntity {
         this.alive = alive;
         this.rotationController = new DefaultBodyRotationController(this);
         this.passengers = new ArrayList<>();
-        //this.rangeManager = new EmptyRangeManager();
-        //this.rangeManager.setRenderDistance(32);
+        final ModeledEntity model = ModelEngineAPI.api.getModeledEntity(uuid);
+        this.rangeManager = new ManualRangeManager(this, model);
+        this.rangeManager.setRenderDistance(32);
     }
 
     public MEGEntity(final UUID uuid, final int entityId) {
@@ -59,46 +61,6 @@ public class MEGEntity implements BaseEntity {
         this.velocity = entity.getLocation().toVector();
         this.location = entity.getLocation();
         this.alive = entity.isAlive();
-    }
-
-    public void spawnModel(final String id) {
-        if (ModelEngineAPI.api.getModelRegistry().getBlueprint(id) == null) {
-            return;
-        }
-        final ActiveModel model = ModelEngineAPI.api.createActiveModelImpl(ModelEngineAPI.getBlueprint(id));
-        ModeledEntity modeledEntity = ModelEngineAPI.api.createModeledEntityImpl(this);
-        modeledEntity.addModel(model, false);
-    }
-
-    public void remove() {
-        final ModeledEntity entity = ModelEngineAPI.api.getModeledEntity(getUniqueId());
-
-        if (entity == null) return;
-
-        for (final Player player : entity.getRangeManager().getPlayerInRange()) {
-            entity.hideFromPlayer(player);
-        }
-
-        //ModelEngineAPI.removeModeledEntity(megEntity.getUniqueId());
-        entity.destroy();
-    }
-
-    public void addPlayerToModel(final Player player, final String id) {
-        final ModeledEntity model = ModelEngineAPI.api.getModeledEntity(getUniqueId());
-        if (model == null) {
-            this.spawnModel(id);
-            return;
-        }
-        if (getRangeManager().getPlayerInRange().contains(player)) return;
-        model.showToPlayer(player);
-    }
-
-    public void removePlayerFromModel(final Player player) {
-        final ModeledEntity model = ModelEngineAPI.api.getModeledEntity(getUniqueId());
-
-        if (model == null) return;
-
-        model.hideFromPlayer(player);
     }
 
     public void setVelocity(final Vector velocity) {
