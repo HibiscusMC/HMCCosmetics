@@ -1,7 +1,6 @@
 package com.hibiscusmc.hmccosmetics.entities;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
-import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.ticxo.modelengine.api.ModelEngineAPI;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
@@ -11,6 +10,7 @@ import org.bukkit.util.Vector;
 
 import java.util.UUID;
 
+// This includes the Pufferfish (The Pufferfish that's what the player leashes to) and the model (MEGEntity)
 public class BalloonEntity {
 
     private final int balloonID;
@@ -29,7 +29,7 @@ public class BalloonEntity {
         if (model == null) return;
 
         if (model.getBase() instanceof final MEGEntity e) {
-            HMCCosmeticsPlugin.getInstance().getLogger().info("Updated Model");
+            //HMCCosmeticsPlugin.getInstance().getLogger().info("Updated Model");
             e.update(this);
         }
     }
