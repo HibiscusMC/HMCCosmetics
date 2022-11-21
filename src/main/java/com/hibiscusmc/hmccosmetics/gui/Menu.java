@@ -109,6 +109,9 @@ public class Menu {
                 if (config.node("action").virtual()) return;
                 /*
                 // This is in dire need of an overhaul
+                // Idea: [ActionType] string ~Trigger
+                // Ex: [EQUIP] niftyHat
+                // Ex: [SEND_MESSAGE] You have equipped the nifty hat! ~equip
 
                 List<String> actionStrings = null;
                 try {
