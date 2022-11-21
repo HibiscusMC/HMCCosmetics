@@ -10,6 +10,7 @@ import com.hibiscusmc.hmccosmetics.util.misc.Placeholder;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
+import io.leangen.geantyref.TypeToken;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -106,6 +107,36 @@ public class Menu {
             GuiItem guiItem = ItemBuilder.from(item).asGuiItem();
             guiItem.setAction(event -> {
                 if (config.node("action").virtual()) return;
+                /*
+                // This is in dire need of an overhaul
+
+                List<String> actionStrings = null;
+                try {
+                    actionStrings = config.node("action").getList(String.class);
+                } catch (SerializationException e) {
+                    throw new RuntimeException(e);
+                }
+
+                for (String actionString : actionStrings) {
+                    String[] types = actionString.split("(?<=\\[)(.*?)(?=\\])");
+                    if (types.length >= 2 || types.length == 0) continue;
+                    String type = types[0];
+
+                    switch (type) {
+
+                    }
+
+                    String[] triggers = actionString.split("(?<=\\~)(.*?)(?=\\ )");
+                    if (triggers.length >= 2 || triggers.length == 0) continue;
+                    String trigger = triggers[0];
+
+                    switch (trigger) {
+                        case ("equip"):
+                            if (user.hasCosmeticInSlot())
+                    }
+                }
+                 */
+
                 String action = config.node("action").getString();
                 List<String> processedAction = Arrays.asList(action.split(" "));
                 if (processedAction.isEmpty()) return;
