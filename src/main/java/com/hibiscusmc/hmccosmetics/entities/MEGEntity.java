@@ -57,10 +57,10 @@ public class MEGEntity implements BaseEntity {
         this.alive = false;
     }
 
-    public void update(BalloonEntity entity) {
-        this.velocity = entity.getLocation().toVector();
-        this.location = entity.getLocation();
-        this.alive = entity.isAlive();
+    public void update() {
+        for (Player player : rangeManager.getPlayerInRange()) {
+            rangeManager.updatePlayer(player);
+        }
     }
 
     public void setVelocity(final Vector velocity) {

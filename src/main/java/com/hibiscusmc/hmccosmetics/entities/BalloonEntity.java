@@ -4,6 +4,7 @@ import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.ticxo.modelengine.api.ModelEngineAPI;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
+import net.minecraft.world.entity.Entity;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -17,13 +18,15 @@ public class BalloonEntity {
     private final UUID uniqueID;
     private final MEGEntity megEntity;
 
-    public BalloonEntity(int balloonID, Location location) {
+    public BalloonEntity(Location location) {
         this.uniqueID = UUID.randomUUID();
-        this.balloonID = balloonID;
-        this.megEntity = new MEGEntity(UUID.randomUUID(), balloonID, new Vector(0, 0, 0), location, false);
+        this.balloonID = Entity.nextEntityId();
+        this.megEntity = new MEGEntity(UUID.randomUUID(), Entity.nextEntityId(), new Vector(0, 0, 0), location, false);
     }
 
     public void updateModel() {
+        this.megEntity.update();
+        /*
         final ModeledEntity model = ModelEngineAPI.api.getModeledEntity(megEntity.getUniqueId());
 
         if (model == null) return;
@@ -32,6 +35,7 @@ public class BalloonEntity {
             //HMCCosmeticsPlugin.getInstance().getLogger().info("Updated Model");
             e.update(this);
         }
+         */
     }
 
     public void spawnModel(final String id) {
@@ -69,6 +73,15 @@ public class BalloonEntity {
         model.showToPlayer(player);
     }
 
+    public void addPlayerToModel(final Player player) {
+        final ModeledEntity model = ModelEngineAPI.api.getModeledEntity(megEntity.getUniqueId());
+        if (model == null) {
+            return;
+        }
+        //if (megEntity.getRangeManager().getPlayerInRange().contains(player)) return;
+        model.showToPlayer(player);
+    }
+
     public void removePlayerFromModel(final Player player) {
         final ModeledEntity model = ModelEngineAPI.api.getModeledEntity(megEntity.getUniqueId());
 
@@ -78,15 +91,19 @@ public class BalloonEntity {
     }
 
 
-    public int getBalloonID() {
+    public int getPufferfishBalloonId() {
         return balloonID;
     }
-    public UUID getBalloonUUID() {
+    public UUID getPufferfishBalloonUniqueId() {
         return uniqueID;
     }
 
-    public UUID getUniqueID() {
+    public UUID getModelUnqiueId() {
         return megEntity.getUniqueId();
+    }
+
+    public int getModelId() {
+        return megEntity.getEntityId();
     }
 
     public Location getLocation() {

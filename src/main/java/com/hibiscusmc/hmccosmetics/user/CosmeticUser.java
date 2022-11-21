@@ -9,13 +9,8 @@ import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBackpackType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
 import com.hibiscusmc.hmccosmetics.entities.BalloonEntity;
 import com.hibiscusmc.hmccosmetics.entities.InvisibleArmorstand;
-import com.hibiscusmc.hmccosmetics.entities.MEGEntity;
 import com.hibiscusmc.hmccosmetics.util.PlayerUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
-import com.ticxo.modelengine.api.ModelEngineAPI;
-import com.ticxo.modelengine.api.model.ActiveModel;
-import com.ticxo.modelengine.api.model.ModeledEntity;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -24,7 +19,6 @@ import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftItemStack;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.util.Vector;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -173,15 +167,15 @@ public class CosmeticUser {
         Location newLoc = player.getLocation().clone().add(Settings.getBalloonOffset());
 
         if (this.balloonEntity != null) return;
-        BalloonEntity balloonEntity1 = new BalloonEntity(Entity.nextEntityId(), player.getLocation());
+        BalloonEntity balloonEntity1 = new BalloonEntity(player.getLocation());
 
         balloonEntity1.spawnModel(cosmeticBalloonType.getModelName());
         balloonEntity1.addPlayerToModel(player, cosmeticBalloonType.getModelName());
         balloonEntity1.updateModel();
 
-        PacketManager.sendEntitySpawnPacket(newLoc, balloonEntity1.getBalloonID(), EntityType.PUFFERFISH, balloonEntity1.getBalloonUUID(), sentTo);
-        PacketManager.sendInvisibilityPacket(balloonEntity1.getBalloonID(), sentTo);
-        PacketManager.sendLeashPacket(balloonEntity1.getBalloonID(), player.getEntityId(), sentTo);
+        PacketManager.sendEntitySpawnPacket(newLoc, balloonEntity1.getPufferfishBalloonId(), EntityType.PUFFERFISH, balloonEntity1.getPufferfishBalloonUniqueId(), sentTo);
+        PacketManager.sendInvisibilityPacket(balloonEntity1.getPufferfishBalloonId(), sentTo);
+        PacketManager.sendLeashPacket(balloonEntity1.getPufferfishBalloonId(), player.getEntityId(), sentTo);
 
         this.balloonEntity = balloonEntity1;
     }

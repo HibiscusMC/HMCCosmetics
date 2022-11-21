@@ -1,14 +1,10 @@
 package com.hibiscusmc.hmccosmetics.cosmetic.types;
 
-import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
-import com.hibiscusmc.hmccosmetics.entities.MEGEntity;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.PlayerUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
-import com.ticxo.modelengine.api.ModelEngineAPI;
-import com.ticxo.modelengine.api.generator.model.ModelBlueprint;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -39,8 +35,8 @@ public class CosmeticBalloonType extends Cosmetic {
         user.getBalloonEntity().setVelocity(actual.clone().subtract(previous.clone()).toVector());
         user.getBalloonEntity().updateModel();
 
-        PacketManager.sendTeleportPacket(user.getBalloonEntity().getBalloonID(), actual, false, PlayerUtils.getNearbyPlayers(player));
-        PacketManager.sendLeashPacket(user.getBalloonEntity().getBalloonID(), player.getEntityId(), PlayerUtils.getNearbyPlayers(player));
+        PacketManager.sendTeleportPacket(user.getBalloonEntity().getPufferfishBalloonId(), actual, false, PlayerUtils.getNearbyPlayers(player));
+        PacketManager.sendLeashPacket(user.getBalloonEntity().getPufferfishBalloonId(), player.getEntityId(), PlayerUtils.getNearbyPlayers(player));
     }
 
     public String getModelName() {
