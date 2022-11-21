@@ -1,7 +1,9 @@
 title: "<white>"
 rows: 5
 items:
-  1:
+  niftyHat:
+    slots:
+      - 1
     item:
       material: LEATHER_HORSE_ARMOR
       amount: 1

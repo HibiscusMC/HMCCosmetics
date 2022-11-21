@@ -16,6 +16,7 @@ import org.bukkit.inventory.ItemStack;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -68,7 +69,25 @@ public class Menu {
         Player player = user.getPlayer();
 
         for (ConfigurationNode config : config.node("items").childrenMap().values()) {
-            int slotNumber = Integer.valueOf(config.key().toString());
+
+            List<String> slotString = null;
+            try {
+                slotString = config.node("slots").getList(String.class);
+            } catch (SerializationException e) {
+                continue;
+            }
+            if (slotString == null) {
+                HMCCosmeticsPlugin.getInstance().getLogger().info("Unable to get valid slot for " + config.key().toString());
+                continue;
+            }
+
+            List<Integer> slots = getSlots(slotString);
+
+
+            if (slots == null) {
+                HMCCosmeticsPlugin.getInstance().getLogger().info("Slot is null for " + config.key().toString());
+                continue;
+            }
 
             ItemStack item;
 
@@ -95,12 +114,38 @@ public class Menu {
                     if (cosmetic == null) return;
                     user.toggleCosmetic(cosmetic);
                     user.updateCosmetic(cosmetic.getSlot());
-                    gui.updateItem(slotNumber, guiItem);
+                    for (int i : slots) {
+                        gui.updateItem(i, guiItem);
+                    }
                 }
             });
-            HMCCosmeticsPlugin.getInstance().getLogger().info("Added " + slotNumber + " as " + guiItem + " in the menu");
-            gui.setItem(slotNumber, guiItem);
+            HMCCosmeticsPlugin.getInstance().getLogger().info("Added " + slots + " as " + guiItem + " in the menu");
+            gui.setItem(slots, guiItem);
         }
         return gui;
+    }
+
+    private List<Integer> getSlots(List<String> slotString) {
+        List<Integer> slots = new ArrayList<>();
+
+        for (String a : slotString) {
+            if (a.contains("-")) {
+                String[] split = a.split("-");
+                int min = Integer.valueOf(split[0]);
+                int max = Integer.valueOf(split[1]);
+                slots.addAll(getSlots(min, max));
+            } else {
+                slots.add(Integer.valueOf(a));
+            }
+        }
+
+        return slots;
+    }
+
+    private List<Integer> getSlots(int small, int max) {
+        List<Integer> slots = new ArrayList<>();
+
+        for (int i = small; i <= max; i++) slots.add(i);
+        return slots;
     }
 }
