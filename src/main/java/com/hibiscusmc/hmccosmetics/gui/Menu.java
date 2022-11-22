@@ -10,7 +10,6 @@ import com.hibiscusmc.hmccosmetics.util.misc.Placeholder;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
-import io.leangen.geantyref.TypeToken;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
