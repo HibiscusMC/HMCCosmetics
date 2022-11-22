@@ -16,6 +16,7 @@ public class MEGEntity extends Chicken {
         setInvulnerable(true);
         setNoAi(true);
         setNoGravity(true);
+        setSilent(true);
         persist = false;
     }
 }
