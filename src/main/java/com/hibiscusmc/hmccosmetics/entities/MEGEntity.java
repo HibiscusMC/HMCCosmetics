@@ -4,7 +4,9 @@ import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.Chicken;
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
 import org.bukkit.craftbukkit.v1_19_R1.CraftWorld;
+import org.bukkit.persistence.PersistentDataType;
 
 public class MEGEntity extends Chicken {
 
@@ -13,10 +15,13 @@ public class MEGEntity extends Chicken {
         this.setPos(loc.getX(), loc.getY(), loc.getZ());
         HMCCosmeticsPlugin.getInstance().getLogger().info("Spawned MEGEntity at " + loc);
         getBukkitLivingEntity().setInvisible(true);
-        setInvulnerable(true);
-        setNoAi(true);
-        setNoGravity(true);
-        setSilent(true);
+        getBukkitLivingEntity().setInvulnerable(true); // NOTE - CREATIVE PLAYERS CAN DESTROY IT STILL
+        getBukkitLivingEntity().setAI(false);
+        getBukkitLivingEntity().setGravity(false);
+        getBukkitLivingEntity().setSilent(true);
+        getBukkitLivingEntity().setCollidable(false);
         persist = false;
+
+        getBukkitEntity().getPersistentDataContainer().set(new NamespacedKey(HMCCosmeticsPlugin.getInstance(), "cosmeticMob"), PersistentDataType.SHORT, Short.valueOf("1"));
     }
 }
