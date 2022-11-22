@@ -1,8 +1,10 @@
 package com.hibiscusmc.hmccosmetics.user;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
+import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
+import com.hibiscusmc.hmccosmetics.util.PlayerUtils;
 import com.hibiscusmc.hmccosmetics.util.ServerUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
 import net.minecraft.world.entity.Entity;
@@ -80,6 +82,14 @@ public class Wardrobe {
             PacketManager.ridingMountPacket(NPC_ID, VIEWER.getBackpackEntity().getId(), viewer);
         }
 
+        if (VIEWER.hasCosmeticInSlot(CosmeticSlot.BALLOON)) {
+            PacketManager.sendLeashPacket(VIEWER.getBalloonEntity().getModelId(), -1, viewer);
+
+            PacketManager.sendTeleportPacket(VIEWER.getBalloonEntity().getPufferfishBalloonId(), WardrobeSettings.getWardrobeLocation(), false, viewer);
+            PacketManager.sendTeleportPacket(VIEWER.getBalloonEntity().getModelId(), WardrobeSettings.getWardrobeLocation().add(Settings.getBalloonOffset()), false, viewer);
+            PacketManager.sendLeashPacket(VIEWER.getBalloonEntity().getModelId(), NPC_ID, viewer);
+        }
+
         this.active = true;
         update();
 
@@ -112,6 +122,10 @@ public class Wardrobe {
 
         if (VIEWER.hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
             PacketManager.ridingMountPacket(player.getEntityId(), VIEWER.getBackpackEntity().getId(), viewer);
+        }
+
+        if (VIEWER.hasCosmeticInSlot(CosmeticSlot.BALLOON)) {
+            PacketManager.sendLeashPacket(VIEWER.getBalloonEntity().getPufferfishBalloonId(), -1, viewer);
         }
 
         if (exitLocation == null) {
@@ -156,6 +170,12 @@ public class Wardrobe {
                 if (VIEWER.hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
                     PacketManager.ridingMountPacket(NPC_ID, VIEWER.getBackpackEntity().getId(), viewer);
                     VIEWER.getBackpackEntity().getBukkitEntity().setRotation(nextyaw, 0);
+                }
+
+                if (VIEWER.hasCosmeticInSlot(CosmeticSlot.BALLOON)) {
+                    PacketManager.sendTeleportPacket(VIEWER.getBalloonEntity().getPufferfishBalloonId(), WardrobeSettings.getWardrobeLocation(), false, viewer);
+                    VIEWER.getBalloonEntity().getModelEntity().getBukkitLivingEntity().teleport(WardrobeSettings.getWardrobeLocation().add(Settings.getBalloonOffset()));
+                    PacketManager.sendLeashPacket(VIEWER.getBalloonEntity().getModelId(), NPC_ID, viewer);
                 }
             }
         };
