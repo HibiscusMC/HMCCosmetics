@@ -9,8 +9,11 @@ import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBackpackType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
 import com.hibiscusmc.hmccosmetics.entities.BalloonEntity;
 import com.hibiscusmc.hmccosmetics.entities.InvisibleArmorstand;
+import com.hibiscusmc.hmccosmetics.entities.MEGEntity;
 import com.hibiscusmc.hmccosmetics.util.PlayerUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
+import com.ticxo.modelengine.api.ModelEngineAPI;
+import com.ticxo.modelengine.api.model.ModeledEntity;
 import net.minecraft.world.entity.EquipmentSlot;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -169,9 +172,10 @@ public class CosmeticUser {
         if (this.balloonEntity != null) return;
         BalloonEntity balloonEntity1 = new BalloonEntity(player.getLocation());
 
+        ((CraftWorld) player.getWorld()).getHandle().addFreshEntity(balloonEntity1.getModelEntity(), CreatureSpawnEvent.SpawnReason.CUSTOM);
+
         balloonEntity1.spawnModel(cosmeticBalloonType.getModelName());
         balloonEntity1.addPlayerToModel(player, cosmeticBalloonType.getModelName());
-        balloonEntity1.updateModel();
 
         PacketManager.sendEntitySpawnPacket(newLoc, balloonEntity1.getPufferfishBalloonId(), EntityType.PUFFERFISH, balloonEntity1.getPufferfishBalloonUniqueId(), sentTo);
         PacketManager.sendInvisibilityPacket(balloonEntity1.getPufferfishBalloonId(), sentTo);
@@ -182,6 +186,9 @@ public class CosmeticUser {
 
     public void despawnBalloon() {
         if (this.balloonEntity == null) return;
+        List<Player> sentTo = PlayerUtils.getNearbyPlayers(getPlayer().getLocation());
+
+        PacketManager.sendEntityDestroyPacket(balloonEntity.getPufferfishBalloonId(), sentTo);
 
         this.balloonEntity.remove();
         this.balloonEntity = null;

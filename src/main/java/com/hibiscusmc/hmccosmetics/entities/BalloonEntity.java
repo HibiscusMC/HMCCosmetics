@@ -1,6 +1,7 @@
 package com.hibiscusmc.hmccosmetics.entities;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
+import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.ticxo.modelengine.api.ModelEngineAPI;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
@@ -16,26 +17,12 @@ public class BalloonEntity {
 
     private final int balloonID;
     private final UUID uniqueID;
-    private final MEGEntity megEntity;
+    private final MEGEntity modelEntity;
 
     public BalloonEntity(Location location) {
         this.uniqueID = UUID.randomUUID();
         this.balloonID = Entity.nextEntityId();
-        this.megEntity = new MEGEntity(UUID.randomUUID(), Entity.nextEntityId(), new Vector(0, 0, 0), location, false);
-    }
-
-    public void updateModel() {
-        this.megEntity.update();
-        /*
-        final ModeledEntity model = ModelEngineAPI.api.getModeledEntity(megEntity.getUniqueId());
-
-        if (model == null) return;
-
-        if (model.getBase() instanceof final MEGEntity e) {
-            //HMCCosmeticsPlugin.getInstance().getLogger().info("Updated Model");
-            e.update(this);
-        }
-         */
+        this.modelEntity = new MEGEntity(location.add(Settings.getBalloonOffset()));
     }
 
     public void spawnModel(final String id) {
@@ -44,14 +31,13 @@ public class BalloonEntity {
             HMCCosmeticsPlugin.getInstance().getLogger().warning("Invalid Model Engine Blueprint " + id);
             return;
         }
-        //HMCCosmeticsPlugin.getInstance().getLogger().warning("Possible Blueprints" + ModelEngineAPI.api.getModelRegistry().getAllBlueprintId());
-        ActiveModel model = ModelEngineAPI.api.createActiveModelImpl(ModelEngineAPI.api.getModelRegistry().getBlueprint(id));
-        ModeledEntity modeledEntity = ModelEngineAPI.api.createModeledEntityImpl(megEntity);
+        ModeledEntity modeledEntity = ModelEngineAPI.getOrCreateModeledEntity(modelEntity.getBukkitEntity());
+        ActiveModel model = ModelEngineAPI.createActiveModel(ModelEngineAPI.getBlueprint(id));
         modeledEntity.addModel(model, false);
     }
 
     public void remove() {
-        final ModeledEntity entity = ModelEngineAPI.api.getModeledEntity(megEntity.getUniqueId());
+        final ModeledEntity entity = ModelEngineAPI.api.getModeledEntity(modelEntity.getUUID());
 
         if (entity == null) return;
 
@@ -64,30 +50,24 @@ public class BalloonEntity {
     }
 
     public void addPlayerToModel(final Player player, final String id) {
-        final ModeledEntity model = ModelEngineAPI.api.getModeledEntity(megEntity.getUniqueId());
+        final ModeledEntity model = ModelEngineAPI.api.getModeledEntity(modelEntity.getUUID());
         if (model == null) {
             spawnModel(id);
             return;
         }
-        //if (megEntity.getRangeManager().getPlayerInRange().contains(player)) return;
+        if (model.getRangeManager().getPlayerInRange().contains(player)) return;
         model.showToPlayer(player);
     }
-
-    public void addPlayerToModel(final Player player) {
-        final ModeledEntity model = ModelEngineAPI.api.getModeledEntity(megEntity.getUniqueId());
-        if (model == null) {
-            return;
-        }
-        //if (megEntity.getRangeManager().getPlayerInRange().contains(player)) return;
-        model.showToPlayer(player);
-    }
-
     public void removePlayerFromModel(final Player player) {
-        final ModeledEntity model = ModelEngineAPI.api.getModeledEntity(megEntity.getUniqueId());
+        final ModeledEntity model = ModelEngineAPI.api.getModeledEntity(modelEntity.getUUID());
 
         if (model == null) return;
 
         model.hideFromPlayer(player);
+    }
+
+    public MEGEntity getModelEntity() {
+        return this.modelEntity;
     }
 
 
@@ -99,30 +79,27 @@ public class BalloonEntity {
     }
 
     public UUID getModelUnqiueId() {
-        return megEntity.getUniqueId();
+        return modelEntity.getUUID();
     }
 
     public int getModelId() {
-        return megEntity.getEntityId();
+        return modelEntity.getId();
     }
 
     public Location getLocation() {
-        return this.megEntity.getLocation();
+        return this.modelEntity.getBukkitEntity().getLocation();
     }
 
     public boolean isAlive() {
-        return this.megEntity.isAlive();
+        return this.modelEntity.isAlive();
     }
 
     public void setLocation(Location location) {
-        this.megEntity.setLocation(location);
+        //this.megEntity.teleportTo(location.getX(), location.getY(), location.getZ());
+        this.modelEntity.getBukkitEntity().teleport(location);
     }
 
     public void setVelocity(Vector vector) {
-        this.megEntity.setVelocity(vector);
-    }
-
-    public void setAlive(boolean alive) {
-        this.megEntity.setAlive(alive);
+        this.modelEntity.getBukkitEntity().setVelocity(vector);
     }
 }
