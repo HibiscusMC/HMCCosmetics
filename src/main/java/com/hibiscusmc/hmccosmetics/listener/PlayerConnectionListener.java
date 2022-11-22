@@ -23,6 +23,7 @@ public class PlayerConnectionListener implements Listener {
         if (user.isInWardrobe()) user.leaveWardrobe();
         Database.save(user);
         user.despawnBackpack();
+        user.despawnBalloon();
         CosmeticUsers.removeUser(user.getUniqueId());
     }
 }
