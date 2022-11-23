@@ -83,16 +83,16 @@ public class Wardrobe {
         }
 
         if (VIEWER.hasCosmeticInSlot(CosmeticSlot.BALLOON)) {
-            PacketManager.sendLeashPacket(VIEWER.getBalloonEntity().getModelId(), -1, viewer);
+            PacketManager.sendLeashPacket(VIEWER.getBalloonEntity().getPufferfishBalloonId(), player.getEntityId(), viewer);
+            PacketManager.sendLeashPacket(VIEWER.getBalloonEntity().getPufferfishBalloonId(), NPC_ID, viewer);
 
             PacketManager.sendTeleportPacket(VIEWER.getBalloonEntity().getPufferfishBalloonId(), WardrobeSettings.getWardrobeLocation(), false, viewer);
             PacketManager.sendTeleportPacket(VIEWER.getBalloonEntity().getModelId(), WardrobeSettings.getWardrobeLocation().add(Settings.getBalloonOffset()), false, viewer);
-            PacketManager.sendLeashPacket(VIEWER.getBalloonEntity().getModelId(), NPC_ID, viewer);
+
         }
 
         this.active = true;
         update();
-
     }
 
     public void end() {
@@ -125,7 +125,7 @@ public class Wardrobe {
         }
 
         if (VIEWER.hasCosmeticInSlot(CosmeticSlot.BALLOON)) {
-            PacketManager.sendLeashPacket(VIEWER.getBalloonEntity().getPufferfishBalloonId(), -1, viewer);
+            PacketManager.sendLeashPacket(VIEWER.getBalloonEntity().getPufferfishBalloonId(), player.getEntityId(), viewer);
         }
 
         if (exitLocation == null) {
@@ -175,7 +175,7 @@ public class Wardrobe {
                 if (VIEWER.hasCosmeticInSlot(CosmeticSlot.BALLOON)) {
                     PacketManager.sendTeleportPacket(VIEWER.getBalloonEntity().getPufferfishBalloonId(), WardrobeSettings.getWardrobeLocation(), false, viewer);
                     VIEWER.getBalloonEntity().getModelEntity().getBukkitLivingEntity().teleport(WardrobeSettings.getWardrobeLocation().add(Settings.getBalloonOffset()));
-                    PacketManager.sendLeashPacket(VIEWER.getBalloonEntity().getModelId(), NPC_ID, viewer);
+                    //PacketManager.sendLeashPacket(VIEWER.getBalloonEntity().getPufferfishBalloonId(), NPC_ID, viewer);
                 }
             }
         };
