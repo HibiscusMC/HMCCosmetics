@@ -2,16 +2,17 @@ package com.hibiscusmc.hmccosmetics.entities;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ambient.Bat;
 import net.minecraft.world.entity.animal.Chicken;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.craftbukkit.v1_19_R1.CraftWorld;
 import org.bukkit.persistence.PersistentDataType;
 
-public class MEGEntity extends Chicken {
+public class MEGEntity extends Bat {
 
     public MEGEntity(Location loc) {
-        super(EntityType.CHICKEN, ((CraftWorld) loc.getWorld()).getHandle());
+        super(EntityType.BAT, ((CraftWorld) loc.getWorld()).getHandle());
         this.setPos(loc.getX(), loc.getY(), loc.getZ());
         HMCCosmeticsPlugin.getInstance().getLogger().info("Spawned MEGEntity at " + loc);
         getBukkitLivingEntity().setInvisible(true);
