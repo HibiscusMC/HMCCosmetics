@@ -1,6 +1,6 @@
-package com.hibiscusmc.hmccosmetics.gui.types;
+package com.hibiscusmc.hmccosmetics.gui.type;
 
-import com.hibiscusmc.hmccosmetics.gui.actions.Action;
+import com.hibiscusmc.hmccosmetics.gui.type.types.CosmeticType;
 
 import java.util.HashMap;
 

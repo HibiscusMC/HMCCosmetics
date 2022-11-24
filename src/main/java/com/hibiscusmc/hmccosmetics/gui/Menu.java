@@ -2,13 +2,8 @@ package com.hibiscusmc.hmccosmetics.gui;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.serializer.ItemSerializer;
-import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
-import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
-import com.hibiscusmc.hmccosmetics.gui.actions.Actions;
-import com.hibiscusmc.hmccosmetics.gui.types.Types;
+import com.hibiscusmc.hmccosmetics.gui.type.Types;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
-import com.hibiscusmc.hmccosmetics.util.InventoryUtils;
-import com.hibiscusmc.hmccosmetics.util.ServerUtils;
 import com.hibiscusmc.hmccosmetics.util.misc.Adventure;
 import com.hibiscusmc.hmccosmetics.util.misc.Placeholder;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
@@ -22,9 +17,7 @@ import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 public class Menu {
 

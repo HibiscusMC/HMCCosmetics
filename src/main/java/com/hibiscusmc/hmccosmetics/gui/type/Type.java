@@ -1,4 +1,4 @@
-package com.hibiscusmc.hmccosmetics.gui.types;
+package com.hibiscusmc.hmccosmetics.gui.type;
 
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import org.spongepowered.configurate.ConfigurationNode;

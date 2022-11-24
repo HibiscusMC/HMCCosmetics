@@ -1,4 +1,4 @@
-package com.hibiscusmc.hmccosmetics.gui.actions;
+package com.hibiscusmc.hmccosmetics.gui.action;
 
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 

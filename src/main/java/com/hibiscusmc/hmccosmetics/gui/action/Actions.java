@@ -1,6 +1,7 @@
-package com.hibiscusmc.hmccosmetics.gui.actions;
+package com.hibiscusmc.hmccosmetics.gui.action;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
+import com.hibiscusmc.hmccosmetics.gui.action.actions.ActionMessage;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import org.apache.commons.lang.StringUtils;
 

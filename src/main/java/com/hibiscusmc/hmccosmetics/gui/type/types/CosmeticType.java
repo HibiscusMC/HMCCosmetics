@@ -1,8 +1,9 @@
-package com.hibiscusmc.hmccosmetics.gui.types;
+package com.hibiscusmc.hmccosmetics.gui.type.types;
 
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
-import com.hibiscusmc.hmccosmetics.gui.actions.Actions;
+import com.hibiscusmc.hmccosmetics.gui.action.Actions;
+import com.hibiscusmc.hmccosmetics.gui.type.Type;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
