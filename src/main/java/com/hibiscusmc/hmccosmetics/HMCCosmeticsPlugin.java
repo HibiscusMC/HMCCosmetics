@@ -12,6 +12,7 @@ import com.hibiscusmc.hmccosmetics.database.Database;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
 import com.hibiscusmc.hmccosmetics.listener.PlayerConnectionListener;
 import com.hibiscusmc.hmccosmetics.listener.PlayerGameListener;
+import com.hibiscusmc.hmccosmetics.util.misc.Translation;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -83,6 +84,9 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
         } catch (ConfigurateException e) {
             throw new RuntimeException(e);
         }
+
+        // Translation setup
+        Translation.setup();
 
         // Cosmetics setup
         Cosmetics.setup();
