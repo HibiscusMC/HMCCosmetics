@@ -90,6 +90,7 @@ public class CosmeticCommand implements CommandExecutor {
         }
         // cosmetic menu exampleMenu playerName
         if (args[0].equalsIgnoreCase("menu")) {
+            if (args.length == 1) return true;
             Menu menu = Menus.getMenu(args[1]);
             Player player = null;
 
