@@ -5,6 +5,7 @@ import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
+import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBackpackType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
 import com.hibiscusmc.hmccosmetics.entities.BalloonEntity;
@@ -135,6 +136,18 @@ public class CosmeticUser {
     public boolean isInWardrobe() {
         if (wardrobe == null) return false;
         return true;
+    }
+
+    public int amountOfCosmetics() {
+        return playerCosmetics.keySet().size();
+    }
+
+    public int amountOfCosmeticsArmor() {
+        int amount = 0;
+        for (Cosmetic cosmetic : Cosmetics.values()) {
+            if (cosmetic.getSlot() == CosmeticSlot.BOOTS || cosmetic.getSlot() == CosmeticSlot.LEGGINGS || cosmetic.getSlot() == CosmeticSlot.CHESTPLATE || cosmetic.getSlot() == CosmeticSlot.HELMET) amount = amount + 1;
+        }
+        return amount;
     }
 
     public void toggleWardrobe() {

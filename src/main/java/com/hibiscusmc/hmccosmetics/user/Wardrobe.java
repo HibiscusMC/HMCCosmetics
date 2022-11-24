@@ -29,7 +29,7 @@ public class Wardrobe {
     private Location viewingLocation;
     private Location npcLocation;
     private Location exitLocation;
-    private Boolean active;
+    private boolean active;
 
     public Wardrobe(CosmeticUser user) {
         NPC_ID = Entity.nextEntityId();

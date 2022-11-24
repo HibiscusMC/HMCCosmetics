@@ -8,7 +8,9 @@ import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticArmorType;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
+import com.hibiscusmc.hmccosmetics.util.InventoryUtils;
 import com.hibiscusmc.hmccosmetics.util.PlayerUtils;
+import com.hibiscusmc.hmccosmetics.util.ServerUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.wrappers.WrapperPlayServerNamedEntitySpawn;
 import com.hibiscusmc.hmccosmetics.util.packets.wrappers.WrapperPlayServerPlayerInfo;
 import com.mojang.datafixers.util.Pair;
@@ -18,6 +20,7 @@ import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_19_R1.CraftEquipmentSlot;
 import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Entity;
@@ -95,14 +98,26 @@ public class PacketManager extends BasePacket {
 
         if (cosmeticSlot == CosmeticSlot.BACKPACK || cosmeticSlot == CosmeticSlot.BALLOON) return;
 
-        if (!(user.getCosmetic(cosmeticSlot) instanceof CosmeticArmorType)) return;
+        if (!(user.getCosmetic(cosmeticSlot) instanceof CosmeticArmorType)) {
+
+            nmsSlot = CraftEquipmentSlot.getNMS(InventoryUtils.getEquipmentSlot(cosmeticSlot));
+            nmsItem = CraftItemStack.asNMSCopy(new org.bukkit.inventory.ItemStack(Material.AIR));
+
+            Pair<EquipmentSlot, ItemStack> pair = new Pair<>(nmsSlot, nmsItem);
+
+            List<Pair<EquipmentSlot, ItemStack>> pairs = Collections.singletonList(pair);
+
+            ClientboundSetEquipmentPacket packet = new ClientboundSetEquipmentPacket(entityId, pairs);
+            for (Player p : sendTo) sendPacket(p, packet);
+            return;
+        }
         CosmeticArmorType cosmeticArmor = (CosmeticArmorType) user.getCosmetic(cosmeticSlot);
 
         // Converting EquipmentSlot and ItemStack to NMS ones.
         nmsSlot = CraftEquipmentSlot.getNMS(cosmeticArmor.getEquipSlot());
         nmsItem = CraftItemStack.asNMSCopy(cosmeticArmor.getCosmeticItem());
 
-        if (nmsSlot == null || nmsItem == null) return;
+        if (nmsSlot == null) return;
 
         Pair<EquipmentSlot, ItemStack> pair = new Pair<>(nmsSlot, nmsItem);
 
