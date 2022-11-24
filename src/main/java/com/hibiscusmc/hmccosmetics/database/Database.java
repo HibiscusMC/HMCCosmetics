@@ -6,6 +6,8 @@ import com.hibiscusmc.hmccosmetics.database.types.Data;
 import com.hibiscusmc.hmccosmetics.database.types.InternalData;
 import com.hibiscusmc.hmccosmetics.database.types.MySQLData;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
+import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
+import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
@@ -36,6 +38,10 @@ public class Database {
 
     public static void save(CosmeticUser user) {
         data.save(user);
+    }
+
+    public static void save(Player player) {
+        data.save(CosmeticUsers.getUser(player));
     }
 
     public static CosmeticUser get(UUID uniqueId) {
