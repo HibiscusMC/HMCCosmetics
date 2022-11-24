@@ -55,6 +55,7 @@ dependencies {
     compileOnly("me.clip:placeholderapi:2.11.1")
     compileOnly("com.ticxo.modelengine:api:R3.0.1")
     compileOnly("com.github.oraxen:oraxen:-SNAPSHOT")
+    compileOnly("com.github.LoneDev6:API-ItemsAdder:3.2.5") // TODO Work on this
     //compileOnly("com.github.Fisher2911:FisherLib:master-SNAPSHOT")
     implementation("net.kyori:adventure-api:4.11.0")
     implementation ("net.kyori:adventure-text-minimessage:4.11.0")
