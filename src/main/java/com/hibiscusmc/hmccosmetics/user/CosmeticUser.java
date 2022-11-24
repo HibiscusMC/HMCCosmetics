@@ -84,7 +84,7 @@ public class CosmeticUser {
     }
 
     public void toggleCosmetic(Cosmetic cosmetic) {
-        if (hasCosmetic(cosmetic)) {
+        if (hasCosmeticInSlot(cosmetic.getSlot())) {
             removeCosmeticSlot(cosmetic);
             return;
         }

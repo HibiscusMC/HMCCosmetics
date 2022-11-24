@@ -1,5 +1,6 @@
 package com.hibiscusmc.hmccosmetics.gui.type.types;
 
+import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
 import com.hibiscusmc.hmccosmetics.gui.action.Actions;
@@ -30,10 +31,12 @@ public class TypeCosmetic extends Type {
         try {
             if (!actionConfig.node("any").virtual()) actionStrings.addAll(actionConfig.node("any").getList(String.class));
 
-            if (!user.hasCosmetic(cosmetic)) {
-                if (!actionConfig.node("on-equip").virtual()) actionStrings.addAll(actionConfig.node("on-equip").getList(String.class));
-            } else {
+            if (user.getCosmetic(cosmetic.getSlot()) == cosmetic) {
                 if (!actionConfig.node("on-unequip").virtual()) actionStrings.addAll(actionConfig.node("on-unequip").getList(String.class));
+                HMCCosmeticsPlugin.getInstance().getLogger().info("on-unequip");
+            } else {
+                if (!actionConfig.node("on-equip").virtual()) actionStrings.addAll(actionConfig.node("on-equip").getList(String.class));
+                HMCCosmeticsPlugin.getInstance().getLogger().info("on-equip");
             }
 
             Actions.runActions(user, actionStrings);
