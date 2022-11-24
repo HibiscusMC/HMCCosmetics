@@ -3,8 +3,16 @@ rows: 5
 items:
   niftyHat:
     slots:
-      - 1
+      - 1-4
     item:
       material: LEATHER_HORSE_ARMOR
       amount: 1
-    action: "equip niftyhat"
+    type: cosmetic
+    cosmetic: niftyhat
+    actions:
+      any:
+        - "[MESSAGE] The Nifty Hat is pretty Nifty."
+      on-equip:
+        - "[MESSAGE] You have equiped the Nifty Hat!"
+      on-unequip:
+        - "[MESSAGE] You have put down the Nifty Hat!"
