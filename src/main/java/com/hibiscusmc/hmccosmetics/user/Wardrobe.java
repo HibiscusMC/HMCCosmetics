@@ -157,7 +157,7 @@ public class Wardrobe {
 
                 PacketManager.sendLookPacket(NPC_ID, location, viewer);
                 VIEWER.updateCosmetic();
-                int rotationSpeed = 3;
+                int rotationSpeed = WardrobeSettings.getRotationSpeed();
                 location.setYaw(getNextYaw(yaw - 30, rotationSpeed));
                 PacketManager.sendRotationPacket(NPC_ID, location, true, viewer);
                 int nextyaw = getNextYaw(yaw, rotationSpeed);
