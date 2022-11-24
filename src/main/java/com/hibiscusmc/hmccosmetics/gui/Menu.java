@@ -5,6 +5,7 @@ import com.hibiscusmc.hmccosmetics.config.serializer.ItemSerializer;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
 import com.hibiscusmc.hmccosmetics.gui.actions.Actions;
+import com.hibiscusmc.hmccosmetics.gui.types.Types;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.InventoryUtils;
 import com.hibiscusmc.hmccosmetics.util.ServerUtils;
@@ -16,12 +17,14 @@ import dev.triumphteam.gui.guis.GuiItem;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public class Menu {
 
@@ -106,91 +109,26 @@ public class Menu {
                 continue;
             }
 
+            List<String> processedLore = new ArrayList<>();
+
             for (String loreLine : item.getItemMeta().getLore()) {
+                 processedLore.add(loreLine.replaceAll("%allowed%", "allowed?"));
                 // TODO apply placeholders here
             }
+
+            ItemMeta itemMeta = item.getItemMeta();
+            itemMeta.setLore(processedLore);
+            item.setItemMeta(itemMeta);
 
             GuiItem guiItem = ItemBuilder.from(item).asGuiItem();
             guiItem.setAction(event -> {
                 if (config.node("type").virtual()) return;
                 String type = config.node("type").getString();
-                if (type.equalsIgnoreCase("cosmetic")) {
-                    if (config.node("cosmetic").virtual()) return;
-                    String cosmeticName = config.node("cosmetic").getString();
-                    Cosmetic cosmetic = Cosmetics.getCosmetic(cosmeticName);
-                    if (cosmetic == null) return;
+                if (Types.isType(type)) Types.getType(type).run(user, config);
 
-                    List<String> actionStrings = new ArrayList<>();
-                    ConfigurationNode actionConfig = config.node("actions");
-
-                    try {
-                        if (!actionConfig.node("any").virtual()) actionStrings.addAll(actionConfig.node("any").getList(String.class));
-
-                        if (!user.hasCosmetic(cosmetic)) {
-                            if (!actionConfig.node("on-equip").virtual()) actionStrings.addAll(actionConfig.node("on-equip").getList(String.class));
-                        } else {
-                            if (!actionConfig.node("on-unequip").virtual()) actionStrings.addAll(actionConfig.node("on-unequip").getList(String.class));
-                        }
-
-                        Actions.runActions(user, actionStrings);
-
-                        user.toggleCosmetic(cosmetic);
-                        user.updateCosmetic(cosmetic.getSlot());
-
-                        for (int i : slots) {
-                            gui.updateItem(i, guiItem);
-                        }
-
-                    } catch (SerializationException e) {
-                        throw new RuntimeException(e);
-                    }
+                for (int i : slots) {
+                    gui.updateItem(i, guiItem);
                 }
-
-                /*
-                // This is in dire need of an overhaul
-                // Idea: [ActionType] string ~Trigger
-                // Ex: [EQUIP] niftyHat
-                // Ex: [SEND_MESSAGE] You have equipped the nifty hat! ~equip
-
-                List<String> actionStrings = null;
-                try {
-                    actionStrings = config.node("action").getList(String.class);
-                } catch (SerializationException e) {
-                    throw new RuntimeException(e);
-                }
-
-                for (String actionString : actionStrings) {
-                    String[] types = actionString.split("(?<=\\[)(.*?)(?=\\])");
-                    if (types.length >= 2 || types.length == 0) continue;
-                    String type = types[0];
-
-                    switch (type) {
-
-                    }
-
-                    String[] triggers = actionString.split("(?<=\\~)(.*?)(?=\\ )");
-                    if (triggers.length >= 2 || triggers.length == 0) continue;
-                    String trigger = triggers[0];
-
-                    switch (trigger) {
-                        case ("equip"):
-                            if (user.hasCosmeticInSlot())
-                    }
-                }
-
-                String action = config.node("action").getString();
-                List<String> processedAction = Arrays.asList(action.split(" "));
-                if (processedAction.isEmpty()) return;
-                if (processedAction.get(0).equalsIgnoreCase("equip")) {
-                    Cosmetic cosmetic = Cosmetics.getCosmetic(processedAction.get(1));
-                    if (cosmetic == null) return;
-                    user.toggleCosmetic(cosmetic);
-                    user.updateCosmetic(cosmetic.getSlot());
-                    for (int i : slots) {
-                        gui.updateItem(i, guiItem);
-                    }
-                }
-                 */
             });
             HMCCosmeticsPlugin.getInstance().getLogger().info("Added " + slots + " as " + guiItem + " in the menu");
             gui.setItem(slots, guiItem);
