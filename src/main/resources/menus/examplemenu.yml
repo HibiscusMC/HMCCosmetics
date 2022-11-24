@@ -7,6 +7,10 @@ items:
     item:
       material: LEATHER_HORSE_ARMOR
       amount: 1
+      lore:
+        - "<WHITE>"
+        - "<gray>Enabled: <#6D9DC5>%enabled%"
+        - "<gray>Allowed: <#6D9DC5>%allowed%"
     type: cosmetic
     cosmetic: niftyhat
     actions:
