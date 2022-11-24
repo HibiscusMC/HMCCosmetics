@@ -4,7 +4,6 @@ import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
-import com.hibiscusmc.hmccosmetics.util.PlayerUtils;
 import com.hibiscusmc.hmccosmetics.util.ServerUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
 import net.minecraft.world.entity.Entity;
@@ -193,7 +192,7 @@ public class Wardrobe {
         return nextYaw;
     }
 
-    public int getARMORSTAND_ID() {
+    public int getArmorstandId() {
         return ARMORSTAND_ID;
     }
 }

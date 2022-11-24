@@ -1,7 +1,6 @@
 package com.hibiscusmc.hmccosmetics.config.serializer;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
-import com.hibiscusmc.hmccosmetics.hooks.items.ItemHook;
 import com.hibiscusmc.hmccosmetics.hooks.items.ItemHooks;
 import com.hibiscusmc.hmccosmetics.util.builder.ColorBuilder;
 import com.hibiscusmc.hmccosmetics.util.misc.StringUtils;
@@ -23,8 +22,6 @@ import org.spongepowered.configurate.serialize.TypeSerializer;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Collectors;
 
 public class ItemSerializer implements TypeSerializer<ItemStack> {

@@ -26,7 +26,7 @@ public class CosmeticArmorType extends Cosmetic {
         this.itemStack = generateItemStack(config.node("item"));
         this.equipSlot = InventoryUtils.getEquipmentSlot(getSlot());
 
-        //Cosmetics.addCosmetic(this);
+        setEquipable(true);
     }
 
     @Override

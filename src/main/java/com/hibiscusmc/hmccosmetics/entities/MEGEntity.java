@@ -3,7 +3,6 @@ package com.hibiscusmc.hmccosmetics.entities;
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ambient.Bat;
-import net.minecraft.world.entity.animal.Chicken;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.craftbukkit.v1_19_R1.CraftWorld;

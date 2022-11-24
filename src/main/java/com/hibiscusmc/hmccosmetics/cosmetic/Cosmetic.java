@@ -9,12 +9,15 @@ public class Cosmetic {
     private String id;
     private String permission;
     private CosmeticSlot slot;
+    private boolean equipable; // This simply means if a player can put it on their body.
 
     protected Cosmetic(String id, ConfigurationNode config) {
         this.id = id;
         //this.permission = config.node("permission").getString(null);
         HMCCosmeticsPlugin.getInstance().getLogger().info("Slot: " + config.node("slot").getString());
-        this.slot = CosmeticSlot.valueOf(config.node("slot").getString());
+        setSlot(CosmeticSlot.valueOf(config.node("slot").getString()));
+
+        setEquipable(false);
 
         Cosmetics.addCosmetic(this);
     }
@@ -46,8 +49,16 @@ public class Cosmetic {
         this.id = id;
     }
 
+    public void setEquipable(boolean equipable) {
+        this.equipable = equipable;
+    }
+
+    public boolean isEquipable() {
+        return equipable;
+    }
+
     public void update(CosmeticUser user) {
-        // overide
+        // Override
     }
 
 }
