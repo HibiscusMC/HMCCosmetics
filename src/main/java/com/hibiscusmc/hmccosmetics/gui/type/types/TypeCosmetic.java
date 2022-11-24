@@ -11,9 +11,9 @@ import org.spongepowered.configurate.serialize.SerializationException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CosmeticType extends Type {
+public class TypeCosmetic extends Type {
 
-    public CosmeticType() {
+    public TypeCosmetic() {
         super("cosmetic");
     }
 

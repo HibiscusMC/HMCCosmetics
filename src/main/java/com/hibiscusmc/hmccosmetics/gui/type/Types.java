@@ -1,6 +1,7 @@
 package com.hibiscusmc.hmccosmetics.gui.type;
 
-import com.hibiscusmc.hmccosmetics.gui.type.types.CosmeticType;
+import com.hibiscusmc.hmccosmetics.gui.type.types.TypeCosmetic;
+import com.hibiscusmc.hmccosmetics.gui.type.types.TypeEmpty;
 
 import java.util.HashMap;
 
@@ -8,7 +9,8 @@ public class Types {
 
     private static HashMap<String, Type> types = new HashMap<>();
 
-    private static CosmeticType COSMETIC_TYPE = new CosmeticType();
+    private static TypeCosmetic TYPE_COSMETIC = new TypeCosmetic();
+    private static TypeEmpty TYPE_EMPTY = new TypeEmpty();
 
     public static Type getType(String id) {
         return types.get(id);
