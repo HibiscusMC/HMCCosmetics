@@ -186,6 +186,24 @@ public class PacketManager extends BasePacket {
         for (Player p : sendTo) sendPacket(p, packet);
     }
 
+    public static void sendRotationPacket(
+            int entityId,
+            int yaw,
+            boolean onGround,
+            List<Player> sendTo
+    ) {
+        float ROTATION_FACTOR = 256.0F / 360.0F;
+        float yaw2 = yaw * ROTATION_FACTOR;
+        PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_LOOK);
+        packet.getIntegers().write(0, entityId);
+        packet.getBytes().write(0, (byte) yaw2);
+        packet.getBytes().write(1, (byte) 0);
+
+        //Bukkit.getLogger().info("DEBUG: Yaw: " + (location.getYaw() * ROTATION_FACTOR) + " | Original Yaw: " + location.getYaw());
+        packet.getBooleans().write(0, onGround);
+        for (Player p : sendTo) sendPacket(p, packet);
+    }
+
 
     /**
      * Mostly to deal with backpacks, this deals with entities riding other entities.

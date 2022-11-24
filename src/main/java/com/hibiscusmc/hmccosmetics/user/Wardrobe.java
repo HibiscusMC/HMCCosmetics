@@ -168,6 +168,7 @@ public class Wardrobe {
                 }
 
                 if (VIEWER.hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
+                    PacketManager.sendTeleportPacket(VIEWER.getArmorstandId(), location, false, viewer);
                     PacketManager.ridingMountPacket(NPC_ID, VIEWER.getBackpackEntity().getId(), viewer);
                     VIEWER.getBackpackEntity().getBukkitEntity().setRotation(nextyaw, 0);
                 }
