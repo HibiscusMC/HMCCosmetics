@@ -10,6 +10,7 @@ import com.hibiscusmc.hmccosmetics.config.serializer.LocationSerializer;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
 import com.hibiscusmc.hmccosmetics.database.Database;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
+import com.hibiscusmc.hmccosmetics.hooks.items.ItemHooks;
 import com.hibiscusmc.hmccosmetics.listener.PlayerConnectionListener;
 import com.hibiscusmc.hmccosmetics.listener.PlayerGameListener;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
@@ -99,5 +100,8 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
 
         // Menus setup
         Menus.setup();
+
+        // ItemHooks
+        ItemHooks.setup();
     }
 }

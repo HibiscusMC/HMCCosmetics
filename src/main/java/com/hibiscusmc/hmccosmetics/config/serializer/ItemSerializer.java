@@ -1,6 +1,8 @@
 package com.hibiscusmc.hmccosmetics.config.serializer;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
+import com.hibiscusmc.hmccosmetics.hooks.items.ItemHook;
+import com.hibiscusmc.hmccosmetics.hooks.items.ItemHooks;
 import com.hibiscusmc.hmccosmetics.util.builder.ColorBuilder;
 import com.hibiscusmc.hmccosmetics.util.misc.StringUtils;
 import com.hibiscusmc.hmccosmetics.util.misc.Utils;
@@ -68,15 +70,13 @@ public class ItemSerializer implements TypeSerializer<ItemStack> {
 
         if (materialNode.virtual()) return null;
 
-        // Future hook integration
         String material = materialNode.getString();
-        List<String> processedMaterial = Arrays.asList(material.split(":"));
-        if (processedMaterial.get(0).equalsIgnoreCase("oraxen")) {
-            // todo
+
+        ItemStack item = ItemHooks.getItem(material);
+        if (item == null) {
+            HMCCosmeticsPlugin.getInstance().getLogger().severe("Invalid Material -> " + material);
+            return new ItemStack(Material.AIR);
         }
-
-
-        ItemStack item = new ItemStack(Material.getMaterial(materialNode.getString()));
         item.setAmount(amountNode.getInt(1));
 
         ItemMeta itemMeta = item.getItemMeta();

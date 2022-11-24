@@ -102,16 +102,18 @@ public class Menu {
                 continue;
             }
 
-            List<String> processedLore = new ArrayList<>();
+            if (item.hasItemMeta()) {
+                List<String> processedLore = new ArrayList<>();
 
-            for (String loreLine : item.getItemMeta().getLore()) {
-                 processedLore.add(loreLine.replaceAll("%allowed%", "allowed?"));
-                // TODO apply placeholders here
+                for (String loreLine : item.getItemMeta().getLore()) {
+                    processedLore.add(loreLine.replaceAll("%allowed%", "allowed?"));
+                    // TODO apply placeholders here
+                }
+
+                ItemMeta itemMeta = item.getItemMeta();
+                itemMeta.setLore(processedLore);
+                item.setItemMeta(itemMeta);
             }
-
-            ItemMeta itemMeta = item.getItemMeta();
-            itemMeta.setLore(processedLore);
-            item.setItemMeta(itemMeta);
 
             GuiItem guiItem = ItemBuilder.from(item).asGuiItem();
             guiItem.setAction(event -> {

@@ -17,7 +17,7 @@ bukkit {
     apiVersion = "1.19"
     authors = listOf("LoJoSho")
     depend = listOf("ProtocolLib")
-    softDepend = listOf("ModelEngine")
+    softDepend = listOf("ModelEngine", "Oraxen")
     version = "${project.version}"
 
     commands {
@@ -54,6 +54,7 @@ dependencies {
     compileOnly("com.comphenix.protocol:ProtocolLib:5.0.0-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:2.11.1")
     compileOnly("com.ticxo.modelengine:api:R3.0.1")
+    compileOnly("com.github.oraxen:oraxen:-SNAPSHOT")
     //compileOnly("com.github.Fisher2911:FisherLib:master-SNAPSHOT")
     implementation("net.kyori:adventure-api:4.11.0")
     implementation ("net.kyori:adventure-text-minimessage:4.11.0")
