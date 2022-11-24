@@ -1,7 +1,10 @@
 package com.hibiscusmc.hmccosmetics.gui.action;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
+import com.hibiscusmc.hmccosmetics.gui.action.actions.ActionConsoleCommand;
+import com.hibiscusmc.hmccosmetics.gui.action.actions.ActionMenu;
 import com.hibiscusmc.hmccosmetics.gui.action.actions.ActionMessage;
+import com.hibiscusmc.hmccosmetics.gui.action.actions.ActionPlayerCommand;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import org.apache.commons.lang.StringUtils;
 
@@ -14,6 +17,10 @@ public class Actions {
 
     // [ID]
     private static ActionMessage ACTION_MESSAGE = new ActionMessage();
+    private static ActionMenu ACTION_MENU = new ActionMenu();
+    private static ActionPlayerCommand ACTION_CONSOLE_COMMAND = new ActionPlayerCommand();
+    private static ActionConsoleCommand ACTION_PLAYER_COMMAND = new ActionConsoleCommand();
+
 
     public static Action getAction(String id) {
         return actions.get(id);
@@ -39,5 +46,4 @@ public class Actions {
             }
         }
     }
-
 }
