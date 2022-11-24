@@ -6,6 +6,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
 
 public class Translation {
@@ -22,10 +23,13 @@ public class Translation {
         return translations.getOrDefault(key, null);
     }
 
-    public void load() {
+    public static void setup() {
         final File file = new File(HMCCosmeticsPlugin.getInstance().getDataFolder(), FILE_NAME);
         if (!file.exists()) {
             HMCCosmeticsPlugin.getInstance().saveResource(FILE_NAME, false);
+        }
+        if (translations == null) {
+            translations = new HashMap<>();
         }
 
         final FileConfiguration config = YamlConfiguration.loadConfiguration(file);
@@ -37,7 +41,7 @@ public class Translation {
         }
 
         for (final String key : section.getKeys(false)) {
-            this.translations.put(key, section.getString(key));
+            translations.put(key, section.getString(key));
         }
     }
 }
