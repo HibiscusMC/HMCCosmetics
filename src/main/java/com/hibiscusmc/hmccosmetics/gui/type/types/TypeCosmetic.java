@@ -31,7 +31,7 @@ public class TypeCosmetic extends Type {
         try {
             if (!actionConfig.node("any").virtual()) actionStrings.addAll(actionConfig.node("any").getList(String.class));
 
-            if (user.getCosmetic(cosmetic.getSlot()) == cosmetic) {
+            if (user.getCosmetic(cosmetic.getSlot()) == (cosmetic)) {
                 if (!actionConfig.node("on-unequip").virtual()) actionStrings.addAll(actionConfig.node("on-unequip").getList(String.class));
                 HMCCosmeticsPlugin.getInstance().getLogger().info("on-unequip");
             } else {
@@ -41,11 +41,11 @@ public class TypeCosmetic extends Type {
 
             Actions.runActions(user, actionStrings);
 
-            user.toggleCosmetic(cosmetic);
-            user.updateCosmetic(cosmetic.getSlot());
-
         } catch (SerializationException e) {
             throw new RuntimeException(e);
         }
+
+        user.toggleCosmetic(cosmetic);
+        user.updateCosmetic(cosmetic.getSlot());
     }
 }

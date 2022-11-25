@@ -72,6 +72,13 @@ public class CosmeticUser {
             spawnBalloon(balloonType);
         }
     }
+    public void toggleCosmetic(Cosmetic cosmetic) {
+        if (hasCosmeticInSlot(cosmetic.getSlot())) {
+            removeCosmeticSlot(cosmetic.getSlot());
+            return;
+        }
+        addPlayerCosmetic(cosmetic);
+    }
 
     public void removeCosmeticSlot(CosmeticSlot slot) {
         if (slot == CosmeticSlot.BACKPACK) {
@@ -81,15 +88,9 @@ public class CosmeticUser {
             despawnBalloon();
         }
         playerCosmetics.remove(slot);
+        removeArmor(slot);
     }
 
-    public void toggleCosmetic(Cosmetic cosmetic) {
-        if (hasCosmeticInSlot(cosmetic.getSlot())) {
-            removeCosmeticSlot(cosmetic);
-            return;
-        }
-        addPlayerCosmetic(cosmetic);
-    }
 
     public void removeCosmeticSlot(Cosmetic cosmetic) {
         removeCosmeticSlot(cosmetic.getSlot());
@@ -101,7 +102,6 @@ public class CosmeticUser {
 
     public void updateCosmetic(CosmeticSlot slot) {
         if (getCosmetic(slot) == null) {
-            // TODO: Add something here
             return;
         }
         getCosmetic(slot).update(this);
@@ -196,6 +196,10 @@ public class CosmeticUser {
         if (invisibleArmorstand == null) return;
         invisibleArmorstand.remove(net.minecraft.world.entity.Entity.RemovalReason.DISCARDED);
         this.invisibleArmorstand = null;
+    }
+
+    public void removeArmor(CosmeticSlot slot) {
+        PacketManager.equipmentSlotUpdate(getPlayer().getEntityId(), this, slot, PlayerUtils.getNearbyPlayers(getPlayer()));
     }
 
     public Player getPlayer() {
