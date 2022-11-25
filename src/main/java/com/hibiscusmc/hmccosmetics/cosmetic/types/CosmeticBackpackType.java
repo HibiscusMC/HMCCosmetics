@@ -4,6 +4,7 @@ import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.serializer.ItemSerializer;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
+import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -27,6 +28,17 @@ public class CosmeticBackpackType extends Cosmetic {
         Player player = Bukkit.getPlayer(user.getUniqueId());
         Location loc = player.getLocation().clone();
 
+        if (loc.getBlock().getType().equals(Material.NETHER_PORTAL)) {
+            player.removePassenger(user.getBackpackEntity().getBukkitLivingEntity());
+            return;
+        }
+
+        if (loc.getWorld() != user.getBackpackEntity().getBukkitLivingEntity().getWorld()) {
+            user.getBackpackEntity().getBukkitLivingEntity().teleport(loc);
+        }
+
+        player.addPassenger(user.getBackpackEntity().getBukkitLivingEntity());
+        //user.getBackpackEntity().moveTo(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), 0);
         user.getBackpackEntity().getBukkitLivingEntity().setRotation(loc.getYaw(), loc.getPitch());
 
     }
