@@ -194,6 +194,7 @@ public class CosmeticUser {
     public void despawnBackpack() {
         Player player = Bukkit.getPlayer(getUniqueId());
         if (invisibleArmorstand == null) return;
+        invisibleArmorstand.getBukkitLivingEntity().setHealth(0);
         invisibleArmorstand.remove(net.minecraft.world.entity.Entity.RemovalReason.DISCARDED);
         this.invisibleArmorstand = null;
     }
