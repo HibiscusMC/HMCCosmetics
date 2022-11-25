@@ -10,6 +10,8 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.spongepowered.configurate.ConfigurationNode;
 
+import java.util.List;
+
 public class CosmeticBalloonType extends Cosmetic {
 
     private String modelName;
@@ -29,10 +31,17 @@ public class CosmeticBalloonType extends Cosmetic {
 
         final Location actual = player.getLocation().clone().add(Settings.getBalloonOffset());
 
+        if (player.getLocation().getWorld() != user.getBalloonEntity().getLocation().getWorld()) {
+            user.getBalloonEntity().getModelEntity().getBukkitLivingEntity().teleport(actual);
+        }
+
         user.getBalloonEntity().getModelEntity().moveTo(actual.getX(), actual.getY(), actual.getZ());
 
-        PacketManager.sendTeleportPacket(user.getBalloonEntity().getPufferfishBalloonId(), actual, false, PlayerUtils.getNearbyPlayers(player));
-        PacketManager.sendLeashPacket(user.getBalloonEntity().getPufferfishBalloonId(), player.getEntityId(), PlayerUtils.getNearbyPlayers(player));
+        List<Player> viewer = PlayerUtils.getNearbyPlayers(player);
+        viewer.add(player);
+
+        PacketManager.sendTeleportPacket(user.getBalloonEntity().getPufferfishBalloonId(), actual, false, viewer);
+        PacketManager.sendLeashPacket(user.getBalloonEntity().getPufferfishBalloonId(), player.getEntityId(), viewer);
     }
 
     public String getModelName() {
