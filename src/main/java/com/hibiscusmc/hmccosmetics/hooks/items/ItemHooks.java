@@ -36,7 +36,7 @@ public class ItemHooks {
 
     public static ItemStack getItem(String raw) {
         if (!raw.contains(":")) {
-            Material mat = Material.valueOf(raw);
+            Material mat = Material.getMaterial(raw);
             if (mat == null) return null;
             return new ItemStack(mat);
         }
