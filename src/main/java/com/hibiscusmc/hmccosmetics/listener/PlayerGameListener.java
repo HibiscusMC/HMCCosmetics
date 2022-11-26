@@ -74,7 +74,7 @@ public class PlayerGameListener implements Listener {
     public void onPlayerTeleport(PlayerTeleportEvent event) {
         CosmeticUser user = CosmeticUsers.getUser(event.getPlayer().getUniqueId());
 
-        user.updateCosmetic();
+        Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> user.updateCosmetic(), 2);
     }
 
     @EventHandler
@@ -127,6 +127,7 @@ public class PlayerGameListener implements Listener {
                 if (windowID != 0) return;
 
                 CosmeticUser user = CosmeticUsers.getUser(player);
+                if (user == null) return;
 
                 for (Cosmetic cosmetic : user.getCosmetic()) {
                     if (!(cosmetic instanceof CosmeticArmorType)) continue;
