@@ -10,9 +10,12 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.util.Map;
 import java.util.UUID;
 
 public class InternalData extends Data {
+
+    NamespacedKey key = new NamespacedKey(HMCCosmeticsPlugin.getInstance(), "cosmetics");
 
     @Override
     public void setup() {
@@ -22,21 +25,32 @@ public class InternalData extends Data {
     @Override
     public void save(CosmeticUser user) {
         Player player = Bukkit.getPlayer(user.getUniqueId());
-        for (Cosmetic cosmetic : user.getCosmetic()) {
-            NamespacedKey slotkey = new NamespacedKey(HMCCosmeticsPlugin.getInstance(), cosmetic.getSlot().toString());
-            player.getPersistentDataContainer().set(slotkey, PersistentDataType.STRING, cosmetic.getId());
-        }
+
+        player.getPersistentDataContainer().set(key, PersistentDataType.STRING, steralizeData(user));
     }
 
     @Override
     public CosmeticUser get(UUID uniqueId) {
         Player player = Bukkit.getPlayer(uniqueId);
         CosmeticUser user = new CosmeticUser(uniqueId);
-        for (CosmeticSlot slot : CosmeticSlot.values()) {
-            NamespacedKey key = new NamespacedKey(HMCCosmeticsPlugin.getInstance(), slot.toString());
-            if (!player.getPersistentDataContainer().has(key, PersistentDataType.STRING)) continue;
-            user.addPlayerCosmetic(Cosmetics.getCosmetic(player.getPersistentDataContainer().get(key, PersistentDataType.STRING)));
+
+        if (!player.getPersistentDataContainer().has(key, PersistentDataType.STRING)) return user;
+        String rawData = player.getPersistentDataContainer().get(key, PersistentDataType.STRING);
+
+        Map<CosmeticSlot, Cosmetic> a = desteralizedata(rawData);
+        for (CosmeticSlot slot : a.keySet()) {
+            user.addPlayerCosmetic(a.get(slot));
+            //HMCCosmeticsPlugin.getInstance().getLogger().info("Retrieved " + player.getName() + " | slot " + slot + " | cosmetic " + Cosmetics.getCosmetic(player.getPersistentDataContainer().get(key, PersistentDataType.STRING)));
         }
         return user;
+    }
+
+    @Override
+    public void clear(UUID uniqueId) {
+        Player player = Bukkit.getPlayer(uniqueId);
+
+        if (player.getPersistentDataContainer().has(key, PersistentDataType.STRING)) {
+            player.getPersistentDataContainer().remove(key);
+        }
     }
 }
