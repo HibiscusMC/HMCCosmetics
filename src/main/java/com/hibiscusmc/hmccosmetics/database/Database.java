@@ -52,4 +52,7 @@ public class Database {
         return data;
     }
 
+    public static void clearData(UUID uniqueId) {
+        data.clear(uniqueId);
+    }
 }
