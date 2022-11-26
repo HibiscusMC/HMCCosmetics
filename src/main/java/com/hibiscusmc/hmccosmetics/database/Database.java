@@ -20,15 +20,17 @@ public class Database {
 
     public Database() {
         String databaseType = DatabaseSettings.getDatabaseType();
-        switch (databaseType) {
-            case "INTERNAL":
-                data = INTERNAL_DATA;
-            case "MYSQL":
-                data = MYSQL_DATA;
-            default:
-                data = INTERNAL_DATA;
-                HMCCosmeticsPlugin.getInstance().getLogger().severe("No Valid Datatype detected! Defaulting to internal data...");
+        data = INTERNAL_DATA; // default
+        if (databaseType.equalsIgnoreCase("INTERNAL")) {
+            data = INTERNAL_DATA;
+            HMCCosmeticsPlugin.getInstance().getLogger().severe("Datatype set to internal data");
         }
+        if (databaseType.equalsIgnoreCase("MySQL")) {
+            data = MYSQL_DATA;
+            HMCCosmeticsPlugin.getInstance().getLogger().severe("Datatype set to MySQL data");
+        }
+        HMCCosmeticsPlugin.getInstance().getLogger().severe("Database is " + data);
+
         setup();
     }
 
