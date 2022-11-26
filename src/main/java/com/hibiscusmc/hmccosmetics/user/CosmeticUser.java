@@ -14,11 +14,13 @@ import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
 import net.minecraft.world.entity.EquipmentSlot;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_19_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftItemStack;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -32,6 +34,9 @@ public class CosmeticUser {
     private Wardrobe wardrobe;
     private InvisibleArmorstand invisibleArmorstand;
     private BalloonEntity balloonEntity;
+
+    // Cosmetic Settings/Toggles
+    private boolean hideBackpack;
 
 
     public CosmeticUser(UUID uuid) {
@@ -151,7 +156,7 @@ public class CosmeticUser {
 
         if (this.invisibleArmorstand != null) return;
         this.invisibleArmorstand = new InvisibleArmorstand(player.getLocation());
-        invisibleArmorstand.setItemSlot(EquipmentSlot.HEAD, CraftItemStack.asNMSCopy(cosmeticBackpackType.getBackpackItem()));
+        invisibleArmorstand.setItemSlot(EquipmentSlot.HEAD, CraftItemStack.asNMSCopy(cosmeticBackpackType.getBackpackItem().clone()));
         ((CraftWorld) player.getWorld()).getHandle().addFreshEntity(invisibleArmorstand, CreatureSpawnEvent.SpawnReason.CUSTOM);
 
         //PacketManager.armorStandMetaPacket(invisibleArmorstand.getBukkitEntity(), sentTo);
@@ -228,6 +233,26 @@ public class CosmeticUser {
         for (final Player p : Bukkit.getOnlinePlayers()) {
             p.showPlayer(HMCCosmeticsPlugin.getInstance(), player);
             player.showPlayer(HMCCosmeticsPlugin.getInstance(), p);
+        }
+    }
+
+    public void hideBackpack() {
+        if (hideBackpack == true) return;
+        if (hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
+            //CosmeticBackpackType cosmeticBackpackType = (CosmeticBackpackType) getCosmetic(CosmeticSlot.BACKPACK);
+            getPlayer().removePassenger(invisibleArmorstand.getBukkitEntity());
+            invisibleArmorstand.getBukkitLivingEntity().getEquipment().clear();
+            hideBackpack = true;
+        }
+    }
+
+    public void showBackpack() {
+        if (hideBackpack == false) return;
+        if (hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
+            CosmeticBackpackType cosmeticBackpackType = (CosmeticBackpackType) getCosmetic(CosmeticSlot.BACKPACK);
+            getPlayer().addPassenger(invisibleArmorstand.getBukkitEntity());
+            invisibleArmorstand.getBukkitLivingEntity().getEquipment().setHelmet(cosmeticBackpackType.getBackpackItem().clone());
+            hideBackpack = false;
         }
     }
 }

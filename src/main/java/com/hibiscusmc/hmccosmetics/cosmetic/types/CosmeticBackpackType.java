@@ -29,7 +29,7 @@ public class CosmeticBackpackType extends Cosmetic {
         Location loc = player.getLocation().clone();
 
         if (loc.getBlock().getType().equals(Material.NETHER_PORTAL)) {
-            player.removePassenger(user.getBackpackEntity().getBukkitLivingEntity());
+            user.hideBackpack();
             return;
         }
 
@@ -38,10 +38,13 @@ public class CosmeticBackpackType extends Cosmetic {
         }
 
         user.getBackpackEntity().moveTo(loc.getX(), loc.getY(), loc.getZ());
+
         if (player.getPassengers().isEmpty()) {
             user.getBackpackEntity().getBukkitLivingEntity().teleport(loc);
-            player.addPassenger(user.getBackpackEntity().getBukkitEntity());
+            //player.addPassenger(user.getBackpackEntity().getBukkitEntity());
         }
+
+        user.showBackpack();
         user.getBackpackEntity().getBukkitLivingEntity().setRotation(loc.getYaw(), loc.getPitch());
 
     }
