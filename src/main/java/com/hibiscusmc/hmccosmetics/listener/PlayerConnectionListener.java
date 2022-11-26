@@ -20,6 +20,7 @@ public class PlayerConnectionListener implements Listener {
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         CosmeticUser user = CosmeticUsers.getUser(event.getPlayer());
+        if (user == null) return;
         if (user.isInWardrobe()) user.leaveWardrobe();
         Database.save(user);
         user.despawnBackpack();
