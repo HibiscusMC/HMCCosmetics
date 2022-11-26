@@ -4,6 +4,7 @@ import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
+import com.hibiscusmc.hmccosmetics.database.Database;
 import com.hibiscusmc.hmccosmetics.gui.Menu;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
@@ -104,6 +105,14 @@ public class CosmeticCommand implements CommandExecutor {
 
             menu.openMenu(CosmeticUsers.getUser(player));
             return true;
+        }
+
+        if (args[0].equalsIgnoreCase("dataclear")) {
+            if (args.length == 1) return true;
+            Player player = Bukkit.getPlayer(args[1]);
+            if (player == null) return true;
+            Database.clearData(player.getUniqueId());
+            sender.sendMessage("Cleared data for " + player.getName());
         }
         return true;
     }

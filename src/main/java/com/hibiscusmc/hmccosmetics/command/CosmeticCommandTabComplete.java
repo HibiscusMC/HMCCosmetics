@@ -26,6 +26,7 @@ public class CosmeticCommandTabComplete implements TabCompleter {
             completions.add("unapply");
             completions.add("menu");
             completions.add("reload");
+            completions.add("dataclear");
         }
 
         if (args.length >= 2) {
@@ -33,6 +34,10 @@ public class CosmeticCommandTabComplete implements TabCompleter {
                 completions.addAll(applyCommandComplete(args));
             } else if (args[0].equalsIgnoreCase("menu")) {
                 completions.addAll(Menus.getMenuNames());
+            } else if (args[0].equalsIgnoreCase("dataclear")) {
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    completions.add(player.getName());
+                }
             }
         }
 
