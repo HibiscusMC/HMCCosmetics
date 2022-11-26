@@ -37,8 +37,11 @@ public class CosmeticBackpackType extends Cosmetic {
             user.getBackpackEntity().getBukkitLivingEntity().teleport(loc);
         }
 
-        player.addPassenger(user.getBackpackEntity().getBukkitLivingEntity());
-        //user.getBackpackEntity().moveTo(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), 0);
+        user.getBackpackEntity().moveTo(loc.getX(), loc.getY(), loc.getZ());
+        if (player.getPassengers().isEmpty()) {
+            user.getBackpackEntity().getBukkitLivingEntity().teleport(loc);
+            player.addPassenger(user.getBackpackEntity().getBukkitEntity());
+        }
         user.getBackpackEntity().getBukkitLivingEntity().setRotation(loc.getYaw(), loc.getPitch());
 
     }
