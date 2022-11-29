@@ -5,6 +5,7 @@ import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
+import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticArmorType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBackpackType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
 import com.hibiscusmc.hmccosmetics.entities.BalloonEntity;
@@ -13,14 +14,16 @@ import com.hibiscusmc.hmccosmetics.util.PlayerUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
 import net.minecraft.world.entity.EquipmentSlot;
 import org.bukkit.Bukkit;
+import org.bukkit.Color;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_19_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftItemStack;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -37,6 +40,7 @@ public class CosmeticUser {
 
     // Cosmetic Settings/Toggles
     private boolean hideBackpack;
+    private HashMap<CosmeticSlot, Color> colors = new HashMap<>();
 
 
     public CosmeticUser(UUID uuid) {
@@ -67,7 +71,12 @@ public class CosmeticUser {
     }
 
     public void addPlayerCosmetic(Cosmetic cosmetic) {
+        addPlayerCosmetic(cosmetic, null);
+    }
+
+    public void addPlayerCosmetic(Cosmetic cosmetic, Color color) {
         playerCosmetics.put(cosmetic.getSlot(), cosmetic);
+        if (color != null) colors.put(cosmetic.getSlot(), color);
         if (cosmetic.getSlot() == CosmeticSlot.BACKPACK) {
             CosmeticBackpackType backpackType = (CosmeticBackpackType) cosmetic;
             spawnBackpack(backpackType);
@@ -92,6 +101,7 @@ public class CosmeticUser {
         if (slot == CosmeticSlot.BALLOON) {
             despawnBalloon();
         }
+        colors.remove(slot);
         playerCosmetics.remove(slot);
         removeArmor(slot);
     }
@@ -117,6 +127,27 @@ public class CosmeticUser {
         for (Cosmetic cosmetic : playerCosmetics.values()) {
             updateCosmetic(cosmetic.getSlot());
         }
+    }
+
+    public ItemStack getUserCosmeticItem(Cosmetic cosmetic) {
+        ItemStack item = null;
+        if (cosmetic instanceof CosmeticArmorType) {
+            CosmeticArmorType cosmetic1 = (CosmeticArmorType) cosmetic;
+            item = cosmetic1.getCosmeticItem();
+        }
+        if (cosmetic instanceof CosmeticBackpackType) {
+            CosmeticBackpackType cosmetic1 = (CosmeticBackpackType) cosmetic;
+            item = cosmetic1.getBackpackItem();
+        }
+        if (!item.hasItemMeta()) return null;
+        ItemMeta itemMeta = item.getItemMeta();
+        if (itemMeta instanceof LeatherArmorMeta) {
+            if (colors.containsKey(cosmetic.getSlot())) {
+                ((LeatherArmorMeta) itemMeta).setColor(colors.get(cosmetic.getSlot()));
+            }
+        }
+        item.setItemMeta(itemMeta);
+        return item;
     }
 
     public void enterWardrobe() {
@@ -156,7 +187,10 @@ public class CosmeticUser {
 
         if (this.invisibleArmorstand != null) return;
         this.invisibleArmorstand = new InvisibleArmorstand(player.getLocation());
-        invisibleArmorstand.setItemSlot(EquipmentSlot.HEAD, CraftItemStack.asNMSCopy(cosmeticBackpackType.getBackpackItem().clone()));
+
+        ItemStack item = getUserCosmeticItem(cosmeticBackpackType);
+
+        invisibleArmorstand.setItemSlot(EquipmentSlot.HEAD, CraftItemStack.asNMSCopy(item));
         ((CraftWorld) player.getWorld()).getHandle().addFreshEntity(invisibleArmorstand, CreatureSpawnEvent.SpawnReason.CUSTOM);
 
         //PacketManager.armorStandMetaPacket(invisibleArmorstand.getBukkitEntity(), sentTo);
@@ -251,7 +285,8 @@ public class CosmeticUser {
         if (hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
             CosmeticBackpackType cosmeticBackpackType = (CosmeticBackpackType) getCosmetic(CosmeticSlot.BACKPACK);
             getPlayer().addPassenger(invisibleArmorstand.getBukkitEntity());
-            invisibleArmorstand.getBukkitLivingEntity().getEquipment().setHelmet(cosmeticBackpackType.getBackpackItem().clone());
+            ItemStack item = getUserCosmeticItem(cosmeticBackpackType);
+            invisibleArmorstand.setItemSlot(EquipmentSlot.HEAD, CraftItemStack.asNMSCopy(item));
             hideBackpack = false;
         }
     }
