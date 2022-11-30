@@ -54,23 +54,22 @@ public class CosmeticCommand implements CommandExecutor {
         }
         if (args[0].equalsIgnoreCase("unapply")) {
             Player player = null;
-            Cosmetic cosmetic;
+            CosmeticSlot cosmeticSlot;
 
             if (sender instanceof Player) player = ((Player) sender).getPlayer();
             if (args.length >= 3) player = Bukkit.getPlayer(args[2]);
 
-            cosmetic = Cosmetics.getCosmetic(args[1]);
+            cosmeticSlot = CosmeticSlot.valueOf(args[1]);
 
-            if (player == null || cosmetic == null) {
+            if (player == null || cosmeticSlot == null) {
                 sender.sendMessage("Something was null");
                 return true;
             }
 
             CosmeticUser user = CosmeticUsers.getUser(player);
 
-            CosmeticSlot slot = cosmetic.getSlot();
-            user.removeCosmeticSlot(cosmetic);
-            user.updateCosmetic(slot);
+            user.removeCosmeticSlot(cosmeticSlot);
+            user.updateCosmetic(cosmeticSlot);
             return true;
         }
         if (args[0].equalsIgnoreCase("wardrobe")) {

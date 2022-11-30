@@ -1,7 +1,9 @@
 package com.hibiscusmc.hmccosmetics.command;
 
+import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
+import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -29,9 +31,14 @@ public class CosmeticCommandTabComplete implements TabCompleter {
             completions.add("dataclear");
         }
 
+        // This needs to be redone.
         if (args.length >= 2) {
-            if (args[0].equalsIgnoreCase("apply") || args[0].equalsIgnoreCase("unapply")) {
+            if (args[0].equalsIgnoreCase("apply")) {
                 completions.addAll(applyCommandComplete(args));
+            } else if (args[0].equalsIgnoreCase("unapply")) {
+                for (CosmeticSlot slot : CosmeticSlot.values()) {
+                    completions.add(slot.name());
+                }
             } else if (args[0].equalsIgnoreCase("menu")) {
                 completions.addAll(Menus.getMenuNames());
             } else if (args[0].equalsIgnoreCase("dataclear")) {
