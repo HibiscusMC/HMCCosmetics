@@ -36,7 +36,7 @@ public class MySQLData extends Data {
         try {
             openConnection();
             connection.prepareStatement("CREATE TABLE IF NOT EXISTS `COSMETICDATABASE` " +
-                    "(UUID varchar(200) PRIMARY KEY, " +
+                    "(UUID varchar(36) PRIMARY KEY, " +
                     "COSMETICS MEDIUMTEXT " +
                     ");").execute();
         } catch (SQLException e) {
