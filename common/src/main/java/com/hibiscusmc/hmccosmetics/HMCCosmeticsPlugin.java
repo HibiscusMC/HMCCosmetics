@@ -13,6 +13,7 @@ import com.hibiscusmc.hmccosmetics.gui.Menus;
 import com.hibiscusmc.hmccosmetics.hooks.items.ItemHooks;
 import com.hibiscusmc.hmccosmetics.listener.PlayerConnectionListener;
 import com.hibiscusmc.hmccosmetics.listener.PlayerGameListener;
+import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
 import com.hibiscusmc.hmccosmetics.util.misc.Translation;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -33,6 +34,13 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
         instance = this;
+
+        // NMS version check
+        if (!NMSHandlers.getHandler().getSupported()) {
+            getLogger().severe("This version is not supported! Consider switching versions?");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
 
         // File setup
         if (!getDataFolder().exists()) {

@@ -2,8 +2,7 @@ import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
 
 plugins {
     id("java")
-    id("com.github.johnrengelman.shadow") version "7.1.1"
-    id("io.papermc.paperweight.userdev") version "1.3.8"
+    id("com.github.johnrengelman.shadow") version "7.1.2"
     id("xyz.jpenilla.run-paper") version "2.0.0"
     id("net.minecrell.plugin-yml.bukkit") version "0.5.2"
 }
@@ -11,69 +10,37 @@ plugins {
 group = "com.hibiscusmc"
 version = "Infdev"
 
-bukkit {
-    load = BukkitPluginDescription.PluginLoadOrder.POSTWORLD
-    main = "com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin"
-    apiVersion = "1.19"
-    authors = listOf("LoJoSho")
-    depend = listOf("ProtocolLib")
-    softDepend = listOf("ModelEngine", "Oraxen")
-    version = "${project.version}"
-
-    commands {
-        register("cosmetic") {
-            description = "Base command"
+allprojects {
+    repositories {
+        mavenCentral()
+        maven("https://papermc.io/repo/repository/maven-public/")
+        maven("https://oss.sonatype.org/content/repositories/snapshots")
+        maven("https://jitpack.io")
+        //maven("https://repo.dmulloy2.net/repository/public/") ProtocolLib Repo, constantly down
+        maven("https://repo.mineinabyss.com/releases/")
+        maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
+        maven("https://mvnrepository.com/artifact/com.zaxxer/HikariCP")
+        maven("https://repo.citizensnpcs.co")
+        //maven("https://mvn.lumine.io/repository/maven-public")
+        maven {
+            url = uri("https://mvn.lumine.io/repository/maven-public")
+            metadataSources {
+                artifact()
+            }
         }
     }
-}
 
-repositories {
-    mavenCentral()
-    maven("https://papermc.io/repo/repository/maven-public/")
-    maven("https://oss.sonatype.org/content/repositories/snapshots")
-    maven("https://jitpack.io")
-    //maven("https://repo.dmulloy2.net/repository/public/") ProtocolLib Repo, constantly down
-    maven("https://repo.mineinabyss.com/releases/")
-    maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
-    maven("https://mvnrepository.com/artifact/com.zaxxer/HikariCP")
-    maven("https://repo.citizensnpcs.co")
-    //maven("https://mvn.lumine.io/repository/maven-public")
-    maven {
-        url = uri("https://mvn.lumine.io/repository/maven-public")
-        metadataSources {
-            artifact()
-        }
+    dependencies {
     }
 }
 
 dependencies {
-    paperDevBundle("1.19.2-R0.1-SNAPSHOT")
-    compileOnly("com.mojang:authlib:1.5.25")
-    compileOnly("org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT")
-    compileOnly("org.jetbrains:annotations:23.0.0")
-    compileOnly("com.comphenix.protocol:ProtocolLib:5.0.0-SNAPSHOT")
-    compileOnly("me.clip:placeholderapi:2.11.1")
-    compileOnly("com.ticxo.modelengine:api:R3.0.1")
-    compileOnly("com.github.oraxen:oraxen:-SNAPSHOT")
-    compileOnly("com.github.LoneDev6:API-ItemsAdder:3.2.5") // TODO Work on this
-    //compileOnly("com.github.Fisher2911:FisherLib:master-SNAPSHOT")
-    implementation("net.kyori:adventure-api:4.11.0")
-    implementation ("net.kyori:adventure-text-minimessage:4.11.0")
-    implementation("net.kyori:adventure-platform-bukkit:4.1.2")
-    implementation("dev.triumphteam:triumph-gui:3.1.3")
-    implementation("org.spongepowered:configurate-yaml:4.1.2")
-    implementation("org.bstats:bstats-bukkit:3.0.0")
+    implementation(project(":common"))
+    //implementation(project(":v1_19_R1"))
+    implementation(files("v1_19_R1/build/libs/1_19_R1-unspecified.jar"))
 }
 
 tasks {
-
-    build {
-        dependsOn(shadowJar)
-    }
-
-    assemble {
-        dependsOn(reobfJar)
-    }
 
     compileJava {
         options.encoding = Charsets.UTF_8.name()
@@ -89,15 +56,19 @@ tasks {
         filteringCharset = Charsets.UTF_8.name()
     }
 
-    reobfJar {
-        outputJar.set(layout.projectDirectory.file("run/plugins/HMCCosmeticsRemapped.jar"))
-    }
-
     runServer {
         minecraftVersion("1.19.2")
     }
 
+    assemble {
+        dependsOn(shadowJar)
+    }
+
     shadowJar {
+        dependsOn(":common:reobfJar")
+        dependsOn(":v1_19_R1:reobfJar")
+        mergeServiceFiles()
+
         relocate("dev.triumphteam.gui", "com.hisbiscus.hmccosmetics.gui")
         relocate("me.mattstudios.mf", "com.hisbiscus.hmccosmetics.mf")
         relocate("net.kyori.adventure", "com.hisbiscus.hmccosmetics.adventure")
@@ -110,10 +81,24 @@ tasks {
         dependencies {
             exclude(dependency("org.yaml:snakeyaml"))
         }
+
+        archiveFile.get().asFile.copyTo(layout.projectDirectory.file("run/plugins/HMCCosmeticsRemapped.jar").asFile, true)
     }
 }
 
-java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(17
-    ))
+
+bukkit {
+    load = BukkitPluginDescription.PluginLoadOrder.POSTWORLD
+    main = "com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin"
+    apiVersion = "1.19"
+    authors = listOf("LoJoSho")
+    depend = listOf("ProtocolLib")
+    softDepend = listOf("ModelEngine", "Oraxen")
+    version = "${project.version}"
+
+    commands {
+        register("cosmetic") {
+            description = "Base command"
+        }
+    }
 }
