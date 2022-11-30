@@ -10,6 +10,7 @@ import com.hibiscusmc.hmccosmetics.gui.Menus;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -108,7 +109,7 @@ public class CosmeticCommand implements CommandExecutor {
 
         if (args[0].equalsIgnoreCase("dataclear")) {
             if (args.length == 1) return true;
-            Player player = Bukkit.getPlayer(args[1]);
+            OfflinePlayer player = Bukkit.getOfflinePlayer(args[1]);
             if (player == null) return true;
             Database.clearData(player.getUniqueId());
             sender.sendMessage("Cleared data for " + player.getName());
