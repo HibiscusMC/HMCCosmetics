@@ -1,5 +1,6 @@
 package com.hibiscusmc.hmccosmetics.database.types;
 
+import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
@@ -34,6 +35,10 @@ public class Data {
         String data = "";
         for (Cosmetic cosmetic : user.getCosmetic()) {
             String input = cosmetic.getSlot() + "=" + cosmetic.getId();
+            if (data.length() == 0) {
+                data = input;
+                continue;
+            }
             data = data + "," + input;
         }
         return data;
@@ -48,6 +53,7 @@ public class Data {
             String[] splitData = a.split("=");
             CosmeticSlot slot = null;
             Cosmetic cosmetic = null;
+            HMCCosmeticsPlugin.getInstance().getLogger().info("First split (suppose slot) " + splitData[0]);
             if (CosmeticSlot.valueOf(splitData[0]) != null) slot = CosmeticSlot.valueOf(splitData[0]);
             if (Cosmetics.hasCosmetic(splitData[1])) cosmetic = Cosmetics.getCosmetic(splitData[1]);
             if (slot == null || cosmetic == null) continue;

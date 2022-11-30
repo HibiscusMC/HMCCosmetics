@@ -6,6 +6,7 @@ import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataType;
 
@@ -46,10 +47,14 @@ public class InternalData extends Data {
 
     @Override
     public void clear(UUID uniqueId) {
-        Player player = Bukkit.getPlayer(uniqueId);
+        OfflinePlayer player = Bukkit.getOfflinePlayer(uniqueId);
 
-        if (player.getPersistentDataContainer().has(key, PersistentDataType.STRING)) {
-            player.getPersistentDataContainer().remove(key);
+        if (player.isOnline()) {
+            Player onlinePlayer = player.getPlayer();
+            if (onlinePlayer.getPersistentDataContainer().has(key, PersistentDataType.STRING)) {
+                onlinePlayer.getPersistentDataContainer().remove(key);
+            }
+            return;
         }
     }
 }

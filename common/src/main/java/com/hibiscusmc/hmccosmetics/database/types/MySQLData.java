@@ -8,6 +8,7 @@ import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import org.bukkit.Bukkit;
 
 import java.sql.*;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
@@ -37,7 +38,7 @@ public class MySQLData extends Data {
             connection.prepareStatement("CREATE TABLE IF NOT EXISTS `COSMETICDATABASE` " +
                     "(UUID varchar(200) PRIMARY KEY, " +
                     "COSMETICS MEDIUMTEXT " +
-                    ");");
+                    ");").execute();
         } catch (SQLException e) {
             plugin.getLogger().severe("");
             plugin.getLogger().severe("");
@@ -68,7 +69,9 @@ public class MySQLData extends Data {
     @Override
     public CosmeticUser get(UUID uniqueId) {
         CosmeticUser user = new CosmeticUser(uniqueId);
-        Bukkit.getScheduler().runTaskAsynchronously(HMCCosmeticsPlugin.getInstance(), () -> {
+
+        // Need to figure out how to properly do this async.
+        Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> {
             try {
                 PreparedStatement preparedStatement = preparedStatement("SELECT COUNT(UUID) FROM COSMETICDATABASE WHERE UUID = ?;");
                 preparedStatement.setString(1, uniqueId.toString());
@@ -81,7 +84,7 @@ public class MySQLData extends Data {
                         preState2.setString(1, uniqueId.toString());
                         ResultSet rs2 = preState2.executeQuery();
                         if (rs2.next()) {
-                            String rawData = rs.getString("COSMETICS");
+                            String rawData = rs2.getString("COSMETICS");
                             Map<CosmeticSlot, Cosmetic> cosmetics = desteralizedata(rawData);
                             for (Cosmetic cosmetic : cosmetics.values()) {
                                 user.addPlayerCosmetic(cosmetic);
@@ -105,7 +108,7 @@ public class MySQLData extends Data {
         if (connection != null && !connection.isClosed()) {
             return;
         }
-        Bukkit.getScheduler().runTaskAsynchronously(HMCCosmeticsPlugin.getInstance(), () -> {
+        //Bukkit.getScheduler().runTaskAsynchronously(HMCCosmeticsPlugin.getInstance(), () -> {
 
             //close Connection if still active
             if (connection != null) {
@@ -124,8 +127,8 @@ public class MySQLData extends Data {
                 throw new RuntimeException(e);
             }
 
-        });
-        connection = DriverManager.getConnection("jdbc:mysql://" + DatabaseSettings.getHost() + ":" + DatabaseSettings.getPort() + "/" + DatabaseSettings.getDatabase(), setupProperties());
+        //});
+        //connection = DriverManager.getConnection("jdbc:mysql://" + DatabaseSettings.getHost() + ":" + DatabaseSettings.getPort() + "/" + DatabaseSettings.getDatabase(), setupProperties());
     }
 
     public void close() {
@@ -146,16 +149,23 @@ public class MySQLData extends Data {
         return props;
     }
 
-    private boolean isConnectionOpen() throws SQLException{
-        if (connection == null || connection.isClosed()) {
-            return false;
-        } else {
-            return true;
+    private boolean isConnectionOpen() {
+        try {
+            if (connection == null || connection.isClosed()) {
+                return false;
+            } else {
+                return true;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 
     public PreparedStatement preparedStatement(String query) {
         PreparedStatement ps = null;
+        if (!isConnectionOpen()) {
+            HMCCosmeticsPlugin.getInstance().getLogger().info("Connection is not open");
+        }
         try {
             ps = connection.prepareStatement(query);
         } catch (SQLException e) {

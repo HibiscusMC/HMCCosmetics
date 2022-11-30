@@ -1,8 +1,10 @@
 package com.hibiscusmc.hmccosmetics.listener;
 
+import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.database.Database;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
@@ -16,7 +18,9 @@ public class PlayerConnectionListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         CosmeticUser user = Database.get(event.getPlayer().getUniqueId());
         CosmeticUsers.addUser(user);
-        user.updateCosmetic();
+        Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
+            user.updateCosmetic();
+        }, 2);
     }
 
     @EventHandler
