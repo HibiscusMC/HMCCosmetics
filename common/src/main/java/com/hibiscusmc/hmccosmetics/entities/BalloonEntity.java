@@ -6,7 +6,6 @@ import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
 import com.ticxo.modelengine.api.ModelEngineAPI;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
-import net.minecraft.world.entity.Entity;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
