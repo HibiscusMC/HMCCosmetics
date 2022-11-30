@@ -74,6 +74,8 @@ public class PlayerGameListener implements Listener {
     public void onPlayerTeleport(PlayerTeleportEvent event) {
         CosmeticUser user = CosmeticUsers.getUser(event.getPlayer().getUniqueId());
 
+        if (user == null) return;
+
         if (user.hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
             user.hideBackpack();
 
