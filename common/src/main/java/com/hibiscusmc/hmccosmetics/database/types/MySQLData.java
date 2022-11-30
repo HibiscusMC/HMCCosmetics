@@ -70,26 +70,20 @@ public class MySQLData extends Data {
     public CosmeticUser get(UUID uniqueId) {
         CosmeticUser user = new CosmeticUser(uniqueId);
 
-        // Need to figure out how to properly do this async.
-        Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> {
+        Bukkit.getScheduler().runTaskAsynchronously(HMCCosmeticsPlugin.getInstance(), () -> {
             try {
-                PreparedStatement preparedStatement = preparedStatement("SELECT COUNT(UUID) FROM COSMETICDATABASE WHERE UUID = ?;");
+                PreparedStatement preparedStatement = preparedStatement("SELECT * FROM COSMETICDATABASE WHERE UUID = ?;");
                 preparedStatement.setString(1, uniqueId.toString());
                 ResultSet rs = preparedStatement.executeQuery();
                 if (rs.next()) {
-                    if (rs.getInt(1) == 0) { // Not in the system
-                        // nothing
-                    } else {
-                        PreparedStatement preState2 = preparedStatement("SELECT * FROM COSMETICDATABASE WHERE UUID = ?;");
-                        preState2.setString(1, uniqueId.toString());
-                        ResultSet rs2 = preState2.executeQuery();
-                        if (rs2.next()) {
-                            String rawData = rs2.getString("COSMETICS");
-                            Map<CosmeticSlot, Cosmetic> cosmetics = desteralizedata(rawData);
-                            for (Cosmetic cosmetic : cosmetics.values()) {
-                                user.addPlayerCosmetic(cosmetic);
-                            }
-                        }
+                    String rawData = rs.getString("COSMETICS");
+                    Map<CosmeticSlot, Cosmetic> cosmetics = desteralizedata(rawData);
+                    for (Cosmetic cosmetic : cosmetics.values()) {
+                        Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> {
+                            // This can not be async.
+                            user.addPlayerCosmetic(cosmetic);
+                        });
+
                     }
                 }
             } catch (SQLException e) {
@@ -101,6 +95,15 @@ public class MySQLData extends Data {
 
     @Override
     public void clear(UUID unqiueId) {
+        Bukkit.getScheduler().runTaskAsynchronously(HMCCosmeticsPlugin.getInstance(), () -> {
+            try {
+                PreparedStatement preparedSt = preparedStatement("DELETE FROM COSMETICDATABASE WHERE UUID=?;");
+                preparedSt.setString(1, unqiueId.toString());
+                preparedSt.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
         // TODO
     }
 
