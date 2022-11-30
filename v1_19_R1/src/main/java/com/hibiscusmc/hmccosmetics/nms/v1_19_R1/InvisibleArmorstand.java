@@ -1,4 +1,4 @@
-package com.hibiscusmc.hmccosmetics.entities;
+package com.hibiscusmc.hmccosmetics.nms.v1_19_R1;
 
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.level.Level;

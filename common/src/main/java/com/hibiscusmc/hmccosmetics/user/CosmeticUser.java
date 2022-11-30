@@ -9,7 +9,8 @@ import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticArmorType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBackpackType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
 import com.hibiscusmc.hmccosmetics.entities.BalloonEntity;
-import com.hibiscusmc.hmccosmetics.entities.InvisibleArmorstand;
+import com.hibiscusmc.hmccosmetics.nms.NMSHandler;
+import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
 import com.hibiscusmc.hmccosmetics.util.PlayerUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -18,8 +19,7 @@ import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_19_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftItemStack;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -35,7 +35,7 @@ public class CosmeticUser {
     private UUID uniqueId;
     private HashMap<CosmeticSlot, Cosmetic> playerCosmetics = new HashMap<>();
     private Wardrobe wardrobe;
-    private InvisibleArmorstand invisibleArmorstand;
+    private ArmorStand invisibleArmorstand;
     private BalloonEntity balloonEntity;
 
     // Cosmetic Settings/Toggles
@@ -60,10 +60,10 @@ public class CosmeticUser {
     }
 
     public int getArmorstandId() {
-        return invisibleArmorstand.getId();
+        return invisibleArmorstand.getEntityId();
     }
 
-    public InvisibleArmorstand getBackpackEntity() {
+    public Entity getBackpackEntity() {
         return this.invisibleArmorstand;
     }
     public BalloonEntity getBalloonEntity() {
@@ -186,38 +186,19 @@ public class CosmeticUser {
         List<Player> sentTo = PlayerUtils.getNearbyPlayers(player.getLocation());
 
         if (this.invisibleArmorstand != null) return;
-        this.invisibleArmorstand = new InvisibleArmorstand(player.getLocation());
 
-        ItemStack item = getUserCosmeticItem(cosmeticBackpackType);
+        this.invisibleArmorstand = (ArmorStand) NMSHandlers.getHandler().spawnBackpack(this, cosmeticBackpackType);
 
-        invisibleArmorstand.setItemSlot(EquipmentSlot.HEAD, CraftItemStack.asNMSCopy(item));
-        ((CraftWorld) player.getWorld()).getHandle().addFreshEntity(invisibleArmorstand, CreatureSpawnEvent.SpawnReason.CUSTOM);
-
-        //PacketManager.armorStandMetaPacket(invisibleArmorstand.getBukkitEntity(), sentTo);
-        //PacketManager.ridingMountPacket(player.getEntityId(), invisibleArmorstand.getId(), sentTo);
-
-        player.addPassenger(invisibleArmorstand.getBukkitEntity());
+        player.addPassenger(invisibleArmorstand);
 
     }
 
     public void spawnBalloon(CosmeticBalloonType cosmeticBalloonType) {
         Player player = Bukkit.getPlayer(getUniqueId());
-        List<Player> sentTo = PlayerUtils.getNearbyPlayers(player.getLocation());
-        Location newLoc = player.getLocation().clone().add(Settings.getBalloonOffset());
 
         if (this.balloonEntity != null) return;
-        BalloonEntity balloonEntity1 = new BalloonEntity(player.getLocation());
 
-        ((CraftWorld) player.getWorld()).getHandle().addFreshEntity(balloonEntity1.getModelEntity(), CreatureSpawnEvent.SpawnReason.CUSTOM);
-
-        balloonEntity1.spawnModel(cosmeticBalloonType.getModelName());
-        balloonEntity1.addPlayerToModel(player, cosmeticBalloonType.getModelName());
-
-        PacketManager.sendEntitySpawnPacket(newLoc, balloonEntity1.getPufferfishBalloonId(), EntityType.PUFFERFISH, balloonEntity1.getPufferfishBalloonUniqueId(), sentTo);
-        PacketManager.sendInvisibilityPacket(balloonEntity1.getPufferfishBalloonId(), sentTo);
-        PacketManager.sendLeashPacket(balloonEntity1.getPufferfishBalloonId(), player.getEntityId(), sentTo);
-
-        this.balloonEntity = balloonEntity1;
+        this.balloonEntity = NMSHandlers.getHandler().spawnBalloon(this, cosmeticBalloonType);
     }
 
     public void despawnBalloon() {
@@ -233,8 +214,9 @@ public class CosmeticUser {
     public void despawnBackpack() {
         Player player = Bukkit.getPlayer(getUniqueId());
         if (invisibleArmorstand == null) return;
-        invisibleArmorstand.getBukkitLivingEntity().setHealth(0);
-        invisibleArmorstand.remove(net.minecraft.world.entity.Entity.RemovalReason.DISCARDED);
+        invisibleArmorstand.setHealth(0);
+        invisibleArmorstand.remove();
+        //invisibleArmorstand.remove(net.minecraft.world.entity.Entity.RemovalReason.DISCARDED);
         this.invisibleArmorstand = null;
     }
 
@@ -274,8 +256,8 @@ public class CosmeticUser {
         if (hideBackpack == true) return;
         if (hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
             //CosmeticBackpackType cosmeticBackpackType = (CosmeticBackpackType) getCosmetic(CosmeticSlot.BACKPACK);
-            getPlayer().removePassenger(invisibleArmorstand.getBukkitEntity());
-            invisibleArmorstand.getBukkitLivingEntity().getEquipment().clear();
+            getPlayer().removePassenger(invisibleArmorstand);
+            invisibleArmorstand.getEquipment().clear();
             hideBackpack = true;
         }
     }
@@ -284,9 +266,9 @@ public class CosmeticUser {
         if (hideBackpack == false) return;
         if (hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
             CosmeticBackpackType cosmeticBackpackType = (CosmeticBackpackType) getCosmetic(CosmeticSlot.BACKPACK);
-            getPlayer().addPassenger(invisibleArmorstand.getBukkitEntity());
+            getPlayer().addPassenger(invisibleArmorstand);
             ItemStack item = getUserCosmeticItem(cosmeticBackpackType);
-            invisibleArmorstand.setItemSlot(EquipmentSlot.HEAD, CraftItemStack.asNMSCopy(item));
+            invisibleArmorstand.getEquipment().setHelmet(item);
             hideBackpack = false;
         }
     }

@@ -33,21 +33,21 @@ public class CosmeticBackpackType extends Cosmetic {
             return;
         }
 
-        if (loc.getWorld() != user.getBackpackEntity().getBukkitLivingEntity().getWorld()) {
-            user.getBackpackEntity().getBukkitLivingEntity().teleport(loc);
+        if (loc.getWorld() != user.getBackpackEntity().getWorld()) {
+            user.getBackpackEntity().teleport(loc);
         }
 
-        user.getBackpackEntity().moveTo(loc.getX(), loc.getY(), loc.getZ());
+        user.getBackpackEntity().teleport(loc);
 
         if (player.getPassengers().isEmpty()) {
             //HMCCosmeticsPlugin.getInstance().getLogger().info("No passengers");
-            user.getBackpackEntity().getBukkitLivingEntity().teleport(loc);
-            player.addPassenger(user.getBackpackEntity().getBukkitEntity());
+            user.getBackpackEntity().teleport(loc);
+            player.addPassenger(user.getBackpackEntity());
         } else {
             //HMCCosmeticsPlugin.getInstance().getLogger().info("Passengers: " + player.getPassengers());
         }
 
-        user.getBackpackEntity().getBukkitLivingEntity().setRotation(loc.getYaw(), loc.getPitch());
+        user.getBackpackEntity().setRotation(loc.getYaw(), loc.getPitch());
         user.showBackpack();
 
     }

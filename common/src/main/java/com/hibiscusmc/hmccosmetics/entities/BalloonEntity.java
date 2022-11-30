@@ -2,6 +2,7 @@ package com.hibiscusmc.hmccosmetics.entities;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.Settings;
+import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
 import com.ticxo.modelengine.api.ModelEngineAPI;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
@@ -21,7 +22,7 @@ public class BalloonEntity {
 
     public BalloonEntity(Location location) {
         this.uniqueID = UUID.randomUUID();
-        this.balloonID = Entity.nextEntityId();
+        this.balloonID = NMSHandlers.getHandler().getNextEntityId();
         this.modelEntity = new MEGEntity(location.add(Settings.getBalloonOffset()));
     }
 

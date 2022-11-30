@@ -4,6 +4,7 @@ import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
+import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
 import com.hibiscusmc.hmccosmetics.util.ServerUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
 import net.minecraft.world.entity.Entity;
@@ -31,8 +32,8 @@ public class Wardrobe {
     private boolean active;
 
     public Wardrobe(CosmeticUser user) {
-        NPC_ID = Entity.nextEntityId();
-        ARMORSTAND_ID = Entity.nextEntityId();
+        NPC_ID = NMSHandlers.getHandler().getNextEntityId();
+        ARMORSTAND_ID = NMSHandlers.getHandler().getNextEntityId();
         WARDROBE_UUID = UUID.randomUUID();
         VIEWER = user;
     }
@@ -78,7 +79,7 @@ public class Wardrobe {
         // Misc
 
         if (VIEWER.hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
-            PacketManager.ridingMountPacket(NPC_ID, VIEWER.getBackpackEntity().getId(), viewer);
+            PacketManager.ridingMountPacket(NPC_ID, VIEWER.getBackpackEntity().getEntityId(), viewer);
         }
 
         if (VIEWER.hasCosmeticInSlot(CosmeticSlot.BALLOON)) {
@@ -120,7 +121,7 @@ public class Wardrobe {
         VIEWER.showPlayer();
 
         if (VIEWER.hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
-            PacketManager.ridingMountPacket(player.getEntityId(), VIEWER.getBackpackEntity().getId(), viewer);
+            PacketManager.ridingMountPacket(player.getEntityId(), VIEWER.getBackpackEntity().getEntityId(), viewer);
         }
 
         if (VIEWER.hasCosmeticInSlot(CosmeticSlot.BALLOON)) {
@@ -168,8 +169,8 @@ public class Wardrobe {
 
                 if (VIEWER.hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
                     PacketManager.sendTeleportPacket(VIEWER.getArmorstandId(), location, false, viewer);
-                    PacketManager.ridingMountPacket(NPC_ID, VIEWER.getBackpackEntity().getId(), viewer);
-                    VIEWER.getBackpackEntity().getBukkitEntity().setRotation(nextyaw, 0);
+                    PacketManager.ridingMountPacket(NPC_ID, VIEWER.getBackpackEntity().getEntityId(), viewer);
+                    VIEWER.getBackpackEntity().setRotation(nextyaw, 0);
                 }
 
                 if (VIEWER.hasCosmeticInSlot(CosmeticSlot.BALLOON)) {
