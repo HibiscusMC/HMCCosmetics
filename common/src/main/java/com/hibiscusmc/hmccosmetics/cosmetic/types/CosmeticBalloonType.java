@@ -32,10 +32,10 @@ public class CosmeticBalloonType extends Cosmetic {
         final Location actual = player.getLocation().clone().add(Settings.getBalloonOffset());
 
         if (player.getLocation().getWorld() != user.getBalloonEntity().getLocation().getWorld()) {
-            user.getBalloonEntity().getModelEntity().getBukkitLivingEntity().teleport(actual);
+            user.getBalloonEntity().getModelEntity().teleport(actual);
         }
 
-        user.getBalloonEntity().getModelEntity().moveTo(actual.getX(), actual.getY(), actual.getZ());
+        user.getBalloonEntity().getModelEntity().teleport(actual);
 
         List<Player> viewer = PlayerUtils.getNearbyPlayers(player);
         viewer.add(player);

@@ -15,9 +15,12 @@ import org.spongepowered.configurate.serialize.SerializationException;
 public class CosmeticBackpackType extends Cosmetic {
 
     private ItemStack backpackItem;
+    ConfigurationNode config;
 
     public CosmeticBackpackType(String id, ConfigurationNode config) {
         super(id, config);
+
+        this.config = config;
 
         this.backpackItem = generateItemStack(config.node("item"));
     }
@@ -52,7 +55,11 @@ public class CosmeticBackpackType extends Cosmetic {
     }
 
     public ItemStack getBackpackItem() {
-        return backpackItem;
+        if (this.backpackItem == null ) {
+            HMCCosmeticsPlugin.getInstance().getLogger().info("Backpack item was null for " + getId());
+            this.backpackItem = generateItemStack(config.node("item"));
+        }
+        return this.backpackItem.clone();
     }
 
     private ItemStack generateItemStack(ConfigurationNode config) {

@@ -1,5 +1,6 @@
 package com.hibiscusmc.hmccosmetics.nms.v1_19_R1;
 
+import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBackpackType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
@@ -8,13 +9,17 @@ import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.PlayerUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
+import net.minecraft.network.protocol.Packet;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.ServerPlayerConnection;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_19_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_19_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftItemStack;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -52,6 +57,11 @@ public class NMSHandler implements com.hibiscusmc.hmccosmetics.nms.NMSHandler {
     }
 
     @Override
+    public org.bukkit.entity.Entity getMEGEntity(Location loc) {
+        return new MEGEntity(loc).getBukkitEntity();
+    }
+
+    @Override
     public org.bukkit.entity.Entity spawnBackpack(CosmeticUser user, CosmeticBackpackType cosmeticBackpackType) {
         InvisibleArmorstand invisibleArmorstand = new InvisibleArmorstand(user.getPlayer().getLocation());
 
@@ -60,11 +70,15 @@ public class NMSHandler implements com.hibiscusmc.hmccosmetics.nms.NMSHandler {
         invisibleArmorstand.setItemSlot(EquipmentSlot.HEAD, CraftItemStack.asNMSCopy(item));
         ((CraftWorld) user.getPlayer().getWorld()).getHandle().addFreshEntity(invisibleArmorstand, CreatureSpawnEvent.SpawnReason.CUSTOM);
 
+        HMCCosmeticsPlugin.getInstance().getLogger().info("spawnBackpack NMS");
+
         return invisibleArmorstand.getBukkitLivingEntity();
         //PacketManager.armorStandMetaPacket(invisibleArmorstand.getBukkitEntity(), sentTo);
         //PacketManager.ridingMountPacket(player.getEntityId(), invisibleArmorstand.getId(), sentTo);
 
     }
+
+
 
     @Override
     public BalloonEntity spawnBalloon(CosmeticUser user, CosmeticBalloonType cosmeticBalloonType) {
@@ -73,7 +87,7 @@ public class NMSHandler implements com.hibiscusmc.hmccosmetics.nms.NMSHandler {
 
         BalloonEntity balloonEntity1 = new BalloonEntity(user.getPlayer().getLocation());
         List<Player> sentTo = PlayerUtils.getNearbyPlayers(player.getLocation());
-        ((CraftWorld) user.getPlayer().getWorld()).getHandle().addFreshEntity(balloonEntity1.getModelEntity(), CreatureSpawnEvent.SpawnReason.CUSTOM);
+        balloonEntity1.getModelEntity().teleport(user.getPlayer().getLocation().add(Settings.getBalloonOffset()));
 
         balloonEntity1.spawnModel(cosmeticBalloonType.getModelName());
         balloonEntity1.addPlayerToModel(player, cosmeticBalloonType.getModelName());
@@ -83,6 +97,13 @@ public class NMSHandler implements com.hibiscusmc.hmccosmetics.nms.NMSHandler {
         PacketManager.sendLeashPacket(balloonEntity1.getPufferfishBalloonId(), player.getEntityId(), sentTo);
 
         return balloonEntity1;
+    }
+
+    @Override
+    public void sendPacket(Player player, Packet packet) {
+        ServerPlayer serverPlayer = ((CraftPlayer) player).getHandle();
+        ServerPlayerConnection connection = serverPlayer.connection;
+        connection.send(packet);
     }
 
     @Override

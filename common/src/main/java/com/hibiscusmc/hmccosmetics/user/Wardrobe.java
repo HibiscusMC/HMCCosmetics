@@ -174,7 +174,7 @@ public class Wardrobe {
 
                 if (VIEWER.hasCosmeticInSlot(CosmeticSlot.BALLOON)) {
                     PacketManager.sendTeleportPacket(VIEWER.getBalloonEntity().getPufferfishBalloonId(), WardrobeSettings.getWardrobeLocation(), false, viewer);
-                    VIEWER.getBalloonEntity().getModelEntity().getBukkitLivingEntity().teleport(WardrobeSettings.getWardrobeLocation().add(Settings.getBalloonOffset()));
+                    VIEWER.getBalloonEntity().getModelEntity().teleport(WardrobeSettings.getWardrobeLocation().add(Settings.getBalloonOffset()));
                     //PacketManager.sendLeashPacket(VIEWER.getBalloonEntity().getPufferfishBalloonId(), NPC_ID, viewer);
                 }
             }

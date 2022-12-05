@@ -72,9 +72,11 @@ public class CosmeticUser {
     public void addPlayerCosmetic(Cosmetic cosmetic, Color color) {
         playerCosmetics.put(cosmetic.getSlot(), cosmetic);
         if (color != null) colors.put(cosmetic.getSlot(), color);
+        HMCCosmeticsPlugin.getInstance().getLogger().info("addPlayerCosmetic " + cosmetic.getId());
         if (cosmetic.getSlot() == CosmeticSlot.BACKPACK) {
             CosmeticBackpackType backpackType = (CosmeticBackpackType) cosmetic;
             spawnBackpack(backpackType);
+            HMCCosmeticsPlugin.getInstance().getLogger().info("addPlayerCosmetic spawnBackpack " + cosmetic.getId());
         }
         if (cosmetic.getSlot() == CosmeticSlot.BALLOON) {
             CosmeticBalloonType balloonType = (CosmeticBalloonType) cosmetic;
@@ -129,19 +131,26 @@ public class CosmeticUser {
         if (cosmetic instanceof CosmeticArmorType) {
             CosmeticArmorType cosmetic1 = (CosmeticArmorType) cosmetic;
             item = cosmetic1.getCosmeticItem();
+            HMCCosmeticsPlugin.getInstance().getLogger().info("GetUserCosemticUser Armor");
         }
         if (cosmetic instanceof CosmeticBackpackType) {
             CosmeticBackpackType cosmetic1 = (CosmeticBackpackType) cosmetic;
             item = cosmetic1.getBackpackItem();
+            HMCCosmeticsPlugin.getInstance().getLogger().info("GetUserCosemticUser Backpack");
         }
-        if (!item.hasItemMeta()) return null;
-        ItemMeta itemMeta = item.getItemMeta();
-        if (itemMeta instanceof LeatherArmorMeta) {
-            if (colors.containsKey(cosmetic.getSlot())) {
-                ((LeatherArmorMeta) itemMeta).setColor(colors.get(cosmetic.getSlot()));
+        if (item == null) {
+            HMCCosmeticsPlugin.getInstance().getLogger().info("GetUserCosemticUser Item is null");
+            return null;
+        }
+        if (item.hasItemMeta()) {
+            ItemMeta itemMeta = item.getItemMeta();
+            if (itemMeta instanceof LeatherArmorMeta) {
+                if (colors.containsKey(cosmetic.getSlot())) {
+                    ((LeatherArmorMeta) itemMeta).setColor(colors.get(cosmetic.getSlot()));
+                }
             }
+            item.setItemMeta(itemMeta);
         }
-        item.setItemMeta(itemMeta);
         return item;
     }
 
@@ -177,6 +186,7 @@ public class CosmeticUser {
     }
 
     public void spawnBackpack(CosmeticBackpackType cosmeticBackpackType) {
+        HMCCosmeticsPlugin.getInstance().getLogger().info("spawnBackpack Bukkit - Start");
         Player player = Bukkit.getPlayer(getUniqueId());
         List<Player> sentTo = PlayerUtils.getNearbyPlayers(player.getLocation());
 
@@ -185,6 +195,8 @@ public class CosmeticUser {
         this.invisibleArmorstand = (ArmorStand) NMSHandlers.getHandler().spawnBackpack(this, cosmeticBackpackType);
 
         player.addPassenger(invisibleArmorstand);
+
+        HMCCosmeticsPlugin.getInstance().getLogger().info("spawnBackpack Bukkit - Finish");
 
     }
 

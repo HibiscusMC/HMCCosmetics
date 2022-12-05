@@ -102,13 +102,14 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
         // Translation setup
         Translation.setup();
 
+        // ItemHooks
+        ItemHooks.setup();
+
         // Cosmetics setup
         Cosmetics.setup();
 
         // Menus setup
         Menus.setup();
 
-        // ItemHooks
-        ItemHooks.setup();
     }
 }

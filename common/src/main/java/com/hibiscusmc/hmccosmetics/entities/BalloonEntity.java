@@ -2,11 +2,13 @@ package com.hibiscusmc.hmccosmetics.entities;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.Settings;
+import com.hibiscusmc.hmccosmetics.nms.NMSHandler;
 import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
 import com.ticxo.modelengine.api.ModelEngineAPI;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -17,12 +19,12 @@ public class BalloonEntity {
 
     private final int balloonID;
     private final UUID uniqueID;
-    private final MEGEntity modelEntity;
+    private final Entity modelEntity;
 
     public BalloonEntity(Location location) {
         this.uniqueID = UUID.randomUUID();
         this.balloonID = NMSHandlers.getHandler().getNextEntityId();
-        this.modelEntity = new MEGEntity(location.add(Settings.getBalloonOffset()));
+        this.modelEntity = NMSHandlers.getHandler().getMEGEntity(location.add(Settings.getBalloonOffset()));
     }
 
     public void spawnModel(final String id) {
@@ -31,13 +33,13 @@ public class BalloonEntity {
             HMCCosmeticsPlugin.getInstance().getLogger().warning("Invalid Model Engine Blueprint " + id);
             return;
         }
-        ModeledEntity modeledEntity = ModelEngineAPI.getOrCreateModeledEntity(modelEntity.getBukkitEntity());
+        ModeledEntity modeledEntity = ModelEngineAPI.getOrCreateModeledEntity(modelEntity);
         ActiveModel model = ModelEngineAPI.createActiveModel(ModelEngineAPI.getBlueprint(id));
         modeledEntity.addModel(model, false);
     }
 
     public void remove() {
-        final ModeledEntity entity = ModelEngineAPI.api.getModeledEntity(modelEntity.getUUID());
+        final ModeledEntity entity = ModelEngineAPI.api.getModeledEntity(modelEntity.getUniqueId());
 
         if (entity == null) return;
 
@@ -50,7 +52,7 @@ public class BalloonEntity {
     }
 
     public void addPlayerToModel(final Player player, final String id) {
-        final ModeledEntity model = ModelEngineAPI.api.getModeledEntity(modelEntity.getUUID());
+        final ModeledEntity model = ModelEngineAPI.api.getModeledEntity(modelEntity.getUniqueId());
         if (model == null) {
             spawnModel(id);
             return;
@@ -59,14 +61,14 @@ public class BalloonEntity {
         model.showToPlayer(player);
     }
     public void removePlayerFromModel(final Player player) {
-        final ModeledEntity model = ModelEngineAPI.api.getModeledEntity(modelEntity.getUUID());
+        final ModeledEntity model = ModelEngineAPI.api.getModeledEntity(modelEntity.getUniqueId());
 
         if (model == null) return;
 
         model.hideFromPlayer(player);
     }
 
-    public MEGEntity getModelEntity() {
+    public Entity getModelEntity() {
         return this.modelEntity;
     }
 
@@ -79,27 +81,23 @@ public class BalloonEntity {
     }
 
     public UUID getModelUnqiueId() {
-        return modelEntity.getUUID();
+        return modelEntity.getUniqueId();
     }
 
     public int getModelId() {
-        return modelEntity.getId();
+        return modelEntity.getEntityId();
     }
 
     public Location getLocation() {
-        return this.modelEntity.getBukkitEntity().getLocation();
-    }
-
-    public boolean isAlive() {
-        return this.modelEntity.isAlive();
+        return this.modelEntity.getLocation();
     }
 
     public void setLocation(Location location) {
         //this.megEntity.teleportTo(location.getX(), location.getY(), location.getZ());
-        this.modelEntity.getBukkitEntity().teleport(location);
+        this.modelEntity.teleport(location);
     }
 
     public void setVelocity(Vector vector) {
-        this.modelEntity.getBukkitEntity().setVelocity(vector);
+        this.modelEntity.setVelocity(vector);
     }
 }

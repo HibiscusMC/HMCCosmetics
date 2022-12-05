@@ -34,6 +34,7 @@ public class CosmeticCommand implements CommandExecutor {
             return true;
         }
         if (args[0].equalsIgnoreCase("apply")) {
+            sender.sendMessage("Applying - Begin");
             Player player = null;
             Cosmetic cosmetic;
 
@@ -51,6 +52,7 @@ public class CosmeticCommand implements CommandExecutor {
 
             user.addPlayerCosmetic(cosmetic);
             user.updateCosmetic(cosmetic.getSlot());
+            sender.sendMessage("Applying - Finish with  " + cosmetic.getId());
             return true;
         }
         if (args[0].equalsIgnoreCase("unapply")) {

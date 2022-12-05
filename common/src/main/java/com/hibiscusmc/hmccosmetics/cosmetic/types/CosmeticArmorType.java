@@ -36,7 +36,7 @@ public class CosmeticArmorType extends Cosmetic {
     }
 
     public ItemStack getCosmeticItem() {
-        return this.itemStack;
+        return this.itemStack.clone();
     }
 
     public EquipmentSlot getEquipSlot() {
