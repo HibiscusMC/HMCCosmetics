@@ -10,6 +10,7 @@ public class Cosmetic {
     private String permission;
     private CosmeticSlot slot;
     private boolean equipable; // This simply means if a player can put it on their body.
+    private boolean dyable;
 
     protected Cosmetic(String id, ConfigurationNode config) {
         this.id = id;
@@ -18,6 +19,7 @@ public class Cosmetic {
         setSlot(CosmeticSlot.valueOf(config.node("slot").getString()));
 
         setEquipable(false);
+        setDyable(config.node("dyable").getBoolean(false));
 
         Cosmetics.addCosmetic(this);
     }
@@ -56,6 +58,15 @@ public class Cosmetic {
     public boolean isEquipable() {
         return equipable;
     }
+
+    public void setDyable(boolean dyable) {
+        this.dyable = dyable;
+    }
+
+    public boolean isDyable() {
+        return this.dyable;
+    }
+
 
     public void update(CosmeticUser user) {
         // Override
