@@ -7,8 +7,10 @@ import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
 import com.hibiscusmc.hmccosmetics.database.Database;
 import com.hibiscusmc.hmccosmetics.gui.Menu;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
+import com.hibiscusmc.hmccosmetics.gui.special.DyeMenu;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
+import io.th0rgal.oraxen.utils.logs.Logs;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -115,6 +117,18 @@ public class CosmeticCommand implements CommandExecutor {
             if (player == null) return true;
             Database.clearData(player.getUniqueId());
             sender.sendMessage("Cleared data for " + player.getName());
+            return true;
+        }
+
+        else if (args[0].equalsIgnoreCase("dye")) {
+            Player player = null;
+            if (sender instanceof Player) player = ((Player) sender).getPlayer();
+            Logs.broadcast(player);
+            if (player == null) return true;
+            CosmeticUser user = CosmeticUsers.getUser(player);
+            Logs.broadcast(user);
+            if (user == null) return true;
+            DyeMenu.openMenu(user, user.getCosmetic(CosmeticSlot.BACKPACK));
         }
         return true;
     }
