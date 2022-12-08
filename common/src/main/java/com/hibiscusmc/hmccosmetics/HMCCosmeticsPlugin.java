@@ -29,6 +29,7 @@ import java.nio.file.Path;
 public final class HMCCosmeticsPlugin extends JavaPlugin {
 
     private static HMCCosmeticsPlugin instance;
+    private static boolean disable = false;
 
     @Override
     public void onEnable() {
@@ -67,6 +68,7 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        disable = true;
         for (Player player : Bukkit.getOnlinePlayers()) {
             Database.save(player);
         }
@@ -111,5 +113,9 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
         // Menus setup
         Menus.setup();
 
+    }
+
+    public static boolean isDisable() {
+        return disable;
     }
 }
