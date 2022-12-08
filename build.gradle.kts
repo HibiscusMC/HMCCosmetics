@@ -115,7 +115,7 @@ bukkit {
     apiVersion = "1.19"
     authors = listOf("LoJoSho")
     depend = listOf("ProtocolLib")
-    softDepend = listOf("ModelEngine", "Oraxen")
+    softDepend = listOf("ModelEngine", "Oraxen", "ItemsAdder")
     version = "${project.version}"
 
     commands {

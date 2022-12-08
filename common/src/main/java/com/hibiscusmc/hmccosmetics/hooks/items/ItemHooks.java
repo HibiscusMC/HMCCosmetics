@@ -11,6 +11,7 @@ public class ItemHooks {
 
     private static HashMap<String, ItemHook> itemHooks = new HashMap<>();
     private static OraxenHook ORAXEN_HOOK = new OraxenHook();
+    private static ItemAdderHook ITEMADDER_HOOK = new ItemAdderHook();
 
     public static ItemHook getItemHook(String id) {
         return itemHooks.get(id.toLowerCase());
@@ -31,7 +32,6 @@ public class ItemHooks {
                 HMCCosmeticsPlugin.getInstance().getLogger().info("Successfully hooked into " + itemHook.getId());
             }
         }
-
     }
 
     public static ItemStack getItem(String raw) {
@@ -43,7 +43,7 @@ public class ItemHooks {
         // Ex. Oraxen:BigSword
         // split[0] is the plugin name
         // split[1] is the item name
-        String[] split = raw.split(":");
+        String[] split = raw.split(":", 2);
 
         if (!isItemHook(split[0])) return null;
         ItemHook itemHook = getItemHook(split[0]);
