@@ -47,8 +47,9 @@ public class CosmeticCommandTabComplete implements TabCompleter {
                     completions.add(player.getName());
                 }
             } else if (args[0].equalsIgnoreCase("dye")) {
-                completions.add(CosmeticSlot.BALLOON.name());
-                completions.add(CosmeticSlot.BACKPACK.name());
+                for (CosmeticSlot slot : CosmeticSlot.values()) {
+                    completions.add(slot.name());
+                }
             }
         }
 
