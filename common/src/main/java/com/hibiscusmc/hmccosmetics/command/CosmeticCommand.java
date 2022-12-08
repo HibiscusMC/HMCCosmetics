@@ -19,6 +19,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
+
 public class CosmeticCommand implements CommandExecutor {
 
     // cosmetics apply cosmetics playerName
@@ -120,15 +122,12 @@ public class CosmeticCommand implements CommandExecutor {
             return true;
         }
 
-        else if (args[0].equalsIgnoreCase("dye")) {
-            Player player = null;
-            if (sender instanceof Player) player = ((Player) sender).getPlayer();
-            Logs.broadcast(player);
+        else if (args[0].equalsIgnoreCase("dye") && args.length == 2) {
+            Player player = sender instanceof Player ? (Player) sender : null;
             if (player == null) return true;
             CosmeticUser user = CosmeticUsers.getUser(player);
-            Logs.broadcast(user);
             if (user == null) return true;
-            DyeMenu.openMenu(user, user.getCosmetic(CosmeticSlot.BACKPACK));
+            DyeMenu.openMenu(user, user.getCosmetic(CosmeticSlot.valueOf(args[1])));
         }
         return true;
     }

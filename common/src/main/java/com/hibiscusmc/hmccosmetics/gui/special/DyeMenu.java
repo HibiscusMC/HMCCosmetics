@@ -12,8 +12,12 @@ import com.hibiscusmc.hmccosmetics.util.misc.Adventure;
 import com.hibiscusmc.hmccosmetics.util.misc.Placeholder;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Color;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.inventory.meta.PotionMeta;
 
 import java.util.Objects;
 
@@ -34,7 +38,15 @@ public class DyeMenu {
         gui.setItem(19, new GuiItem(originalItem));
         gui.setDefaultTopClickAction(event -> {
             if (event.getSlot() == 25) {
-                //TODO Color the cosmetic and apply it to the player
+                ItemStack item = event.getInventory().getItem(25);
+                if (item == null) return;
+                ItemMeta meta = item.getItemMeta();
+                if (meta == null) return;
+                Color color = meta instanceof LeatherArmorMeta ? ((LeatherArmorMeta) meta).getColor() :
+                        meta instanceof PotionMeta ? ((PotionMeta) meta).getColor() : null;
+                if (color == null) return;
+                //user.removeCosmeticSlot(cosmetic);
+                user.addPlayerCosmetic(cosmetic, color);
                 player.closeInventory();
             } else event.setCancelled(true);
         });
