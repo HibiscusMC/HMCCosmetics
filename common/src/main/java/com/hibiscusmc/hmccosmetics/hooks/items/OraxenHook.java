@@ -9,9 +9,8 @@ public class OraxenHook extends ItemHook{
         super("oraxen");
     }
 
+    @Override
     public ItemStack get(String itemid) {
         return OraxenItems.getItemById(itemid).build();
     }
-
-
 }
