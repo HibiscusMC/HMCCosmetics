@@ -4,6 +4,7 @@ import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
 import com.hibiscusmc.hmccosmetics.gui.action.Actions;
+import com.hibiscusmc.hmccosmetics.gui.special.DyeMenu;
 import com.hibiscusmc.hmccosmetics.gui.type.Type;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import org.spongepowered.configurate.ConfigurationNode;
@@ -38,7 +39,10 @@ public class TypeCosmetic extends Type {
             } else {
                 if (!actionConfig.node("on-equip").virtual()) actionStrings.addAll(actionConfig.node("on-equip").getList(String.class));
                 HMCCosmeticsPlugin.getInstance().getLogger().info("on-equip");
-                user.addPlayerCosmetic(cosmetic);
+                // TODO: Redo this
+                if (cosmetic.isDyable()) {
+                    DyeMenu.openMenu(user, cosmetic);
+                }
             }
 
             Actions.runActions(user, actionStrings);
