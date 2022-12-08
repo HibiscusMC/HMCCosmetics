@@ -70,6 +70,9 @@ public class CosmeticUser {
     }
 
     public void addPlayerCosmetic(Cosmetic cosmetic, Color color) {
+        if (playerCosmetics.containsKey(cosmetic.getSlot())) {
+            removeCosmeticSlot(cosmetic.getSlot());
+        }
         playerCosmetics.put(cosmetic.getSlot(), cosmetic);
         if (color != null) colors.put(cosmetic.getSlot(), color);
         HMCCosmeticsPlugin.getInstance().getLogger().info("addPlayerCosmetic " + cosmetic.getId());
