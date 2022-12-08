@@ -77,6 +77,7 @@ public class ItemSerializer implements TypeSerializer<ItemStack> {
         item.setAmount(amountNode.getInt(1));
 
         ItemMeta itemMeta = item.getItemMeta();
+        if (itemMeta == null) return item;
         if (!nameNode.virtual()) itemMeta.setDisplayName(StringUtils.parseStringToString(Utils.replaceIfNull(nameNode.getString(), "")));
         if (!unbreakableNode.virtual()) itemMeta.setUnbreakable(unbreakableNode.getBoolean());
         if (!glowingNode.virtual()) {

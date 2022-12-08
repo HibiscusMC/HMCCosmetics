@@ -28,6 +28,7 @@ public class ItemHooks {
     public static void setup() {
         for (ItemHook itemHook : itemHooks.values()) {
             if (Bukkit.getPluginManager().getPlugin(itemHook.getId()) != null) {
+                HMCCosmeticsPlugin.getInstance().getServer().getPluginManager().registerEvents(itemHook, HMCCosmeticsPlugin.getInstance());
                 itemHook.setActive(true);
                 HMCCosmeticsPlugin.getInstance().getLogger().info("Successfully hooked into " + itemHook.getId());
             }

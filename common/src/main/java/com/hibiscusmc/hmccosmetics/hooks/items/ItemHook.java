@@ -1,8 +1,9 @@
 package com.hibiscusmc.hmccosmetics.hooks.items;
 
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
-public class ItemHook {
+public class ItemHook implements Listener {
 
     private String id;
     private boolean active;

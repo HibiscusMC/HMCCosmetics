@@ -54,7 +54,7 @@ public class MySQLData extends Data {
     }
     @Override
     public void save(CosmeticUser user) {
-        Bukkit.getScheduler().runTaskAsynchronously(HMCCosmeticsPlugin.getInstance(), () -> {
+        Runnable run = () -> {
             try {
                 PreparedStatement preparedSt = preparedStatement("REPLACE INTO COSMETICDATABASE(UUID,COSMETICS) VALUES(?,?);");
                 preparedSt.setString(1, user.getUniqueId().toString());
@@ -63,7 +63,12 @@ public class MySQLData extends Data {
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-        });
+        };
+        if (!HMCCosmeticsPlugin.isDisable()) {
+            Bukkit.getScheduler().runTaskAsynchronously(HMCCosmeticsPlugin.getInstance(), run);
+        } else {
+            run.run();
+        }
     }
 
     @Override
