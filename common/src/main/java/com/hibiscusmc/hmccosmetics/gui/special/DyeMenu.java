@@ -52,7 +52,7 @@ public class DyeMenu {
         });
 
         gui.setPlayerInventoryAction(event -> event.setCancelled(true));
-        gui.setCloseGuiAction(event -> player.closeInventory());
+        gui.setCloseGuiAction(event -> {});
         gui.open(player);
     }
 }
