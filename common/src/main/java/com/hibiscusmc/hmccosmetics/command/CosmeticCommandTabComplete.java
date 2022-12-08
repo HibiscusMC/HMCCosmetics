@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -28,6 +29,7 @@ public class CosmeticCommandTabComplete implements TabCompleter {
             completions.add("menu");
             completions.add("reload");
             completions.add("dataclear");
+            completions.add("dye");
         }
 
         // This needs to be redone.
@@ -44,6 +46,9 @@ public class CosmeticCommandTabComplete implements TabCompleter {
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     completions.add(player.getName());
                 }
+            } else if (args[0].equalsIgnoreCase("dye")) {
+                completions.add(CosmeticSlot.BALLOON.name());
+                completions.add(CosmeticSlot.BACKPACK.name());
             }
         }
 
