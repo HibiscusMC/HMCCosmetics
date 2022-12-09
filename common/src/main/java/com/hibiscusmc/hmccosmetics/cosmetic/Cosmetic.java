@@ -19,7 +19,7 @@ public class Cosmetic {
         setSlot(CosmeticSlot.valueOf(config.node("slot").getString()));
 
         setEquipable(false);
-        setDyable(config.node("dyable").getBoolean(false));
+        setDyable(config.node("dyeable").getBoolean(false));
 
         Cosmetics.addCosmetic(this);
     }
