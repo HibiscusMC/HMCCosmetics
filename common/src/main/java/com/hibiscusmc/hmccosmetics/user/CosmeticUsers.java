@@ -3,6 +3,7 @@ package com.hibiscusmc.hmccosmetics.user;
 import com.google.common.collect.HashBiMap;
 import com.hibiscusmc.hmccosmetics.util.ServerUtils;
 import net.minecraft.world.entity.EntityType;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
@@ -42,5 +43,9 @@ public class CosmeticUsers {
         if (entity == null) return null;
         if (entity.getType().equals(EntityType.PLAYER)) return null;
         return COSMETIC_USERS.get(entity.getUniqueId());
+    }
+    
+    public static CosmeticUser getUser(String playerName) {
+        return getUser(Bukkit.getPlayer(playerName).getUniqueId());
     }
 }
