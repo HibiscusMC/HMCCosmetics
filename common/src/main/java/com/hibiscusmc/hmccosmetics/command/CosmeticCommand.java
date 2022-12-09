@@ -1,6 +1,7 @@
 package com.hibiscusmc.hmccosmetics.command;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
+import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
@@ -29,7 +30,17 @@ public class CosmeticCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (args.length == 0) {
-            // Possble default menu here?
+            if (!(sender instanceof Player)) {
+                // Console
+                return true;
+            }
+            CosmeticUser user = CosmeticUsers.getUser(((Player) sender).getUniqueId());
+            Menu menu = Menus.getMenu(Settings.getDefaultMenu());
+            if (user == null || menu == null) {
+                sender.sendMessage("Invalid Menu");
+                return true;
+            }
+            menu.openMenu(user);
             return true;
         }
         if (args[0].equalsIgnoreCase("reload")) {
