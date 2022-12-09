@@ -1,4 +1,8 @@
-<h4 align="center">![https://www.spigotmc.org/resources/100107/](https://www.spigotmc.org/data/resource_icons/100/100107.jpg)</h4>
+<p align="center">
+    <a href="https://www.spigotmc.org/resources/100107/">
+        <img alt="logo" src="https://www.spigotmc.org/data/resource_icons/100/100107.jpg?1645162659"/>
+    </a>
+</p>
 
 <h4 align="center">Source code for HMCCosemtics, a premium Minecraft plugin.</h4>
 
