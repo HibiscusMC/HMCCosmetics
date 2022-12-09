@@ -13,6 +13,7 @@ import com.hibiscusmc.hmccosmetics.util.PlayerUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
+import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -20,10 +21,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class CosmeticUser {
 
@@ -141,6 +139,9 @@ public class CosmeticUser {
             item = cosmetic1.getBackpackItem();
             HMCCosmeticsPlugin.getInstance().getLogger().info("GetUserCosemticUser Backpack");
         }
+        if (cosmetic instanceof CosmeticBalloonType) {
+            item = new ItemStack(Material.LEATHER_HORSE_ARMOR);
+        }
         if (item == null) {
             HMCCosmeticsPlugin.getInstance().getLogger().info("GetUserCosemticUser Item is null");
             return null;
@@ -236,6 +237,20 @@ public class CosmeticUser {
 
     public Player getPlayer() {
         return Bukkit.getPlayer(uniqueId);
+    }
+
+    public Color getCosmeticColor(CosmeticSlot slot) {
+        return colors.get(slot);
+    }
+
+    public List<CosmeticSlot> getDyeableSlots() {
+        ArrayList<CosmeticSlot> dyableSlots = new ArrayList();
+
+        for (Cosmetic cosmetic : getCosmetic()) {
+            if (cosmetic.isDyable()) dyableSlots.add(cosmetic.getSlot());
+        }
+
+        return dyableSlots;
     }
 
     public boolean hasCosmetic(Cosmetic cosmetic) {

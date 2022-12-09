@@ -3,6 +3,8 @@ package com.hibiscusmc.hmccosmetics.command;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
+import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
+import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -12,7 +14,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -32,6 +33,9 @@ public class CosmeticCommandTabComplete implements TabCompleter {
             completions.add("dye");
         }
 
+        if (!(sender instanceof Player)) return completions;
+        CosmeticUser user = CosmeticUsers.getUser(((Player) sender).getUniqueId());
+
         // This needs to be redone.
         if (args.length >= 2) {
             if (args[0].equalsIgnoreCase("apply")) {
@@ -47,7 +51,7 @@ public class CosmeticCommandTabComplete implements TabCompleter {
                     completions.add(player.getName());
                 }
             } else if (args[0].equalsIgnoreCase("dye")) {
-                for (CosmeticSlot slot : CosmeticSlot.values()) {
+                for (CosmeticSlot slot : user.getDyeableSlots()) {
                     completions.add(slot.name());
                 }
             }

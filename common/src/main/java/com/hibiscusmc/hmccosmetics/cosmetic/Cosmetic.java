@@ -21,6 +21,8 @@ public class Cosmetic {
         setEquipable(false);
         setDyable(config.node("dyeable").getBoolean(false));
 
+        HMCCosmeticsPlugin.getInstance().getLogger().info("Dyeable " + dyable);
+
         Cosmetics.addCosmetic(this);
     }
 
@@ -71,5 +73,4 @@ public class Cosmetic {
     public void update(CosmeticUser user) {
         // Override
     }
-
 }

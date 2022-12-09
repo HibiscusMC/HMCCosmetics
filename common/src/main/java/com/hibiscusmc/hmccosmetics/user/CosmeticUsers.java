@@ -44,7 +44,7 @@ public class CosmeticUsers {
         if (entity.getType().equals(EntityType.PLAYER)) return null;
         return COSMETIC_USERS.get(entity.getUniqueId());
     }
-    
+
     public static CosmeticUser getUser(String playerName) {
         return getUser(Bukkit.getPlayer(playerName).getUniqueId());
     }

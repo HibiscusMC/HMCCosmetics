@@ -7,6 +7,9 @@ import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
 import com.ticxo.modelengine.api.ModelEngineAPI;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
+import com.ticxo.modelengine.api.nms.entity.fake.BoneRenderer;
+import com.ticxo.modelengine.api.nms.entity.fake.FakeEntity;
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -27,7 +30,7 @@ public class BalloonEntity {
         this.modelEntity = NMSHandlers.getHandler().getMEGEntity(location.add(Settings.getBalloonOffset()));
     }
 
-    public void spawnModel(final String id) {
+    public void spawnModel(final String id, Color color) {
         HMCCosmeticsPlugin.getInstance().getLogger().info("Attempting Spawning for " + id);
         if (ModelEngineAPI.api.getModelRegistry().getBlueprint(id) == null) {
             HMCCosmeticsPlugin.getInstance().getLogger().warning("Invalid Model Engine Blueprint " + id);
@@ -36,6 +39,11 @@ public class BalloonEntity {
         ModeledEntity modeledEntity = ModelEngineAPI.getOrCreateModeledEntity(modelEntity);
         ActiveModel model = ModelEngineAPI.createActiveModel(ModelEngineAPI.getBlueprint(id));
         modeledEntity.addModel(model, false);
+        if (color != null) {
+            modeledEntity.getModels().forEach((d, singleModel) -> {
+                singleModel.getRendererHandler().setColor(color);
+            });
+        }
     }
 
     public void remove() {
@@ -49,12 +57,17 @@ public class BalloonEntity {
 
         //ModelEngineAPI.removeModeledEntity(megEntity.getUniqueId());
         entity.destroy();
+        modelEntity.remove();
     }
 
     public void addPlayerToModel(final Player player, final String id) {
+        addPlayerToModel(player, id, null);
+    }
+
+    public void addPlayerToModel(final Player player, final String id, Color color) {
         final ModeledEntity model = ModelEngineAPI.api.getModeledEntity(modelEntity.getUniqueId());
         if (model == null) {
-            spawnModel(id);
+            spawnModel(id, color);
             return;
         }
         if (model.getRangeManager().getPlayerInRange().contains(player)) return;

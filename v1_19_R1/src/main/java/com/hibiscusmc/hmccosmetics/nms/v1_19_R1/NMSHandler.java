@@ -2,6 +2,7 @@ package com.hibiscusmc.hmccosmetics.nms.v1_19_R1;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.Settings;
+import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBackpackType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
 import com.hibiscusmc.hmccosmetics.entities.BalloonEntity;
@@ -89,8 +90,8 @@ public class NMSHandler implements com.hibiscusmc.hmccosmetics.nms.NMSHandler {
         List<Player> sentTo = PlayerUtils.getNearbyPlayers(player.getLocation());
         balloonEntity1.getModelEntity().teleport(user.getPlayer().getLocation().add(Settings.getBalloonOffset()));
 
-        balloonEntity1.spawnModel(cosmeticBalloonType.getModelName());
-        balloonEntity1.addPlayerToModel(player, cosmeticBalloonType.getModelName());
+        balloonEntity1.spawnModel(cosmeticBalloonType.getModelName(), user.getCosmeticColor(cosmeticBalloonType.getSlot()));
+        balloonEntity1.addPlayerToModel(player, cosmeticBalloonType.getModelName(), user.getCosmeticColor(cosmeticBalloonType.getSlot()));
 
         PacketManager.sendEntitySpawnPacket(newLoc, balloonEntity1.getPufferfishBalloonId(), EntityType.PUFFERFISH, balloonEntity1.getPufferfishBalloonUniqueId(), sentTo);
         PacketManager.sendInvisibilityPacket(balloonEntity1.getPufferfishBalloonId(), sentTo);
