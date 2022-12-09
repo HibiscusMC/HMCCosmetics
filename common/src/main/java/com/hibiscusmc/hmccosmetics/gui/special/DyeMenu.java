@@ -3,23 +3,16 @@ package com.hibiscusmc.hmccosmetics.gui.special;
 import com.hibiscusmc.hmccolor.HMCColorApi;
 import com.hibiscusmc.hmccolor.gui.guis.Gui;
 import com.hibiscusmc.hmccolor.gui.guis.GuiItem;
+import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
-import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticArmorType;
-import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBackpackType;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
-import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
-import com.hibiscusmc.hmccosmetics.util.misc.Adventure;
 import com.hibiscusmc.hmccosmetics.util.misc.Placeholder;
-import dev.triumphteam.gui.builder.item.ItemBuilder;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Color;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.PotionMeta;
-
-import java.util.Objects;
 
 public class DyeMenu {
 
@@ -34,7 +27,7 @@ public class DyeMenu {
         Player player = user.getPlayer();
         HMCColorApi hmcColorApi = new HMCColorApi();
         Gui gui = hmcColorApi.getColorMenu();
-        gui.updateTitle(Placeholder.applyPapiPlaceholders(player, "Dyeing Menu"));
+        gui.updateTitle(Placeholder.applyPapiPlaceholders(player, Settings.getDyeMenuName()));
         gui.setItem(19, new GuiItem(originalItem));
         gui.setDefaultTopClickAction(event -> {
             if (event.getSlot() == 25) {

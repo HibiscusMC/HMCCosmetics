@@ -3,7 +3,7 @@
 #
 config-version: 1
 
-default-menu: main
+default-menu: examplemenu
 database-settings:
   type: INTERNAL # INTERNAL, MYSQL
   mysql:
@@ -28,6 +28,8 @@ cosmetic-settings:
     x: 0.5
     y: 3
     z: 0.5
+dye-menu:
+  title: "Dye menu"
 wardrobe:
   # spawn static wardrobe if in this radius of wardrobe-location
   static-radius: 10

@@ -21,8 +21,11 @@ public class Settings {
     private static final transient String LOOK_DOWN_PITCH_PATH = "look-down-backpack-remove";
     private static final String VIEW_DISTANCE_PATH = "view-distance";
     private static final String PARTICLE_COUNT = "particle-count";
+    private static final String DYE_MENU_PATH = "dye-menu";
+    private static final String DYE_MENU_NAME = "title";
 
     private static String defaultMenu;
+    private static String dyeMenuName;
     private static int configVersion;
     private static boolean requireEmptyHelmet;
     private static boolean requireEmptyOffHand;
@@ -61,6 +64,10 @@ public class Settings {
         final var balloonSection = cosmeticSettings.node(BALLOON_OFFSET);
 
         balloonOffset = loadVector(balloonSection);
+
+        ConfigurationNode dyeMenuSettings = source.node(DYE_MENU_PATH);
+
+        dyeMenuName = dyeMenuSettings.node(DYE_MENU_NAME).getString("Dye Menu");
     }
 
     private static Vector loadVector(final ConfigurationNode config) {
@@ -107,5 +114,9 @@ public class Settings {
 
     public static int getConfigVersion() {
         return configVersion;
+    }
+
+    public static String getDyeMenuName() {
+        return dyeMenuName;
     }
 }
