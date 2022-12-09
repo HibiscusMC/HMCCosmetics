@@ -1,3 +1,5 @@
+<h4 align="center">![https://www.spigotmc.org/resources/100107/](https://www.spigotmc.org/data/resource_icons/100/100107.jpg)</h4>
+
 <h4 align="center">Source code for HMCCosemtics, a premium Minecraft plugin.</h4>
 
 <p align="center">
@@ -8,6 +10,9 @@
         <img alt="polymart" src="https://img.shields.io/badge/POLYMART-HMCCosmetics-brightgreen?style=for-the-badge"/>
     </a>
     <a href="https://docs.hibiscusmc.com/">
-        <img alt="polymart" src="https://img.shields.io/badge/Documentation-brightgreen?style=for-the-badge"/>
+        <img alt="docs" src="https://img.shields.io/badge/Documentation-brightgreen?style=for-the-badge"/>
+    </a>
+    <a href="https://discord.gg/pcm8kWrdNt">
+        <img alt="discord" src="https://img.shields.io/badge/Discord Support-blue?style=for-the-badge"/>
     </a>
 </p> 
