@@ -43,12 +43,12 @@ public class CosmeticCommand implements CommandExecutor {
             menu.openMenu(user);
             return true;
         }
-        if (args[0].equalsIgnoreCase("reload")) {
+        else if (args[0].equalsIgnoreCase("reload")) {
             HMCCosmeticsPlugin.setup();
             sender.sendMessage("Reloaded.");
             return true;
         }
-        if (args[0].equalsIgnoreCase("apply")) {
+        else if (args[0].equalsIgnoreCase("apply")) {
             sender.sendMessage("Applying - Begin");
             Player player = null;
             Cosmetic cosmetic;
@@ -70,7 +70,7 @@ public class CosmeticCommand implements CommandExecutor {
             sender.sendMessage("Applying - Finish with  " + cosmetic.getId());
             return true;
         }
-        if (args[0].equalsIgnoreCase("unapply")) {
+        else if (args[0].equalsIgnoreCase("unapply")) {
             Player player = null;
             CosmeticSlot cosmeticSlot;
 
@@ -90,7 +90,7 @@ public class CosmeticCommand implements CommandExecutor {
             user.updateCosmetic(cosmeticSlot);
             return true;
         }
-        if (args[0].equalsIgnoreCase("wardrobe")) {
+        else if (args[0].equalsIgnoreCase("wardrobe")) {
             Player player = null;
 
             if (sender instanceof Player) player = ((Player) sender).getPlayer();
@@ -107,7 +107,7 @@ public class CosmeticCommand implements CommandExecutor {
             return true;
         }
         // cosmetic menu exampleMenu playerName
-        if (args[0].equalsIgnoreCase("menu")) {
+        else if (args[0].equalsIgnoreCase("menu")) {
             if (args.length == 1) return true;
             Menu menu = Menus.getMenu(args[1]);
             Player player = null;
@@ -124,7 +124,7 @@ public class CosmeticCommand implements CommandExecutor {
             return true;
         }
 
-        if (args[0].equalsIgnoreCase("dataclear")) {
+        else if (args[0].equalsIgnoreCase("dataclear")) {
             if (args.length == 1) return true;
             OfflinePlayer player = Bukkit.getOfflinePlayer(args[1]);
             if (player == null) return true;
@@ -139,6 +139,20 @@ public class CosmeticCommand implements CommandExecutor {
             CosmeticUser user = CosmeticUsers.getUser(player);
             if (user == null) return true;
             DyeMenu.openMenu(user, user.getCosmetic(CosmeticSlot.valueOf(args[1])));
+        }
+
+        else if (args[0].equalsIgnoreCase("dump") && args.length == 1) {
+            Player player = sender instanceof Player ? (Player) sender : null;
+            if (player == null) return true;
+            CosmeticUser user = CosmeticUsers.getUser(player);
+            if (user == null) return true;
+            player.sendMessage("Passengers -> " + player.getPassengers());
+            if (user.hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
+                player.sendMessage("Backpack Location -> " + user.getBackpackEntity().getLocation());
+            }
+            player.sendMessage("Cosmetics -> " + user.getCosmetic());
+            player.sendMessage("EntityId -> " + player.getEntityId());
+            return true;
         }
         return true;
     }

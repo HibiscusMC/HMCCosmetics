@@ -7,6 +7,7 @@ import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
 import com.hibiscusmc.hmccosmetics.config.serializer.ItemSerializer;
 import com.hibiscusmc.hmccosmetics.config.serializer.LocationSerializer;
+import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
 import com.hibiscusmc.hmccosmetics.database.Database;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
@@ -14,8 +15,11 @@ import com.hibiscusmc.hmccosmetics.hooks.items.ItemHooks;
 import com.hibiscusmc.hmccosmetics.listener.PlayerConnectionListener;
 import com.hibiscusmc.hmccosmetics.listener.PlayerGameListener;
 import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
+import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
+import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import com.hibiscusmc.hmccosmetics.util.misc.Translation;
 import org.bukkit.Bukkit;
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -113,6 +117,22 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
         // Menus setup
         Menus.setup();
 
+        // For reloads
+        /*
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            CosmeticUser user = CosmeticUsers.getUser(player.getUniqueId());
+            if (user == null) continue;
+            for (Cosmetic cosmetic : user.getCosmetic()) {
+                Color color = user.getCosmeticColor(cosmetic.getSlot());
+                Cosmetic newCosmetic = Cosmetics.getCosmetic(cosmetic.getId());
+                user.removeCosmeticSlot(cosmetic);
+
+                if (newCosmetic == null) continue;
+                user.addPlayerCosmetic(newCosmetic, color);
+            }
+            user.updateCosmetic();
+        }
+         */
     }
 
     public static boolean isDisable() {
