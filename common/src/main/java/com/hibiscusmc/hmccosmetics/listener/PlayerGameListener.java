@@ -21,6 +21,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
@@ -100,6 +101,35 @@ public class PlayerGameListener implements Listener {
         user.updateCosmetic(CosmeticSlot.BALLOON);
     }
 
+    @EventHandler
+    public void onPlayerArmorDamage(PlayerItemDamageEvent event) {
+        // Possibly look into cancelling the event, then handling the damage on our own.
+        if (event.isCancelled()) return;
+
+        int slot = -1;
+        int w = 36;
+        for (ItemStack armorItem : event.getPlayer().getInventory().getArmorContents()) {
+            if (armorItem == null) continue;
+            if (armorItem.isSimilar(event.getItem())) {
+                slot = w;
+                break;
+            }
+            w++;
+        }
+
+        if (slot == -1) return;
+
+        CosmeticUser user = CosmeticUsers.getUser(event.getPlayer().getUniqueId());
+        CosmeticSlot cosmeticSlot = InventoryUtils.BukkitCosmeticSlot(slot);
+
+        if (!user.hasCosmeticInSlot(cosmeticSlot)) return;
+
+        Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
+            HMCCosmeticsPlugin.getInstance().getLogger().info("PlayerItemDamageEvent UpdateCosmetic " + cosmeticSlot);
+            user.updateCosmetic(cosmeticSlot);
+        }, 2);
+    }
+
     private void registerInventoryClickListener() {
         ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(HMCCosmeticsPlugin.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Client.WINDOW_CLICK) {
             @Override
@@ -148,7 +178,7 @@ public class PlayerGameListener implements Listener {
                     Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
                         user.updateCosmetic(cosmetic.getSlot());
                     }, 1);
-                    HMCCosmeticsPlugin.getInstance().getLogger().info("Menu Fired, updated cosmetics " + cosmetic);
+                    HMCCosmeticsPlugin.getInstance().getLogger().info("Menu Fired, updated cosmetics " + cosmetic + " on slotdata " + windowID);
                 }
             }
         });
