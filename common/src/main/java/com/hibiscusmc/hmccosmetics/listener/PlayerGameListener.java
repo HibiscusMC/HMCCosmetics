@@ -16,9 +16,12 @@ import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import com.hibiscusmc.hmccosmetics.util.InventoryUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerItemDamageEvent;
@@ -27,6 +30,7 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -90,6 +94,23 @@ public class PlayerGameListener implements Listener {
                 user.showBackpack();
             }, 2);
         }
+
+        if (user.hasCosmeticInSlot(CosmeticSlot.BALLOON)) {
+            // TODO: Resolve issue with Balloons not going through portal
+            user.getBalloonEntity().setLocation(event.getTo());
+
+            Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
+                user.updateCosmetic(CosmeticSlot.BALLOON);
+            }, 2);
+        }
+    }
+
+    @EventHandler
+    public void onPlayerHit(EntityDamageEvent event) {
+        if (event.isCancelled()) return;
+        Entity entity = event.getEntity();
+        if (!entity.getPersistentDataContainer().has(new NamespacedKey(HMCCosmeticsPlugin.getInstance(), "cosmeticMob"), PersistentDataType.SHORT)) return;
+        event.setCancelled(true);
     }
 
     @EventHandler
