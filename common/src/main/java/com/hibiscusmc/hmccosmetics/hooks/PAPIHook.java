@@ -29,9 +29,8 @@ public class PAPIHook extends PlaceholderExpansion {
     @Override
     public String onRequest(OfflinePlayer player, String params) {
         final String[] parts = params.split("_");
-        if (parts.length == 0) {
-            return null;
-        }
+        if (parts.length == 0) return null;
+
 
         CosmeticUser user = CosmeticUsers.getUser(player.getUniqueId());
         if (user == null) return null;
