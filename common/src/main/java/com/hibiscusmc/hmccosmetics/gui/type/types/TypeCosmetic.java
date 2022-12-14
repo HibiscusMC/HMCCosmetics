@@ -42,6 +42,8 @@ public class TypeCosmetic extends Type {
                 // TODO: Redo this
                 if (cosmetic.isDyable()) {
                     DyeMenu.openMenu(user, cosmetic);
+                } else {
+                    user.addPlayerCosmetic(cosmetic);
                 }
             }
 
