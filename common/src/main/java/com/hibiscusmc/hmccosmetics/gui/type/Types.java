@@ -13,14 +13,14 @@ public class Types {
     private static TypeEmpty TYPE_EMPTY = new TypeEmpty();
 
     public static Type getType(String id) {
-        return types.get(id);
+        return types.get(id.toUpperCase());
     }
 
     public static boolean isType(String id) {
-        return types.containsKey(id);
+        return types.containsKey(id.toUpperCase());
     }
 
     public static void addType(Type type) {
-        types.put(type.getId(), type);
+        types.put(type.getId().toUpperCase(), type);
     }
 }
