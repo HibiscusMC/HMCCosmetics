@@ -17,11 +17,11 @@ public class Menus {
     private static HashMap<String, Menu> MENUS = new HashMap<>();
 
     public static void addMenu(Menu menu) {
-        MENUS.put(menu.getId(), menu);
+        MENUS.put(menu.getId().toUpperCase(), menu);
     }
 
     public static Menu getMenu(String id) {
-        return MENUS.get(id);
+        return MENUS.get(id.toUpperCase());
     }
 
     public static Collection<Menu> getMenu() {
@@ -29,7 +29,7 @@ public class Menus {
     }
 
     public static boolean hasMenu(String id) {
-        return MENUS.containsKey(id);
+        return MENUS.containsKey(id.toUpperCase());
     }
 
     public static boolean hasMenu(Menu menu) {
