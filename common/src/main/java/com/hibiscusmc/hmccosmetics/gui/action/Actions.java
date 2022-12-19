@@ -23,15 +23,15 @@ public class Actions {
 
 
     public static Action getAction(String id) {
-        return actions.get(id);
+        return actions.get(id.toUpperCase());
     }
 
     public static boolean isAction(String id) {
-        return actions.containsKey(id);
+        return actions.containsKey(id.toUpperCase());
     }
 
     public static void addAction(Action action) {
-        actions.put(action.getId(), action);
+        actions.put(action.getId().toUpperCase(), action);
     }
 
     public static void runActions(CosmeticUser user, List<String> raw) {
