@@ -5,28 +5,17 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.*;
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
-import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticArmorType;
+import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
-import com.hibiscusmc.hmccosmetics.util.InventoryUtils;
 import com.hibiscusmc.hmccosmetics.util.PlayerUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.wrappers.WrapperPlayServerNamedEntitySpawn;
 import com.hibiscusmc.hmccosmetics.util.packets.wrappers.WrapperPlayServerPlayerInfo;
-import com.mojang.datafixers.util.Pair;
-import it.unimi.dsi.fastutil.ints.IntArrayList;
-import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
-import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.ItemStack;
 import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_19_R1.CraftEquipmentSlot;
-import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -55,7 +44,11 @@ public class PacketManager extends BasePacket {
             Player player,
             int gamemode
     ) {
-        sendPacket(player, new ClientboundGameEventPacket(ClientboundGameEventPacket.CHANGE_GAME_MODE, (float) gamemode));
+        PacketContainer packet = new PacketContainer(PacketType.Play.Server.GAME_STATE_CHANGE);
+        packet.getGameStateIDs().write(0, 3);
+        // Tells what event this is. This is a change gamemode event.
+        packet.getFloat().write(0, (float) gamemode);
+        sendPacket(player, packet);
         HMCCosmeticsPlugin.getInstance().getLogger().info("Gamemode Change sent to " + player + " to be " + gamemode);
     }
 
@@ -92,38 +85,10 @@ public class PacketManager extends BasePacket {
             CosmeticSlot cosmeticSlot,
             List<Player> sendTo
     ) {
-        EquipmentSlot nmsSlot = null;
-        ItemStack nmsItem = null;
-
         if (cosmeticSlot == CosmeticSlot.BACKPACK || cosmeticSlot == CosmeticSlot.BALLOON) return;
 
-        if (!(user.getCosmetic(cosmeticSlot) instanceof CosmeticArmorType)) {
+        NMSHandlers.getHandler().equipmentSlotUpdate(entityId, user, cosmeticSlot, sendTo);
 
-            nmsSlot = CraftEquipmentSlot.getNMS(InventoryUtils.getEquipmentSlot(cosmeticSlot));
-            nmsItem = CraftItemStack.asNMSCopy(new org.bukkit.inventory.ItemStack(Material.AIR));
-
-            Pair<EquipmentSlot, ItemStack> pair = new Pair<>(nmsSlot, nmsItem);
-
-            List<Pair<EquipmentSlot, ItemStack>> pairs = Collections.singletonList(pair);
-
-            ClientboundSetEquipmentPacket packet = new ClientboundSetEquipmentPacket(entityId, pairs);
-            for (Player p : sendTo) sendPacket(p, packet);
-            return;
-        }
-        CosmeticArmorType cosmeticArmor = (CosmeticArmorType) user.getCosmetic(cosmeticSlot);
-
-        // Converting EquipmentSlot and ItemStack to NMS ones.
-        nmsSlot = CraftEquipmentSlot.getNMS(cosmeticArmor.getEquipSlot());
-        nmsItem = CraftItemStack.asNMSCopy(user.getUserCosmeticItem(cosmeticArmor));
-
-        if (nmsSlot == null) return;
-
-        Pair<EquipmentSlot, ItemStack> pair = new Pair<>(nmsSlot, nmsItem);
-
-        List<Pair<EquipmentSlot, ItemStack>> pairs = Collections.singletonList(pair);
-
-        ClientboundSetEquipmentPacket packet = new ClientboundSetEquipmentPacket(entityId, pairs);
-        for (Player p : sendTo) sendPacket(p, packet);
     }
 
     public static void armorStandMetaPacket(
@@ -230,7 +195,7 @@ public class PacketManager extends BasePacket {
      */
     public static void sendEntityDestroyPacket(final int entityId, List<Player> sendTo) {
         PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_DESTROY);
-        packet.getModifier().write(0, new IntArrayList(new int[]{entityId}));
+        packet.getModifier().write(0, new int[]{entityId});
         for (final Player p : sendTo) sendPacket(p, packet);
     }
 

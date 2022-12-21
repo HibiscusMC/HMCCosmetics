@@ -13,6 +13,9 @@ public class DatabaseSettings {
     private static final String MYSQL_HOST = "host";
     private static final String MYSQL_USER = "user";
     private static final String MYSQL_PORT = "port";
+    private static final String DELAY_PATH = "delay";
+    private static final String ENABLE_DELAY = "enabled";
+    private static final String DELAY_LENGTH = "delay";
 
     private static String databaseType;
     private static String database;
@@ -20,6 +23,8 @@ public class DatabaseSettings {
     private static String host;
     private static String username;
     private static int port;
+    private static boolean enabledDelay;
+    private static int delayLength;
 
     public static void load(ConfigurationNode source) {
         //ConfigurationNode databaseSettings = source.node(DATABASE_SETTINGS_PATH);
@@ -33,6 +38,11 @@ public class DatabaseSettings {
         host = mySql.node(MYSQL_HOST).getString();
         username = mySql.node(MYSQL_USER).getString();
         port = mySql.node(MYSQL_PORT).getInt();
+
+        ConfigurationNode delay = source.node(DELAY_PATH);
+
+        enabledDelay = delay.node(ENABLE_DELAY).getBoolean(false);
+        delayLength = delay.node(DELAY_LENGTH).getInt(2);
     }
 
     public static String getDatabaseType() {
@@ -57,5 +67,13 @@ public class DatabaseSettings {
 
     public static int getPort() {
         return port;
+    }
+
+    public static boolean isEnabledDelay() {
+        return enabledDelay;
+    }
+
+    public static int getDelayLength() {
+        return delayLength;
     }
 }

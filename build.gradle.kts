@@ -40,7 +40,7 @@ allprojects {
 }
 
 dependencies {
-    implementation(project(path = ":common", configuration = "reobf"))
+    implementation(project(path = ":common"))
     implementation(project(path = ":v1_19_R1", configuration = "reobf"))
     //implementation(files("v1_19_R1/build/libs/1_19_R1-unspecified.jar"))
 
@@ -83,7 +83,6 @@ tasks {
     }
 
     shadowJar {
-        dependsOn(":common:reobfJar")
         dependsOn(":v1_19_R1:reobfJar")
         mergeServiceFiles()
 

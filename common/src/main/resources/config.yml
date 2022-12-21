@@ -12,6 +12,9 @@ database-settings:
     port: 3306
     host: localhost
     user: username
+  delay:
+    enabled: false # This is for if other plugins need to handle certain aspects of a player first.
+    delay: 20 # In ticks
 cosmetic-settings:
   require-empty-helmet: false
   require-empty-off-hand: false

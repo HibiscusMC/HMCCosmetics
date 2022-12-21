@@ -1,6 +1,7 @@
 package com.hibiscusmc.hmccosmetics.listener;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
+import com.hibiscusmc.hmccosmetics.config.DatabaseSettings;
 import com.hibiscusmc.hmccosmetics.database.Database;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
@@ -11,16 +12,25 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class PlayerConnectionListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        CosmeticUser user = Database.get(event.getPlayer().getUniqueId());
-        CosmeticUsers.addUser(user);
-        Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
-            user.updateCosmetic();
-        }, 2);
+        Runnable run = () -> {
+            CosmeticUser user = Database.get(event.getPlayer().getUniqueId());
+            CosmeticUsers.addUser(user);
+            HMCCosmeticsPlugin.getInstance().getLogger().info("Run User Join");
+            Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> user.updateCosmetic(), 2);
+        };
+
+        if (DatabaseSettings.isEnabledDelay()) {
+            HMCCosmeticsPlugin.getInstance().getLogger().info("Delay Enabled with " + DatabaseSettings.getDelayLength() + " ticks");
+            Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), run, DatabaseSettings.getDelayLength());
+        } else {
+            run.run();
+        }
     }
 
     @EventHandler

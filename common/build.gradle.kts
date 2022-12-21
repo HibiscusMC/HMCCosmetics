@@ -1,12 +1,8 @@
 plugins {
     id("java")
-    id("com.github.johnrengelman.shadow") apply false
-    id("io.papermc.paperweight.userdev") version "1.3.8"
 }
 
 dependencies {
-    paperDevBundle("1.19.2-R0.1-SNAPSHOT")
-
     compileOnly("com.mojang:authlib:1.5.25")
     compileOnly("org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT")
     compileOnly("org.jetbrains:annotations:23.0.0")
@@ -14,7 +10,7 @@ dependencies {
     compileOnly("me.clip:placeholderapi:2.11.1")
     compileOnly("com.ticxo.modelengine:api:R3.0.1")
     compileOnly("com.github.oraxen:oraxen:-SNAPSHOT")
-    compileOnly("com.github.LoneDev6:API-ItemsAdder:3.2.5") // TODO Work on this
+    compileOnly("com.github.LoneDev6:API-ItemsAdder:3.2.5")
     compileOnly("com.hibiscus:hmccolor:0.1-SNAPSHOT")
 
     //compileOnly("com.github.Fisher2911:FisherLib:master-SNAPSHOT")
@@ -27,9 +23,7 @@ dependencies {
 }
 
 tasks {
-    build {
-        dependsOn(reobfJar)
-    }
+
 }
 
 java {

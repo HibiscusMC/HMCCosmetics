@@ -227,7 +227,6 @@ public class CosmeticUser {
         if (invisibleArmorstand == null) return;
         invisibleArmorstand.setHealth(0);
         invisibleArmorstand.remove();
-        //invisibleArmorstand.remove(net.minecraft.world.entity.Entity.RemovalReason.DISCARDED);
         this.invisibleArmorstand = null;
     }
 

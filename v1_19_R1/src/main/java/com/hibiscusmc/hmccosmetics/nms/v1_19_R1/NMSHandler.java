@@ -3,14 +3,17 @@ package com.hibiscusmc.hmccosmetics.nms.v1_19_R1;
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
+import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticArmorType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBackpackType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
 import com.hibiscusmc.hmccosmetics.entities.BalloonEntity;
-import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
+import com.hibiscusmc.hmccosmetics.util.InventoryUtils;
 import com.hibiscusmc.hmccosmetics.util.PlayerUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerPlayerConnection;
@@ -18,6 +21,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.craftbukkit.v1_19_R1.CraftEquipmentSlot;
 import org.bukkit.craftbukkit.v1_19_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_19_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer;
@@ -27,6 +32,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Collections;
 import java.util.List;
 
 public class NMSHandler implements com.hibiscusmc.hmccosmetics.nms.NMSHandler {
@@ -101,6 +107,45 @@ public class NMSHandler implements com.hibiscusmc.hmccosmetics.nms.NMSHandler {
     }
 
     @Override
+    public void equipmentSlotUpdate(
+            int entityId,
+            CosmeticUser user,
+            CosmeticSlot cosmeticSlot,
+            List<Player> sendTo
+    ) {
+
+        EquipmentSlot nmsSlot = null;
+        net.minecraft.world.item.ItemStack nmsItem = null;
+
+        if (!(user.getCosmetic(cosmeticSlot) instanceof CosmeticArmorType)) {
+
+            nmsSlot = CraftEquipmentSlot.getNMS(InventoryUtils.getEquipmentSlot(cosmeticSlot));
+            nmsItem = CraftItemStack.asNMSCopy(new org.bukkit.inventory.ItemStack(Material.AIR));
+
+            Pair<EquipmentSlot, net.minecraft.world.item.ItemStack> pair = new Pair<>(nmsSlot, nmsItem);
+
+            List<Pair<EquipmentSlot, net.minecraft.world.item.ItemStack>> pairs = Collections.singletonList(pair);
+
+            ClientboundSetEquipmentPacket packet = new ClientboundSetEquipmentPacket(entityId, pairs);
+            for (Player p : sendTo) sendPacket(p, packet);
+            return;
+        }
+        CosmeticArmorType cosmeticArmor = (CosmeticArmorType) user.getCosmetic(cosmeticSlot);
+
+        // Converting EquipmentSlot and ItemStack to NMS ones.
+        nmsSlot = CraftEquipmentSlot.getNMS(cosmeticArmor.getEquipSlot());
+        nmsItem = CraftItemStack.asNMSCopy(user.getUserCosmeticItem(cosmeticArmor));
+
+        if (nmsSlot == null) return;
+
+        Pair<EquipmentSlot, net.minecraft.world.item.ItemStack> pair = new Pair<>(nmsSlot, nmsItem);
+
+        List<Pair<EquipmentSlot, net.minecraft.world.item.ItemStack>> pairs = Collections.singletonList(pair);
+
+        ClientboundSetEquipmentPacket packet = new ClientboundSetEquipmentPacket(entityId, pairs);
+        for (Player p : sendTo) sendPacket(p, packet);
+    }
+
     public void sendPacket(Player player, Packet packet) {
         ServerPlayer serverPlayer = ((CraftPlayer) player).getHandle();
         ServerPlayerConnection connection = serverPlayer.connection;
