@@ -20,6 +20,7 @@ dependencies {
     implementation("dev.triumphteam:triumph-gui:3.1.3")
     implementation("org.spongepowered:configurate-yaml:4.1.2")
     implementation("org.bstats:bstats-bukkit:3.0.0")
+    implementation("it.unimi.dsi:fastutil:8.5.11")
 }
 
 tasks {

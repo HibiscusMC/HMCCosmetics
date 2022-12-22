@@ -60,6 +60,7 @@ dependencies {
     implementation("dev.triumphteam:triumph-gui:3.1.3")
     implementation("org.spongepowered:configurate-yaml:4.1.2")
     implementation("org.bstats:bstats-bukkit:3.0.0")
+    implementation("it.unimi.dsi:fastutil:8.5.11")
 }
 
 tasks {
@@ -93,6 +94,7 @@ tasks {
         relocate("org.bstats", "com.hisbiscus.hmccosmetics.bstats")
         relocate("com.zaxxer.hikaricp", "com.hisbiscus.hmccosmetics.hikaricp")
         relocate("com.j256.ormlite", "com.hisbiscus.hmccosmetics.ormlite")
+        //relocate("it.unimi.dsi", "com.hisbiscus.hmccosmetics.dsi")
         archiveFileName.set("HMCCosmetics.jar")
 
         dependencies {

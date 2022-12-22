@@ -11,6 +11,7 @@ import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import com.hibiscusmc.hmccosmetics.util.PlayerUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.wrappers.WrapperPlayServerNamedEntitySpawn;
 import com.hibiscusmc.hmccosmetics.util.packets.wrappers.WrapperPlayServerPlayerInfo;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -195,7 +196,7 @@ public class PacketManager extends BasePacket {
      */
     public static void sendEntityDestroyPacket(final int entityId, List<Player> sendTo) {
         PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_DESTROY);
-        packet.getModifier().write(0, new int[]{entityId});
+        packet.getModifier().write(0, new IntArrayList(new int[]{entityId}));
         for (final Player p : sendTo) sendPacket(p, packet);
     }
 
