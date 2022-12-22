@@ -6,6 +6,7 @@ import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import org.bukkit.Bukkit;
+import org.bukkit.Color;
 
 import java.sql.*;
 import java.util.HashMap;
@@ -82,13 +83,14 @@ public class MySQLData extends Data {
                 ResultSet rs = preparedStatement.executeQuery();
                 if (rs.next()) {
                     String rawData = rs.getString("COSMETICS");
-                    Map<CosmeticSlot, Cosmetic> cosmetics = desteralizedata(rawData);
-                    for (Cosmetic cosmetic : cosmetics.values()) {
-                        Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> {
-                            // This can not be async.
-                            user.addPlayerCosmetic(cosmetic);
-                        });
-
+                    Map<CosmeticSlot, Map<Cosmetic, Color>> cosmetics = desteralizedata(rawData);
+                    for (Map<Cosmetic, Color> cosmeticColors : cosmetics.values()) {
+                        for (Cosmetic cosmetic : cosmeticColors.keySet()) {
+                            Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> {
+                                // This can not be async.
+                                user.addPlayerCosmetic(cosmetic, cosmeticColors.get(cosmetic));
+                            });
+                        }
                     }
                 }
             } catch (SQLException e) {

@@ -5,6 +5,7 @@ import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import org.bukkit.Bukkit;
+import org.bukkit.Color;
 import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -37,10 +38,14 @@ public class InternalData extends Data {
         if (!player.getPersistentDataContainer().has(key, PersistentDataType.STRING)) return user;
         String rawData = player.getPersistentDataContainer().get(key, PersistentDataType.STRING);
 
-        Map<CosmeticSlot, Cosmetic> a = desteralizedata(rawData);
-        for (CosmeticSlot slot : a.keySet()) {
-            user.addPlayerCosmetic(a.get(slot));
-            //HMCCosmeticsPlugin.getInstance().getLogger().info("Retrieved " + player.getName() + " | slot " + slot + " | cosmetic " + Cosmetics.getCosmetic(player.getPersistentDataContainer().get(key, PersistentDataType.STRING)));
+        Map<CosmeticSlot, Map<Cosmetic, Color>> a = desteralizedata(rawData);
+        for (Map<Cosmetic, Color> cosmeticColors : a.values()) {
+            for (Cosmetic cosmetic : cosmeticColors.keySet()) {
+                Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> {
+                    // This can not be async.
+                    user.addPlayerCosmetic(cosmetic, cosmeticColors.get(cosmetic));
+                });
+            }
         }
         return user;
     }
