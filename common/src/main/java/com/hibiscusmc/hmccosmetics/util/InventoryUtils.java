@@ -121,6 +121,9 @@ public class InventoryUtils {
             case OFFHAND -> {
                 return EquipmentSlot.OFF_HAND;
             }
+            case MAINHAND -> {
+                return EquipmentSlot.HAND;
+            }
             default -> {
                 return null;
             }

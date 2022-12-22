@@ -32,6 +32,7 @@ public interface NMSHandler {
             List<Player> sendTo
     );
 
+
     default boolean getSupported () {
         return false;
     }

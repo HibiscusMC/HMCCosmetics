@@ -14,6 +14,7 @@ import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticArmorType;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import com.hibiscusmc.hmccosmetics.util.InventoryUtils;
+import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -154,11 +155,17 @@ public class PlayerGameListener implements Listener {
     }
 
     @EventHandler
-    public void onMainHandSwitch(PlayerChangedMainHandEvent event) {
-        CosmeticUser user = CosmeticUsers.getUser(event.getPlayer().getUniqueId());
+    public void onMainHandSwitch(PlayerItemHeldEvent event) {
+        HMCCosmeticsPlugin.getInstance().getLogger().info("PlayerItemHeldEvent");
+        CosmeticUser user = CosmeticUsers.getUser(event.getPlayer());
+        if (user == null) return;
+        HMCCosmeticsPlugin.getInstance().getLogger().info("PlayerItemHeldEvent 2");
 
-        // TODO: Mainhand cosmetics
-        //user.updateCosmetic(CosmeticSlot.MAINHAND);
+        
+
+         event.getPreviousSlot();
+
+        user.updateCosmetic(CosmeticSlot.MAINHAND);
     }
 
     private void registerInventoryClickListener() {

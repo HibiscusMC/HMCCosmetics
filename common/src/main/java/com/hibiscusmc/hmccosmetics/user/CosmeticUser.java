@@ -7,6 +7,7 @@ import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticArmorType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBackpackType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
+import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticMainhandType;
 import com.hibiscusmc.hmccosmetics.entities.BalloonEntity;
 import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
 import com.hibiscusmc.hmccosmetics.util.InventoryUtils;
@@ -143,6 +144,10 @@ public class CosmeticUser {
             CosmeticArmorType cosmetic1 = (CosmeticArmorType) cosmetic;
             item = cosmetic1.getCosmeticItem();
             HMCCosmeticsPlugin.getInstance().getLogger().info("GetUserCosemticUser Armor");
+        }
+        if (cosmetic instanceof CosmeticMainhandType) {
+            CosmeticMainhandType cosmetic1 = (CosmeticMainhandType) cosmetic;
+            item = cosmetic1.getItemStack();
         }
         if (cosmetic instanceof CosmeticBackpackType) {
             CosmeticBackpackType cosmetic1 = (CosmeticBackpackType) cosmetic;

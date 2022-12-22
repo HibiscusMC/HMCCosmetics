@@ -5,6 +5,7 @@ import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticArmorType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBackpackType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
+import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticMainhandType;
 import org.spongepowered.configurate.CommentedConfigurationNode;
 import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.ConfigurationNode;
@@ -84,6 +85,9 @@ public class Cosmetics {
                 }
                 case BACKPACK -> {
                     new CosmeticBackpackType(id, cosmeticConfig);
+                }
+                case MAINHAND -> {
+                    new CosmeticMainhandType(id, cosmeticConfig);
                 }
                 default -> {
                     new CosmeticArmorType(id, cosmeticConfig);
