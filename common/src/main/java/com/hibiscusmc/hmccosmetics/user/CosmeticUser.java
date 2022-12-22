@@ -9,6 +9,7 @@ import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBackpackType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
 import com.hibiscusmc.hmccosmetics.entities.BalloonEntity;
 import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
+import com.hibiscusmc.hmccosmetics.util.InventoryUtils;
 import com.hibiscusmc.hmccosmetics.util.PlayerUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
 import org.bukkit.Bukkit;
@@ -33,7 +34,13 @@ public class CosmeticUser {
 
     // Cosmetic Settings/Toggles
     private boolean hideBackpack;
+    private boolean hideCosmetics;
     private HashMap<CosmeticSlot, Color> colors = new HashMap<>();
+
+    public CosmeticUser() {
+        hideBackpack = false;
+        hideCosmetics = false;
+    }
 
 
     public CosmeticUser(UUID uuid) {
@@ -129,6 +136,9 @@ public class CosmeticUser {
 
     public ItemStack getUserCosmeticItem(Cosmetic cosmetic) {
         ItemStack item = null;
+        if (hideCosmetics) {
+            return getPlayer().getInventory().getItem(InventoryUtils.getEquipmentSlot(cosmetic.getSlot()));
+        }
         if (cosmetic instanceof CosmeticArmorType) {
             CosmeticArmorType cosmetic1 = (CosmeticArmorType) cosmetic;
             item = cosmetic1.getCosmeticItem();
@@ -210,6 +220,11 @@ public class CosmeticUser {
         if (this.balloonEntity != null) return;
 
         this.balloonEntity = NMSHandlers.getHandler().spawnBalloon(this, cosmeticBalloonType);
+
+        List<Player> viewer = PlayerUtils.getNearbyPlayers(player);
+        viewer.add(player);
+
+        PacketManager.sendLeashPacket(getBalloonEntity().getPufferfishBalloonId(), player.getEntityId(), viewer);
     }
 
     public void despawnBalloon() {
@@ -295,5 +310,40 @@ public class CosmeticUser {
             invisibleArmorstand.getEquipment().setHelmet(item);
             hideBackpack = false;
         }
+    }
+
+    public void hideCosmetics() {
+        if (hideCosmetics == true) return;
+        hideCosmetics = true;
+        if (hasCosmeticInSlot(CosmeticSlot.BALLOON)) {
+            getBalloonEntity().removePlayerFromModel(getPlayer());
+            List<Player> viewer = PlayerUtils.getNearbyPlayers(getPlayer());
+            PacketManager.sendLeashPacket(getBalloonEntity().getPufferfishBalloonId(), -1, viewer);
+        }
+        if (hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
+            //CosmeticBackpackType cosmeticBackpackType = (CosmeticBackpackType) getCosmetic(CosmeticSlot.BACKPACK);
+            getPlayer().removePassenger(invisibleArmorstand);
+            invisibleArmorstand.getEquipment().clear();
+        }
+        updateCosmetic();
+        HMCCosmeticsPlugin.getInstance().getLogger().info("HideCosmetics");
+    }
+
+    public void showCosmetics() {
+        if (hideCosmetics == false) return;
+        hideCosmetics = false;
+        if (hasCosmeticInSlot(CosmeticSlot.BALLOON)) {
+            CosmeticBalloonType balloonType = (CosmeticBalloonType) getCosmetic(CosmeticSlot.BALLOON);
+            getBalloonEntity().addPlayerToModel(getPlayer(), balloonType.getModelName());
+            List<Player> viewer = PlayerUtils.getNearbyPlayers(getPlayer());
+            PacketManager.sendLeashPacket(getBalloonEntity().getPufferfishBalloonId(), getPlayer().getEntityId(), viewer);
+        }
+        if (hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
+            CosmeticBackpackType cosmeticBackpackType = (CosmeticBackpackType) getCosmetic(CosmeticSlot.BACKPACK);
+            ItemStack item = getUserCosmeticItem(cosmeticBackpackType);
+            invisibleArmorstand.getEquipment().setHelmet(item);
+        }
+        updateCosmetic();
+        HMCCosmeticsPlugin.getInstance().getLogger().info("ShowCosmetics");
     }
 }

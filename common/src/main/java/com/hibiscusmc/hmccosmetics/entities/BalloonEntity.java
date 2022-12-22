@@ -68,10 +68,12 @@ public class BalloonEntity {
         final ModeledEntity model = ModelEngineAPI.api.getModeledEntity(modelEntity.getUniqueId());
         if (model == null) {
             spawnModel(id, color);
+            HMCCosmeticsPlugin.getInstance().getLogger().info("model is null");
             return;
         }
-        if (model.getRangeManager().getPlayerInRange().contains(player)) return;
+        //if (model.getRangeManager().getPlayerInRange().contains(player)) return;
         model.showToPlayer(player);
+        HMCCosmeticsPlugin.getInstance().getLogger().info("Show to player");
     }
     public void removePlayerFromModel(final Player player) {
         final ModeledEntity model = ModelEngineAPI.api.getModeledEntity(modelEntity.getUniqueId());
@@ -79,6 +81,7 @@ public class BalloonEntity {
         if (model == null) return;
 
         model.hideFromPlayer(player);
+        HMCCosmeticsPlugin.getInstance().getLogger().info("Hidden from player");
     }
 
     public Entity getModelEntity() {

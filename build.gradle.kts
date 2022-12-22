@@ -32,6 +32,7 @@ allprojects {
                 artifact()
             }
         }
+        maven("https://maven.enginehub.org/repo/")
     }
 
     dependencies {
@@ -51,7 +52,8 @@ dependencies {
     compileOnly("me.clip:placeholderapi:2.11.1")
     compileOnly("com.ticxo.modelengine:api:R3.0.1")
     compileOnly("com.github.oraxen:oraxen:-SNAPSHOT")
-    compileOnly("com.github.LoneDev6:API-ItemsAdder:3.2.5") // TODO Work on this
+    compileOnly("com.github.LoneDev6:API-ItemsAdder:3.2.5")
+    compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.1.0-SNAPSHOT")
 
     //compileOnly("com.github.Fisher2911:FisherLib:master-SNAPSHOT")
     implementation("net.kyori:adventure-api:4.11.0")
@@ -87,13 +89,13 @@ tasks {
         dependsOn(":v1_19_R1:reobfJar")
         mergeServiceFiles()
 
-        relocate("dev.triumphteam.gui", "com.hisbiscus.hmccosmetics.gui")
-        relocate("me.mattstudios.mf", "com.hisbiscus.hmccosmetics.mf")
-        relocate("net.kyori.adventure", "com.hisbiscus.hmccosmetics.adventure")
-        relocate("org.spongepowered.configurate", "com.hisbiscus.hmccosmetics.configurate")
-        relocate("org.bstats", "com.hisbiscus.hmccosmetics.bstats")
-        relocate("com.zaxxer.hikaricp", "com.hisbiscus.hmccosmetics.hikaricp")
-        relocate("com.j256.ormlite", "com.hisbiscus.hmccosmetics.ormlite")
+        relocate("dev.triumphteam.gui", "com.hisbiscusmc.hmccosmetics.gui")
+        relocate("me.mattstudios.mf", "com.hisbiscusmc.hmccosmetics.mf")
+        relocate("net.kyori.adventure", "com.hisbiscusmc.hmccosmetics.adventure")
+        relocate("org.spongepowered.configurate", "com.hisbiscusmc.hmccosmetics.configurate")
+        relocate("org.bstats", "com.hisbiscusmc.hmccosmetics.bstats")
+        relocate("com.zaxxer.hikaricp", "com.hisbiscusmc.hmccosmetics.hikaricp")
+        relocate("com.j256.ormlite", "com.hisbiscusmc.hmccosmetics.ormlite")
         //relocate("it.unimi.dsi", "com.hisbiscus.hmccosmetics.dsi")
         archiveFileName.set("HMCCosmetics.jar")
 
@@ -116,7 +118,7 @@ bukkit {
     apiVersion = "1.19"
     authors = listOf("LoJoSho")
     depend = listOf("ProtocolLib")
-    softDepend = listOf("ModelEngine", "Oraxen", "ItemsAdder", "HMCColor")
+    softDepend = listOf("ModelEngine", "Oraxen", "ItemsAdder", "HMCColor", "WorldGuard")
     version = "${project.version}"
 
     commands {

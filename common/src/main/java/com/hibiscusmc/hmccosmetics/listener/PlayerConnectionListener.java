@@ -41,7 +41,6 @@ public class PlayerConnectionListener implements Listener {
                 for (Entity entity : event.getPlayer().getPassengers()) {
                     if (entity.getType() == EntityType.ARMOR_STAND) {
                         entity.remove();
-                        entity.remove();
                     }
                 }
             }

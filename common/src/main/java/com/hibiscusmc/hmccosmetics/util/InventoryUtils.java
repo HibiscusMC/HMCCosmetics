@@ -48,6 +48,7 @@ public class InventoryUtils {
 
     public static CosmeticSlot BukkitCosmeticSlot(EquipmentSlot slot) {
         return switch (slot) {
+            case HAND -> CosmeticSlot.MAINHAND;
             case OFF_HAND -> CosmeticSlot.OFFHAND;
             case FEET -> CosmeticSlot.BOOTS;
             case LEGS -> CosmeticSlot.LEGGINGS;
@@ -59,16 +60,16 @@ public class InventoryUtils {
 
     public static CosmeticSlot BukkitCosmeticSlot(int slot) {
         switch (slot) {
-            case 39 -> {
+            case 36 -> {
                 return CosmeticSlot.HELMET;
             }
-            case 38 -> {
+            case 37 -> {
                 return CosmeticSlot.CHESTPLATE;
             }
-            case 37 -> {
+            case 38 -> {
                 return CosmeticSlot.LEGGINGS;
             }
-            case 36 -> {
+            case 39 -> {
                 return CosmeticSlot.BOOTS;
             }
             case 40 -> {

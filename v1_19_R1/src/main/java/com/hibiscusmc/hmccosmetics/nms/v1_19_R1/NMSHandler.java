@@ -6,6 +6,7 @@ import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticArmorType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBackpackType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
+import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticMainhandType;
 import com.hibiscusmc.hmccosmetics.entities.BalloonEntity;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.InventoryUtils;
@@ -120,7 +121,7 @@ public class NMSHandler implements com.hibiscusmc.hmccosmetics.nms.NMSHandler {
         if (!(user.getCosmetic(cosmeticSlot) instanceof CosmeticArmorType)) {
 
             nmsSlot = CraftEquipmentSlot.getNMS(InventoryUtils.getEquipmentSlot(cosmeticSlot));
-            nmsItem = CraftItemStack.asNMSCopy(new org.bukkit.inventory.ItemStack(Material.AIR));
+            nmsItem = CraftItemStack.asNMSCopy(user.getPlayer().getInventory().getItem(InventoryUtils.getEquipmentSlot(cosmeticSlot)));
 
             Pair<EquipmentSlot, net.minecraft.world.item.ItemStack> pair = new Pair<>(nmsSlot, nmsItem);
 
@@ -137,6 +138,29 @@ public class NMSHandler implements com.hibiscusmc.hmccosmetics.nms.NMSHandler {
         nmsItem = CraftItemStack.asNMSCopy(user.getUserCosmeticItem(cosmeticArmor));
 
         if (nmsSlot == null) return;
+
+        Pair<EquipmentSlot, net.minecraft.world.item.ItemStack> pair = new Pair<>(nmsSlot, nmsItem);
+
+        List<Pair<EquipmentSlot, net.minecraft.world.item.ItemStack>> pairs = Collections.singletonList(pair);
+
+        ClientboundSetEquipmentPacket packet = new ClientboundSetEquipmentPacket(entityId, pairs);
+        for (Player p : sendTo) sendPacket(p, packet);
+    }
+
+    public void equipmentSlotUpdate(
+            int entityId,
+            CosmeticUser user,
+            org.bukkit.inventory.EquipmentSlot slot,
+            List<Player> sendTo
+    ) {
+        EquipmentSlot nmsSlot = null;
+        net.minecraft.world.item.ItemStack nmsItem = null;
+
+        CosmeticMainhandType cosmetic = (CosmeticMainhandType) user.getCosmetic(CosmeticSlot.MAINHAND);
+        ItemStack item = new ItemStack(Material.AIR); //cosmetic.getItem()
+
+        nmsSlot = CraftEquipmentSlot.getNMS(slot);
+        nmsItem = CraftItemStack.asNMSCopy(item);
 
         Pair<EquipmentSlot, net.minecraft.world.item.ItemStack> pair = new Pair<>(nmsSlot, nmsItem);
 

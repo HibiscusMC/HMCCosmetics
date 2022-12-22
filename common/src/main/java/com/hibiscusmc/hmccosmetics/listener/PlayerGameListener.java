@@ -24,10 +24,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.player.PlayerItemDamageEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.event.player.PlayerToggleSneakEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
@@ -125,7 +122,9 @@ public class PlayerGameListener implements Listener {
     @EventHandler
     public void onPlayerArmorDamage(PlayerItemDamageEvent event) {
         // Possibly look into cancelling the event, then handling the damage on our own.
+
         if (event.isCancelled()) return;
+        HMCCosmeticsPlugin.getInstance().getLogger().info("PlayerItemDamageEvent");
 
         int slot = -1;
         int w = 36;
@@ -143,12 +142,23 @@ public class PlayerGameListener implements Listener {
         CosmeticUser user = CosmeticUsers.getUser(event.getPlayer().getUniqueId());
         CosmeticSlot cosmeticSlot = InventoryUtils.BukkitCosmeticSlot(slot);
 
-        if (!user.hasCosmeticInSlot(cosmeticSlot)) return;
+        if (!user.hasCosmeticInSlot(cosmeticSlot)) {
+            HMCCosmeticsPlugin.getInstance().getLogger().info("No cosmetic in " + cosmeticSlot);
+            return;
+        }
 
         Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
             HMCCosmeticsPlugin.getInstance().getLogger().info("PlayerItemDamageEvent UpdateCosmetic " + cosmeticSlot);
             user.updateCosmetic(cosmeticSlot);
         }, 2);
+    }
+
+    @EventHandler
+    public void onMainHandSwitch(PlayerChangedMainHandEvent event) {
+        CosmeticUser user = CosmeticUsers.getUser(event.getPlayer().getUniqueId());
+
+        // TODO: Mainhand cosmetics
+        //user.updateCosmetic(CosmeticSlot.MAINHAND);
     }
 
     private void registerInventoryClickListener() {

@@ -41,7 +41,6 @@ public class CosmeticBalloonType extends Cosmetic {
         viewer.add(player);
 
         PacketManager.sendTeleportPacket(user.getBalloonEntity().getPufferfishBalloonId(), actual, false, viewer);
-        PacketManager.sendLeashPacket(user.getBalloonEntity().getPufferfishBalloonId(), player.getEntityId(), viewer);
     }
 
     public String getModelName() {

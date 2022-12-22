@@ -5,6 +5,7 @@ public enum CosmeticSlot {
     CHESTPLATE,
     LEGGINGS,
     BOOTS,
+    MAINHAND,
     OFFHAND,
     BACKPACK,
     BALLOON
