@@ -17,13 +17,14 @@ public class WGListener implements Listener {
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
+        CosmeticUser user = CosmeticUsers.getUser(event.getPlayer());
+        if (user == null) return;
         Location location = event.getPlayer().getLocation();
         com.sk89q.worldedit.util.Location loc = BukkitAdapter.adapt(location);
         RegionContainer region = WorldGuard.getInstance().getPlatform().getRegionContainer();
         RegionQuery query = region.createQuery();
         ApplicableRegionSet set = query.getApplicableRegions(loc);
         // TODO: Add more cosmetics
-        CosmeticUser user = CosmeticUsers.getUser(event.getPlayer());
         if (set.getRegions().size() == 0) {
             user.showCosmetics();
         }
