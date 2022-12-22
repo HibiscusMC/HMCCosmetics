@@ -24,10 +24,6 @@ dependencies {
     implementation("it.unimi.dsi:fastutil:8.5.11")
 }
 
-tasks {
-
-}
-
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(17
     ))
