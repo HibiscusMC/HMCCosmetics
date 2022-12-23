@@ -14,12 +14,14 @@ import com.hibiscusmc.hmccosmetics.util.PlayerUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerPlayerConnection;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.player.Inventory;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -121,8 +123,8 @@ public class NMSHandler implements com.hibiscusmc.hmccosmetics.nms.NMSHandler {
         if (!(user.getCosmetic(cosmeticSlot) instanceof CosmeticArmorType)) {
 
             if (user.getCosmetic(cosmeticSlot) instanceof CosmeticMainhandType) {
-                CosmeticMainhandType cosmeticMainhandType = (CosmeticMainhandType) user.getCosmetic(cosmeticSlot);
-                nmsItem = CraftItemStack.asNMSCopy(cosmeticMainhandType.getItemStack());
+                CosmeticMainhandType cosmeticMainhandType = (CosmeticMainhandType) user.getCosmetic(CosmeticSlot.MAINHAND);
+                nmsItem = CraftItemStack.asNMSCopy(user.getUserCosmeticItem(cosmeticMainhandType));
             } else {
                 nmsItem = CraftItemStack.asNMSCopy(user.getPlayer().getInventory().getItem(InventoryUtils.getEquipmentSlot(cosmeticSlot)));
             }
@@ -153,6 +155,28 @@ public class NMSHandler implements com.hibiscusmc.hmccosmetics.nms.NMSHandler {
 
         ClientboundSetEquipmentPacket packet = new ClientboundSetEquipmentPacket(entityId, pairs);
         for (Player p : sendTo) sendPacket(p, packet);
+    }
+
+    @Override
+    public void slotUpdate(
+            Player player,
+            int slot
+    ) {
+        int index = 0;
+
+        ServerPlayer player1 = ((CraftPlayer) player).getHandle();
+
+        if (index < Inventory.getSelectionSize()) {
+            index += 36;
+        } else if (index > 39) {
+            index += 5; // Off hand
+        } else if (index > 35) {
+            index = 8 - (index - 36);
+        }
+        ItemStack item = player.getInventory().getItem(slot);
+
+        Packet packet = new ClientboundContainerSetSlotPacket(player1.inventoryMenu.containerId, player1.inventoryMenu.incrementStateId(), index, CraftItemStack.asNMSCopy(item));
+        sendPacket(player, packet);
     }
 
     public void sendPacket(Player player, Packet packet) {

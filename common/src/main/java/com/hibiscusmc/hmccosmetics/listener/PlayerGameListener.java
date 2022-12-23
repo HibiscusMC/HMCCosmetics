@@ -11,6 +11,7 @@ import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticArmorType;
+import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import com.hibiscusmc.hmccosmetics.util.InventoryUtils;
@@ -156,16 +157,14 @@ public class PlayerGameListener implements Listener {
 
     @EventHandler
     public void onMainHandSwitch(PlayerItemHeldEvent event) {
-        HMCCosmeticsPlugin.getInstance().getLogger().info("PlayerItemHeldEvent");
         CosmeticUser user = CosmeticUsers.getUser(event.getPlayer());
         if (user == null) return;
-        HMCCosmeticsPlugin.getInstance().getLogger().info("PlayerItemHeldEvent 2");
 
-        
-
-         event.getPreviousSlot();
-
-        user.updateCosmetic(CosmeticSlot.MAINHAND);
+        event.getPlayer().getInventory().setItem(event.getPreviousSlot(), event.getPlayer().getInventory().getItem(event.getPreviousSlot()));
+        //NMSHandlers.getHandler().slotUpdate(event.getPlayer(), event.getPreviousSlot());
+        Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
+            user.updateCosmetic(CosmeticSlot.MAINHAND);
+        }, 2);
     }
 
     private void registerInventoryClickListener() {

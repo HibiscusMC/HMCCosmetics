@@ -32,6 +32,10 @@ public interface NMSHandler {
             List<Player> sendTo
     );
 
+    void slotUpdate(
+            Player player,
+            int slot
+    );
 
     default boolean getSupported () {
         return false;
