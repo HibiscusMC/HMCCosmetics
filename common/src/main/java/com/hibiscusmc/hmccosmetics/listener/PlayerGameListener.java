@@ -11,6 +11,7 @@ import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticArmorType;
+import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticMainhandType;
 import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
@@ -211,11 +212,12 @@ public class PlayerGameListener implements Listener {
                 if (user == null) return;
 
                 for (Cosmetic cosmetic : user.getCosmetic()) {
-                    if (!(cosmetic instanceof CosmeticArmorType)) continue;
-                    Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
-                        user.updateCosmetic(cosmetic.getSlot());
-                    }, 1);
-                    HMCCosmeticsPlugin.getInstance().getLogger().info("Menu Fired, updated cosmetics " + cosmetic + " on slotdata " + windowID);
+                    if ((cosmetic instanceof CosmeticArmorType) || (cosmetic instanceof CosmeticMainhandType)) {
+                        Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
+                            user.updateCosmetic(cosmetic);
+                        }, 1);
+                        HMCCosmeticsPlugin.getInstance().getLogger().info("Menu Fired, updated cosmetics " + cosmetic + " on slotdata " + windowID);
+                    }
                 }
             }
         });

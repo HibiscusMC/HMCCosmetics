@@ -22,7 +22,7 @@ public class PlayerConnectionListener implements Listener {
             CosmeticUser user = Database.get(event.getPlayer().getUniqueId());
             CosmeticUsers.addUser(user);
             HMCCosmeticsPlugin.getInstance().getLogger().info("Run User Join");
-            Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> user.updateCosmetic(), 2);
+            Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> user.updateCosmetic(), 4);
         };
 
         if (DatabaseSettings.isEnabledDelay()) {
