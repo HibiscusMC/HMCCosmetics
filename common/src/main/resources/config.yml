@@ -34,6 +34,8 @@ cosmetic-settings:
 dye-menu:
   title: "Dye menu"
 wardrobe:
+  # If the wardrobe should be accessed anywhere (Experimental)
+  portable: false
   # spawn static wardrobe if in this radius of wardrobe-location
   static-radius: 10
   # how much yaw should change per tick, set to 0 for none
