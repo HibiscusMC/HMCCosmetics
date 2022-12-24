@@ -13,6 +13,7 @@ dependencies {
     compileOnly("com.github.LoneDev6:API-ItemsAdder:3.2.5")
     compileOnly("com.hibiscus:hmccolor:0.1-SNAPSHOT")
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.1.0-SNAPSHOT")
+    compileOnly("it.unimi.dsi:fastutil:8.5.11")
 
     //compileOnly("com.github.Fisher2911:FisherLib:master-SNAPSHOT")
     implementation("net.kyori:adventure-api:4.11.0")
@@ -21,7 +22,6 @@ dependencies {
     implementation("dev.triumphteam:triumph-gui:3.1.3")
     implementation("org.spongepowered:configurate-yaml:4.1.2")
     implementation("org.bstats:bstats-bukkit:3.0.0")
-    implementation("it.unimi.dsi:fastutil:8.5.11")
 }
 
 java {
