@@ -8,10 +8,14 @@ import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.Pair;
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
+import com.hibiscusmc.hmccosmetics.config.Settings;
+import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticArmorType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticMainhandType;
+import com.hibiscusmc.hmccosmetics.gui.Menu;
+import com.hibiscusmc.hmccosmetics.gui.Menus;
 import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
@@ -24,6 +28,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -45,6 +50,7 @@ public class PlayerGameListener implements Listener {
         registerInventoryClickListener();
         registerMenuChangeListener();
         registerPlayerEquipmentListener();
+        registerPlayerArmListener();
     }
 
     @EventHandler
@@ -106,10 +112,12 @@ public class PlayerGameListener implements Listener {
     }
 
     @EventHandler
-    public void onPlayerHit(EntityDamageEvent event) {
+    public void onPlayerHit(EntityDamageByEntityEvent event) {
         if (event.isCancelled()) return;
         Entity entity = event.getEntity();
-        if (!entity.getPersistentDataContainer().has(new NamespacedKey(HMCCosmeticsPlugin.getInstance(), "cosmeticMob"), PersistentDataType.SHORT)) return;
+        if (event.getEntity().getEntityId() == event.getDamager().getEntityId()) event.setCancelled(true);
+        if (!entity.getPersistentDataContainer().has(new NamespacedKey(HMCCosmeticsPlugin.getInstance(), "cosmeticMob"), PersistentDataType.SHORT))
+            return;
         event.setCancelled(true);
     }
 
@@ -248,6 +256,21 @@ public class PlayerGameListener implements Listener {
 
                 event.getPacket().getSlotStackPairLists().write(0, armor);
                 HMCCosmeticsPlugin.getInstance().getLogger().info("Equipment for " + user.getPlayer().getName() + " has been updated for " + player.getName());
+            }
+        });
+    }
+
+    private void registerPlayerArmListener() {
+        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(HMCCosmeticsPlugin.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Client.ARM_ANIMATION) {
+            @Override
+            public void onPacketReceiving(PacketEvent event) {
+                if (!(event.getPlayer() instanceof Player)) return;
+                Player player = event.getPlayer();
+                CosmeticUser user = CosmeticUsers.getUser(player);
+                if (user == null) return;
+                Menu menu = Menus.getMenu(Settings.getDefaultMenu());
+                if (menu == null) return;
+                menu.openMenu(user);
             }
         });
     }

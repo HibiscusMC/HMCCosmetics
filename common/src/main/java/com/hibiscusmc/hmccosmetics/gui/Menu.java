@@ -10,6 +10,7 @@ import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -50,6 +51,7 @@ public class Menu {
 
     public void openMenu(CosmeticUser user) {
         Player player = user.getPlayer();
+        if (player == null) return;
         final Component component = Adventure.MINI_MESSAGE.deserialize(Placeholder.applyPapiPlaceholders(player, this.title));
         Gui gui = Gui.gui().
                 title(component).
@@ -60,7 +62,12 @@ public class Menu {
 
         gui = getItems(user, gui);
 
-        gui.open(player);
+        Gui finalGui = gui;
+        Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> {
+            finalGui.open(player);
+        });
+
+        //gui.open(player);
 
     }
 

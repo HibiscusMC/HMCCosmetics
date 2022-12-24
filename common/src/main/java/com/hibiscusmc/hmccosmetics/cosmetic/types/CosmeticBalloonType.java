@@ -26,7 +26,7 @@ public class CosmeticBalloonType extends Cosmetic {
     @Override
     public void update(CosmeticUser user) {
         Player player = Bukkit.getPlayer(user.getUniqueId());
-
+        if (player == null) return;
         if (user.isInWardrobe()) return;
 
         final Location actual = player.getLocation().clone().add(Settings.getBalloonOffset());
