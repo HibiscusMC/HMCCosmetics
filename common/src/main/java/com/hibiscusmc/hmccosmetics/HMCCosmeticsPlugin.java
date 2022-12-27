@@ -170,6 +170,7 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
         getInstance().getLogger().info("Successfully Enabled HMCCosmetics");
         getInstance().getLogger().info(Cosmetics.values().size() + " Cosmetics Successfully Setup");
         getInstance().getLogger().info(Menus.getMenuNames().size() + " Menus Successfully Setup");
+        getInstance().getLogger().info("Data storage is set to " + DatabaseSettings.getDatabaseType());
     }
 
     public static boolean isDisable() {
