@@ -6,6 +6,7 @@ import com.hibiscusmc.hmccosmetics.util.misc.Adventure;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.spongepowered.configurate.ConfigurationNode;
 
@@ -33,6 +34,17 @@ public class MessagesUtil {
         message.replaceAll("%prefix%", prefix);
         Component finalMessage = Adventure.MINI_MESSAGE.deserialize(message);
         Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.getInstance()).player(player);
+
+        target.sendMessage(finalMessage);
+    }
+
+    public static void sendMessage(CommandSender sender, String key) {
+        if (!messages.containsKey(key)) return;
+        if (messages.get(key).isEmpty()) return;
+        String message = messages.get(key);
+        message.replaceAll("%prefix%", prefix);
+        Component finalMessage = Adventure.MINI_MESSAGE.deserialize(message);
+        Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.getInstance()).sender(sender);
 
         target.sendMessage(finalMessage);
     }
