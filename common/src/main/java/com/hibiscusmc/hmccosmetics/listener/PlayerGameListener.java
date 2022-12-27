@@ -20,6 +20,7 @@ import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import com.hibiscusmc.hmccosmetics.util.InventoryUtils;
+import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -67,7 +68,7 @@ public class PlayerGameListener implements Listener {
         Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
             user.updateCosmetic(cosmeticSlot);
         }, 1);
-        HMCCosmeticsPlugin.getInstance().getLogger().info("Event fired, updated cosmetic " + cosmeticSlot);
+        MessagesUtil.sendDebugMessages("Event fired, updated cosmetic " + cosmeticSlot);
     }
 
     @EventHandler
@@ -85,9 +86,9 @@ public class PlayerGameListener implements Listener {
     public void onPlayerTeleport(PlayerTeleportEvent event) {
         CosmeticUser user = CosmeticUsers.getUser(event.getPlayer().getUniqueId());
 
-        HMCCosmeticsPlugin.getInstance().getLogger().info("Player Teleport Event");
+        MessagesUtil.sendDebugMessages("Player Teleport Event");
         if (user == null) {
-            HMCCosmeticsPlugin.getInstance().getLogger().info("user is null");
+            MessagesUtil.sendDebugMessages("user is null");
             return;
         }
 
@@ -135,7 +136,7 @@ public class PlayerGameListener implements Listener {
         // Possibly look into cancelling the event, then handling the damage on our own.
 
         if (event.isCancelled()) return;
-        HMCCosmeticsPlugin.getInstance().getLogger().info("PlayerItemDamageEvent");
+        MessagesUtil.sendDebugMessages("PlayerItemDamageEvent");
 
         int slot = -1;
         int w = 36;
@@ -154,12 +155,12 @@ public class PlayerGameListener implements Listener {
         CosmeticSlot cosmeticSlot = InventoryUtils.BukkitCosmeticSlot(slot);
 
         if (!user.hasCosmeticInSlot(cosmeticSlot)) {
-            HMCCosmeticsPlugin.getInstance().getLogger().info("No cosmetic in " + cosmeticSlot);
+            MessagesUtil.sendDebugMessages("No cosmetic in " + cosmeticSlot);
             return;
         }
 
         Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
-            HMCCosmeticsPlugin.getInstance().getLogger().info("PlayerItemDamageEvent UpdateCosmetic " + cosmeticSlot);
+            MessagesUtil.sendDebugMessages("PlayerItemDamageEvent UpdateCosmetic " + cosmeticSlot);
             user.updateCosmetic(cosmeticSlot);
         }, 2);
     }
@@ -198,7 +199,7 @@ public class PlayerGameListener implements Listener {
                 Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
                     user.updateCosmetic(cosmeticSlot);
                 }, 1);
-                HMCCosmeticsPlugin.getInstance().getLogger().info("Packet fired, updated cosmetic " + cosmeticSlot);
+                MessagesUtil.sendDebugMessages("Packet fired, updated cosmetic " + cosmeticSlot);
             }
         });
     }
@@ -207,7 +208,7 @@ public class PlayerGameListener implements Listener {
         ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(HMCCosmeticsPlugin.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Server.WINDOW_ITEMS) {
             @Override
             public void onPacketSending(PacketEvent event) {
-                HMCCosmeticsPlugin.getInstance().getLogger().info("Menu Initial ");
+                MessagesUtil.sendDebugMessages("Menu Initial ");
                 Player player = event.getPlayer();
                 if (event.getPlayer() == null) return;
                 if (!(event.getPlayer() instanceof Player)) return;
@@ -224,7 +225,7 @@ public class PlayerGameListener implements Listener {
                         Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
                             user.updateCosmetic(cosmetic);
                         }, 1);
-                        HMCCosmeticsPlugin.getInstance().getLogger().info("Menu Fired, updated cosmetics " + cosmetic + " on slotdata " + windowID);
+                        MessagesUtil.sendDebugMessages("Menu Fired, updated cosmetics " + cosmetic + " on slotdata " + windowID);
                     }
                 }
             }
@@ -255,7 +256,7 @@ public class PlayerGameListener implements Listener {
                 }
 
                 event.getPacket().getSlotStackPairLists().write(0, armor);
-                HMCCosmeticsPlugin.getInstance().getLogger().info("Equipment for " + user.getPlayer().getName() + " has been updated for " + player.getName());
+                MessagesUtil.sendDebugMessages("Equipment for " + user.getPlayer().getName() + " has been updated for " + player.getName());
             }
         });
     }

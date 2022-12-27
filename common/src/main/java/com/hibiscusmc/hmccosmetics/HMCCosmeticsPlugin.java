@@ -148,6 +148,10 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
             user.updateCosmetic();
         }
          */
+
+        getInstance().getLogger().info("Successfully Enabled HMCCosmetics");
+        getInstance().getLogger().info(Cosmetics.values().size() + " Cosmetics Successfully Setup");
+        getInstance().getLogger().info(Menus.getMenuNames().size() + " Menus Successfully Setup");
     }
 
     public static boolean isDisable() {

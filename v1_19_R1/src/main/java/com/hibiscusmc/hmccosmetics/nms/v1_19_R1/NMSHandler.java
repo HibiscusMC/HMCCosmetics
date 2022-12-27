@@ -10,6 +10,7 @@ import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticMainhandType;
 import com.hibiscusmc.hmccosmetics.entities.BalloonEntity;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.InventoryUtils;
+import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.PlayerUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
 import com.mojang.datafixers.util.Pair;
@@ -80,7 +81,7 @@ public class NMSHandler implements com.hibiscusmc.hmccosmetics.nms.NMSHandler {
         invisibleArmorstand.setItemSlot(EquipmentSlot.HEAD, CraftItemStack.asNMSCopy(item));
         ((CraftWorld) user.getPlayer().getWorld()).getHandle().addFreshEntity(invisibleArmorstand, CreatureSpawnEvent.SpawnReason.CUSTOM);
 
-        HMCCosmeticsPlugin.getInstance().getLogger().info("spawnBackpack NMS");
+        MessagesUtil.sendDebugMessages("spawnBackpack NMS");
 
         return invisibleArmorstand.getBukkitLivingEntity();
         //PacketManager.armorStandMetaPacket(invisibleArmorstand.getBukkitEntity(), sentTo);

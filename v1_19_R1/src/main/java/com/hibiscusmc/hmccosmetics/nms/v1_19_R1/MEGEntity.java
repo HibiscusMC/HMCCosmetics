@@ -1,6 +1,7 @@
 package com.hibiscusmc.hmccosmetics.nms.v1_19_R1;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
+import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ambient.Bat;
 import org.bukkit.Location;
@@ -13,7 +14,7 @@ public class MEGEntity extends Bat {
     public MEGEntity(Location loc) {
             super(EntityType.BAT, ((CraftWorld) loc.getWorld()).getHandle());
             this.setPos(loc.getX(), loc.getY(), loc.getZ());
-            HMCCosmeticsPlugin.getInstance().getLogger().info("Spawned MEGEntity at " + loc);
+            MessagesUtil.sendDebugMessages("Spawned MEGEntity at " + loc);
             getBukkitLivingEntity().setInvisible(true);
             getBukkitLivingEntity().setInvulnerable(true); // NOTE - CREATIVE PLAYERS CAN DESTROY IT STILL
             getBukkitLivingEntity().setAI(false);

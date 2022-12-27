@@ -8,6 +8,7 @@ import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
+import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.PlayerUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.wrappers.WrapperPlayServerNamedEntitySpawn;
 import com.hibiscusmc.hmccosmetics.util.packets.wrappers.WrapperPlayServerPlayerInfo;
@@ -51,7 +52,7 @@ public class PacketManager extends BasePacket {
         // Tells what event this is. This is a change gamemode event.
         packet.getFloat().write(0, (float) gamemode);
         sendPacket(player, packet);
-        HMCCosmeticsPlugin.getInstance().getLogger().info("Gamemode Change sent to " + player + " to be " + gamemode);
+        MessagesUtil.sendDebugMessages("Gamemode Change sent to " + player + " to be " + gamemode);
     }
 
     public static void ridingMountPacket(
@@ -112,13 +113,13 @@ public class PacketManager extends BasePacket {
             int entityId,
             List<Player> sendTo
     ) {
-            PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
-            packet.getModifier().writeDefaults();
-            packet.getIntegers().write(0, entityId);
-            WrappedDataWatcher wrapper = new WrappedDataWatcher();
-            wrapper.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(0, WrappedDataWatcher.Registry.get(Byte.class)), (byte) 0x20);
-            packet.getWatchableCollectionModifier().write(0, wrapper.getWatchableObjects());
-            for (Player p : sendTo) sendPacket(p, packet);
+        PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
+        packet.getModifier().writeDefaults();
+        packet.getIntegers().write(0, entityId);
+        WrappedDataWatcher wrapper = new WrappedDataWatcher();
+        wrapper.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(0, WrappedDataWatcher.Registry.get(Byte.class)), (byte) 0x20);
+        packet.getWatchableCollectionModifier().write(0, wrapper.getWatchableObjects());
+        for (Player p : sendTo) sendPacket(p, packet);
     }
 
     public static void sendLookPacket(

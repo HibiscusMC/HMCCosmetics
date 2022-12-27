@@ -4,6 +4,7 @@ import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.nms.NMSHandler;
 import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
+import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.ticxo.modelengine.api.ModelEngineAPI;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
@@ -16,6 +17,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import java.util.UUID;
+import java.util.logging.Level;
 
 // This includes the Pufferfish (The Pufferfish that's what the player leashes to) and the model (MEGEntity)
 public class BalloonEntity {
@@ -31,9 +33,9 @@ public class BalloonEntity {
     }
 
     public void spawnModel(final String id, Color color) {
-        HMCCosmeticsPlugin.getInstance().getLogger().info("Attempting Spawning for " + id);
+        MessagesUtil.sendDebugMessages("Attempting Spawning for " + id);
         if (ModelEngineAPI.api.getModelRegistry().getBlueprint(id) == null) {
-            HMCCosmeticsPlugin.getInstance().getLogger().warning("Invalid Model Engine Blueprint " + id);
+            MessagesUtil.sendDebugMessages("Invalid Model Engine Blueprint " + id, Level.SEVERE);
             return;
         }
         ModeledEntity modeledEntity = ModelEngineAPI.getOrCreateModeledEntity(modelEntity);
@@ -68,12 +70,12 @@ public class BalloonEntity {
         final ModeledEntity model = ModelEngineAPI.api.getModeledEntity(modelEntity.getUniqueId());
         if (model == null) {
             spawnModel(id, color);
-            HMCCosmeticsPlugin.getInstance().getLogger().info("model is null");
+            MessagesUtil.sendDebugMessages("model is null");
             return;
         }
         //if (model.getRangeManager().getPlayerInRange().contains(player)) return;
         model.showToPlayer(player);
-        HMCCosmeticsPlugin.getInstance().getLogger().info("Show to player");
+        MessagesUtil.sendDebugMessages("Show to player");
     }
     public void removePlayerFromModel(final Player player) {
         final ModeledEntity model = ModelEngineAPI.api.getModeledEntity(modelEntity.getUniqueId());
@@ -81,7 +83,7 @@ public class BalloonEntity {
         if (model == null) return;
 
         model.hideFromPlayer(player);
-        HMCCosmeticsPlugin.getInstance().getLogger().info("Hidden from player");
+        MessagesUtil.sendDebugMessages("Hidden from player");
     }
 
     public Entity getModelEntity() {

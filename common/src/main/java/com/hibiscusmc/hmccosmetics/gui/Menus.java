@@ -1,6 +1,7 @@
 package com.hibiscusmc.hmccosmetics.gui;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
+import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.spongepowered.configurate.CommentedConfigurationNode;
 import org.spongepowered.configurate.ConfigurateException;
@@ -57,7 +58,7 @@ public class Menus {
 
         for (File child : directoryListing) {
             if (child.toString().contains(".yml") || child.toString().contains(".yaml")) {
-                HMCCosmeticsPlugin.getInstance().getLogger().info("Scanning " + child);
+                MessagesUtil.sendDebugMessages("Scanning " + child);
                 // Loads file
                 YamlConfigurationLoader loader = YamlConfigurationLoader.builder().path(child.toPath()).build();
                 CommentedConfigurationNode root;

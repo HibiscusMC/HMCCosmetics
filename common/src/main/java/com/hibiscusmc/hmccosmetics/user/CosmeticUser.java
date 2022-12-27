@@ -11,6 +11,7 @@ import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticMainhandType;
 import com.hibiscusmc.hmccosmetics.entities.BalloonEntity;
 import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
 import com.hibiscusmc.hmccosmetics.util.InventoryUtils;
+import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.PlayerUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
 import org.bukkit.Bukkit;
@@ -81,11 +82,11 @@ public class CosmeticUser {
         }
         playerCosmetics.put(cosmetic.getSlot(), cosmetic);
         if (color != null) colors.put(cosmetic.getSlot(), color);
-        HMCCosmeticsPlugin.getInstance().getLogger().info("addPlayerCosmetic " + cosmetic.getId());
+        MessagesUtil.sendDebugMessages("addPlayerCosmetic " + cosmetic.getId());
         if (cosmetic.getSlot() == CosmeticSlot.BACKPACK) {
             CosmeticBackpackType backpackType = (CosmeticBackpackType) cosmetic;
             spawnBackpack(backpackType);
-            HMCCosmeticsPlugin.getInstance().getLogger().info("addPlayerCosmetic spawnBackpack " + cosmetic.getId());
+            MessagesUtil.sendDebugMessages("addPlayerCosmetic spawnBackpack " + cosmetic.getId());
         }
         if (cosmetic.getSlot() == CosmeticSlot.BALLOON) {
             CosmeticBalloonType balloonType = (CosmeticBalloonType) cosmetic;
@@ -147,7 +148,7 @@ public class CosmeticUser {
         if (cosmetic instanceof CosmeticArmorType) {
             CosmeticArmorType cosmetic1 = (CosmeticArmorType) cosmetic;
             item = cosmetic1.getCosmeticItem();
-            HMCCosmeticsPlugin.getInstance().getLogger().info("GetUserCosemticUser Armor");
+            MessagesUtil.sendDebugMessages("GetUserCosemticUser Armor");
         }
         if (cosmetic instanceof CosmeticMainhandType) {
             CosmeticMainhandType cosmetic1 = (CosmeticMainhandType) cosmetic;
@@ -156,13 +157,13 @@ public class CosmeticUser {
         if (cosmetic instanceof CosmeticBackpackType) {
             CosmeticBackpackType cosmetic1 = (CosmeticBackpackType) cosmetic;
             item = cosmetic1.getBackpackItem();
-            HMCCosmeticsPlugin.getInstance().getLogger().info("GetUserCosemticUser Backpack");
+            MessagesUtil.sendDebugMessages("GetUserCosemticUser Backpack");
         }
         if (cosmetic instanceof CosmeticBalloonType) {
             item = new ItemStack(Material.LEATHER_HORSE_ARMOR);
         }
         if (item == null) {
-            HMCCosmeticsPlugin.getInstance().getLogger().info("GetUserCosemticUser Item is null");
+            MessagesUtil.sendDebugMessages("GetUserCosemticUser Item is null");
             return null;
         }
         if (item.hasItemMeta()) {
@@ -209,7 +210,7 @@ public class CosmeticUser {
     }
 
     public void spawnBackpack(CosmeticBackpackType cosmeticBackpackType) {
-        HMCCosmeticsPlugin.getInstance().getLogger().info("spawnBackpack Bukkit - Start");
+        MessagesUtil.sendDebugMessages("spawnBackpack Bukkit - Start");
         Player player = Bukkit.getPlayer(getUniqueId());
         List<Player> sentTo = PlayerUtils.getNearbyPlayers(player.getLocation());
 
@@ -219,8 +220,7 @@ public class CosmeticUser {
 
         player.addPassenger(invisibleArmorstand);
 
-        HMCCosmeticsPlugin.getInstance().getLogger().info("spawnBackpack Bukkit - Finish");
-
+        MessagesUtil.sendDebugMessages("spawnBackpack Bukkit - Finish");
     }
 
     public void spawnBalloon(CosmeticBalloonType cosmeticBalloonType) {
@@ -335,7 +335,7 @@ public class CosmeticUser {
             invisibleArmorstand.getEquipment().clear();
         }
         updateCosmetic();
-        HMCCosmeticsPlugin.getInstance().getLogger().info("HideCosmetics");
+        MessagesUtil.sendDebugMessages("HideCosmetics");
     }
 
     public void showCosmetics() {
@@ -353,6 +353,6 @@ public class CosmeticUser {
             invisibleArmorstand.getEquipment().setHelmet(item);
         }
         updateCosmetic();
-        HMCCosmeticsPlugin.getInstance().getLogger().info("ShowCosmetics");
+        MessagesUtil.sendDebugMessages("ShowCosmetics");
     }
 }

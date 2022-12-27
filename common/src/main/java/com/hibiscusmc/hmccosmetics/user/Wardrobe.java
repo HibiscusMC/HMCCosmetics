@@ -5,6 +5,7 @@ import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
+import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.ServerUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
 import org.bukkit.Bukkit;
@@ -39,9 +40,9 @@ public class Wardrobe {
 
     public void start() {
         Player player = VIEWER.getPlayer();
-        player.sendMessage("start");
-        player.sendMessage("NPC ID " + NPC_ID);
-        player.sendMessage("armorstand id " + ARMORSTAND_ID);
+        MessagesUtil.sendDebugMessages("start");
+        MessagesUtil.sendDebugMessages("NPC ID " + NPC_ID);
+        MessagesUtil.sendDebugMessages("armorstand id " + ARMORSTAND_ID);
 
         this.originalGamemode = player.getGameMode();
         if (WardrobeSettings.isReturnLastLocation()) {
@@ -67,7 +68,7 @@ public class Wardrobe {
         // NPC 2
         Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
             PacketManager.sendFakePlayerSpawnPacket(WardrobeSettings.getWardrobeLocation(), WARDROBE_UUID, NPC_ID, viewer);
-            HMCCosmeticsPlugin.getInstance().getLogger().info("Spawned Fake Player on " + WardrobeSettings.getWardrobeLocation());
+            MessagesUtil.sendDebugMessages("Spawned Fake Player on " + WardrobeSettings.getWardrobeLocation());
         }, 4);
 
 
@@ -99,9 +100,9 @@ public class Wardrobe {
         this.active = false;
 
         Player player = VIEWER.getPlayer();
-        player.sendMessage("end");
-        player.sendMessage("NPC ID " + NPC_ID);
-        player.sendMessage("armorstand id " + ARMORSTAND_ID);
+        MessagesUtil.sendDebugMessages("end");
+        MessagesUtil.sendDebugMessages("NPC ID " + NPC_ID);
+        MessagesUtil.sendDebugMessages("armorstand id " + ARMORSTAND_ID);
 
         List<Player> viewer = List.of(player);
 
@@ -145,11 +146,11 @@ public class Wardrobe {
             @Override
             public void run() {
                 if (active == false) {
-                    HMCCosmeticsPlugin.getInstance().getLogger().info("Active is false");
+                    MessagesUtil.sendDebugMessages("Active is false");
                     this.cancel();
                     return;
                 }
-                HMCCosmeticsPlugin.getInstance().getLogger().info("Update ");
+                MessagesUtil.sendDebugMessages("Update ");
                 List<Player> viewer = List.of(VIEWER.getPlayer());
 
                 Location location = WardrobeSettings.getWardrobeLocation().clone();

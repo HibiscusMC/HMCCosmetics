@@ -6,6 +6,7 @@ import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticArmorType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBackpackType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticMainhandType;
+import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import org.spongepowered.configurate.CommentedConfigurationNode;
 import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.ConfigurationNode;
@@ -61,7 +62,7 @@ public class Cosmetics {
 
         for (File child : directoryListing) {
             if (child.toString().contains(".yml") || child.toString().contains(".yaml")) {
-                HMCCosmeticsPlugin.getInstance().getLogger().info("Scanning " + child);
+                MessagesUtil.sendDebugMessages("Scanning " + child);
                 // Loads file
                 YamlConfigurationLoader loader = YamlConfigurationLoader.builder().path(child.toPath()).build();
                 CommentedConfigurationNode root;
@@ -78,7 +79,7 @@ public class Cosmetics {
     private static void setupCosmetics(CommentedConfigurationNode config) {
         for (ConfigurationNode cosmeticConfig : config.childrenMap().values()) {
             String id = cosmeticConfig.key().toString();
-            HMCCosmeticsPlugin.getInstance().getLogger().info("Attempting to add " + id);
+            MessagesUtil.sendDebugMessages("Attempting to add " + id);
             switch (CosmeticSlot.valueOf(cosmeticConfig.node("slot").getString())) {
                 case BALLOON -> {
                     new CosmeticBalloonType(id, cosmeticConfig);

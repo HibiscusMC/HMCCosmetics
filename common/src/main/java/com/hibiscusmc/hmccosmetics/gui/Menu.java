@@ -4,6 +4,7 @@ import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.serializer.ItemSerializer;
 import com.hibiscusmc.hmccosmetics.gui.type.Types;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
+import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.misc.Adventure;
 import com.hibiscusmc.hmccosmetics.util.misc.Placeholder;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
@@ -83,7 +84,7 @@ public class Menu {
                 continue;
             }
             if (slotString == null) {
-                HMCCosmeticsPlugin.getInstance().getLogger().info("Unable to get valid slot for " + config.key().toString());
+                MessagesUtil.sendDebugMessages("Unable to get valid slot for " + config.key().toString());
                 continue;
             }
 
@@ -91,7 +92,7 @@ public class Menu {
 
 
             if (slots == null) {
-                HMCCosmeticsPlugin.getInstance().getLogger().info("Slot is null for " + config.key().toString());
+                MessagesUtil.sendDebugMessages("Slot is null for " + config.key().toString());
                 continue;
             }
 
@@ -105,7 +106,7 @@ public class Menu {
             }
 
             if (item == null) {
-                HMCCosmeticsPlugin.getInstance().getLogger().info("something went wrong! " + item);
+                MessagesUtil.sendDebugMessages("something went wrong! " + item);
                 continue;
             }
 
@@ -132,7 +133,7 @@ public class Menu {
                     gui.updateItem(i, guiItem);
                 }
             });
-            HMCCosmeticsPlugin.getInstance().getLogger().info("Added " + slots + " as " + guiItem + " in the menu");
+            MessagesUtil.sendDebugMessages("Added " + slots + " as " + guiItem + " in the menu");
             gui.setItem(slots, guiItem);
         }
         return gui;

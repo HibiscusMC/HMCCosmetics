@@ -2,6 +2,7 @@ package com.hibiscusmc.hmccosmetics.config;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.serializer.LocationSerializer;
+import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.misc.Utils;
 import org.bukkit.Location;
 import org.spongepowered.configurate.ConfigurationNode;
@@ -57,9 +58,9 @@ public class WardrobeSettings {
         returnLastLocation = source.node(RETURN_LAST_LOCATION).getBoolean();
         try {
             wardrobeLocation = LocationSerializer.INSTANCE.deserialize(Location.class, source.node(STATIC_LOCATION_PATH));
-            HMCCosmeticsPlugin.getInstance().getLogger().info("Wardrobe Location: " + wardrobeLocation);
+            MessagesUtil.sendDebugMessages("Wardrobe Location: " + wardrobeLocation);
             viewerLocation = LocationSerializer.INSTANCE.deserialize(Location.class, source.node(VIEWER_LOCATION_PATH));
-            HMCCosmeticsPlugin.getInstance().getLogger().info("Viewer Location: " + viewerLocation);
+            MessagesUtil.sendDebugMessages("Viewer Location: " + viewerLocation);
             leaveLocation = Utils.replaceIfNull(LocationSerializer.INSTANCE.deserialize(Location.class, source.node(LEAVE_LOCATION_PATH)), viewerLocation);
         } catch (SerializationException e) {
             throw new RuntimeException(e);

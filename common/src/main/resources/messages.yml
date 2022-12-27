@@ -1,4 +1,4 @@
-prefix: "<white>"
+prefix: "<white>HMCCosmetics > "
 no-permission: "%prefix% <red>No Permission!"
 no-cosmetic-permission: "%prefix% <red>You do not have permission for this cosmetic!"
 set-hat: "%prefix% <gradient:#6D9DC5:#45CDE9>Applied hat!"
@@ -27,12 +27,6 @@ set-other-pants: "%prefix% <gradient:#6D9DC5:#45CDE9>You have set the pants of %
 set-other-boots: "%prefix% <gradient:#6D9DC5:#45CDE9>You have set the boots of %player% to %type%"
 hid-cosmetics: "%prefix% <gradient:#6D9DC5:#45CDE9>You have hidden your cosmetics"
 shown-cosmetics: "%prefix% <gradient:#6D9DC5:#45CDE9>You have shown your cosmetics"
-opened-wardrobe:
-  type: title
-  message: "<black>"
-  fade-in: 1
-  duration: 1
-  fade-out: 1
 closed-wardrobe: "%prefix% <gradient:#6D9DC5:#45CDE9>Closed wardrobe!"
 wardrobe-already-open: "%prefix% <gradient:#6D9DC5:#45CDE9><red>The wardrobe is already open!"
 not-near-wardrobe: "%prefix% <gradient:#6D9DC5:#45CDE9><red>You are not near the wardrobe!"

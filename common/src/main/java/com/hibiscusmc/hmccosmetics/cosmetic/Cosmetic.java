@@ -1,7 +1,7 @@
 package com.hibiscusmc.hmccosmetics.cosmetic;
 
-import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
+import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import org.spongepowered.configurate.ConfigurationNode;
 
 public class Cosmetic {
@@ -15,13 +15,13 @@ public class Cosmetic {
     protected Cosmetic(String id, ConfigurationNode config) {
         this.id = id;
         //this.permission = config.node("permission").getString(null);
-        HMCCosmeticsPlugin.getInstance().getLogger().info("Slot: " + config.node("slot").getString());
+        MessagesUtil.sendDebugMessages("Slot: " + config.node("slot").getString());
         setSlot(CosmeticSlot.valueOf(config.node("slot").getString()));
 
         setEquipable(false);
         setDyable(config.node("dyeable").getBoolean(false));
 
-        HMCCosmeticsPlugin.getInstance().getLogger().info("Dyeable " + dyable);
+        MessagesUtil.sendDebugMessages("Dyeable " + dyable);
 
         Cosmetics.addCosmetic(this);
     }

@@ -24,6 +24,7 @@ public class Settings {
     private static final String PARTICLE_COUNT = "particle-count";
     private static final String DYE_MENU_PATH = "dye-menu";
     private static final String DYE_MENU_NAME = "title";
+    private static final String DEBUG_ENABLE_PETH = "debug-mode";
 
     private static String defaultMenu;
     private static String dyeMenuName;
@@ -33,12 +34,14 @@ public class Settings {
     private static boolean requireEmptyChestPlate;
     private static boolean requireEmptyPants;
     private static boolean requireEmptyBoots;
+    private static boolean debugMode;
     private static int lookDownPitch;
     private static int viewDistance;
     private static Vector balloonOffset;
 
     public static void load(ConfigurationNode source) {
 
+        debugMode = source.node(DEBUG_ENABLE_PETH).getBoolean(false);
         defaultMenu = source.node(DEFAULT_MENU).getString();
         configVersion = source.node(CONFIG_VERSION).getInt(0);
         if (configVersion == 0) {
@@ -140,5 +143,9 @@ public class Settings {
 
     public static String getDyeMenuName() {
         return dyeMenuName;
+    }
+
+    public static boolean isDebugEnabled() {
+        return debugMode;
     }
 }

@@ -4,6 +4,7 @@ import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.serializer.ItemSerializer;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
+import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -11,6 +12,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
+
+import java.util.logging.Level;
 
 public class CosmeticBackpackType extends Cosmetic {
 
@@ -56,7 +59,7 @@ public class CosmeticBackpackType extends Cosmetic {
 
     public ItemStack getBackpackItem() {
         if (this.backpackItem == null ) {
-            HMCCosmeticsPlugin.getInstance().getLogger().info("Backpack item was null for " + getId());
+            MessagesUtil.sendDebugMessages("Backpack item was null for " + getId());
             this.backpackItem = generateItemStack(config.node("item"));
         }
         return this.backpackItem.clone();
@@ -66,12 +69,12 @@ public class CosmeticBackpackType extends Cosmetic {
         try {
             ItemStack item = ItemSerializer.INSTANCE.deserialize(ItemStack.class, config);
             if (item == null) {
-                HMCCosmeticsPlugin.getInstance().getLogger().severe("Unable to create item for " + getId());
+                MessagesUtil.sendDebugMessages("Unable to create item for " + getId(), Level.SEVERE);
                 return new ItemStack(Material.AIR);
             }
             return item;
         } catch (SerializationException e) {
-            HMCCosmeticsPlugin.getInstance().getLogger().severe("Fatal error encountered for " + getId() + " regarding Serialization of item");
+            MessagesUtil.sendDebugMessages("Fatal error encountered for " + getId() + " regarding Serialization of item", Level.SEVERE);
             throw new RuntimeException(e);
         }
     }
