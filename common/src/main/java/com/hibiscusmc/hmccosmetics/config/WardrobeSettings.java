@@ -1,6 +1,5 @@
 package com.hibiscusmc.hmccosmetics.config;
 
-import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.serializer.LocationSerializer;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.misc.Utils;

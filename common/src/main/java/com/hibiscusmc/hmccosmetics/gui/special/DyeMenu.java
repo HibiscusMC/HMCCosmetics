@@ -5,7 +5,6 @@ import com.hibiscusmc.hmccolor.gui.guis.Gui;
 import com.hibiscusmc.hmccolor.gui.guis.GuiItem;
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
-import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.misc.Placeholder;
 import org.bukkit.Color;

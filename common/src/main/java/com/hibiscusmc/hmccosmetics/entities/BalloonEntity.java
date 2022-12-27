@@ -1,15 +1,11 @@
 package com.hibiscusmc.hmccosmetics.entities;
 
-import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.Settings;
-import com.hibiscusmc.hmccosmetics.nms.NMSHandler;
 import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.ticxo.modelengine.api.ModelEngineAPI;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
-import com.ticxo.modelengine.api.nms.entity.fake.BoneRenderer;
-import com.ticxo.modelengine.api.nms.entity.fake.FakeEntity;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;

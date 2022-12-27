@@ -1,6 +1,5 @@
 package com.hibiscusmc.hmccosmetics.cosmetic.types;
 
-import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.serializer.ItemSerializer;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;

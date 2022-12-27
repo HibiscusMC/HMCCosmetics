@@ -1,6 +1,5 @@
 package com.hibiscusmc.hmccosmetics.hooks.worldguard;
 
-import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.flags.Flag;

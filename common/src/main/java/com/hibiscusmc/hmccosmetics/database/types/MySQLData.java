@@ -9,7 +9,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Color;
 
 import java.sql.*;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
