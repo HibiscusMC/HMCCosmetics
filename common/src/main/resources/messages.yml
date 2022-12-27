@@ -1,5 +1,8 @@
 prefix: "<white>HMCCosmetics > "
 no-permission: "%prefix% <red>No Permission!"
+
+
+# To-Do messages
 no-cosmetic-permission: "%prefix% <red>You do not have permission for this cosmetic!"
 set-hat: "%prefix% <gradient:#6D9DC5:#45CDE9>Applied hat!"
 removed-hat: "%prefix% <gradient:#6D9DC5:#45CDE9>Removed hat!"
