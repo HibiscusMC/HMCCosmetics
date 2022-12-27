@@ -11,6 +11,7 @@ import com.hibiscusmc.hmccosmetics.gui.Menus;
 import com.hibiscusmc.hmccosmetics.gui.special.DyeMenu;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
+import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import io.th0rgal.oraxen.utils.logs.Logs;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -44,6 +45,10 @@ public class CosmeticCommand implements CommandExecutor {
             return true;
         }
         else if (args[0].equalsIgnoreCase("reload")) {
+            if (!sender.hasPermission("HMCCosmetics.reload") || !sender.isOp()) {
+                MessagesUtil.sendMessage(sender, "no-permission");
+                return true;
+            }
             HMCCosmeticsPlugin.setup();
             sender.sendMessage("Reloaded.");
             return true;
