@@ -31,7 +31,7 @@ public class MessagesUtil {
         if (!messages.containsKey(key)) return;
         if (messages.get(key).isEmpty()) return;
         String message = messages.get(key);
-        message.replaceAll("%prefix%", prefix);
+        message = message.replaceAll("%prefix%", prefix);
         Component finalMessage = Adventure.MINI_MESSAGE.deserialize(message);
         Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.getInstance()).player(player);
 
@@ -42,7 +42,7 @@ public class MessagesUtil {
         if (!messages.containsKey(key)) return;
         if (messages.get(key).isEmpty()) return;
         String message = messages.get(key);
-        message.replaceAll("%prefix%", prefix);
+        message = message.replaceAll("%prefix%", prefix);
         Component finalMessage = Adventure.MINI_MESSAGE.deserialize(message);
         Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.getInstance()).sender(sender);
 

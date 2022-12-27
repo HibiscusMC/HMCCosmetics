@@ -17,6 +17,7 @@ import com.hibiscusmc.hmccosmetics.hooks.worldguard.WGListener;
 import com.hibiscusmc.hmccosmetics.listener.PlayerConnectionListener;
 import com.hibiscusmc.hmccosmetics.listener.PlayerGameListener;
 import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
+import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.misc.Translation;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -116,6 +117,23 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
             Settings.load(loader.load());
             WardrobeSettings.load(loader.load().node("wardrobe"));
             DatabaseSettings.load(loader.load().node("database-settings"));
+        } catch (ConfigurateException e) {
+            throw new RuntimeException(e);
+        }
+
+        // Messages setup
+        final File messagesFile = Path.of(getInstance().getDataFolder().getPath(), "messages.yml").toFile();
+        final YamlConfigurationLoader messagesLoader = YamlConfigurationLoader.
+                builder().
+                path(messagesFile.toPath()).
+                defaultOptions(opts ->
+                        opts.serializers(build -> {
+                            build.register(Location.class, LocationSerializer.INSTANCE);
+                            build.register(ItemStack.class, ItemSerializer.INSTANCE);
+                        }))
+                .build();
+        try {
+            MessagesUtil.setup(messagesLoader.load());
         } catch (ConfigurateException e) {
             throw new RuntimeException(e);
         }
