@@ -1,5 +1,4 @@
 import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
     id("java")
@@ -25,14 +24,14 @@ allprojects {
         maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
         maven("https://mvnrepository.com/artifact/com.zaxxer/HikariCP")
         maven("https://repo.citizensnpcs.co")
-        //maven("https://mvn.lumine.io/repository/maven-public")
+        maven("https://maven.enginehub.org/repo/")
+        maven("https://repo.skyslycer.de/")
         maven {
             url = uri("https://mvn.lumine.io/repository/maven-public")
             metadataSources {
                 artifact()
             }
         }
-        maven("https://maven.enginehub.org/repo/")
     }
 
     dependencies {
@@ -96,7 +95,6 @@ tasks {
         relocate("org.bstats", "com.hisbiscusmc.hmccosmetics.bstats")
         relocate("com.zaxxer.hikaricp", "com.hisbiscusmc.hmccosmetics.hikaricp")
         relocate("com.j256.ormlite", "com.hisbiscusmc.hmccosmetics.ormlite")
-        //relocate("it.unimi.dsi", "com.hisbiscus.hmccosmetics.dsi")
         archiveFileName.set("HMCCosmetics.jar")
 
         dependencies {
