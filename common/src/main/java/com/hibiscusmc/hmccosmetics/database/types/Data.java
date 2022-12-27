@@ -5,6 +5,7 @@ import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
+import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import org.bukkit.Color;
 import org.jetbrains.annotations.Nullable;
 
@@ -56,7 +57,7 @@ public class Data {
             String[] splitData = a.split("=");
             CosmeticSlot slot = null;
             Cosmetic cosmetic = null;
-            HMCCosmeticsPlugin.getInstance().getLogger().info("First split (suppose slot) " + splitData[0]);
+            MessagesUtil.sendDebugMessages("First split (suppose slot) " + splitData[0]);
             if (CosmeticSlot.valueOf(splitData[0]) != null) slot = CosmeticSlot.valueOf(splitData[0]);
 
             if (splitData[1].contains("&")) {

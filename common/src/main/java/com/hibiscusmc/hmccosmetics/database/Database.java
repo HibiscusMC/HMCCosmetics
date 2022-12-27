@@ -7,6 +7,7 @@ import com.hibiscusmc.hmccosmetics.database.types.InternalData;
 import com.hibiscusmc.hmccosmetics.database.types.MySQLData;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
+import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
@@ -23,13 +24,13 @@ public class Database {
         data = INTERNAL_DATA; // default
         if (databaseType.equalsIgnoreCase("INTERNAL")) {
             data = INTERNAL_DATA;
-            HMCCosmeticsPlugin.getInstance().getLogger().severe("Datatype set to internal data");
+            MessagesUtil.sendDebugMessages("Datatype set to internal data");
         }
         if (databaseType.equalsIgnoreCase("MySQL")) {
             data = MYSQL_DATA;
-            HMCCosmeticsPlugin.getInstance().getLogger().severe("Datatype set to MySQL data");
+            MessagesUtil.sendDebugMessages("Datatype set to MySQL data");
         }
-        HMCCosmeticsPlugin.getInstance().getLogger().severe("Database is " + data);
+        MessagesUtil.sendDebugMessages("Database is " + data);
 
         setup();
     }
