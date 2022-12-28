@@ -2,6 +2,7 @@ package com.hibiscusmc.hmccosmetics.config;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.util.Vector;
 import org.spongepowered.configurate.ConfigurationNode;
 
@@ -114,6 +115,27 @@ public class Settings {
                 return requireEmptyBoots;
             }
             case OFFHAND -> {
+                return requireEmptyOffHand;
+            }
+        }
+        return false;
+    }
+
+    public static boolean getRequireEmpty(EquipmentSlot slot) {
+        switch (slot) {
+            case HEAD -> {
+                return requireEmptyHelmet;
+            }
+            case CHEST -> {
+                return requireEmptyChestPlate;
+            }
+            case LEGS -> {
+                return requireEmptyPants;
+            }
+            case FEET -> {
+                return requireEmptyBoots;
+            }
+            case OFF_HAND -> {
                 return requireEmptyOffHand;
             }
         }
