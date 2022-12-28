@@ -34,7 +34,7 @@ public class MessagesUtil {
 
     public static void sendMessage(Player player, String key) {
         if (!messages.containsKey(key)) return;
-        if (messages.get(key).isEmpty()) return;
+        if (messages.get(key) == null) return;
         String message = messages.get(key);
         message = message.replaceAll("%prefix%", prefix);
         Component finalMessage = Adventure.MINI_MESSAGE.deserialize(message);
@@ -45,7 +45,7 @@ public class MessagesUtil {
 
     public static void sendMessage(CommandSender sender, String key) {
         if (!messages.containsKey(key)) return;
-        if (messages.get(key).isEmpty()) return;
+        if (messages.get(key) == null) return;
         String message = messages.get(key);
         message = message.replaceAll("%prefix%", prefix);
         Component finalMessage = Adventure.MINI_MESSAGE.deserialize(message);
