@@ -4,11 +4,18 @@ import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
+import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticArmorType;
+import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
+import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticMainhandType;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class PAPIHook extends PlaceholderExpansion {
 
@@ -31,43 +38,112 @@ public class PAPIHook extends PlaceholderExpansion {
 
     @Override
     public String onRequest(OfflinePlayer player, String params) {
-        final String[] parts = params.split("_");
-        if (parts.length == 0) return null;
-
-
-        CosmeticUser user = CosmeticUsers.getUser(player.getUniqueId());
+        if (!player.isOnline()) return null;
+        CosmeticUser user = CosmeticUsers.getUser(player.getPlayer());
         if (user == null) return null;
-        if (parts[0].equalsIgnoreCase("using")) {
-            if (parts.length < 2) return null;
-            final String id = this.getId(parts, 1);
-            Cosmetic cosmetic = Cosmetics.getCosmetic(id);
-            if (cosmetic == null) return "false";
-            if (user.getCosmetic(cosmetic.getSlot()).equals(cosmetic)) return "true";
-        }
-        if (parts[0].equalsIgnoreCase("current")) {
-            if (parts.length < 2) return null;
-            final String id = this.getId(parts, 1);
-            CosmeticSlot cosmeticslot = CosmeticSlot.valueOf(id);
-            if (cosmeticslot == null) return "";
-            if (user.getCosmetic(cosmeticslot) != null) return user.getCosmetic(cosmeticslot).getId();
-        }
-        if (parts[0].equalsIgnoreCase("wardrobe-enabled")) {
-            if (parts.length < 1) return null;
-            if (user.isInWardrobe()) return String.valueOf(user.isInWardrobe());
-            //final String id = this.getId(parts, 1);
 
-        }
+        List<String> placeholderArgs = Arrays.asList(params.split("_"));
 
-        return "";
+        switch (placeholderArgs.get(0).toLowerCase()) {
+            case "using":
+                if (placeholderArgs == null) {
+                    return null;
+                }
+                if (placeholderArgs.get(1) != null) {
+                    Cosmetic cosmetic = Cosmetics.getCosmetic(placeholderArgs.get(1));
+                    if (user.getCosmetic(cosmetic.getSlot()).getId() == cosmetic.getId()) return "true";
+                    return "false";
+                }
+            case "current":
+                if (placeholderArgs == null) {
+                    return null;
+                }
+                if (placeholderArgs.get(1) != null) {
+                    CosmeticSlot slot = CosmeticSlot.valueOf(placeholderArgs.get(1).toUpperCase());
+                    if (slot == null) return null;
+                    if (placeholderArgs.size() == 2) return user.getCosmetic(slot).getId();
+                    switch (placeholderArgs.get(2).toLowerCase()) {
+                        case "material" -> {
+                            return getMaterial(user.getCosmetic(slot));
+                        }
+                        case "custommodeldata" -> {
+                            return getModelData(user.getCosmetic(slot));
+                        }
+                        case "name" -> {
+                            return getItemName(user.getCosmetic(slot));
+                        }
+                        case "lore" -> {
+                            return getItemLore(user.getCosmetic(slot));
+                        }
+                        case "permission" -> {
+                            return user.getCosmetic(slot).getPermission();
+                        }
+                        default -> {
+                            return user.getCosmetic(slot).getId();
+                        }
+                    }
+                }
+            case "wardrobe-enabled":
+                return String.valueOf(user.isInWardrobe());
+        }
+        return null;
     }
 
-    private String getId(final String[] parts, final int fromIndex) {
-        final StringBuilder builder = new StringBuilder();
-        for (int i = fromIndex; i < parts.length; i++) {
-            builder.append(parts[i]);
-            if (i < parts.length - 1) builder.append("_");
+    public String getMaterial(Cosmetic cosmetic) {
+        if (cosmetic instanceof CosmeticArmorType) {
+            return ((CosmeticArmorType) cosmetic).getCosmeticItem().getType().toString();
         }
+        if (cosmetic instanceof CosmeticMainhandType) {
+            return ((CosmeticMainhandType) cosmetic).getItemStack().getType().toString();
+        }
+        return null;
+    }
 
-        return builder.toString();
+    public String getModelData(Cosmetic cosmetic) {
+        if (cosmetic instanceof CosmeticArmorType) {
+            ItemStack item = ((CosmeticArmorType) cosmetic).getCosmeticItem();
+            if (item.hasItemMeta()) {
+                return String.valueOf(item.getItemMeta().getCustomModelData());
+            }
+        }
+        if (cosmetic instanceof CosmeticMainhandType) {
+            ItemStack item = ((CosmeticMainhandType) cosmetic).getItemStack();
+            if (item.hasItemMeta()) {
+                return String.valueOf(item.getItemMeta().getCustomModelData());
+            }
+        }
+        return null;
+    }
+
+    public String getItemName(Cosmetic cosmetic) {
+        if (cosmetic instanceof CosmeticArmorType) {
+            ItemStack item = ((CosmeticArmorType) cosmetic).getCosmeticItem();
+            if (item.hasItemMeta()) {
+                return item.getItemMeta().getDisplayName();
+            }
+        }
+        if (cosmetic instanceof CosmeticMainhandType) {
+            ItemStack item = ((CosmeticMainhandType) cosmetic).getItemStack();
+            if (item.hasItemMeta()) {
+                return item.getItemMeta().getDisplayName();
+            }
+        }
+        return null;
+    }
+
+    public String getItemLore(Cosmetic cosmetic) {
+        if (cosmetic instanceof CosmeticArmorType) {
+            ItemStack item = ((CosmeticArmorType) cosmetic).getCosmeticItem();
+            if (item.hasItemMeta()) {
+                return String.valueOf(item.getItemMeta().getLore());
+            }
+        }
+        if (cosmetic instanceof CosmeticMainhandType) {
+            ItemStack item = ((CosmeticMainhandType) cosmetic).getItemStack();
+            if (item.hasItemMeta()) {
+                return String.valueOf(item.getItemMeta().getLore());
+            }
+        }
+        return null;
     }
 }
