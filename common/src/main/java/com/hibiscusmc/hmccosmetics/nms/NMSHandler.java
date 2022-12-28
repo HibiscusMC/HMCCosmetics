@@ -8,6 +8,7 @@ import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
@@ -35,6 +36,13 @@ public interface NMSHandler {
     void slotUpdate(
             Player player,
             int slot
+    );
+
+    void equipmentSlotUpdate(
+            int entityId,
+            org.bukkit.inventory.EquipmentSlot slot,
+            ItemStack item,
+            List<Player> sendTo
     );
 
     default boolean getSupported () {

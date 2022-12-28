@@ -156,6 +156,33 @@ public class NMSHandler implements com.hibiscusmc.hmccosmetics.nms.NMSHandler {
         for (Player p : sendTo) sendPacket(p, packet);
     }
 
+
+    @Override
+    public void equipmentSlotUpdate(
+            int entityId,
+            org.bukkit.inventory.EquipmentSlot slot,
+            ItemStack item,
+            List<Player> sendTo
+    ) {
+
+        EquipmentSlot nmsSlot = null;
+        net.minecraft.world.item.ItemStack nmsItem = null;
+
+        // Converting EquipmentSlot and ItemStack to NMS ones.
+        nmsSlot = CraftEquipmentSlot.getNMS(slot);
+        nmsItem = CraftItemStack.asNMSCopy(item);
+
+        if (nmsSlot == null) return;
+
+        Pair<EquipmentSlot, net.minecraft.world.item.ItemStack> pair = new Pair<>(nmsSlot, nmsItem);
+
+        List<Pair<EquipmentSlot, net.minecraft.world.item.ItemStack>> pairs = Collections.singletonList(pair);
+
+        ClientboundSetEquipmentPacket packet = new ClientboundSetEquipmentPacket(entityId, pairs);
+        for (Player p : sendTo) sendPacket(p, packet);
+    }
+
+
     @Override
     public void slotUpdate(
             Player player,

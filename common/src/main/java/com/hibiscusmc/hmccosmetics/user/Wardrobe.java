@@ -11,8 +11,11 @@ import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.List;
@@ -137,7 +140,13 @@ public class Wardrobe {
             player.teleport(exitLocation);
         }
         if (!player.isOnline()) return;
+
+        if (WardrobeSettings.isEquipPumpkin()) {
+            NMSHandlers.getHandler().equipmentSlotUpdate(VIEWER.getPlayer().getEntityId(), EquipmentSlot.HEAD, player.getInventory().getHelmet(), viewer);
+        }
+
         VIEWER.updateCosmetic();
+
         MessagesUtil.sendMessage(player, "closed-wardrobe");
     }
 
@@ -160,7 +169,7 @@ public class Wardrobe {
                 location.setYaw(yaw);
 
                 PacketManager.sendLookPacket(NPC_ID, location, viewer);
-                VIEWER.updateCosmetic();
+                //VIEWER.updateCosmetic();
                 int rotationSpeed = WardrobeSettings.getRotationSpeed();
                 location.setYaw(getNextYaw(yaw - 30, rotationSpeed));
                 PacketManager.sendRotationPacket(NPC_ID, location, true, viewer);
@@ -181,6 +190,10 @@ public class Wardrobe {
                     PacketManager.sendTeleportPacket(VIEWER.getBalloonEntity().getPufferfishBalloonId(), WardrobeSettings.getWardrobeLocation(), false, viewer);
                     VIEWER.getBalloonEntity().getModelEntity().teleport(WardrobeSettings.getWardrobeLocation().add(Settings.getBalloonOffset()));
                     //PacketManager.sendLeashPacket(VIEWER.getBalloonEntity().getModelId(), NPC_ID, viewer); // Pufferfish goes away for some reason?
+                }
+
+                if (WardrobeSettings.isEquipPumpkin()) {
+                    NMSHandlers.getHandler().equipmentSlotUpdate(VIEWER.getPlayer().getEntityId(), EquipmentSlot.HEAD, new ItemStack(Material.CARVED_PUMPKIN), viewer);
                 }
             }
         };
