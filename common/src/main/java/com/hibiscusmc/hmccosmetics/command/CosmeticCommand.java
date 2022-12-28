@@ -161,7 +161,7 @@ public class CosmeticCommand implements CommandExecutor {
             if (args.length == 1) return true;
             OfflinePlayer player = Bukkit.getOfflinePlayer(args[1]);
             if (player == null) return true;
-            if (sender.hasPermission("HMCCosmetic.dataclear") || !sender.isOp()) {
+            if (!sender.hasPermission("HMCCosmetic.dataclear") && !sender.isOp()) {
                 MessagesUtil.sendMessage(sender, "no-permission");
                 return true;
             }
@@ -175,7 +175,7 @@ public class CosmeticCommand implements CommandExecutor {
             if (player == null) return true;
             CosmeticUser user = CosmeticUsers.getUser(player);
             if (user == null) return true;
-            if (sender.hasPermission("HMCCosmetic.dye") || !sender.isOp()) {
+            if (!sender.hasPermission("HMCCosmetic.dye") && !sender.isOp()) {
                 MessagesUtil.sendMessage(sender, "no-permission");
                 return true;
             }
@@ -187,7 +187,7 @@ public class CosmeticCommand implements CommandExecutor {
             if (player == null) return true;
             CosmeticUser user = CosmeticUsers.getUser(player);
             if (user == null) return true;
-            if (sender.hasPermission("HMCCosmetic.dump") || !sender.isOp()) {
+            if (!sender.hasPermission("HMCCosmetic.dump") && !sender.isOp()) {
                 MessagesUtil.sendMessage(sender, "no-permission");
                 return true;
             }
