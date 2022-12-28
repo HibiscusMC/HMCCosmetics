@@ -7,6 +7,7 @@ import com.hibiscusmc.hmccosmetics.gui.action.Actions;
 import com.hibiscusmc.hmccosmetics.gui.special.DyeMenu;
 import com.hibiscusmc.hmccosmetics.gui.type.Type;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
+import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 
@@ -24,7 +25,15 @@ public class TypeCosmetic extends Type {
         if (config.node("cosmetic").virtual()) return;
         String cosmeticName = config.node("cosmetic").getString();
         Cosmetic cosmetic = Cosmetics.getCosmetic(cosmeticName);
-        if (cosmetic == null) return;
+        if (cosmetic == null) {
+            MessagesUtil.sendMessage(user.getPlayer(), "invalid-cosmetic");
+            return;
+        }
+
+        if (!user.canEquipCosmetic(cosmetic)) {
+            MessagesUtil.sendMessage(user.getPlayer(), "no-cosmetic-permission");
+            return;
+        }
 
         List<String> actionStrings = new ArrayList<>();
         ConfigurationNode actionConfig = config.node("actions");
@@ -34,11 +43,11 @@ public class TypeCosmetic extends Type {
 
             if (user.getCosmetic(cosmetic.getSlot()) == cosmetic) {
                 if (!actionConfig.node("on-unequip").virtual()) actionStrings.addAll(actionConfig.node("on-unequip").getList(String.class));
-                HMCCosmeticsPlugin.getInstance().getLogger().info("on-unequip");
+                MessagesUtil.sendDebugMessages("on-unequip");
                 user.removeCosmeticSlot(cosmetic);
             } else {
                 if (!actionConfig.node("on-equip").virtual()) actionStrings.addAll(actionConfig.node("on-equip").getList(String.class));
-                HMCCosmeticsPlugin.getInstance().getLogger().info("on-equip");
+                MessagesUtil.sendDebugMessages("on-equip");
                 // TODO: Redo this
                 if (cosmetic.isDyable()) {
                     DyeMenu.openMenu(user, cosmetic);
