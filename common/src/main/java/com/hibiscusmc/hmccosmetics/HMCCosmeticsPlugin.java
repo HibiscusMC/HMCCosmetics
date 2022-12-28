@@ -1,5 +1,6 @@
 package com.hibiscusmc.hmccosmetics;
 
+import com.hibiscusmc.hmccosmetics.api.HMCCosmeticSetupEvent;
 import com.hibiscusmc.hmccosmetics.command.CosmeticCommand;
 import com.hibiscusmc.hmccosmetics.command.CosmeticCommandTabComplete;
 import com.hibiscusmc.hmccosmetics.config.DatabaseSettings;
@@ -171,6 +172,8 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
         getInstance().getLogger().info(Cosmetics.values().size() + " Cosmetics Successfully Setup");
         getInstance().getLogger().info(Menus.getMenuNames().size() + " Menus Successfully Setup");
         getInstance().getLogger().info("Data storage is set to " + DatabaseSettings.getDatabaseType());
+
+        Bukkit.getPluginManager().callEvent(new HMCCosmeticSetupEvent());
     }
 
     public static boolean isDisable() {

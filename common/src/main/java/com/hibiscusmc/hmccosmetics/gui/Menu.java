@@ -1,6 +1,8 @@
 package com.hibiscusmc.hmccosmetics.gui;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
+import com.hibiscusmc.hmccosmetics.api.PlayerMenuOpenEvent;
+import com.hibiscusmc.hmccosmetics.api.PlayerWardrobeLeaveEvent;
 import com.hibiscusmc.hmccosmetics.config.serializer.ItemSerializer;
 import com.hibiscusmc.hmccosmetics.gui.type.Types;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
@@ -64,6 +66,13 @@ public class Menu {
         gui = getItems(user, gui);
 
         Gui finalGui = gui;
+
+        PlayerMenuOpenEvent event = new PlayerMenuOpenEvent(user, this);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) {
+            return;
+        }
+
         Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> {
             finalGui.open(player);
         });

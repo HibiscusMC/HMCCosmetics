@@ -1,6 +1,10 @@
 package com.hibiscusmc.hmccosmetics.user;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
+import com.hibiscusmc.hmccosmetics.api.PlayerHideCosmeticEvent;
+import com.hibiscusmc.hmccosmetics.api.PlayerShowCosmeticEvent;
+import com.hibiscusmc.hmccosmetics.api.PlayerWardrobeEnterEvent;
+import com.hibiscusmc.hmccosmetics.api.PlayerWardrobeLeaveEvent;
 import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
@@ -183,6 +187,12 @@ public class CosmeticUser {
             MessagesUtil.sendMessage(getPlayer(), "not-near-wardrobe");
             return;
         }
+        PlayerWardrobeEnterEvent event = new PlayerWardrobeEnterEvent(this);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) {
+            return;
+        }
+
         wardrobe = new Wardrobe(this);
         wardrobe.start();
     }
@@ -192,6 +202,12 @@ public class CosmeticUser {
     }
 
     public void leaveWardrobe() {
+        PlayerWardrobeLeaveEvent event = new PlayerWardrobeLeaveEvent(this);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) {
+            return;
+        }
+
         wardrobe.end();
         wardrobe = null;
     }
@@ -323,6 +339,12 @@ public class CosmeticUser {
 
     public void hideCosmetics() {
         if (hideCosmetics == true) return;
+        PlayerHideCosmeticEvent event = new PlayerHideCosmeticEvent(this);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) {
+            return;
+        }
+
         hideCosmetics = true;
         if (hasCosmeticInSlot(CosmeticSlot.BALLOON)) {
             getBalloonEntity().removePlayerFromModel(getPlayer());
@@ -340,6 +362,12 @@ public class CosmeticUser {
 
     public void showCosmetics() {
         if (hideCosmetics == false) return;
+
+        PlayerShowCosmeticEvent event = new PlayerShowCosmeticEvent(this);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) {
+            return;
+        }
         hideCosmetics = false;
         if (hasCosmeticInSlot(CosmeticSlot.BALLOON)) {
             CosmeticBalloonType balloonType = (CosmeticBalloonType) getCosmetic(CosmeticSlot.BALLOON);
