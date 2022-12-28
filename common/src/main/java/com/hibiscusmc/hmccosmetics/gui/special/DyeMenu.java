@@ -3,11 +3,14 @@ package com.hibiscusmc.hmccosmetics.gui.special;
 import com.hibiscusmc.hmccolor.HMCColorApi;
 import com.hibiscusmc.hmccolor.gui.guis.Gui;
 import com.hibiscusmc.hmccolor.gui.guis.GuiItem;
+import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.misc.Placeholder;
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -39,7 +42,10 @@ public class DyeMenu {
                 if (color == null) return;
                 //user.removeCosmeticSlot(cosmetic);
                 user.addPlayerCosmetic(cosmetic, color);
-                player.closeInventory();
+                player.setItemOnCursor(new ItemStack(Material.AIR));
+                Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
+                    player.closeInventory();
+                }, 2);
             } else event.setCancelled(true);
         });
 
