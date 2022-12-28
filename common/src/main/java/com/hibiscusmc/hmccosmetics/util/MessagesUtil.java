@@ -2,6 +2,7 @@ package com.hibiscusmc.hmccosmetics.util;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.Settings;
+import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.misc.Adventure;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
@@ -26,6 +27,10 @@ public class MessagesUtil {
             messages.put(node.key().toString(), node.getString());
         }
      }
+
+    public static void sendMessage(CosmeticUser user, String key) {
+        sendMessage(user.getPlayer(), key);
+    }
 
     public static void sendMessage(Player player, String key) {
         if (!messages.containsKey(key)) return;
