@@ -209,7 +209,7 @@ public class PacketManager extends BasePacket {
         PacketContainer packet = new PacketContainer(PacketType.Play.Server.CAMERA);
         packet.getIntegers().write(0, entityId);
         for (final Player p : sendTo) sendPacket(p, packet);
-        HMCCosmeticsPlugin.getInstance().getLogger().info(sendTo + " | " + entityId + " has had a camera packet on them!");
+        MessagesUtil.sendDebugMessages(sendTo + " | " + entityId + " has had a camera packet on them!");
     }
 
     /**
