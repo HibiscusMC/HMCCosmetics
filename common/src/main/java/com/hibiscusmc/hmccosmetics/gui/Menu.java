@@ -126,9 +126,11 @@ public class Menu {
             if (item.hasItemMeta()) {
                 List<String> processedLore = new ArrayList<>();
 
-                for (String loreLine : item.getItemMeta().getLore()) {
-                    processedLore.add(loreLine.replaceAll("%allowed%", "allowed?"));
-                    // TODO apply placeholders here
+                if (item.getItemMeta().hasLore()) {
+                    for (String loreLine : item.getItemMeta().getLore()) {
+                        processedLore.add(loreLine.replaceAll("%allowed%", "allowed?"));
+                        // TODO apply placeholders here
+                    }
                 }
 
                 ItemMeta itemMeta = item.getItemMeta();
