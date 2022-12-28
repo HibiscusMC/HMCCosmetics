@@ -19,8 +19,6 @@ import java.util.List;
 
 public class PAPIHook extends PlaceholderExpansion {
 
-    // TODO: Finish this
-
     @Override
     public @NotNull String getIdentifier() {
         return "HMCCosmetics";
