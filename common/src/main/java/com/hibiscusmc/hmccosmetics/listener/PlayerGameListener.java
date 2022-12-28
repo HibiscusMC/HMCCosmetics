@@ -265,6 +265,7 @@ public class PlayerGameListener implements Listener {
                 Player player = event.getPlayer();
                 CosmeticUser user = CosmeticUsers.getUser(player);
                 if (user == null) return;
+                if (!user.isInWardrobe()) return;
                 Menu menu = Menus.getMenu(Settings.getDefaultMenu());
                 if (menu == null) return;
                 menu.openMenu(user);
