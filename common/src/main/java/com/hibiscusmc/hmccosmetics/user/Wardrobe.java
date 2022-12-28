@@ -92,6 +92,7 @@ public class Wardrobe {
 
         }
 
+        MessagesUtil.sendMessage(player, "opened-wardrobe");
         this.active = true;
         update();
     }
@@ -137,6 +138,7 @@ public class Wardrobe {
         }
         if (!player.isOnline()) return;
         VIEWER.updateCosmetic();
+        MessagesUtil.sendMessage(player, "closed-wardrobe");
     }
 
     public void update() {

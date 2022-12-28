@@ -180,7 +180,7 @@ public class CosmeticUser {
 
     public void enterWardrobe() {
         if (!WardrobeSettings.inDistanceOfStatic(getPlayer().getLocation())) {
-            getPlayer().sendMessage("You are to far away!");
+            MessagesUtil.sendMessage(getPlayer(), "not-near-wardrobe");
             return;
         }
         wardrobe = new Wardrobe(this);
@@ -276,7 +276,7 @@ public class CosmeticUser {
         return dyableSlots;
     }
 
-    public boolean hasCosmetic(Cosmetic cosmetic) {
+    public boolean canEquipCosmetic(Cosmetic cosmetic) {
         if (!cosmetic.requiresPermission()) return true;
         if (getPlayer().hasPermission(cosmetic.getPermission())) return true;
         return false;

@@ -34,10 +34,17 @@ public class CosmeticCommand implements CommandExecutor {
             }
             CosmeticUser user = CosmeticUsers.getUser(((Player) sender).getUniqueId());
             Menu menu = Menus.getMenu(Settings.getDefaultMenu());
-            if (user == null || menu == null) {
-                sender.sendMessage("Invalid Menu");
+
+            if (user == null) {
+                MessagesUtil.sendMessage(sender, "invalid-player");
                 return true;
             }
+
+            if (menu == null) {
+                MessagesUtil.sendMessage(sender, "invalid-menu");
+                return true;
+            }
+
             menu.openMenu(user);
             return true;
         }
@@ -47,11 +54,10 @@ public class CosmeticCommand implements CommandExecutor {
                 return true;
             }
             HMCCosmeticsPlugin.setup();
-            sender.sendMessage("Reloaded.");
+            MessagesUtil.sendMessage(sender, "reloaded");
             return true;
         }
         else if (args[0].equalsIgnoreCase("apply")) {
-            sender.sendMessage("Applying - Begin");
             Player player = null;
             Cosmetic cosmetic;
 
@@ -60,16 +66,25 @@ public class CosmeticCommand implements CommandExecutor {
 
             cosmetic = Cosmetics.getCosmetic(args[1]);
 
-            if (player == null || cosmetic == null) {
-                sender.sendMessage("Something was null");
+            if (cosmetic == null) {
+                MessagesUtil.sendMessage(sender, "invalid-cosmetic");
+                return true;
+            }
+
+            if (player == null) {
+                MessagesUtil.sendMessage(sender, "invalid-player");
                 return true;
             }
 
             CosmeticUser user = CosmeticUsers.getUser(player);
 
+            if (!user.canEquipCosmetic(cosmetic)) {
+                MessagesUtil.sendMessage(player, "no-cosmetic-permission");
+                return true;
+            }
+
             user.addPlayerCosmetic(cosmetic);
             user.updateCosmetic(cosmetic.getSlot());
-            sender.sendMessage("Applying - Finish with  " + cosmetic.getId());
             return true;
         }
         else if (args[0].equalsIgnoreCase("unapply")) {
@@ -81,8 +96,13 @@ public class CosmeticCommand implements CommandExecutor {
 
             cosmeticSlot = CosmeticSlot.valueOf(args[1]);
 
-            if (player == null || cosmeticSlot == null) {
-                sender.sendMessage("Something was null");
+            if (cosmeticSlot == null) {
+                MessagesUtil.sendMessage(sender, "invalid-slot");
+                return true;
+            }
+
+            if (player == null) {
+                MessagesUtil.sendMessage(sender, "invalid-player");
                 return true;
             }
 
@@ -98,8 +118,13 @@ public class CosmeticCommand implements CommandExecutor {
             if (sender instanceof Player) player = ((Player) sender).getPlayer();
             if (args.length >= 3) player = Bukkit.getPlayer(args[2]);
 
+            if (!player.hasPermission("HMCCosmetic.wardrobe")) {
+                MessagesUtil.sendMessage(sender, "no-permission");
+                return true;
+            }
+
             if (player == null) {
-                sender.sendMessage("Player was null");
+                MessagesUtil.sendMessage(sender, "invalid-player");
                 return true;
             }
 
@@ -116,13 +141,19 @@ public class CosmeticCommand implements CommandExecutor {
 
             if (sender instanceof Player) player = ((Player) sender).getPlayer();
             if (args.length >= 3) player = Bukkit.getPlayer(args[2]);
+            CosmeticUser user = CosmeticUsers.getUser(player);
 
-            if (player == null || menu == null) {
-                sender.sendMessage("Something was null");
+            if (user == null) {
+                MessagesUtil.sendMessage(sender, "invalid-player");
                 return true;
             }
 
-            menu.openMenu(CosmeticUsers.getUser(player));
+            if (menu == null) {
+                MessagesUtil.sendMessage(sender, "invalid-menu");
+                return true;
+            }
+
+            menu.openMenu(user);
             return true;
         }
 
@@ -130,6 +161,10 @@ public class CosmeticCommand implements CommandExecutor {
             if (args.length == 1) return true;
             OfflinePlayer player = Bukkit.getOfflinePlayer(args[1]);
             if (player == null) return true;
+            if (sender.hasPermission("HMCCosmetic.dataclear") || !sender.isOp()) {
+                MessagesUtil.sendMessage(sender, "no-permission");
+                return true;
+            }
             Database.clearData(player.getUniqueId());
             sender.sendMessage("Cleared data for " + player.getName());
             return true;
@@ -140,6 +175,10 @@ public class CosmeticCommand implements CommandExecutor {
             if (player == null) return true;
             CosmeticUser user = CosmeticUsers.getUser(player);
             if (user == null) return true;
+            if (sender.hasPermission("HMCCosmetic.dye") || !sender.isOp()) {
+                MessagesUtil.sendMessage(sender, "no-permission");
+                return true;
+            }
             DyeMenu.openMenu(user, user.getCosmetic(CosmeticSlot.valueOf(args[1])));
         }
 
@@ -148,6 +187,10 @@ public class CosmeticCommand implements CommandExecutor {
             if (player == null) return true;
             CosmeticUser user = CosmeticUsers.getUser(player);
             if (user == null) return true;
+            if (sender.hasPermission("HMCCosmetic.dump") || !sender.isOp()) {
+                MessagesUtil.sendMessage(sender, "no-permission");
+                return true;
+            }
             player.sendMessage("Passengers -> " + player.getPassengers());
             if (user.hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
                 player.sendMessage("Backpack Location -> " + user.getBackpackEntity().getLocation());
