@@ -6,6 +6,7 @@ import com.hibiscusmc.hmccosmetics.gui.action.actions.ActionMenu;
 import com.hibiscusmc.hmccosmetics.gui.action.actions.ActionMessage;
 import com.hibiscusmc.hmccosmetics.gui.action.actions.ActionPlayerCommand;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
+import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.HashMap;
@@ -38,11 +39,11 @@ public class Actions {
         for (String a : raw) {
             String id = StringUtils.substringBetween(a, "[", "]").toUpperCase();
             String message = StringUtils.substringAfter(a, "] ");
-            HMCCosmeticsPlugin.getInstance().getLogger().info("ID is " + id + " // Message is " + message);
+            MessagesUtil.sendDebugMessages("ID is " + id + " // Message is " + message);
             if (isAction(id)) {
                 getAction(id).run(user, message);
             } else {
-                HMCCosmeticsPlugin.getInstance().getLogger().info("Possible ids: " + actions.keySet());
+                MessagesUtil.sendDebugMessages("Possible ids: " + actions.keySet());
             }
         }
     }
