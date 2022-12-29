@@ -120,7 +120,7 @@ public class Wardrobe {
         // NPC
         if (VIEWER.hasCosmeticInSlot(CosmeticSlot.BALLOON)) PacketManager.sendLeashPacket(VIEWER.getBalloonEntity().getModelId(), -1, viewer);
         PacketManager.sendEntityDestroyPacket(NPC_ID, viewer); // Success
-        PacketManager.sendRemovePlayerPacket(player, player.getUniqueId(), viewer); // Success
+        PacketManager.sendRemovePlayerPacket(player, WARDROBE_UUID, viewer); // Success
 
         // Player
         PacketManager.sendCameraPacket(player.getEntityId(), viewer);
@@ -146,7 +146,6 @@ public class Wardrobe {
         } else {
             player.teleport(exitLocation);
         }
-        if (!player.isOnline()) return;
 
         if (WardrobeSettings.isEquipPumpkin()) {
             NMSHandlers.getHandler().equipmentSlotUpdate(VIEWER.getPlayer().getEntityId(), EquipmentSlot.HEAD, player.getInventory().getHelmet(), viewer);
