@@ -118,6 +118,11 @@ public class CosmeticCommand implements CommandExecutor {
 
             CosmeticUser user = CosmeticUsers.getUser(player);
 
+            if (user.getCosmetic(cosmeticSlot) == null) {
+                MessagesUtil.sendMessage(sender, "no-cosmetic-slot");
+                return true;
+            }
+
             TagResolver placeholders =
                     TagResolver.resolver(Placeholder.parsed("cosmetic", user.getCosmetic(cosmeticSlot).getId()),
                     TagResolver.resolver(Placeholder.parsed("player", player.getName())),
