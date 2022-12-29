@@ -37,28 +37,35 @@ public class CosmeticCommandTabComplete implements TabCompleter {
         if (!(sender instanceof Player)) return completions;
         CosmeticUser user = CosmeticUsers.getUser(((Player) sender).getUniqueId());
 
-        // This needs to be redone.
         if (args.length >= 2) {
-            if (args[0].equalsIgnoreCase("apply")) {
-                completions.addAll(applyCommandComplete(args));
-            } else if (args[0].equalsIgnoreCase("unapply")) {
-                for (CosmeticSlot slot : CosmeticSlot.values()) {
-                    completions.add(slot.name());
+            String subcommand = args[0].toLowerCase();
+            switch (subcommand) {
+                case "apply" -> {
+                    completions.addAll(applyCommandComplete(args));
                 }
-            } else if (args[0].equalsIgnoreCase("menu")) {
-                completions.addAll(Menus.getMenuNames());
-            } else if (args[0].equalsIgnoreCase("dataclear")) {
-                for (Player player : Bukkit.getOnlinePlayers()) {
-                    completions.add(player.getName());
+                case "upapply" -> {
+                    for (CosmeticSlot slot : CosmeticSlot.values()) {
+                        completions.add(slot.name());
+                    }
                 }
-            } else if (args[0].equalsIgnoreCase("dye")) {
-                for (CosmeticSlot slot : user.getDyeableSlots()) {
-                    completions.add(slot.name());
+                case "menu" -> {
+                    completions.addAll(Menus.getMenuNames());
                 }
-            } else if (args[0].equalsIgnoreCase("setlocation")) {
-                completions.add("wardrobelocation");
-                completions.add("viewerlocation");
-                completions.add("leavelocation");
+                case "dataclear" -> {
+                    for (Player player : Bukkit.getOnlinePlayers()) {
+                        completions.add(player.getName());
+                    }
+                }
+                case "dye" -> {
+                    for (CosmeticSlot slot : user.getDyeableSlots()) {
+                        completions.add(slot.name());
+                    }
+                }
+                case "setlocation" -> {
+                    completions.add("wardrobelocation");
+                    completions.add("viewerlocation");
+                    completions.add("leavelocation");
+                }
             }
         }
 
@@ -78,7 +85,6 @@ public class CosmeticCommandTabComplete implements TabCompleter {
                 }
             }
         }
-
         return completitions;
     }
 }
