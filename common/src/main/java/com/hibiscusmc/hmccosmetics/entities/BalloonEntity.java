@@ -108,6 +108,7 @@ public class BalloonEntity {
 
     public void setLocation(Location location) {
         //this.megEntity.teleportTo(location.getX(), location.getY(), location.getZ());
+        location = location.add(Settings.getBalloonOffset());
         this.modelEntity.teleport(location);
     }
 
