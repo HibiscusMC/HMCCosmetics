@@ -15,6 +15,7 @@ import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import org.apache.commons.lang3.EnumUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -99,17 +100,16 @@ public class CosmeticCommand implements CommandExecutor {
         }
         else if (args[0].equalsIgnoreCase("unapply")) {
             Player player = null;
-            CosmeticSlot cosmeticSlot;
+            CosmeticSlot cosmeticSlot = null;
 
             if (sender instanceof Player) player = ((Player) sender).getPlayer();
             if (args.length >= 3) player = Bukkit.getPlayer(args[2]);
 
-            cosmeticSlot = CosmeticSlot.valueOf(args[1]);
-
-            if (cosmeticSlot == null) {
+            if (!EnumUtils.isValidEnum(CosmeticSlot.class, args[1])) {
                 MessagesUtil.sendMessage(sender, "invalid-slot");
                 return true;
             }
+            cosmeticSlot = CosmeticSlot.valueOf(args[1]);
 
             if (player == null) {
                 MessagesUtil.sendMessage(sender, "invalid-player");
@@ -125,8 +125,8 @@ public class CosmeticCommand implements CommandExecutor {
 
             TagResolver placeholders =
                     TagResolver.resolver(Placeholder.parsed("cosmetic", user.getCosmetic(cosmeticSlot).getId()),
-                    TagResolver.resolver(Placeholder.parsed("player", player.getName())),
-                    TagResolver.resolver(Placeholder.parsed("cosmeticslot", cosmeticSlot.name())));
+                            TagResolver.resolver(Placeholder.parsed("player", player.getName())),
+                            TagResolver.resolver(Placeholder.parsed("cosmeticslot", cosmeticSlot.name())));
 
             MessagesUtil.sendMessage(player, "unequip-cosmetic", placeholders);
 
