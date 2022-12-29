@@ -31,6 +31,7 @@ public class CosmeticCommandTabComplete implements TabCompleter {
             completions.add("reload");
             completions.add("dataclear");
             completions.add("dye");
+            completions.add("setlocation");
         }
 
         if (!(sender instanceof Player)) return completions;
@@ -54,6 +55,10 @@ public class CosmeticCommandTabComplete implements TabCompleter {
                 for (CosmeticSlot slot : user.getDyeableSlots()) {
                     completions.add(slot.name());
                 }
+            } else if (args[0].equalsIgnoreCase("setlocation")) {
+                completions.add("wardrobelocation");
+                completions.add("viewerlocation");
+                completions.add("leavelocation");
             }
         }
 

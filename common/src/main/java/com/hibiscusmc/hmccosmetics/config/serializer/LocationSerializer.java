@@ -1,9 +1,11 @@
 package com.hibiscusmc.hmccosmetics.config.serializer;
 
+import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 import org.spongepowered.configurate.serialize.TypeSerializer;
@@ -40,7 +42,7 @@ public class LocationSerializer implements TypeSerializer<Location> {
     }
 
     @Override
-    public void serialize(final Type type, @Nullable final Location obj, final ConfigurationNode node) throws SerializationException {
-
+    public void serialize(final Type type, @Nullable final Location loc, final ConfigurationNode source) throws SerializationException {
+        // Empty
     }
 }

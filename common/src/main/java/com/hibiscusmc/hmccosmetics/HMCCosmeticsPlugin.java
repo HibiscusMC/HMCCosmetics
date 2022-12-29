@@ -26,6 +26,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.spongepowered.configurate.ConfigurateException;
+import org.spongepowered.configurate.ConfigurationNode;
+import org.spongepowered.configurate.ConfigurationOptions;
+import org.spongepowered.configurate.loader.ConfigurationLoader;
+import org.spongepowered.configurate.objectmapping.ObjectMapper;
+import org.spongepowered.configurate.objectmapping.meta.NodeResolver;
+import org.spongepowered.configurate.yaml.NodeStyle;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
 import java.io.File;
@@ -35,6 +41,7 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
 
     private static HMCCosmeticsPlugin instance;
     private static boolean disable = false;
+    private static YamlConfigurationLoader configLoader;
 
     @Override
     public void onEnable() {
@@ -113,11 +120,13 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
                             build.register(Location.class, LocationSerializer.INSTANCE);
                             build.register(ItemStack.class, ItemSerializer.INSTANCE);
                         }))
+                .nodeStyle(NodeStyle.BLOCK)
                 .build();
         try {
-            Settings.load(loader.load());
+            Settings.load(loader.load(ConfigurationOptions.defaults()));
             WardrobeSettings.load(loader.load().node("wardrobe"));
             DatabaseSettings.load(loader.load().node("database-settings"));
+            configLoader = loader;
         } catch (ConfigurateException e) {
             throw new RuntimeException(e);
         }
@@ -132,6 +141,7 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
                             build.register(Location.class, LocationSerializer.INSTANCE);
                             build.register(ItemStack.class, ItemSerializer.INSTANCE);
                         }))
+                .nodeStyle(NodeStyle.BLOCK)
                 .build();
         try {
             MessagesUtil.setup(messagesLoader.load());
@@ -178,5 +188,18 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
 
     public static boolean isDisable() {
         return disable;
+    }
+
+    public static YamlConfigurationLoader getConfigLoader() {
+        return configLoader;
+    }
+
+    public static void saveConfig(ConfigurationNode node) {
+        try {
+            HMCCosmeticsPlugin.getConfigLoader().save(node);
+            HMCCosmeticsPlugin.getInstance().getLogger().info("Set new location " + node.path());
+        } catch (ConfigurateException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

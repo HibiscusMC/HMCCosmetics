@@ -2,6 +2,7 @@ package com.hibiscusmc.hmccosmetics.command;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.Settings;
+import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
@@ -12,6 +13,8 @@ import com.hibiscusmc.hmccosmetics.gui.special.DyeMenu;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -83,6 +86,13 @@ public class CosmeticCommand implements CommandExecutor {
                 return true;
             }
 
+            TagResolver placeholders =
+                    TagResolver.resolver(Placeholder.parsed("cosmetic", cosmetic.getId()),
+                            TagResolver.resolver(Placeholder.parsed("player", player.getName())),
+                            TagResolver.resolver(Placeholder.parsed("cosmeticslot", cosmetic.getSlot().name())));
+
+            MessagesUtil.sendMessage(player, "equip-cosmetic", placeholders);
+
             user.addPlayerCosmetic(cosmetic);
             user.updateCosmetic(cosmetic.getSlot());
             return true;
@@ -107,6 +117,13 @@ public class CosmeticCommand implements CommandExecutor {
             }
 
             CosmeticUser user = CosmeticUsers.getUser(player);
+
+            TagResolver placeholders =
+                    TagResolver.resolver(Placeholder.parsed("cosmetic", user.getCosmetic(cosmeticSlot).getId()),
+                    TagResolver.resolver(Placeholder.parsed("player", player.getName())),
+                    TagResolver.resolver(Placeholder.parsed("cosmeticslot", cosmeticSlot.name())));
+
+            MessagesUtil.sendMessage(player, "unequip-cosmetic", placeholders);
 
             user.removeCosmeticSlot(cosmeticSlot);
             user.updateCosmetic(cosmeticSlot);
@@ -180,6 +197,35 @@ public class CosmeticCommand implements CommandExecutor {
                 return true;
             }
             DyeMenu.openMenu(user, user.getCosmetic(CosmeticSlot.valueOf(args[1])));
+        }
+
+        else if (args[0].equalsIgnoreCase("setlocation")) {
+
+            Player player = sender instanceof Player ? (Player) sender : null;
+            if (player == null) return true;
+
+            if (args.length < 2) {
+                MessagesUtil.sendMessage(player, "not-enough-args");
+                return true;
+            }
+
+            if (args[1].equalsIgnoreCase("wardrobelocation")) {
+                WardrobeSettings.setWardrobeLocation(player.getLocation());
+                MessagesUtil.sendMessage(player, "set-wardrobe-location");
+                return true;
+            }
+
+            if (args[1].equalsIgnoreCase("viewerlocation")) {
+                WardrobeSettings.setViewerLocation(player.getLocation());
+                MessagesUtil.sendMessage(player, "set-wardrobe-viewing");
+                return true;
+            }
+
+            if (args[1].equalsIgnoreCase("leavelocation")) {
+                WardrobeSettings.setLeaveLocation(player.getLocation());
+                MessagesUtil.sendMessage(player, "set-wardrobe-leaving");
+                return true;
+            }
         }
 
         else if (args[0].equalsIgnoreCase("dump") && args.length == 1) {

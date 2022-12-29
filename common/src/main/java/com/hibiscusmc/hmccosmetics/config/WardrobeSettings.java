@@ -1,5 +1,6 @@
 package com.hibiscusmc.hmccosmetics.config;
 
+import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.serializer.LocationSerializer;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.misc.Utils;
@@ -27,6 +28,7 @@ public class WardrobeSettings {
     private static final String EQUIP_PUMPKIN_WARDROBE = "equip-pumpkin";
     private static final String RETURN_LAST_LOCATION = "return-last-location";
 
+    private static ConfigurationNode configRoot;
     private static boolean disableOnDamage;
     private static int displayRadius;
     private static boolean portable;
@@ -43,6 +45,7 @@ public class WardrobeSettings {
     private static Location leaveLocation;
 
     public static void load(ConfigurationNode source) {
+        configRoot = source;
 
         disableOnDamage = source.node(DISABLE_ON_DAMAGE_PATH).getBoolean();
         displayRadius = source.node(DISPLAY_RADIUS_PATH).getInt();
@@ -133,4 +136,57 @@ public class WardrobeSettings {
         return wardrobeLocation.distanceSquared(location) <= staticRadius * staticRadius;
     }
 
+    public static void setWardrobeLocation(Location newLocation) {
+        wardrobeLocation = newLocation;
+
+        HMCCosmeticsPlugin plugin = HMCCosmeticsPlugin.getInstance();
+
+        plugin.getConfig().set("wardrobe.wardrobe-location." + "world", newLocation.getWorld().getName());
+        plugin.getConfig().set("wardrobe.wardrobe-location." + "x", newLocation.getX());
+        plugin.getConfig().set("wardrobe.wardrobe-location." + "y", newLocation.getY());
+        plugin.getConfig().set("wardrobe.wardrobe-location." + "z", newLocation.getZ());
+        plugin.getConfig().set("wardrobe.wardrobe-location." + "yaw", newLocation.getYaw());
+        plugin.getConfig().set("wardrobe.wardrobe-location." + "pitch", newLocation.getPitch());
+
+        /* Configuration sets suck
+        source.node(WORLD).set(loc.getWorld().getName());
+        source.node(X).set(loc.getX());
+        source.node(Y).set(loc.getY());
+        source.node(Z).set(loc.getZ());
+        source.node(YAW).set(loc.getYaw());
+        source.node(PITCH).set(loc.getPitch());
+         */
+
+        HMCCosmeticsPlugin.getInstance().saveConfig();
+    }
+
+    public static void setViewerLocation(Location newLocation) {
+        viewerLocation = newLocation;
+
+        HMCCosmeticsPlugin plugin = HMCCosmeticsPlugin.getInstance();
+
+        plugin.getConfig().set("wardrobe.viewer-location." + "world", newLocation.getWorld().getName());
+        plugin.getConfig().set("wardrobe.viewer-location." + "x", newLocation.getX());
+        plugin.getConfig().set("wardrobe.viewer-location." + "y", newLocation.getY());
+        plugin.getConfig().set("wardrobe.viewer-location." + "z", newLocation.getZ());
+        plugin.getConfig().set("wardrobe.viewer-location." + "yaw", newLocation.getYaw());
+        plugin.getConfig().set("wardrobe.viewer-location." + "pitch", newLocation.getPitch());
+
+        HMCCosmeticsPlugin.getInstance().saveConfig();
+    }
+
+    public static void setLeaveLocation(Location newLocation) {
+        leaveLocation = newLocation;
+
+        HMCCosmeticsPlugin plugin = HMCCosmeticsPlugin.getInstance();
+
+        plugin.getConfig().set("wardrobe.leave-location." + "world", newLocation.getWorld().getName());
+        plugin.getConfig().set("wardrobe.leave-location." + "x", newLocation.getX());
+        plugin.getConfig().set("wardrobe.leave-location." + "y", newLocation.getY());
+        plugin.getConfig().set("wardrobe.leave-location." + "z", newLocation.getZ());
+        plugin.getConfig().set("wardrobe.leave-location." + "yaw", newLocation.getYaw());
+        plugin.getConfig().set("wardrobe.leave-location." + "pitch", newLocation.getPitch());
+
+        HMCCosmeticsPlugin.getInstance().saveConfig();
+    }
 }
