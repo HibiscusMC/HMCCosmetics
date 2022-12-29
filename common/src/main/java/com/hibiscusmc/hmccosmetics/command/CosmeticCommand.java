@@ -68,6 +68,11 @@ public class CosmeticCommand implements CommandExecutor {
             if (sender instanceof Player) player = ((Player) sender).getPlayer();
             if (args.length >= 3) player = Bukkit.getPlayer(args[2]);
 
+            if (args.length == 1) {
+                MessagesUtil.sendMessage(player, "not-enough-args");
+                return true;
+            }
+
             cosmetic = Cosmetics.getCosmetic(args[1]);
 
             if (cosmetic == null) {
