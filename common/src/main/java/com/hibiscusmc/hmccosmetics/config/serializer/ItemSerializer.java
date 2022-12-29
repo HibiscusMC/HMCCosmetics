@@ -34,6 +34,7 @@ public class ItemSerializer implements TypeSerializer<ItemStack> {
     private static final String GLOWING = "glowing";
     private static final String LORE = "lore";
     private static final String MODEL_DATA = "model-data";
+    private static final String NBT_TAGS = "nbt-tag";
     private static final String ENCHANTS = "enchants";
     private static final String ITEM_FLAGS = "item-flags";
     private static final String TEXTURE = "texture";
@@ -56,6 +57,7 @@ public class ItemSerializer implements TypeSerializer<ItemStack> {
         final ConfigurationNode glowingNode = source.node(GLOWING);
         final ConfigurationNode loreNode = source.node(LORE);
         final ConfigurationNode modelDataNode = source.node(MODEL_DATA);
+        final ConfigurationNode nbtNode = source.node(NBT_TAGS);
         final ConfigurationNode enchantsNode = source.node(ENCHANTS);
         final ConfigurationNode itemFlagsNode = source.node(ITEM_FLAGS);
         final ConfigurationNode textureNode = source.node(TEXTURE);
@@ -88,6 +90,12 @@ public class ItemSerializer implements TypeSerializer<ItemStack> {
                             new ArrayList<String>()).
                     stream().map(StringUtils::parseStringToString).collect(Collectors.toList()));
         if (!modelDataNode.virtual()) itemMeta.setCustomModelData(modelDataNode.getInt());
+
+        if (!nbtNode.virtual()) {
+            for (ConfigurationNode nbtNodes : nbtNode.childrenMap().values()) {
+                itemMeta.getPersistentDataContainer().set(NamespacedKey.minecraft(nbtNodes.key().toString()), PersistentDataType.STRING, nbtNodes.getString());
+            }
+        }
 
         if (!enchantsNode.virtual()) {
             for (ConfigurationNode enchantNode : enchantsNode.childrenMap().values()) {
