@@ -4,6 +4,7 @@ import com.hibiscusmc.hmccosmetics.config.DatabaseSettings;
 import com.hibiscusmc.hmccosmetics.database.types.Data;
 import com.hibiscusmc.hmccosmetics.database.types.InternalData;
 import com.hibiscusmc.hmccosmetics.database.types.MySQLData;
+import com.hibiscusmc.hmccosmetics.database.types.SQLiteData;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
@@ -17,17 +18,20 @@ public class Database {
 
     private static InternalData INTERNAL_DATA  = new InternalData();
     private static MySQLData MYSQL_DATA = new MySQLData();
+    private static SQLiteData SQLITE_DATA = new SQLiteData();
 
     public Database() {
         String databaseType = DatabaseSettings.getDatabaseType();
         data = INTERNAL_DATA; // default
         if (databaseType.equalsIgnoreCase("INTERNAL")) {
             data = INTERNAL_DATA;
-            MessagesUtil.sendDebugMessages("Datatype set to internal data");
         }
         if (databaseType.equalsIgnoreCase("MySQL")) {
             data = MYSQL_DATA;
-            MessagesUtil.sendDebugMessages("Datatype set to MySQL data");
+        }
+        if (databaseType.equalsIgnoreCase("sqlite")) {
+            data = SQLITE_DATA;
+
         }
         MessagesUtil.sendDebugMessages("Database is " + data);
 
