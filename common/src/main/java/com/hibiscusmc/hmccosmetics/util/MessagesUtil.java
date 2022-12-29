@@ -7,6 +7,7 @@ import com.hibiscusmc.hmccosmetics.util.misc.Adventure;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.spongepowered.configurate.ConfigurationNode;
@@ -53,6 +54,30 @@ public class MessagesUtil {
 
         target.sendMessage(finalMessage);
     }
+
+    public static void sendMessage(Player player, String key, TagResolver placeholder) {
+        if (!messages.containsKey(key)) return;
+        if (messages.get(key) == null) return;
+        String message = messages.get(key);
+        message = message.replaceAll("%prefix%", prefix);
+        Component finalMessage = Adventure.MINI_MESSAGE.deserialize(message, placeholder);
+        Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.getInstance()).player(player);
+
+        target.sendMessage(finalMessage);
+    }
+
+    public static void sendActionBar(Player player, String key) {
+        if (!messages.containsKey(key)) return;
+        if (messages.get(key) == null) return;
+        String message = messages.get(key);
+        message = message.replaceAll("%prefix%", prefix);
+        Component finalMessage = Adventure.MINI_MESSAGE.deserialize(message);
+        Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.getInstance()).player(player);
+
+        target.sendActionBar(finalMessage);
+    }
+
+
 
     public static void sendDebugMessages(String message) {
         sendDebugMessages(message, Level.INFO);
