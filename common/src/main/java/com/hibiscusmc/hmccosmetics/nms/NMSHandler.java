@@ -45,6 +45,10 @@ public interface NMSHandler {
             List<Player> sendTo
     );
 
+    void hideNPCName(
+            Player player,
+            String NPCName);
+
     default boolean getSupported () {
         return false;
     }

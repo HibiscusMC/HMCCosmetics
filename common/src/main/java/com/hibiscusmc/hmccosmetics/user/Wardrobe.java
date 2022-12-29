@@ -25,6 +25,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Wardrobe {
 
     private int NPC_ID;
+    private String npcName;
     private UUID WARDROBE_UUID;
     private int ARMORSTAND_ID;
     private GameMode originalGamemode;
@@ -66,13 +67,19 @@ public class Wardrobe {
         PacketManager.sendCameraPacket(ARMORSTAND_ID, viewer);
 
         // NPC
-        PacketManager.sendFakePlayerInfoPacket(player, NPC_ID, WARDROBE_UUID, viewer);
+        npcName = "WardrobeNPC-" + NPC_ID;
+        while (npcName.length() > 16) {
+            npcName = npcName.substring(16);
+        }
+        PacketManager.sendFakePlayerInfoPacket(player, NPC_ID, WARDROBE_UUID, npcName, viewer);
 
         // NPC 2
         Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
             PacketManager.sendFakePlayerSpawnPacket(WardrobeSettings.getWardrobeLocation(), WARDROBE_UUID, NPC_ID, viewer);
             MessagesUtil.sendDebugMessages("Spawned Fake Player on " + WardrobeSettings.getWardrobeLocation());
+            NMSHandlers.getHandler().hideNPCName(player, npcName);
         }, 4);
+
 
 
         // Location

@@ -244,12 +244,13 @@ public class PacketManager extends BasePacket {
             final Player skinnedPlayer,
             final int entityId,
             final UUID uuid,
+            final String NPCName,
             final List<Player> sendTo
     ) {
         WrapperPlayServerPlayerInfo info = new WrapperPlayServerPlayerInfo();
         info.setAction(EnumWrappers.PlayerInfoAction.ADD_PLAYER);
 
-        String name = "Mannequin-" + entityId;
+        String name = NPCName;
         while (name.length() > 16) {
             name = name.substring(16);
         }
