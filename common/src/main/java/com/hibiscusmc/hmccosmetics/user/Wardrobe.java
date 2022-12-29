@@ -8,6 +8,10 @@ import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.ServerUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.bossbar.BossBar;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -33,6 +37,7 @@ public class Wardrobe {
     private Location viewingLocation;
     private Location npcLocation;
     private Location exitLocation;
+    private BossBar bossBar;
     private boolean active;
 
     public Wardrobe(CosmeticUser user) {
@@ -102,6 +107,17 @@ public class Wardrobe {
 
         }
 
+        if (WardrobeSettings.getEnabledBossbar()) {
+
+            float progress = WardrobeSettings.getBossbarProgress();
+            Component message = MessagesUtil.processStringNoKey(WardrobeSettings.getBossbarText());
+
+            bossBar = BossBar.bossBar(message, progress, WardrobeSettings.getBossbarColor(), WardrobeSettings.getBossbarOverlay());
+            Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.getInstance()).player(player);
+
+            target.showBossBar(bossBar);
+        }
+
         MessagesUtil.sendMessage(player, "opened-wardrobe");
         this.active = true;
         update();
@@ -149,6 +165,12 @@ public class Wardrobe {
 
         if (WardrobeSettings.isEquipPumpkin()) {
             NMSHandlers.getHandler().equipmentSlotUpdate(VIEWER.getPlayer().getEntityId(), EquipmentSlot.HEAD, player.getInventory().getHelmet(), viewer);
+        }
+
+        if (WardrobeSettings.getEnabledBossbar()) {
+            Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.getInstance()).player(player);
+
+            target.hideBossBar(bossBar);
         }
 
         VIEWER.updateCosmetic();

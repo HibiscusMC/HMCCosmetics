@@ -45,6 +45,12 @@ wardrobe:
   equip-pumpkin: false
   # Rather than having a set exit location, this will send the player back to where they entered the wardrobe.
   return-last-location: false
+  # Bossbar that shows when a player is in a wardrobe.
+  bossbar:
+    enabled: false
+    text: "Left-Click to open the menu!"
+    progress: 100
+    overlay: PROGRESS
   wardrobe-location:
     world: "World"
     x: 0

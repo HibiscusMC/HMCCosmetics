@@ -4,6 +4,8 @@ import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.serializer.LocationSerializer;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.misc.Utils;
+import net.kyori.adventure.bossbar.BossBar;
+import org.apache.commons.lang3.EnumUtils;
 import org.bukkit.Location;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
@@ -27,6 +29,12 @@ public class WardrobeSettings {
     private static final String LEAVE_LOCATION_PATH = "leave-location";
     private static final String EQUIP_PUMPKIN_WARDROBE = "equip-pumpkin";
     private static final String RETURN_LAST_LOCATION = "return-last-location";
+    private static final String BOSSBAR_PATH = "bossbar";
+    private static final String BOSSBAR_ENABLE_PATH = "enabled";
+    private static final String BOSSBAR_TEXT_PATH = "text";
+    private static final String BOSSBAR_PROGRESS_PATH = "progress";
+    private static final String BOSSBAR_OVERLAY_PATH = "overlay";
+    private static final String BOSSBAR_COLOR_PATH = "color";
 
     private static ConfigurationNode configRoot;
     private static boolean disableOnDamage;
@@ -37,12 +45,17 @@ public class WardrobeSettings {
     private static int rotationSpeed;
     private static int spawnDelay;
     private static int despawnDelay;
+    private static float bossbarProgress;
     private static boolean applyCosmeticsOnClose;
     private static boolean equipPumpkin;
     private static boolean returnLastLocation;
+    private static boolean enabledBossbar;
     private static Location wardrobeLocation;
     private static Location viewerLocation;
     private static Location leaveLocation;
+    private static String bossbarMessage;
+    private static BossBar.Overlay bossbarOverlay;
+    private static BossBar.Color bossbarColor;
 
     public static void load(ConfigurationNode source) {
         configRoot = source;
@@ -57,7 +70,25 @@ public class WardrobeSettings {
         despawnDelay = source.node(DESPAWN_DELAY_PATH).getInt();
         applyCosmeticsOnClose = source.node(APPLY_COSMETICS_ON_CLOSE).getBoolean();
         equipPumpkin = source.node(EQUIP_PUMPKIN_WARDROBE).getBoolean();
-        returnLastLocation = source.node(RETURN_LAST_LOCATION).getBoolean();
+        returnLastLocation = source.node(RETURN_LAST_LOCATION).getBoolean(false);
+
+        ConfigurationNode bossBarNode = source.node(BOSSBAR_PATH);
+        enabledBossbar = bossBarNode.node(BOSSBAR_ENABLE_PATH).getBoolean(false);
+        bossbarProgress = bossBarNode.node(BOSSBAR_PROGRESS_PATH).getFloat(1.0f);
+        bossbarMessage = bossBarNode.node(BOSSBAR_TEXT_PATH).getString("");
+        if (EnumUtils.isValidEnum(BossBar.Overlay.class, bossBarNode.node(BOSSBAR_OVERLAY_PATH).getString(""))) {
+            bossbarOverlay = BossBar.Overlay.valueOf(bossBarNode.node(BOSSBAR_OVERLAY_PATH).getString(""));
+        } else {
+            bossbarOverlay = BossBar.Overlay.PROGRESS;
+        }
+
+        if (EnumUtils.isValidEnum(BossBar.Color.class, bossBarNode.node(BOSSBAR_COLOR_PATH).getString())) {
+            bossbarColor = BossBar.Color.valueOf(bossBarNode.node(BOSSBAR_COLOR_PATH).getString());
+        } else {
+            bossbarColor = BossBar.Color.YELLOW;
+        }
+
+
         try {
             wardrobeLocation = LocationSerializer.INSTANCE.deserialize(Location.class, source.node(STATIC_LOCATION_PATH));
             MessagesUtil.sendDebugMessages("Wardrobe Location: " + wardrobeLocation);
@@ -134,6 +165,26 @@ public class WardrobeSettings {
         if (staticRadius == -1) return false;
         if (!wardrobeLocation.getWorld().equals(location.getWorld())) return false;
         return wardrobeLocation.distanceSquared(location) <= staticRadius * staticRadius;
+    }
+
+    public static boolean getEnabledBossbar() {
+        return enabledBossbar;
+    }
+
+    public static float getBossbarProgress() {
+        return bossbarProgress;
+    }
+
+    public static String getBossbarText() {
+        return bossbarMessage;
+    }
+
+    public static BossBar.Overlay getBossbarOverlay() {
+        return bossbarOverlay;
+    }
+
+    public static BossBar.Color getBossbarColor() {
+        return bossbarColor;
     }
 
     public static void setWardrobeLocation(Location newLocation) {
