@@ -57,14 +57,6 @@ public class CosmeticBackpackType extends Cosmetic {
 
     }
 
-    public void rotateEntity(int entityId, Location location) {
-        //PacketManager.sendRotationPacket(entityId, location, true);
-    }
-
-    public void moveEntity(int entityId, Location location) {
-        //PacketManager.sendTeleportPacket();
-    }
-
     @Override
     public ItemStack getItem() {
         if (this.backpackItem == null ) {
