@@ -4,6 +4,7 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
+import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.Pair;
@@ -36,10 +37,7 @@ import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class PlayerGameListener implements Listener {
 
@@ -193,9 +191,7 @@ public class PlayerGameListener implements Listener {
                 CosmeticSlot cosmeticSlot = InventoryUtils.NMSCosmeticSlot(slotClicked);
                 if (cosmeticSlot == null) return;
                 if (!user.hasCosmeticInSlot(cosmeticSlot)) return;
-                Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
-                    user.updateCosmetic(cosmeticSlot);
-                }, 1);
+                Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> user.updateCosmetic(cosmeticSlot), 1);
                 MessagesUtil.sendDebugMessages("Packet fired, updated cosmetic " + cosmeticSlot);
             }
         });
@@ -217,14 +213,36 @@ public class PlayerGameListener implements Listener {
                 CosmeticUser user = CosmeticUsers.getUser(player);
                 if (user == null) return;
 
+                HashMap<Integer, ItemStack> items = new HashMap<>();
+
+                for (Cosmetic cosmetic : user.getCosmetic()) {
+                    if ((cosmetic instanceof CosmeticArmorType cosmeticArmorType)) {
+                        items.put(InventoryUtils.getPacketArmorSlot(cosmeticArmorType.getEquipSlot()), user.getUserCosmeticItem(cosmeticArmorType));
+                    }
+                }
+
+                PacketContainer packet = new PacketContainer(PacketType.Play.Server.WINDOW_ITEMS);
+                packet.getIntegers().write(0, 0);
+                for (int slot = 0; slot < 46; slot++) {
+                    if (slot >= 5 && slot <= 8 || slot == 45) {
+                        if (!items.containsKey(slot)) continue;
+                        slotData.set(slot, items.get(slot));
+                        MessagesUtil.sendDebugMessages("Set " + slot + " as " + items.get(slot));
+                    }
+                }
+                packet.getItemListModifier().write(0, slotData);
+                event.setPacket(packet);
+                MessagesUtil.sendDebugMessages("Menu Fired, updated cosmetics " + " on slotdata " + windowID + " with " + slotData.size());
+                /*
                 for (Cosmetic cosmetic : user.getCosmetic()) {
                     if ((cosmetic instanceof CosmeticArmorType) || (cosmetic instanceof CosmeticMainhandType)) {
                         Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
                             user.updateCosmetic(cosmetic);
                         }, 1);
-                        MessagesUtil.sendDebugMessages("Menu Fired, updated cosmetics " + cosmetic + " on slotdata " + windowID);
+
                     }
                 }
+                 */
             }
         });
     }
@@ -233,13 +251,13 @@ public class PlayerGameListener implements Listener {
         ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(HMCCosmeticsPlugin.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Server.ENTITY_EQUIPMENT) {
             @Override
             public void onPacketSending(PacketEvent event) {
-                //HMCCosmeticsPlugin.getInstance().getLogger().info("equipment packet is activated");
+                MessagesUtil.sendDebugMessages("equipment packet is activated");
                 Player player = event.getPlayer(); // Player that's sent
                 int entityID = event.getPacket().getIntegers().read(0);
                 // User
                 CosmeticUser user = CosmeticUsers.getUser(entityID);
                 if (user == null) {
-                    //HMCCosmeticsPlugin.getInstance().getLogger().info("equipment packet is activated - user null");
+                    MessagesUtil.sendDebugMessages("equipment packet is activated - user null");
                     return;
                 }
 

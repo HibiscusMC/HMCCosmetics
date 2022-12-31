@@ -54,7 +54,6 @@ public class CosmeticBackpackType extends Cosmetic {
 
         user.getBackpackEntity().setRotation(loc.getYaw(), loc.getPitch());
         user.showBackpack();
-
     }
 
     @Override

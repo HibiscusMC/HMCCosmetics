@@ -23,7 +23,7 @@ public class InventoryUtils {
         };
     }
 
-    private static int getPacketArmorSlot(final EquipmentSlot slot) {
+    public static int getPacketArmorSlot(final EquipmentSlot slot) {
         return switch (slot) {
             case HEAD -> 5;
             case CHEST -> 6;
