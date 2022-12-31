@@ -12,6 +12,7 @@ import com.hibiscusmc.hmccosmetics.util.TranslationUtil;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -117,54 +118,32 @@ public class PAPIHook extends PlaceholderExpansion {
     }
 
     public String getMaterial(Cosmetic cosmetic) {
-        if (cosmetic instanceof CosmeticArmorType) {
-            return ((CosmeticArmorType) cosmetic).getItem().getType().toString();
-        }
-        if (cosmetic instanceof CosmeticMainhandType) {
-            return ((CosmeticMainhandType) cosmetic).getItem().getType().toString();
-        }
-        return null;
+        ItemStack item = cosmetic.getItem();
+        if (item == null) return null;
+        return cosmetic.getItem().getType().toString();
     }
 
     public String getModelData(Cosmetic cosmetic) {
-        if (cosmetic instanceof CosmeticArmorType) {
-            ItemStack item = ((CosmeticArmorType) cosmetic).getItem();
-            if (item.hasItemMeta()) {
-                return String.valueOf(item.getItemMeta().getCustomModelData());
-            }
-        }
-        if (cosmetic instanceof CosmeticMainhandType) {
-            ItemStack item = ((CosmeticMainhandType) cosmetic).getItem();
-            if (item.hasItemMeta()) {
-                return String.valueOf(item.getItemMeta().getCustomModelData());
-            }
-        }
-        return null;
+        ItemStack item = cosmetic.getItem();
+        if (item == null) return null;
+        if (!item.hasItemMeta()) return null;
+        ItemMeta itemMeta = item.getItemMeta();
+        return String.valueOf(itemMeta.getCustomModelData());
     }
 
     public String getItemName(Cosmetic cosmetic) {
-        if (cosmetic instanceof CosmeticArmorType) {
-            ItemStack item = ((CosmeticArmorType) cosmetic).getItem();
-            if (item.hasItemMeta()) {
-                return item.getItemMeta().getDisplayName();
-            }
-        }
-        if (cosmetic instanceof CosmeticMainhandType) {
-            ItemStack item = ((CosmeticMainhandType) cosmetic).getItem();
-            if (item.hasItemMeta()) {
-                return item.getItemMeta().getDisplayName();
-            }
-        }
-        return null;
+        ItemStack item = cosmetic.getItem();
+        if (item == null) return null;
+        if (!item.hasItemMeta()) return null;
+        ItemMeta itemMeta = item.getItemMeta();
+        return itemMeta.getDisplayName();
     }
 
     public String getItemLore(Cosmetic cosmetic) {
-        if (cosmetic instanceof CosmeticArmorType || cosmetic instanceof CosmeticMainhandType) {
-            ItemStack item = cosmetic.getItem();
-            if (item == null) return null;
-            if (item.hasItemMeta()) {
-                return String.valueOf(item.getItemMeta().getLore());
-            }
+        ItemStack item = cosmetic.getItem();
+        if (item == null) return null;
+        if (item.hasItemMeta()) {
+            return String.valueOf(item.getItemMeta().getLore());
         }
         return null;
     }
