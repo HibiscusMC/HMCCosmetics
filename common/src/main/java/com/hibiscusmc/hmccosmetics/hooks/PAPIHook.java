@@ -47,7 +47,7 @@ public class PAPIHook extends PlaceholderExpansion {
         CosmeticUser user = CosmeticUsers.getUser(player.getPlayer());
         if (user == null) return null;
 
-        List<String> placeholderArgs = Arrays.asList(params.split("_"));
+        List<String> placeholderArgs = Arrays.asList(params.split("_", 3));
 
         switch (placeholderArgs.get(0).toLowerCase()) {
             case "using":
@@ -94,7 +94,14 @@ public class PAPIHook extends PlaceholderExpansion {
                 }
                 if (placeholderArgs.get(1) != null) {
                     Cosmetic cosmetic = Cosmetics.getCosmetic(placeholderArgs.get(1));
-                    if (cosmetic == null) return "INVALID_COSMETIC";
+                    if (cosmetic == null) {
+                        Cosmetic secondAttemptCosmetic = Cosmetics.getCosmetic(placeholderArgs.get(1) + "_" + placeholderArgs.get(2));
+                        if (secondAttemptCosmetic == null) {
+                            return "INVALID_COSMETIC";
+                        } else {
+                            cosmetic = secondAttemptCosmetic;
+                        }
+                    }
                     return TranslationUtil.getTranslation("unlockedCosmetic", String.valueOf(user.canEquipCosmetic(cosmetic)));
                 }
             case "equipped":
@@ -103,7 +110,14 @@ public class PAPIHook extends PlaceholderExpansion {
                 }
                 if (placeholderArgs.get(1) != null) {
                     Cosmetic cosmetic = Cosmetics.getCosmetic(placeholderArgs.get(1));
-                    if (cosmetic == null) return "INVALID_COSMETIC";
+                    if (cosmetic == null) {
+                        Cosmetic secondAttemptCosmetic = Cosmetics.getCosmetic(placeholderArgs.get(1) + "_" + placeholderArgs.get(2));
+                        if (secondAttemptCosmetic == null) {
+                            return "INVALID_COSMETIC";
+                        } else {
+                            cosmetic = secondAttemptCosmetic;
+                        }
+                    }
                     if (user.getCosmetic(cosmetic.getSlot()) == null) return "false";
                     if (cosmetic.getId() == user.getCosmetic(cosmetic.getSlot()).getId()) {
                         return "true";

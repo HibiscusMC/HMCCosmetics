@@ -4,6 +4,7 @@ import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.api.PlayerMenuOpenEvent;
 import com.hibiscusmc.hmccosmetics.api.PlayerWardrobeLeaveEvent;
 import com.hibiscusmc.hmccosmetics.config.serializer.ItemSerializer;
+import com.hibiscusmc.hmccosmetics.gui.type.Type;
 import com.hibiscusmc.hmccosmetics.gui.type.Types;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
@@ -15,6 +16,7 @@ import dev.triumphteam.gui.guis.GuiItem;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -123,31 +125,28 @@ public class Menu {
                 MessagesUtil.sendDebugMessages("something went wrong! " + item);
                 continue;
             }
+            ItemStack originalItem = item.clone();
+            item = updateLore(player, item);
 
-            if (item.hasItemMeta()) {
-                List<String> processedLore = new ArrayList<>();
+            Type type = null;
 
-                if (item.getItemMeta().hasLore()) {
-                    for (String loreLine : item.getItemMeta().getLore()) {
-                        processedLore.add(PlaceholderAPI.setPlaceholders(player, loreLine));
-                    }
-                }
-
-                ItemMeta itemMeta = item.getItemMeta();
-                itemMeta.setLore(processedLore);
-                item.setItemMeta(itemMeta);
+            if (!config.node("type").virtual()) {
+                String typeId = config.node("type").getString();
+                if (Types.isType(typeId)) type = Types.getType(typeId);
             }
 
             GuiItem guiItem = ItemBuilder.from(item).asGuiItem();
+
+            Type finalType = type;
             guiItem.setAction(event -> {
-                if (config.node("type").virtual()) return;
-                String type = config.node("type").getString();
-                if (Types.isType(type)) Types.getType(type).run(user, config);
+                if (finalType != null) finalType.run(user, config);
 
                 for (int i : slots) {
-                    gui.updateItem(i, guiItem);
+                    gui.updateItem(i, updateLore(player, originalItem.clone()));
+                    MessagesUtil.sendDebugMessages("Updated slot " + i);
                 }
             });
+
             MessagesUtil.sendDebugMessages("Added " + slots + " as " + guiItem + " in the menu");
             gui.setItem(slots, guiItem);
         }
@@ -176,5 +175,22 @@ public class Menu {
 
         for (int i = small; i <= max; i++) slots.add(i);
         return slots;
+    }
+
+    private ItemStack updateLore(Player player, ItemStack itemStack) {
+        if (itemStack.hasItemMeta()) {
+            List<String> processedLore = new ArrayList<>();
+
+            if (itemStack.getItemMeta().hasLore()) {
+                for (String loreLine : itemStack.getItemMeta().getLore()) {
+                    processedLore.add(PlaceholderAPI.setPlaceholders(player, loreLine));
+                }
+            }
+
+            ItemMeta itemMeta = itemStack.getItemMeta();
+            itemMeta.setLore(processedLore);
+            itemStack.setItemMeta(itemMeta);
+        }
+        return itemStack;
     }
 }
