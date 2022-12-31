@@ -46,6 +46,10 @@ public class PlayerGameListener implements Listener {
         registerMenuChangeListener();
         registerPlayerEquipmentListener();
         registerPlayerArmListener();
+
+        registerLookMovement();
+        registerMoveListener();
+        registerTeleportMovement();
     }
 
     @EventHandler
@@ -296,7 +300,24 @@ public class PlayerGameListener implements Listener {
         ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(HMCCosmeticsPlugin.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Client.LOOK) {
             @Override
             public void onPacketReceiving(PacketEvent event) {
-                //
+                // TODO: Finish
+                MessagesUtil.sendDebugMessages("Look Packet ");
+                Player player = event.getPlayer();
+                if (event.getPlayer() == null) return;
+                if (!(event.getPlayer() instanceof Player)) return;
+            }
+        });
+    }
+
+    private void registerMoveListener() {
+        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(HMCCosmeticsPlugin.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Client.POSITION) {
+            @Override
+            public void onPacketReceiving(PacketEvent event) {
+                // TODO: Finish
+                MessagesUtil.sendDebugMessages("Position Packet ");
+                Player player = event.getPlayer();
+                if (event.getPlayer() == null) return;
+                if (!(event.getPlayer() instanceof Player)) return;
             }
         });
     }
@@ -305,7 +326,11 @@ public class PlayerGameListener implements Listener {
         ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(HMCCosmeticsPlugin.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Client.TELEPORT_ACCEPT) {
             @Override
             public void onPacketReceiving(PacketEvent event) {
-                //
+                // TODO: Finish
+                MessagesUtil.sendDebugMessages("Teleport Packet ");
+                Player player = event.getPlayer();
+                if (event.getPlayer() == null) return;
+                if (!(event.getPlayer() instanceof Player)) return;
             }
         });
     }
