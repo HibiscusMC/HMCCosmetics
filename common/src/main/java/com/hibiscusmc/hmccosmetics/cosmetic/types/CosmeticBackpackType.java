@@ -4,6 +4,7 @@ import com.hibiscusmc.hmccosmetics.config.serializer.ItemSerializer;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
+import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -56,7 +57,16 @@ public class CosmeticBackpackType extends Cosmetic {
 
     }
 
-    public ItemStack getBackpackItem() {
+    public void rotateEntity(int entityId, Location location) {
+        //PacketManager.sendRotationPacket(entityId, location, true);
+    }
+
+    public void moveEntity(int entityId, Location location) {
+        //PacketManager.sendTeleportPacket();
+    }
+
+    @Override
+    public ItemStack getItem() {
         if (this.backpackItem == null ) {
             MessagesUtil.sendDebugMessages("Backpack item was null for " + getId());
             this.backpackItem = generateItemStack(config.node("item"));

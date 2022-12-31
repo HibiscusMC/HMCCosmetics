@@ -23,7 +23,6 @@ public class CosmeticMainhandType extends Cosmetic {
 
         this.itemStack = generateItemStack(config.node("item"));
 
-        setEquipable(true);
     }
 
     @Override
@@ -48,7 +47,8 @@ public class CosmeticMainhandType extends Cosmetic {
         }
     }
 
-    public ItemStack getItemStack() {
-        return itemStack;
+    @Override
+    public ItemStack getItem() {
+        return itemStack.clone();
     }
 }

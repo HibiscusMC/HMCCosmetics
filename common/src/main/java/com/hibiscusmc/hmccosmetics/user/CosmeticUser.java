@@ -149,19 +149,8 @@ public class CosmeticUser {
         if (hideCosmetics) {
             return getPlayer().getInventory().getItem(InventoryUtils.getEquipmentSlot(cosmetic.getSlot()));
         }
-        if (cosmetic instanceof CosmeticArmorType) {
-            CosmeticArmorType cosmetic1 = (CosmeticArmorType) cosmetic;
-            item = cosmetic1.getCosmeticItem();
-            MessagesUtil.sendDebugMessages("GetUserCosemticUser Armor");
-        }
-        if (cosmetic instanceof CosmeticMainhandType) {
-            CosmeticMainhandType cosmetic1 = (CosmeticMainhandType) cosmetic;
-            item = cosmetic1.getItemStack();
-        }
-        if (cosmetic instanceof CosmeticBackpackType) {
-            CosmeticBackpackType cosmetic1 = (CosmeticBackpackType) cosmetic;
-            item = cosmetic1.getBackpackItem();
-            MessagesUtil.sendDebugMessages("GetUserCosemticUser Backpack");
+        if (cosmetic instanceof CosmeticArmorType || cosmetic instanceof CosmeticMainhandType || cosmetic instanceof CosmeticBackpackType) {
+            item = cosmetic.getItem();
         }
         if (cosmetic instanceof CosmeticBalloonType) {
             item = new ItemStack(Material.LEATHER_HORSE_ARMOR);

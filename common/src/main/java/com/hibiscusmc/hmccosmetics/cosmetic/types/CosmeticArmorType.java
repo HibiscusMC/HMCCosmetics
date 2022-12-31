@@ -27,8 +27,6 @@ public class CosmeticArmorType extends Cosmetic {
 
         this.itemStack = generateItemStack(config.node("item"));
         this.equipSlot = InventoryUtils.getEquipmentSlot(getSlot());
-
-        setEquipable(true);
     }
 
     @Override
@@ -37,7 +35,8 @@ public class CosmeticArmorType extends Cosmetic {
         PacketManager.equipmentSlotUpdate(player, getSlot(), PlayerUtils.getNearbyPlayers(player));
     }
 
-    public ItemStack getCosmeticItem() {
+    @Override
+    public ItemStack getItem() {
         return this.itemStack.clone();
     }
 

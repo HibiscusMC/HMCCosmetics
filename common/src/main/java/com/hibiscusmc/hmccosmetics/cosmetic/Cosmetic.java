@@ -2,6 +2,8 @@ package com.hibiscusmc.hmccosmetics.cosmetic;
 
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
 
 public class Cosmetic {
@@ -9,7 +11,6 @@ public class Cosmetic {
     private String id;
     private String permission;
     private CosmeticSlot slot;
-    private boolean equipable; // This simply means if a player can put it on their body.
     private boolean dyable;
 
     protected Cosmetic(String id, ConfigurationNode config) {
@@ -18,7 +19,6 @@ public class Cosmetic {
         MessagesUtil.sendDebugMessages("Slot: " + config.node("slot").getString());
         setSlot(CosmeticSlot.valueOf(config.node("slot").getString()));
 
-        setEquipable(false);
         setDyable(config.node("dyeable").getBoolean(false));
 
         MessagesUtil.sendDebugMessages("Dyeable " + dyable);
@@ -53,14 +53,6 @@ public class Cosmetic {
         this.id = id;
     }
 
-    public void setEquipable(boolean equipable) {
-        this.equipable = equipable;
-    }
-
-    public boolean isEquipable() {
-        return equipable;
-    }
-
     public void setDyable(boolean dyable) {
         this.dyable = dyable;
     }
@@ -72,5 +64,10 @@ public class Cosmetic {
 
     public void update(CosmeticUser user) {
         // Override
+    }
+
+    @Nullable
+    public ItemStack getItem() {
+        return null; // Override
     }
 }
