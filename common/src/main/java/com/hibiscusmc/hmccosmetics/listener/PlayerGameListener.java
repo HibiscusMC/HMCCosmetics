@@ -120,6 +120,7 @@ public class PlayerGameListener implements Listener {
 
     @EventHandler
     public void onPlayerLook(PlayerMoveEvent event) {
+        // TODO: Move to packets
         CosmeticUser user = CosmeticUsers.getUser(event.getPlayer().getUniqueId());
         if (user == null) return;
         // Really need to look into optimization of this
@@ -247,7 +248,7 @@ public class PlayerGameListener implements Listener {
                 for (EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
                     CosmeticArmorType cosmeticArmor = (CosmeticArmorType) user.getCosmetic(InventoryUtils.BukkitCosmeticSlot(equipmentSlot));
                     if (cosmeticArmor == null) continue;
-                    Pair<EnumWrappers.ItemSlot, ItemStack> pair = new Pair<>(InventoryUtils.itemBukkitSlot(cosmeticArmor.getEquipSlot()), cosmeticArmor.getCosmeticItem());
+                    Pair<EnumWrappers.ItemSlot, ItemStack> pair = new Pair<>(InventoryUtils.itemBukkitSlot(cosmeticArmor.getEquipSlot()), cosmeticArmor.getItem());
                     armor.add(pair);
                 }
 
@@ -269,6 +270,24 @@ public class PlayerGameListener implements Listener {
                 Menu menu = Menus.getMenu(Settings.getDefaultMenu());
                 if (menu == null) return;
                 menu.openMenu(user);
+            }
+        });
+    }
+
+    private void registerLookMovement() {
+        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(HMCCosmeticsPlugin.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Client.LOOK) {
+            @Override
+            public void onPacketReceiving(PacketEvent event) {
+                //
+            }
+        });
+    }
+
+    private void registerTeleportMovement() {
+        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(HMCCosmeticsPlugin.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Client.TELEPORT_ACCEPT) {
+            @Override
+            public void onPacketReceiving(PacketEvent event) {
+                //
             }
         });
     }

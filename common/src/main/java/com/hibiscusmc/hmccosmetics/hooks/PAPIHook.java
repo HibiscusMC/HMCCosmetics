@@ -5,7 +5,6 @@ import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticArmorType;
-import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticMainhandType;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
@@ -89,23 +88,23 @@ public class PAPIHook extends PlaceholderExpansion {
 
     public String getMaterial(Cosmetic cosmetic) {
         if (cosmetic instanceof CosmeticArmorType) {
-            return ((CosmeticArmorType) cosmetic).getCosmeticItem().getType().toString();
+            return ((CosmeticArmorType) cosmetic).getItem().getType().toString();
         }
         if (cosmetic instanceof CosmeticMainhandType) {
-            return ((CosmeticMainhandType) cosmetic).getItemStack().getType().toString();
+            return ((CosmeticMainhandType) cosmetic).getItem().getType().toString();
         }
         return null;
     }
 
     public String getModelData(Cosmetic cosmetic) {
         if (cosmetic instanceof CosmeticArmorType) {
-            ItemStack item = ((CosmeticArmorType) cosmetic).getCosmeticItem();
+            ItemStack item = ((CosmeticArmorType) cosmetic).getItem();
             if (item.hasItemMeta()) {
                 return String.valueOf(item.getItemMeta().getCustomModelData());
             }
         }
         if (cosmetic instanceof CosmeticMainhandType) {
-            ItemStack item = ((CosmeticMainhandType) cosmetic).getItemStack();
+            ItemStack item = ((CosmeticMainhandType) cosmetic).getItem();
             if (item.hasItemMeta()) {
                 return String.valueOf(item.getItemMeta().getCustomModelData());
             }
@@ -115,13 +114,13 @@ public class PAPIHook extends PlaceholderExpansion {
 
     public String getItemName(Cosmetic cosmetic) {
         if (cosmetic instanceof CosmeticArmorType) {
-            ItemStack item = ((CosmeticArmorType) cosmetic).getCosmeticItem();
+            ItemStack item = ((CosmeticArmorType) cosmetic).getItem();
             if (item.hasItemMeta()) {
                 return item.getItemMeta().getDisplayName();
             }
         }
         if (cosmetic instanceof CosmeticMainhandType) {
-            ItemStack item = ((CosmeticMainhandType) cosmetic).getItemStack();
+            ItemStack item = ((CosmeticMainhandType) cosmetic).getItem();
             if (item.hasItemMeta()) {
                 return item.getItemMeta().getDisplayName();
             }
@@ -131,13 +130,13 @@ public class PAPIHook extends PlaceholderExpansion {
 
     public String getItemLore(Cosmetic cosmetic) {
         if (cosmetic instanceof CosmeticArmorType) {
-            ItemStack item = ((CosmeticArmorType) cosmetic).getCosmeticItem();
+            ItemStack item = ((CosmeticArmorType) cosmetic).getItem();
             if (item.hasItemMeta()) {
                 return String.valueOf(item.getItemMeta().getLore());
             }
         }
         if (cosmetic instanceof CosmeticMainhandType) {
-            ItemStack item = ((CosmeticMainhandType) cosmetic).getItemStack();
+            ItemStack item = ((CosmeticMainhandType) cosmetic).getItem();
             if (item.hasItemMeta()) {
                 return String.valueOf(item.getItemMeta().getLore());
             }

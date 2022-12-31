@@ -3,7 +3,6 @@ package com.hibiscusmc.hmccosmetics.util.packets;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.*;
-import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
@@ -14,6 +13,7 @@ import com.hibiscusmc.hmccosmetics.util.packets.wrappers.WrapperPlayServerNamedE
 import com.hibiscusmc.hmccosmetics.util.packets.wrappers.WrapperPlayServerPlayerInfo;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -130,6 +130,14 @@ public class PacketManager extends BasePacket {
         packet.getIntegers().write(0, entityId);
         packet.getBytes().write(0, (byte) (location.getYaw() * 256.0F / 360.0F));
         for (Player p : sendTo) sendPacket(p, packet);
+    }
+
+    public static void sendRotationPacket(
+            int entityId,
+            Location location,
+            boolean onGround
+    ) {
+        sendRotationPacket(entityId, location, onGround, getWorldPlayers(location.getWorld()));
     }
 
     public static void sendRotationPacket(
@@ -362,5 +370,9 @@ public class PacketManager extends BasePacket {
         for (final Player p : sendTo) {
             sendPacket(p, packet);
         }
+    }
+
+    private static List<Player> getWorldPlayers(World world) {
+        return world.getPlayers();
     }
 }
