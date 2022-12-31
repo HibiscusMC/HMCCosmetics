@@ -21,6 +21,7 @@ import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import com.hibiscusmc.hmccosmetics.util.InventoryUtils;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Entity;
@@ -100,14 +101,34 @@ public class PlayerGameListener implements Listener {
             }, 2);
         }
 
+        if (event.getCause().equals(PlayerTeleportEvent.TeleportCause.NETHER_PORTAL) || event.getCause().equals(PlayerTeleportEvent.TeleportCause.END_PORTAL)) return;
+
         if (user.hasCosmeticInSlot(CosmeticSlot.BALLOON)) {
-            // TODO: Resolve issue with Balloons not going through portal
             user.getBalloonEntity().setLocation(event.getTo());
 
             Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
                 user.updateCosmetic(CosmeticSlot.BALLOON);
             }, 2);
         }
+    }
+
+    @EventHandler
+    public void portalTeleport(PlayerPortalEvent event) {
+        CosmeticUser user = CosmeticUsers.getUser(event.getPlayer().getUniqueId());
+
+        MessagesUtil.sendDebugMessages("Player Teleport Event");
+        if (user == null) {
+            MessagesUtil.sendDebugMessages("user is null");
+            return;
+        }
+
+        final Cosmetic cosmetic = user.getCosmetic(CosmeticSlot.BALLOON);
+        final Color color = user.getCosmeticColor(CosmeticSlot.BALLOON);
+        user.removeCosmeticSlot(CosmeticSlot.BALLOON);
+
+        Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
+            user.addPlayerCosmetic(cosmetic, color);
+        }, 4);
     }
 
     @EventHandler
