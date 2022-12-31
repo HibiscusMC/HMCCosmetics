@@ -1,10 +1,6 @@
 package com.hibiscusmc.hmccosmetics.gui.action;
 
-import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
-import com.hibiscusmc.hmccosmetics.gui.action.actions.ActionConsoleCommand;
-import com.hibiscusmc.hmccosmetics.gui.action.actions.ActionMenu;
-import com.hibiscusmc.hmccosmetics.gui.action.actions.ActionMessage;
-import com.hibiscusmc.hmccosmetics.gui.action.actions.ActionPlayerCommand;
+import com.hibiscusmc.hmccosmetics.gui.action.actions.*;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import org.apache.commons.lang.StringUtils;
@@ -21,6 +17,7 @@ public class Actions {
     private static ActionMenu ACTION_MENU = new ActionMenu();
     private static ActionPlayerCommand ACTION_CONSOLE_COMMAND = new ActionPlayerCommand();
     private static ActionConsoleCommand ACTION_PLAYER_COMMAND = new ActionConsoleCommand();
+    private static ActionCloseMenu ACTION_EXIT_MENU = new ActionCloseMenu();
 
 
     public static Action getAction(String id) {
