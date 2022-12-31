@@ -12,6 +12,7 @@ import com.hibiscusmc.hmccosmetics.util.misc.Placeholder;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
+import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -128,8 +129,7 @@ public class Menu {
 
                 if (item.getItemMeta().hasLore()) {
                     for (String loreLine : item.getItemMeta().getLore()) {
-                        processedLore.add(loreLine.replaceAll("%allowed%", "allowed?"));
-                        // TODO apply placeholders here
+                        processedLore.add(PlaceholderAPI.setPlaceholders(player, loreLine));
                     }
                 }
 

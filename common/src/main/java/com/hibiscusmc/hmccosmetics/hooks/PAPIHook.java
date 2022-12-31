@@ -8,6 +8,7 @@ import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticArmorType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticMainhandType;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
+import com.hibiscusmc.hmccosmetics.util.TranslationUtil;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
@@ -17,6 +18,12 @@ import java.util.Arrays;
 import java.util.List;
 
 public class PAPIHook extends PlaceholderExpansion {
+
+    private static boolean papiEnabled = false;
+
+    public PAPIHook() {
+        papiEnabled = true;
+    }
 
     @Override
     public @NotNull String getIdentifier() {
@@ -80,6 +87,29 @@ public class PAPIHook extends PlaceholderExpansion {
                         }
                     }
                 }
+            case "unlocked":
+                if (placeholderArgs == null) {
+                    return null;
+                }
+                if (placeholderArgs.get(1) != null) {
+                    Cosmetic cosmetic = Cosmetics.getCosmetic(placeholderArgs.get(1));
+                    if (cosmetic == null) return "INVALID_COSMETIC";
+                    return TranslationUtil.getTranslation("unlockedCosmetic", String.valueOf(user.canEquipCosmetic(cosmetic)));
+                }
+            case "equipped":
+                if (placeholderArgs == null) {
+                    return null;
+                }
+                if (placeholderArgs.get(1) != null) {
+                    Cosmetic cosmetic = Cosmetics.getCosmetic(placeholderArgs.get(1));
+                    if (cosmetic == null) return "INVALID_COSMETIC";
+                    if (user.getCosmetic(cosmetic.getSlot()) == null) return "false";
+                    if (cosmetic.getId() == user.getCosmetic(cosmetic.getSlot()).getId()) {
+                        return "true";
+                    } else {
+                        return "false";
+                    }
+                }
             case "wardrobe-enabled":
                 return String.valueOf(user.isInWardrobe());
         }
@@ -129,18 +159,17 @@ public class PAPIHook extends PlaceholderExpansion {
     }
 
     public String getItemLore(Cosmetic cosmetic) {
-        if (cosmetic instanceof CosmeticArmorType) {
-            ItemStack item = ((CosmeticArmorType) cosmetic).getItem();
-            if (item.hasItemMeta()) {
-                return String.valueOf(item.getItemMeta().getLore());
-            }
-        }
-        if (cosmetic instanceof CosmeticMainhandType) {
-            ItemStack item = ((CosmeticMainhandType) cosmetic).getItem();
+        if (cosmetic instanceof CosmeticArmorType || cosmetic instanceof CosmeticMainhandType) {
+            ItemStack item = cosmetic.getItem();
+            if (item == null) return null;
             if (item.hasItemMeta()) {
                 return String.valueOf(item.getItemMeta().getLore());
             }
         }
         return null;
+    }
+
+    public static boolean isPAPIEnabled() {
+        return papiEnabled;
     }
 }

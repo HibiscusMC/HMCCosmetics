@@ -1,5 +1,6 @@
 package com.hibiscusmc.hmccosmetics.util.misc;
 
+import com.hibiscusmc.hmccosmetics.util.TranslationUtil;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,17 +19,8 @@ public class Placeholder {
     public static final String ID = "%id%";
 
     /**
-     * @param message message being translated
-     * @param placeholders placeholders applied
      * @return message with placeholders applied
      */
-
-    public static String applyPlaceholders(String message, final Map<String, String> placeholders) {
-        for (final Map.Entry<String, String> entry : placeholders.entrySet()) {
-            message = message.replace(entry.getKey(), Translation.translate(entry.getValue()));
-        }
-        return message;
-    }
 
     public static String applyPapiPlaceholders(@Nullable final Player player,
                                                final String message) {

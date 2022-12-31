@@ -81,23 +81,6 @@ public class ItemBuilder {
     }
 
     /**
-     * Sets placeholders to the item's name
-     *
-     * @param placeholders placeholders
-     */
-
-    public ItemBuilder namePlaceholders(final Map<String, String> placeholders) {
-        if (this.itemMeta == null) {
-            return this;
-        }
-
-        final String name = Placeholder.
-                applyPlaceholders(this.itemMeta.getDisplayName(), placeholders);
-        this.itemMeta.setDisplayName(name);
-        return this;
-    }
-
-    /**
      * @param lore ItemStack lore
      * @return this
      */
@@ -106,35 +89,6 @@ public class ItemBuilder {
         if (this.itemMeta == null) {
             return this;
         }
-        this.itemMeta.setLore(lore);
-        return this;
-    }
-
-    /**
-     * Sets placeholders to the item's lore
-     *
-     * @param placeholders placeholders
-     */
-
-
-    public ItemBuilder lorePlaceholders(final Map<String, String> placeholders) {
-        if (this.itemMeta == null) {
-            return this;
-        }
-        final List<String> lore = new ArrayList<>();
-
-        final List<String> previousLore = this.itemMeta.getLore();
-
-        if (previousLore == null) {
-            return this;
-        }
-
-        for (final String line : previousLore) {
-            lore.add(Placeholder.applyPlaceholders(
-                    line, placeholders
-            ));
-        }
-
         this.itemMeta.setLore(lore);
         return this;
     }

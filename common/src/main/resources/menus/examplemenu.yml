@@ -9,8 +9,8 @@ items:
       amount: 1
       lore:
         - "<WHITE>"
-        - "<gray>Enabled: <#6D9DC5>%enabled%"
-        - "<gray>Allowed: <#6D9DC5>%allowed%"
+        - "<gray>Enabled: <#6D9DC5>%HMCCosmetics_equipped_niftyhat%"
+        - "<gray>Allowed: <#6D9DC5>%HMCCosmetics_unlocked_niftyhat%"
     type: cosmetic
     cosmetic: niftyhat
     actions:

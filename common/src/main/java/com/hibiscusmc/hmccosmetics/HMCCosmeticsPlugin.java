@@ -19,7 +19,7 @@ import com.hibiscusmc.hmccosmetics.listener.PlayerConnectionListener;
 import com.hibiscusmc.hmccosmetics.listener.PlayerGameListener;
 import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
-import com.hibiscusmc.hmccosmetics.util.misc.Translation;
+import com.hibiscusmc.hmccosmetics.util.TranslationUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -150,7 +150,17 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
         }
 
         // Translation setup
-        Translation.setup();
+        final File translationFile = Path.of(getInstance().getDataFolder().getPath(), "translations.yml").toFile();
+        final YamlConfigurationLoader translationLoader = YamlConfigurationLoader.
+                builder().
+                path(translationFile.toPath())
+                .nodeStyle(NodeStyle.BLOCK)
+                .build();
+        try {
+            TranslationUtil.setup(translationLoader.load());
+        } catch (ConfigurateException e) {
+            throw new RuntimeException(e);
+        }
 
         // ItemHooks
         ItemHooks.setup();

@@ -2,8 +2,10 @@ package com.hibiscusmc.hmccosmetics.util;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.Settings;
+import com.hibiscusmc.hmccosmetics.hooks.PAPIHook;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.misc.Adventure;
+import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
@@ -34,47 +36,63 @@ public class MessagesUtil {
     }
 
     public static void sendMessage(Player player, String key) {
-        Component finalMessage = processString(key);
+        Component finalMessage = processString(player, key);
         Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.getInstance()).player(player);
 
         target.sendMessage(finalMessage);
     }
 
     public static void sendMessage(CommandSender sender, String key) {
-        Component finalMessage = processString(key);
+        Component finalMessage = processString(null, key);
         Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.getInstance()).sender(sender);
 
         target.sendMessage(finalMessage);
     }
 
     public static void sendMessage(Player player, String key, TagResolver placeholder) {
-        if (!messages.containsKey(key)) return;
-        if (messages.get(key) == null) return;
-        String message = messages.get(key);
-        message = message.replaceAll("%prefix%", prefix);
-        Component finalMessage = Adventure.MINI_MESSAGE.deserialize(message, placeholder);
+        Component finalMessage = processString(player, key, placeholder);
         Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.getInstance()).player(player);
 
         target.sendMessage(finalMessage);
     }
 
     public static void sendActionBar(Player player, String key) {
-        Component finalMessage = processString(key);
+        Component finalMessage = processString(player, key);
         Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.getInstance()).player(player);
 
         target.sendActionBar(finalMessage);
     }
 
-    public static Component processString(String key) {
+    public static Component processString(Player player, String key) {
+        return processString(player, key, null);
+    }
+
+    public static Component processString(Player player, String key, TagResolver placeholders) {
         if (!messages.containsKey(key)) return null;
         if (messages.get(key) == null) return null;
         String message = messages.get(key);
+        if (PAPIHook.isPAPIEnabled() && player != null) message = PlaceholderAPI.setPlaceholders(player, message);
         message = message.replaceAll("%prefix%", prefix);
+        if (placeholders != null ) {
+            return Adventure.MINI_MESSAGE.deserialize(message, placeholders);
+        }
         return Adventure.MINI_MESSAGE.deserialize(message);
     }
 
     public static Component processStringNoKey(String message) {
+        return processStringNoKey(null, message, null);
+    }
+
+    public static Component processStringNoKey(Player player, String message) {
+        return processStringNoKey(player, message, null);
+    }
+
+    public static Component processStringNoKey(Player player, String message, TagResolver placeholders) {
         message = message.replaceAll("%prefix%", prefix);
+        if (PAPIHook.isPAPIEnabled() && player != null) message = PlaceholderAPI.setPlaceholders(player, message);
+        if (placeholders != null ) {
+            return Adventure.MINI_MESSAGE.deserialize(message, placeholders);
+        }
         return Adventure.MINI_MESSAGE.deserialize(message);
     }
 
