@@ -15,7 +15,11 @@ public class Cosmetic {
 
     protected Cosmetic(String id, ConfigurationNode config) {
         this.id = id;
-        //this.permission = config.node("permission").getString(null);
+        if (!config.node("permission").virtual()) {
+            this.permission = config.node("permission").getString();
+        } else {
+            this.permission = null;
+        }
         MessagesUtil.sendDebugMessages("Slot: " + config.node("slot").getString());
         setSlot(CosmeticSlot.valueOf(config.node("slot").getString()));
 
