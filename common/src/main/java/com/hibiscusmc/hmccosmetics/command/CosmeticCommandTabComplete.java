@@ -1,5 +1,6 @@
 package com.hibiscusmc.hmccosmetics.command;
 
+import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
@@ -41,7 +42,7 @@ public class CosmeticCommandTabComplete implements TabCompleter {
             String subcommand = args[0].toLowerCase();
             switch (subcommand) {
                 case "apply" -> {
-                    completions.addAll(applyCommandComplete(args));
+                    completions.addAll(applyCommandComplete(user, args));
                 }
                 case "upapply" -> {
                     for (CosmeticSlot slot : CosmeticSlot.values()) {
@@ -73,11 +74,15 @@ public class CosmeticCommandTabComplete implements TabCompleter {
         return completions;
     }
 
-    private static List<String> applyCommandComplete(String[] args) {
+    private static List<String> applyCommandComplete(CosmeticUser user, String[] args) {
         List<String> completitions = new ArrayList<>();
 
         if (args.length == 2) {
-            completitions.addAll(Cosmetics.keys());
+            for (Cosmetic cosmetic : Cosmetics.values()) {
+                if (!user.canEquipCosmetic(cosmetic)) continue;
+                completitions.add(cosmetic.getId());
+            }
+            //completitions.addAll(Cosmetics.keys());
         } else {
             if (args.length == 3) {
                 for (Player player : Bukkit.getOnlinePlayers()) {
