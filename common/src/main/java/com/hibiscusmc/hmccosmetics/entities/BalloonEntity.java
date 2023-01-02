@@ -3,6 +3,7 @@ package com.hibiscusmc.hmccosmetics.entities;
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
+import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
 import com.ticxo.modelengine.api.ModelEngineAPI;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
@@ -21,6 +22,7 @@ public class BalloonEntity {
     private final int balloonID;
     private final UUID uniqueID;
     private final Entity modelEntity;
+    private ModeledEntity modeledEntity;
 
     public BalloonEntity(Location location) {
         this.uniqueID = UUID.randomUUID();
@@ -42,6 +44,7 @@ public class BalloonEntity {
                 singleModel.getRendererHandler().setColor(color);
             });
         }
+        this.modeledEntity = modeledEntity;
     }
 
     public void remove() {
@@ -108,7 +111,6 @@ public class BalloonEntity {
 
     public void setLocation(Location location) {
         //this.megEntity.teleportTo(location.getX(), location.getY(), location.getZ());
-        location = location.add(Settings.getBalloonOffset());
         this.modelEntity.teleport(location);
     }
 

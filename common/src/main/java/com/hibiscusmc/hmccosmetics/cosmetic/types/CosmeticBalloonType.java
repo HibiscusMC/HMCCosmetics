@@ -2,11 +2,13 @@ package com.hibiscusmc.hmccosmetics.cosmetic.types;
 
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
+import com.hibiscusmc.hmccosmetics.entities.BalloonEntity;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.PlayerUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.spongepowered.configurate.ConfigurationNode;
 
@@ -26,21 +28,28 @@ public class CosmeticBalloonType extends Cosmetic {
     @Override
     public void update(CosmeticUser user) {
         Player player = Bukkit.getPlayer(user.getUniqueId());
+        Location currentLocation = user.getBalloonEntity().getLocation().clone();
+        Location newLocation = player.getLocation().clone().add(Settings.getBalloonOffset()).clone();
         if (player == null) return;
         if (user.isInWardrobe()) return;
-
-        final Location actual = player.getLocation().clone().add(Settings.getBalloonOffset());
-
-        if (player.getLocation().getWorld() != user.getBalloonEntity().getLocation().getWorld()) {
-            user.getBalloonEntity().getModelEntity().teleport(actual);
-        }
-
-        user.getBalloonEntity().getModelEntity().teleport(actual);
 
         List<Player> viewer = PlayerUtils.getNearbyPlayers(player);
         viewer.add(player);
 
-        PacketManager.sendTeleportPacket(user.getBalloonEntity().getPufferfishBalloonId(), actual, false, viewer);
+        BalloonEntity balloonEntity = user.getBalloonEntity();
+
+        if (player.getLocation().getWorld() != balloonEntity.getLocation().getWorld()) {
+            balloonEntity.getModelEntity().teleport(newLocation);
+            PacketManager.sendTeleportPacket(balloonEntity.getPufferfishBalloonId(), newLocation, false, viewer);
+            return;
+        }
+
+        newLocation.add(player.getVelocity().clone().multiply(-1));
+        balloonEntity.setLocation(newLocation);
+        balloonEntity.setVelocity(newLocation.clone().subtract(currentLocation.clone()).toVector());
+
+        PacketManager.sendTeleportPacket(balloonEntity.getPufferfishBalloonId(), newLocation, false, viewer);
+        PacketManager.sendLeashPacket(balloonEntity.getPufferfishBalloonId(), player.getEntityId(), viewer);
     }
 
     public String getModelName() {

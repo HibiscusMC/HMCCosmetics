@@ -12,6 +12,7 @@ import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.PlayerUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.wrappers.WrapperPlayServerNamedEntitySpawn;
 import com.hibiscusmc.hmccosmetics.util.packets.wrappers.WrapperPlayServerPlayerInfo;
+import com.hibiscusmc.hmccosmetics.util.packets.wrappers.WrapperPlayServerRelEntityMove;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -342,6 +343,14 @@ public class PacketManager extends BasePacket {
         for (final Player p : sendTo) sendPacket(p, info.getHandle());
     }
 
+    public static void sendLeashPacket(
+            final int leashedEntity,
+            final int entityId,
+            final Location location
+    ) {
+        sendLeashPacket(leashedEntity, entityId, getViewers(location));
+    }
+
     /**
      * Sends a leash packet, useful for balloons!
      * @param leashedEntity Entity being leashed (ex. a horse)
@@ -353,10 +362,10 @@ public class PacketManager extends BasePacket {
             final int entityId,
             final List<Player> sendTo
     ) {
+        PacketContainer packet = new PacketContainer(PacketType.Play.Server.ATTACH_ENTITY);
+        packet.getIntegers().write(0, leashedEntity);
+        packet.getIntegers().write(1, entityId);
         for (final Player p : sendTo) {
-            PacketContainer packet = new PacketContainer(PacketType.Play.Server.ATTACH_ENTITY);
-            packet.getIntegers().write(0, leashedEntity);
-            packet.getIntegers().write(1, entityId);
             sendPacket(p, packet);
         }
     }
@@ -385,6 +394,42 @@ public class PacketManager extends BasePacket {
         for (final Player p : sendTo) {
             sendPacket(p, packet);
         }
+    }
+
+    /**
+     * Sends a movement packet from one location to another
+     * @param entityId Entity this will affect
+     * @param from Previous location
+     * @param to New location
+     * @param onGround If the movement is on the ground
+     * @param sendTo Whom to send the packet to
+     */
+    public static void sendMovePacket(
+            final int entityId,
+            final Location from,
+            final Location to,
+            final boolean onGround,
+            List<Player> sendTo
+    ) {
+        PacketContainer packet = new PacketContainer(PacketType.Play.Server.REL_ENTITY_MOVE);
+        WrapperPlayServerRelEntityMove wrapper = new WrapperPlayServerRelEntityMove(packet);
+        wrapper.setEntityID(entityId);
+        wrapper.setDx(to.getX() - from.getX());
+        wrapper.setDy(to.getY() - from.getY());
+        wrapper.setDz(to.getZ() - from.getZ());
+        wrapper.setOnGround(onGround);
+        for (final Player p : sendTo) {
+            sendPacket(p, wrapper.getHandle());
+        }
+    }
+
+    public static void sendMovePacket(
+            final int entityId,
+            final Location from,
+            final Location to,
+            final boolean onGround
+    ) {
+        sendMovePacket(entityId, from, to, onGround, getViewers(to));
     }
 
     private static List<Player> getViewers(Location location) {

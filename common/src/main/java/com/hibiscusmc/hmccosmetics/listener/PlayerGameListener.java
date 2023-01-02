@@ -104,8 +104,6 @@ public class PlayerGameListener implements Listener {
         if (event.getCause().equals(PlayerTeleportEvent.TeleportCause.NETHER_PORTAL) || event.getCause().equals(PlayerTeleportEvent.TeleportCause.END_PORTAL)) return;
 
         if (user.hasCosmeticInSlot(CosmeticSlot.BALLOON)) {
-            user.getBalloonEntity().setLocation(event.getTo());
-
             Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
                 user.updateCosmetic(CosmeticSlot.BALLOON);
             }, 2);
