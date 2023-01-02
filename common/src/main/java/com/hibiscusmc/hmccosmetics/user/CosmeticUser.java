@@ -223,7 +223,7 @@ public class CosmeticUser {
 
         this.invisibleArmorstand = (ArmorStand) NMSHandlers.getHandler().spawnBackpack(this, cosmeticBackpackType);
 
-        player.addPassenger(invisibleArmorstand);
+        //player.addPassenger(invisibleArmorstand);
 
         MessagesUtil.sendDebugMessages("spawnBackpack Bukkit - Finish");
     }

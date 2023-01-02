@@ -44,6 +44,8 @@ public class CosmeticBackpackType extends Cosmetic {
 
         user.getBackpackEntity().teleport(loc);
 
+        PacketManager.sendRidingPacket(player.getEntityId(), user.getBackpackEntity().getEntityId(), loc);
+        /*
         if (player.getPassengers().isEmpty()) {
             //HMCCosmeticsPlugin.getInstance().getLogger().info("No passengers");
             user.getBackpackEntity().teleport(loc);
@@ -51,6 +53,7 @@ public class CosmeticBackpackType extends Cosmetic {
         } else {
             //HMCCosmeticsPlugin.getInstance().getLogger().info("Passengers: " + player.getPassengers());
         }
+         */
 
         user.getBackpackEntity().setRotation(loc.getYaw(), loc.getPitch());
         user.showBackpack();
