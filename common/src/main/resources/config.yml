@@ -3,7 +3,7 @@
 #
 config-version: 1
 
-default-menu: examplemenu
+default-menu: defaultmenu
 debug-mode: false
 database-settings:
   type: sqlite # INTERNAL (not recommended!), MYSQL, SQLite
@@ -33,7 +33,7 @@ cosmetic-settings:
     y: 3
     z: 0.5
 dye-menu:
-  title: "Dye menu"
+  title: "<white>"
 wardrobe:
   # If the wardrobe should be accessed anywhere (Experimental)
   portable: false

@@ -1,0 +1,87 @@
+title: "<white>"
+rows: 5
+items:
+  beanie:
+    slots:
+      - 1
+    item:
+      material: hmccosmetics:beanie
+    type: cosmetic
+    cosmetic: beanie
+  backpack:
+    slots:
+      - 2
+    item:
+      material: hmccosmetics:backpack
+    type: cosmetic
+    cosmetic: backpack
+  future_wings:
+    slots:
+      - 3
+    item:
+      material: hmccosmetics:future_wings
+    type: cosmetic
+    cosmetic: future_wings
+  lantern_cosmetic:
+    slots:
+      - 4
+    item:
+      material: hmccosmetics:lantern_cosmetic
+    type: cosmetic
+    cosmetic: lantern_cosmetic
+  baseball_hat:
+    slots:
+      - 5
+    item:
+      material: hmccosmetics:baseball_hat
+    type: cosmetic
+    cosmetic: baseball_hat
+  frog_hat:
+    slots:
+      - 6
+    item:
+      material: hmccosmetics:frog_hat
+    type: cosmetic
+    cosmetic: frog_hat
+  jetpack:
+    slots:
+      - 7
+    item:
+      material: hmccosmetics:jetpack
+    type: cosmetic
+    cosmetic: jetpack
+  hammer:
+    slots:
+      - 10
+    item:
+      material: hmccosmetics:hammer
+    type: cosmetic
+    cosmetic: hammer
+  chestplate:
+    slots:
+      - 11
+    item:
+      material: hmccosmetics:chestplate
+    type: cosmetic
+    cosmetic: chestplate
+  pants:
+    slots:
+      - 12
+    item:
+      material: hmccosmetics:pants
+    type: cosmetic
+    cosmetic: pants
+  boots:
+    slots:
+      - 13
+    item:
+      material: hmccosmetics:boots
+    type: cosmetic
+    cosmetic: boots
+  kite:
+    slots:
+      - 14
+    item:
+      material: hmccosmetics:kite
+    type: cosmetic
+    cosmetic: kite
