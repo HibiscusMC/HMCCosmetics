@@ -27,8 +27,7 @@ public class DyeMenu {
         if (originalItem == null || !cosmetic.isDyable()) return;
 
         Player player = user.getPlayer();
-        HMCColorApi hmcColorApi = new HMCColorApi();
-        Gui gui = hmcColorApi.getColorMenu();
+        Gui gui = HMCColorApi.INSTANCE.colorMenu();
         gui.updateTitle(Placeholder.applyPapiPlaceholders(player, Settings.getDyeMenuName()));
         gui.setItem(19, new GuiItem(originalItem));
         gui.setDefaultTopClickAction(event -> {
@@ -43,9 +42,7 @@ public class DyeMenu {
                 //user.removeCosmeticSlot(cosmetic);
                 user.addPlayerCosmetic(cosmetic, color);
                 player.setItemOnCursor(new ItemStack(Material.AIR));
-                Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
-                    player.closeInventory();
-                }, 2);
+                Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), player::closeInventory, 2);
             } else event.setCancelled(true);
         });
 
