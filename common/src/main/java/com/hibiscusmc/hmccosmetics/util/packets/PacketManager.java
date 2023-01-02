@@ -3,6 +3,7 @@ package com.hibiscusmc.hmccosmetics.util.packets;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.*;
+import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
@@ -18,6 +19,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -137,7 +139,7 @@ public class PacketManager extends BasePacket {
             Location location,
             boolean onGround
     ) {
-        sendRotationPacket(entityId, location, onGround, getWorldPlayers(location.getWorld()));
+        sendRotationPacket(entityId, location, onGround, getViewers(location));
     }
 
     public static void sendRotationPacket(
@@ -177,6 +179,19 @@ public class PacketManager extends BasePacket {
         for (Player p : sendTo) sendPacket(p, packet);
     }
 
+
+    /**
+     * Mostly to deal with backpacks, this deals with entities riding other entities.
+     * @param mountId The entity that is the "mount", ex. a player
+     * @param passengerId The entity that is riding the mount, ex. a armorstand for a backpack
+     */
+    public static void sendRidingPacket(
+            final int mountId,
+            final int passengerId,
+            final Location location
+    ) {
+        sendRidingPacket(mountId, passengerId, getViewers(location));
+    }
 
     /**
      * Mostly to deal with backpacks, this deals with entities riding other entities.
@@ -372,7 +387,13 @@ public class PacketManager extends BasePacket {
         }
     }
 
-    private static List<Player> getWorldPlayers(World world) {
-        return world.getPlayers();
+    private static List<Player> getViewers(Location location) {
+        ArrayList<Player> viewers = new ArrayList();
+        if (Settings.getViewDistance() <= 0) {
+            viewers.addAll(location.getWorld().getPlayers());
+        } else {
+            viewers.addAll(PlayerUtils.getNearbyPlayers(location));
+        }
+        return viewers;
     }
 }
