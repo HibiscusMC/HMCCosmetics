@@ -2,6 +2,7 @@ package com.hibiscusmc.hmccosmetics.util;
 
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.comphenix.protocol.wrappers.WrappedSignedProperty;
+import com.hibiscusmc.hmccosmetics.config.Settings;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -27,7 +28,8 @@ public class PlayerUtils {
 
     public static List<Player> getNearbyPlayers(Location location) {
         List<Player> players = new ArrayList<>();
-        for (Entity entity : location.getWorld().getNearbyEntities(location, 32, 32, 32)) {
+        int viewDistance = Settings.getViewDistance();
+        for (Entity entity : location.getWorld().getNearbyEntities(location, viewDistance, viewDistance, viewDistance)) {
             if (entity instanceof Player) {
                 players.add((Player) entity);
             }
