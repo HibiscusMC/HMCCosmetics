@@ -11,6 +11,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,6 +24,7 @@ public class CosmeticCommandTabComplete implements TabCompleter {
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
         List<String> completions = new ArrayList<>();
+        List<String> finalCompletitons = new ArrayList<>();
 
         if (args.length == 1) {
             completions.add("apply");
@@ -33,6 +35,8 @@ public class CosmeticCommandTabComplete implements TabCompleter {
             completions.add("dataclear");
             completions.add("dye");
             completions.add("setlocation");
+
+            StringUtil.copyPartialMatches(args[0], completions, finalCompletitons);
         }
 
         if (!(sender instanceof Player)) return completions;
@@ -52,7 +56,7 @@ public class CosmeticCommandTabComplete implements TabCompleter {
                 case "menu" -> {
                     completions.addAll(Menus.getMenuNames());
                 }
-                case "dataclear" -> {
+                case "dataclear", "wardrobe" -> {
                     for (Player player : Bukkit.getOnlinePlayers()) {
                         completions.add(player.getName());
                     }
@@ -68,10 +72,11 @@ public class CosmeticCommandTabComplete implements TabCompleter {
                     completions.add("leavelocation");
                 }
             }
+            StringUtil.copyPartialMatches(args[1], completions, finalCompletitons);
         }
 
-        Collections.sort(completions);
-        return completions;
+        Collections.sort(finalCompletitons);
+        return finalCompletitons;
     }
 
     private static List<String> applyCommandComplete(CosmeticUser user, String[] args) {
