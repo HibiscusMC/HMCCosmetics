@@ -143,7 +143,7 @@ public class CosmeticCommand implements CommandExecutor {
             Player player = null;
 
             if (sender instanceof Player) player = ((Player) sender).getPlayer();
-            if (args.length >= 3) player = Bukkit.getPlayer(args[2]);
+            if (args.length >= 2) player = Bukkit.getPlayer(args[1]);
 
             if (!player.hasPermission("HMCCosmetic.wardrobe")) {
                 MessagesUtil.sendMessage(sender, "no-permission");
