@@ -17,15 +17,12 @@ import java.util.logging.Level;
 
 public class CosmeticBackpackType extends Cosmetic {
 
-    private ItemStack backpackItem;
     ConfigurationNode config;
 
     public CosmeticBackpackType(String id, ConfigurationNode config) {
         super(id, config);
 
         this.config = config;
-
-        this.backpackItem = generateItemStack(config.node("item"));
     }
 
     @Override
@@ -57,28 +54,5 @@ public class CosmeticBackpackType extends Cosmetic {
 
         user.getBackpackEntity().setRotation(loc.getYaw(), loc.getPitch());
         user.showBackpack();
-    }
-
-    @Override
-    public ItemStack getItem() {
-        if (this.backpackItem == null ) {
-            MessagesUtil.sendDebugMessages("Backpack item was null for " + getId());
-            this.backpackItem = generateItemStack(config.node("item"));
-        }
-        return this.backpackItem.clone();
-    }
-
-    private ItemStack generateItemStack(ConfigurationNode config) {
-        try {
-            ItemStack item = ItemSerializer.INSTANCE.deserialize(ItemStack.class, config);
-            if (item == null) {
-                MessagesUtil.sendDebugMessages("Unable to create item for " + getId(), Level.SEVERE);
-                return new ItemStack(Material.AIR);
-            }
-            return item;
-        } catch (SerializationException e) {
-            MessagesUtil.sendDebugMessages("Fatal error encountered for " + getId() + " regarding Serialization of item", Level.SEVERE);
-            throw new RuntimeException(e);
-        }
     }
 }

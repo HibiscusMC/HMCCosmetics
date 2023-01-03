@@ -16,13 +16,8 @@ import java.util.logging.Level;
 
 public class CosmeticMainhandType extends Cosmetic {
 
-    private ItemStack itemStack;
-
     public CosmeticMainhandType(String id, ConfigurationNode config) {
         super(id, config);
-
-        this.itemStack = generateItemStack(config.node("item"));
-
     }
 
     @Override
@@ -31,24 +26,5 @@ public class CosmeticMainhandType extends Cosmetic {
 
         PacketManager.equipmentSlotUpdate(player.getEntityId(), user, getSlot(), PlayerUtils.getNearbyPlayers(player));
 
-    }
-
-    private ItemStack generateItemStack(ConfigurationNode config) {
-        try {
-            ItemStack item = ItemSerializer.INSTANCE.deserialize(ItemStack.class, config);
-            if (item == null) {
-                MessagesUtil.sendDebugMessages("Unable to create item for " + getId(), Level.SEVERE);
-                return new ItemStack(Material.AIR);
-            }
-            return item;
-        } catch (SerializationException e) {
-            MessagesUtil.sendDebugMessages("Fatal error encountered for " + getId() + " regarding Serialization of item", Level.SEVERE);
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public ItemStack getItem() {
-        return itemStack.clone();
     }
 }

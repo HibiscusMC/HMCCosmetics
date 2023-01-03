@@ -19,13 +19,11 @@ import java.util.logging.Level;
 
 public class CosmeticArmorType extends Cosmetic {
 
-    private ItemStack itemStack;
     private EquipmentSlot equipSlot;
 
     public CosmeticArmorType(String id, ConfigurationNode config) {
         super(id, config);
 
-        this.itemStack = generateItemStack(config.node("item"));
         this.equipSlot = InventoryUtils.getEquipmentSlot(getSlot());
     }
 
@@ -35,26 +33,9 @@ public class CosmeticArmorType extends Cosmetic {
         PacketManager.equipmentSlotUpdate(player, getSlot(), PlayerUtils.getNearbyPlayers(player));
     }
 
-    @Override
-    public ItemStack getItem() {
-        return this.itemStack.clone();
-    }
-
     public EquipmentSlot getEquipSlot() {
         return this.equipSlot;
     }
 
-    private ItemStack generateItemStack(ConfigurationNode config) {
-        try {
-            ItemStack item = ItemSerializer.INSTANCE.deserialize(ItemStack.class, config);
-            if (item == null) {
-                MessagesUtil.sendDebugMessages("Unable to create item for " + getId(), Level.SEVERE);
-                return new ItemStack(Material.AIR);
-            }
-            return item;
-        } catch (SerializationException e) {
-            MessagesUtil.sendDebugMessages("Fatal error encountered for " + getId() + " regarding Serialization of item", Level.SEVERE);
-            throw new RuntimeException(e);
-        }
-    }
+
 }
