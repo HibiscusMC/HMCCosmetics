@@ -49,7 +49,7 @@ public class CosmeticBalloonType extends Cosmetic {
         balloonEntity.setVelocity(newLocation.clone().subtract(currentLocation.clone()).toVector());
 
         PacketManager.sendTeleportPacket(balloonEntity.getPufferfishBalloonId(), newLocation, false, viewer);
-        PacketManager.sendLeashPacket(balloonEntity.getPufferfishBalloonId(), player.getEntityId(), viewer);
+        if (!user.getHidden()) PacketManager.sendLeashPacket(balloonEntity.getPufferfishBalloonId(), player.getEntityId(), viewer);
     }
 
     public String getModelName() {

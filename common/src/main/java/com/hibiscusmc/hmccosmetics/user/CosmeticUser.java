@@ -342,7 +342,6 @@ public class CosmeticUser {
         }
         if (hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
             //CosmeticBackpackType cosmeticBackpackType = (CosmeticBackpackType) getCosmetic(CosmeticSlot.BACKPACK);
-            getPlayer().removePassenger(invisibleArmorstand);
             invisibleArmorstand.getEquipment().clear();
         }
         updateCosmetic();
@@ -371,5 +370,9 @@ public class CosmeticUser {
         }
         updateCosmetic();
         MessagesUtil.sendDebugMessages("ShowCosmetics");
+    }
+
+    public boolean getHidden() {
+        return this.hideCosmetics;
     }
 }
