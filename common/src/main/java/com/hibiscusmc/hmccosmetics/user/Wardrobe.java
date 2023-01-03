@@ -85,14 +85,11 @@ public class Wardrobe {
             NMSHandlers.getHandler().hideNPCName(player, npcName);
         }, 4);
 
-
-
         // Location
         PacketManager.sendLookPacket(NPC_ID, WardrobeSettings.getWardrobeLocation(), viewer);
         PacketManager.sendRotationPacket(NPC_ID, WardrobeSettings.getWardrobeLocation(), true, viewer);
 
         // Misc
-
         if (VIEWER.hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
             PacketManager.ridingMountPacket(NPC_ID, VIEWER.getBackpackEntity().getEntityId(), viewer);
         }
@@ -100,15 +97,13 @@ public class Wardrobe {
         if (VIEWER.hasCosmeticInSlot(CosmeticSlot.BALLOON)) {
             PacketManager.sendLeashPacket(VIEWER.getBalloonEntity().getPufferfishBalloonId(), -1, viewer);
             PacketManager.sendLeashPacket(VIEWER.getBalloonEntity().getPufferfishBalloonId(), NPC_ID, viewer); // This needs a possible fix
-            PacketManager.sendLeashPacket(VIEWER.getBalloonEntity().getModelId(), NPC_ID, viewer);
+            //PacketManager.sendLeashPacket(VIEWER.getBalloonEntity().getModelId(), NPC_ID, viewer);
 
-            PacketManager.sendTeleportPacket(VIEWER.getBalloonEntity().getPufferfishBalloonId(), WardrobeSettings.getWardrobeLocation(), false, viewer);
+            PacketManager.sendTeleportPacket(VIEWER.getBalloonEntity().getPufferfishBalloonId(), WardrobeSettings.getWardrobeLocation().add(Settings.getBalloonOffset()), false, viewer);
             PacketManager.sendTeleportPacket(VIEWER.getBalloonEntity().getModelId(), WardrobeSettings.getWardrobeLocation().add(Settings.getBalloonOffset()), false, viewer);
-
         }
 
         if (WardrobeSettings.getEnabledBossbar()) {
-
             float progress = WardrobeSettings.getBossbarProgress();
             Component message = MessagesUtil.processStringNoKey(WardrobeSettings.getBossbarText());
 
@@ -215,7 +210,7 @@ public class Wardrobe {
                 }
 
                 if (VIEWER.hasCosmeticInSlot(CosmeticSlot.BALLOON)) {
-                    PacketManager.sendTeleportPacket(VIEWER.getBalloonEntity().getPufferfishBalloonId(), WardrobeSettings.getWardrobeLocation(), false, viewer);
+                    PacketManager.sendTeleportPacket(VIEWER.getBalloonEntity().getPufferfishBalloonId(), WardrobeSettings.getWardrobeLocation().add(Settings.getBalloonOffset()), false, viewer);
                     VIEWER.getBalloonEntity().getModelEntity().teleport(WardrobeSettings.getWardrobeLocation().add(Settings.getBalloonOffset()));
                     //PacketManager.sendLeashPacket(VIEWER.getBalloonEntity().getModelId(), NPC_ID, viewer); // Pufferfish goes away for some reason?
                 }
