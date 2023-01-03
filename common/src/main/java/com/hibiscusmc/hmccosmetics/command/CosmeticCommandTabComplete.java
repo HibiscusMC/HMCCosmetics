@@ -48,9 +48,9 @@ public class CosmeticCommandTabComplete implements TabCompleter {
                 case "apply" -> {
                     completions.addAll(applyCommandComplete(user, args));
                 }
-                case "upapply" -> {
+                case "unapply" -> {
                     for (CosmeticSlot slot : CosmeticSlot.values()) {
-                        completions.add(slot.toString());
+                        completions.add(slot.toString().toUpperCase());
                     }
                 }
                 case "menu" -> {
