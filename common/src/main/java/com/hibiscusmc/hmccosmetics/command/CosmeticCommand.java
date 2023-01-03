@@ -110,11 +110,11 @@ public class CosmeticCommand implements CommandExecutor {
             if (sender instanceof Player) player = ((Player) sender).getPlayer();
             if (args.length >= 3) player = Bukkit.getPlayer(args[2]);
 
-            if (!EnumUtils.isValidEnum(CosmeticSlot.class, args[1])) {
+            if (!EnumUtils.isValidEnum(CosmeticSlot.class, args[1].toUpperCase())) {
                 MessagesUtil.sendMessage(sender, "invalid-slot");
                 return true;
             }
-            cosmeticSlot = CosmeticSlot.valueOf(args[1]);
+            cosmeticSlot = CosmeticSlot.valueOf(args[1].toUpperCase());
 
             if (player == null) {
                 MessagesUtil.sendMessage(sender, "invalid-player");
