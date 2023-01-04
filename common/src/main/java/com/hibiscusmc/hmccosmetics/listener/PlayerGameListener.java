@@ -59,7 +59,9 @@ public class PlayerGameListener implements Listener {
         //if (event.getSlotType() != InventoryType.SlotType.ARMOR) return;
         CosmeticUser user = CosmeticUsers.getUser(event.getWhoClicked().getUniqueId());
         if (user == null) return;
-        EquipmentSlot slot = getArmorSlot(event.getCurrentItem().getType());
+        ItemStack item = event.getCurrentItem();
+        if (item == null) return;
+        EquipmentSlot slot = getArmorSlot(item.getType());
         if (slot == null) return;
         CosmeticSlot cosmeticSlot = InventoryUtils.BukkitCosmeticSlot(slot);
         if (cosmeticSlot == null) return;
