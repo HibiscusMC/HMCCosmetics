@@ -166,7 +166,11 @@ public class CosmeticUser {
             item = cosmetic.getItem();
         }
         if (cosmetic instanceof CosmeticBalloonType) {
-            item = new ItemStack(Material.LEATHER_HORSE_ARMOR);
+            if (cosmetic.getItem() == null) {
+                item = new ItemStack(Material.LEATHER_HORSE_ARMOR);
+            } else {
+                item = cosmetic.getItem();
+            }
         }
         if (item == null) {
             MessagesUtil.sendDebugMessages("GetUserCosemticUser Item is null");
