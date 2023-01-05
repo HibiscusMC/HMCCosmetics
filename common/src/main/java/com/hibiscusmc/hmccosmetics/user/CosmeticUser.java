@@ -113,7 +113,7 @@ public class CosmeticUser {
 
     public void removeCosmeticSlot(CosmeticSlot slot) {
         // API
-        PlayerCosmeticEquipEvent event = new PlayerCosmeticEquipEvent(this, getCosmetic(slot));
+        PlayerCosmeticRemoveEvent event = new PlayerCosmeticRemoveEvent(this, getCosmetic(slot));
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             return;
