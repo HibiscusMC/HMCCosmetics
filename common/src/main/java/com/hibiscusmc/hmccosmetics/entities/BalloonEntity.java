@@ -42,6 +42,7 @@ public class BalloonEntity {
         if (color != null) {
             modeledEntity.getModels().forEach((d, singleModel) -> {
                 singleModel.getRendererHandler().setColor(color);
+                singleModel.getRendererHandler().update();
             });
         }
         this.modeledEntity = modeledEntity;
