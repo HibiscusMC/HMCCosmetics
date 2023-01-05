@@ -81,6 +81,7 @@ public class Cosmetic {
 
     @Nullable
     public ItemStack getItem() {
+        if (item == null) return null;
         return item.clone();
     }
 
