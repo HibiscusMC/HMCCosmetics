@@ -1,10 +1,7 @@
 package com.hibiscusmc.hmccosmetics.user;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
-import com.hibiscusmc.hmccosmetics.api.PlayerHideCosmeticEvent;
-import com.hibiscusmc.hmccosmetics.api.PlayerShowCosmeticEvent;
-import com.hibiscusmc.hmccosmetics.api.PlayerWardrobeEnterEvent;
-import com.hibiscusmc.hmccosmetics.api.PlayerWardrobeLeaveEvent;
+import com.hibiscusmc.hmccosmetics.api.*;
 import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
@@ -81,9 +78,18 @@ public class CosmeticUser {
     }
 
     public void addPlayerCosmetic(Cosmetic cosmetic, Color color) {
+        // API
+        PlayerCosmeticEquipEvent event = new PlayerCosmeticEquipEvent(this, cosmetic);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) {
+            return;
+        }
+        cosmetic = event.getCosmetic();
+        // Internal
         if (playerCosmetics.containsKey(cosmetic.getSlot())) {
             removeCosmeticSlot(cosmetic.getSlot());
         }
+
         playerCosmetics.put(cosmetic.getSlot(), cosmetic);
         if (color != null) colors.put(cosmetic.getSlot(), color);
         MessagesUtil.sendDebugMessages("addPlayerCosmetic " + cosmetic.getId());
@@ -106,6 +112,13 @@ public class CosmeticUser {
     }
 
     public void removeCosmeticSlot(CosmeticSlot slot) {
+        // API
+        PlayerCosmeticEquipEvent event = new PlayerCosmeticEquipEvent(this, getCosmetic(slot));
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) {
+            return;
+        }
+        // Internal
         if (slot == CosmeticSlot.BACKPACK) {
             despawnBackpack();
         }
