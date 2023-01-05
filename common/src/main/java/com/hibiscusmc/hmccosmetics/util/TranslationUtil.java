@@ -1,12 +1,8 @@
 package com.hibiscusmc.hmccosmetics.util;
 
-import com.google.common.collect.HashBiMap;
-import kotlin.Pair;
 import org.spongepowered.configurate.ConfigurationNode;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class TranslationUtil {
 

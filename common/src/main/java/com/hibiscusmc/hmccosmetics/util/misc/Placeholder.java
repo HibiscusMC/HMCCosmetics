@@ -1,10 +1,7 @@
 package com.hibiscusmc.hmccosmetics.util.misc;
 
-import com.hibiscusmc.hmccosmetics.util.TranslationUtil;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Map;
 
 public class Placeholder {
 

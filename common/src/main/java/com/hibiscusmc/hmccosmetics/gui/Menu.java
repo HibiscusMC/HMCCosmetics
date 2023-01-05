@@ -2,7 +2,6 @@ package com.hibiscusmc.hmccosmetics.gui;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.api.PlayerMenuOpenEvent;
-import com.hibiscusmc.hmccosmetics.api.PlayerWardrobeLeaveEvent;
 import com.hibiscusmc.hmccosmetics.config.serializer.ItemSerializer;
 import com.hibiscusmc.hmccosmetics.gui.type.Type;
 import com.hibiscusmc.hmccosmetics.gui.type.Types;
@@ -16,7 +15,6 @@ import dev.triumphteam.gui.guis.GuiItem;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;

@@ -3,7 +3,6 @@ package com.hibiscusmc.hmccosmetics.entities;
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
-import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
 import com.ticxo.modelengine.api.ModelEngineAPI;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
@@ -31,6 +30,7 @@ public class BalloonEntity {
     }
 
     public void spawnModel(final String id, Color color) {
+
         MessagesUtil.sendDebugMessages("Attempting Spawning for " + id);
         if (ModelEngineAPI.api.getModelRegistry().getBlueprint(id) == null) {
             MessagesUtil.sendDebugMessages("Invalid Model Engine Blueprint " + id, Level.SEVERE);

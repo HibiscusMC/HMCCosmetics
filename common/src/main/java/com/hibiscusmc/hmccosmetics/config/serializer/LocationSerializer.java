@@ -1,11 +1,9 @@
 package com.hibiscusmc.hmccosmetics.config.serializer;
 
-import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 import org.spongepowered.configurate.serialize.TypeSerializer;
