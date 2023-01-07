@@ -12,13 +12,17 @@ import java.util.logging.Level;
 public class WGHook {
 
     public static StateFlag COSMETIC_ENABLE_FLAG;
+    public static StateFlag COSMETIC_WARDROBE_FLAG;
 
     public WGHook() {
         FlagRegistry registry = WorldGuard.getInstance().getFlagRegistry();
         try {
-            StateFlag flag = new StateFlag("cosmetic-enable", false);
-            registry.register(flag);
-            COSMETIC_ENABLE_FLAG = flag; // only set
+            StateFlag cosmeticFlag = new StateFlag("cosmetic-enable", false);
+            StateFlag wardrobeFlag = new StateFlag("cosmetic-wardrobe", false);
+            registry.register(cosmeticFlag);
+            registry.register(wardrobeFlag);
+            COSMETIC_ENABLE_FLAG = cosmeticFlag;
+            COSMETIC_WARDROBE_FLAG = wardrobeFlag;
         } catch (FlagConflictException e) {
             Flag<?> existing = registry.get("cosmetic-enable");
             if (existing instanceof StateFlag) {
@@ -33,6 +37,10 @@ public class WGHook {
 
     public static StateFlag getCosmeticEnableFlag() {
         return COSMETIC_ENABLE_FLAG;
+    }
+
+    public static StateFlag getCosmeticWardrobeFlag() {
+        return COSMETIC_WARDROBE_FLAG;
     }
 
 }
