@@ -345,7 +345,7 @@ public class CosmeticUser {
 
     public void hideCosmetics() {
         if (hideCosmetics == true) return;
-        PlayerHideCosmeticEvent event = new PlayerHideCosmeticEvent(this);
+        PlayerCosmeticHideEvent event = new PlayerCosmeticHideEvent(this);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             return;
@@ -368,7 +368,7 @@ public class CosmeticUser {
     public void showCosmetics() {
         if (hideCosmetics == false) return;
 
-        PlayerShowCosmeticEvent event = new PlayerShowCosmeticEvent(this);
+        PlayerCosmeticShowEvent event = new PlayerCosmeticShowEvent(this);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             return;

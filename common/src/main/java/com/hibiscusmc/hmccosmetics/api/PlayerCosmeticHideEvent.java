@@ -5,12 +5,12 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-public class PlayerHideCosmeticEvent extends Event implements Cancellable {
+public class PlayerCosmeticHideEvent extends Event implements Cancellable {
 
     private CosmeticUser user;
     private boolean isCancelled;
 
-    public PlayerHideCosmeticEvent(CosmeticUser user) {
+    public PlayerCosmeticHideEvent(CosmeticUser user) {
         this.user = user;
         this.isCancelled = false;
     }
