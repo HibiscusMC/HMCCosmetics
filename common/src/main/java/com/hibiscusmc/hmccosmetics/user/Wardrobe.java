@@ -22,6 +22,8 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -49,9 +51,6 @@ public class Wardrobe {
 
     public void start() {
         Player player = VIEWER.getPlayer();
-        MessagesUtil.sendDebugMessages("start");
-        MessagesUtil.sendDebugMessages("NPC ID " + NPC_ID);
-        MessagesUtil.sendDebugMessages("armorstand id " + ARMORSTAND_ID);
 
         this.originalGamemode = player.getGameMode();
         if (WardrobeSettings.isReturnLastLocation()) {
@@ -60,62 +59,77 @@ public class Wardrobe {
             this.exitLocation = WardrobeSettings.getLeaveLocation();
         }
 
+        viewingLocation = WardrobeSettings.getViewerLocation();
+        npcLocation = WardrobeSettings.getWardrobeLocation();
+
         VIEWER.hidePlayer();
         List<Player> viewer = List.of(player);
-        // Armorstand
-        PacketManager.sendEntitySpawnPacket(WardrobeSettings.getViewerLocation(), ARMORSTAND_ID, EntityType.ARMOR_STAND, UUID.randomUUID(), viewer);
-        PacketManager.sendInvisibilityPacket(ARMORSTAND_ID, viewer);
-        PacketManager.sendLookPacket(ARMORSTAND_ID, WardrobeSettings.getViewerLocation(), viewer);
 
-        // Player
-        PacketManager.gamemodeChangePacket(player, 3);
-        PacketManager.sendCameraPacket(ARMORSTAND_ID, viewer);
+        Runnable run = () -> {
+            // Armorstand
+            PacketManager.sendEntitySpawnPacket(viewingLocation, ARMORSTAND_ID, EntityType.ARMOR_STAND, UUID.randomUUID(), viewer);
+            PacketManager.sendInvisibilityPacket(ARMORSTAND_ID, viewer);
+            PacketManager.sendLookPacket(ARMORSTAND_ID, viewingLocation, viewer);
 
-        // NPC
-        npcName = "WardrobeNPC-" + NPC_ID;
-        while (npcName.length() > 16) {
-            npcName = npcName.substring(16);
+            // Player
+            PacketManager.gamemodeChangePacket(player, 3);
+            PacketManager.sendCameraPacket(ARMORSTAND_ID, viewer);
+
+            // NPC
+            npcName = "WardrobeNPC-" + NPC_ID;
+            while (npcName.length() > 16) {
+                npcName = npcName.substring(16);
+            }
+            PacketManager.sendFakePlayerInfoPacket(player, NPC_ID, WARDROBE_UUID, npcName, viewer);
+
+            // NPC 2
+            Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
+                PacketManager.sendFakePlayerSpawnPacket(npcLocation, WARDROBE_UUID, NPC_ID, viewer);
+                MessagesUtil.sendDebugMessages("Spawned Fake Player on " + npcLocation);
+                NMSHandlers.getHandler().hideNPCName(player, npcName);
+            }, 4);
+
+            // Location
+            PacketManager.sendLookPacket(NPC_ID, npcLocation, viewer);
+            PacketManager.sendRotationPacket(NPC_ID, npcLocation, true, viewer);
+
+            // Misc
+            if (VIEWER.hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
+                PacketManager.ridingMountPacket(NPC_ID, VIEWER.getBackpackEntity().getEntityId(), viewer);
+            }
+
+            if (VIEWER.hasCosmeticInSlot(CosmeticSlot.BALLOON)) {
+                PacketManager.sendLeashPacket(VIEWER.getBalloonEntity().getPufferfishBalloonId(), -1, viewer);
+                PacketManager.sendLeashPacket(VIEWER.getBalloonEntity().getPufferfishBalloonId(), NPC_ID, viewer); // This needs a possible fix
+                //PacketManager.sendLeashPacket(VIEWER.getBalloonEntity().getModelId(), NPC_ID, viewer);
+
+                PacketManager.sendTeleportPacket(VIEWER.getBalloonEntity().getPufferfishBalloonId(), npcLocation.clone().add(Settings.getBalloonOffset()), false, viewer);
+                PacketManager.sendTeleportPacket(VIEWER.getBalloonEntity().getModelId(), npcLocation.clone().add(Settings.getBalloonOffset()), false, viewer);
+            }
+
+            if (WardrobeSettings.getEnabledBossbar()) {
+                float progress = WardrobeSettings.getBossbarProgress();
+                Component message = MessagesUtil.processStringNoKey(WardrobeSettings.getBossbarText());
+
+                bossBar = BossBar.bossBar(message, progress, WardrobeSettings.getBossbarColor(), WardrobeSettings.getBossbarOverlay());
+                Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.getInstance()).player(player);
+
+                target.showBossBar(bossBar);
+            }
+
+            MessagesUtil.sendMessage(player, "opened-wardrobe");
+            this.active = true;
+            update();
+        };
+
+
+        if (WardrobeSettings.isEnabledTransition()) {
+            MessagesUtil.sendTitle(VIEWER.getPlayer(), WardrobeSettings.getTransitionText());
+            Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), run, 40);
+        } else {
+            run.run();
         }
-        PacketManager.sendFakePlayerInfoPacket(player, NPC_ID, WARDROBE_UUID, npcName, viewer);
 
-        // NPC 2
-        Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
-            PacketManager.sendFakePlayerSpawnPacket(WardrobeSettings.getWardrobeLocation(), WARDROBE_UUID, NPC_ID, viewer);
-            MessagesUtil.sendDebugMessages("Spawned Fake Player on " + WardrobeSettings.getWardrobeLocation());
-            NMSHandlers.getHandler().hideNPCName(player, npcName);
-        }, 4);
-
-        // Location
-        PacketManager.sendLookPacket(NPC_ID, WardrobeSettings.getWardrobeLocation(), viewer);
-        PacketManager.sendRotationPacket(NPC_ID, WardrobeSettings.getWardrobeLocation(), true, viewer);
-
-        // Misc
-        if (VIEWER.hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
-            PacketManager.ridingMountPacket(NPC_ID, VIEWER.getBackpackEntity().getEntityId(), viewer);
-        }
-
-        if (VIEWER.hasCosmeticInSlot(CosmeticSlot.BALLOON)) {
-            PacketManager.sendLeashPacket(VIEWER.getBalloonEntity().getPufferfishBalloonId(), -1, viewer);
-            PacketManager.sendLeashPacket(VIEWER.getBalloonEntity().getPufferfishBalloonId(), NPC_ID, viewer); // This needs a possible fix
-            //PacketManager.sendLeashPacket(VIEWER.getBalloonEntity().getModelId(), NPC_ID, viewer);
-
-            PacketManager.sendTeleportPacket(VIEWER.getBalloonEntity().getPufferfishBalloonId(), WardrobeSettings.getWardrobeLocation().add(Settings.getBalloonOffset()), false, viewer);
-            PacketManager.sendTeleportPacket(VIEWER.getBalloonEntity().getModelId(), WardrobeSettings.getWardrobeLocation().add(Settings.getBalloonOffset()), false, viewer);
-        }
-
-        if (WardrobeSettings.getEnabledBossbar()) {
-            float progress = WardrobeSettings.getBossbarProgress();
-            Component message = MessagesUtil.processStringNoKey(WardrobeSettings.getBossbarText());
-
-            bossBar = BossBar.bossBar(message, progress, WardrobeSettings.getBossbarColor(), WardrobeSettings.getBossbarOverlay());
-            Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.getInstance()).player(player);
-
-            target.showBossBar(bossBar);
-        }
-
-        MessagesUtil.sendMessage(player, "opened-wardrobe");
-        this.active = true;
-        update();
     }
 
     public void end() {

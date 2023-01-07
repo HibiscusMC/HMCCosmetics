@@ -51,6 +51,10 @@ wardrobe:
     text: "Left-Click to open the menu!"
     progress: 100
     overlay: PROGRESS
+  transition:
+    enabled: true
+    text: "<black>"
+    delay: 40
   wardrobe-location:
     world: "World"
     x: 0

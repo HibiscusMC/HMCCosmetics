@@ -199,8 +199,10 @@ public class CosmeticUser {
             return;
         }
 
-        wardrobe = new Wardrobe(this);
-        wardrobe.start();
+        if (wardrobe == null) {
+            wardrobe = new Wardrobe(this);
+            wardrobe.start();
+        }
     }
 
     public Wardrobe getWardrobe() {

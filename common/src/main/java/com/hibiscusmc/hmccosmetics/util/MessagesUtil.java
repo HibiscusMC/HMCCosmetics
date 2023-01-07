@@ -2,6 +2,7 @@ package com.hibiscusmc.hmccosmetics.util;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.Settings;
+import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
 import com.hibiscusmc.hmccosmetics.hooks.PAPIHook;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.misc.Adventure;
@@ -10,10 +11,12 @@ import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.title.Title;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.spongepowered.configurate.ConfigurationNode;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.logging.Level;
 
@@ -61,6 +64,15 @@ public class MessagesUtil {
         Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.getInstance()).player(player);
 
         target.sendActionBar(finalMessage);
+    }
+
+    public static void sendTitle(Player player, String message) {
+        Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.getInstance()).player(player);
+
+        Title.Times times = Title.Times.times(Duration.ofMillis(3000), Duration.ofMillis(3000), Duration.ofMillis(1000));
+        Title title = Title.title(processStringNoKey(player, message), Component.empty(), times);
+
+        target.showTitle(title);
     }
 
     public static Component processString(Player player, String key) {

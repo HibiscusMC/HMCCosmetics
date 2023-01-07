@@ -35,6 +35,10 @@ public class WardrobeSettings {
     private static final String BOSSBAR_PROGRESS_PATH = "progress";
     private static final String BOSSBAR_OVERLAY_PATH = "overlay";
     private static final String BOSSBAR_COLOR_PATH = "color";
+    private static final String TRANSITION_PATH = "transition";
+    private static final String TRANSITION_ENABLE_PATH = "enabled";
+    private static final String TRANSITION_DELAY_PATH = "delay";
+    private static final String TRANSITION_TEXT_PATH = "text";
 
     private static ConfigurationNode configRoot;
     private static boolean disableOnDamage;
@@ -56,6 +60,9 @@ public class WardrobeSettings {
     private static String bossbarMessage;
     private static BossBar.Overlay bossbarOverlay;
     private static BossBar.Color bossbarColor;
+    private static boolean enabledTransition;
+    private static String transitionText;
+    private static int transitionDelay;
 
     public static void load(ConfigurationNode source) {
         configRoot = source;
@@ -88,6 +95,10 @@ public class WardrobeSettings {
             bossbarColor = BossBar.Color.YELLOW;
         }
 
+        ConfigurationNode transitionNode = source.node(TRANSITION_PATH);
+        enabledTransition = transitionNode.node(TRANSITION_ENABLE_PATH).getBoolean(false);
+        transitionText = transitionNode.node(TRANSITION_TEXT_PATH).getString("");
+        transitionDelay = transitionNode.node(TRANSITION_DELAY_PATH).getInt(1);
 
         try {
             wardrobeLocation = LocationSerializer.INSTANCE.deserialize(Location.class, source.node(STATIC_LOCATION_PATH));
@@ -185,6 +196,17 @@ public class WardrobeSettings {
 
     public static BossBar.Color getBossbarColor() {
         return bossbarColor;
+    }
+    public static boolean isEnabledTransition() {
+        return enabledTransition;
+    }
+
+    public static String getTransitionText() {
+        return transitionText;
+    }
+
+    public static int getTransitionDelay() {
+        return transitionDelay;
     }
 
     public static void setWardrobeLocation(Location newLocation) {
