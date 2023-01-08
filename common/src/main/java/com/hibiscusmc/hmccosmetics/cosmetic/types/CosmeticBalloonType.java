@@ -9,6 +9,7 @@ import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 import org.spongepowered.configurate.ConfigurationNode;
 
 import java.util.List;
@@ -43,9 +44,11 @@ public class CosmeticBalloonType extends Cosmetic {
             return;
         }
 
-        newLocation.add(player.getVelocity().clone().multiply(-1));
+        //newLocation.add(player.getVelocity().clone().multiply(-1));
+        Vector velocity = newLocation.clone().toVector().subtract(currentLocation.clone().toVector());
+        balloonEntity.getModelEntity().setVelocity(velocity);
         balloonEntity.setLocation(newLocation);
-        balloonEntity.setVelocity(newLocation.clone().subtract(currentLocation.clone()).toVector());
+        //balloonEntity.setVelocity(newLocation.clone().subtract(currentLocation.clone()).toVector());
 
         PacketManager.sendTeleportPacket(balloonEntity.getPufferfishBalloonId(), newLocation, false, viewer);
         if (!user.getHidden()) PacketManager.sendLeashPacket(balloonEntity.getPufferfishBalloonId(), player.getEntityId(), viewer);
