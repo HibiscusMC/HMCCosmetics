@@ -35,15 +35,13 @@ cosmetic-settings:
 dye-menu:
   title: "<white>"
 wardrobe:
-  # If the wardrobe should be accessed anywhere (Experimental)
-  portable: false
   # spawn static wardrobe if in this radius of wardrobe-location
   static-radius: 10
   # how much yaw should change per tick, set to 0 for none
   rotation-speed: 3
   # Applies a pumpkin for an overlay of the player while in the wardrobe.
   equip-pumpkin: false
-  # Rather than having a set exit location, this will send the player back to where they entered the wardrobe.
+  # Rather than having a set exit location, this will send the player back to where they entered the wardrobe. Not recommended for WG regions
   return-last-location: false
   # Bossbar that shows when a player is in a wardrobe.
   bossbar:
