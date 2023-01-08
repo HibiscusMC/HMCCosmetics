@@ -65,6 +65,8 @@ public class Wardrobe {
         VIEWER.hidePlayer();
         List<Player> viewer = List.of(player);
 
+        MessagesUtil.sendMessage(player, "opened-wardrobe");
+
         Runnable run = () -> {
             // Armorstand
             PacketManager.sendEntitySpawnPacket(viewingLocation, ARMORSTAND_ID, EntityType.ARMOR_STAND, UUID.randomUUID(), viewer);
@@ -117,7 +119,6 @@ public class Wardrobe {
                 target.showBossBar(bossBar);
             }
 
-            MessagesUtil.sendMessage(player, "opened-wardrobe");
             this.active = true;
             update();
         };
@@ -131,7 +132,7 @@ public class Wardrobe {
                     WardrobeSettings.getTransitionStay(),
                     WardrobeSettings.getTransitionFadeOut()
             );
-            Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), run, 40);
+            Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), run, WardrobeSettings.getTransitionDelay());
         } else {
             run.run();
         }
@@ -139,55 +140,70 @@ public class Wardrobe {
     }
 
     public void end() {
-        this.active = false;
-
         Player player = VIEWER.getPlayer();
 
         List<Player> viewer = List.of(player);
 
-        // NPC
-        if (VIEWER.hasCosmeticInSlot(CosmeticSlot.BALLOON)) PacketManager.sendLeashPacket(VIEWER.getBalloonEntity().getModelId(), -1, viewer);
-        PacketManager.sendEntityDestroyPacket(NPC_ID, viewer); // Success
-        PacketManager.sendRemovePlayerPacket(player, WARDROBE_UUID, viewer); // Success
-
-        // Player
-        PacketManager.sendCameraPacket(player.getEntityId(), viewer);
-        PacketManager.gamemodeChangePacket(player, ServerUtils.convertGamemode(this.originalGamemode)); // Success
-
-        // Armorstand
-        PacketManager.sendEntityDestroyPacket(ARMORSTAND_ID, viewer); // Sucess
-
-        //PacketManager.sendEntityDestroyPacket(player.getEntityId(), viewer); // Success
-        player.setGameMode(this.originalGamemode);
-        VIEWER.showPlayer();
-
-        if (VIEWER.hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
-            PacketManager.ridingMountPacket(player.getEntityId(), VIEWER.getBackpackEntity().getEntityId(), viewer);
-        }
-
-        if (VIEWER.hasCosmeticInSlot(CosmeticSlot.BALLOON)) {
-            PacketManager.sendLeashPacket(VIEWER.getBalloonEntity().getPufferfishBalloonId(), player.getEntityId(), viewer);
-        }
-
-        if (exitLocation == null) {
-            player.teleport(player.getWorld().getSpawnLocation());
-        } else {
-            player.teleport(exitLocation);
-        }
-
-        if (WardrobeSettings.isEquipPumpkin()) {
-            NMSHandlers.getHandler().equipmentSlotUpdate(VIEWER.getPlayer().getEntityId(), EquipmentSlot.HEAD, player.getInventory().getHelmet(), viewer);
-        }
-
-        if (WardrobeSettings.getEnabledBossbar()) {
-            Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.getInstance()).player(player);
-
-            target.hideBossBar(bossBar);
-        }
-
-        VIEWER.updateCosmetic();
-
         MessagesUtil.sendMessage(player, "closed-wardrobe");
+
+        Runnable run = () -> {
+            this.active = false;
+
+            // NPC
+            if (VIEWER.hasCosmeticInSlot(CosmeticSlot.BALLOON)) PacketManager.sendLeashPacket(VIEWER.getBalloonEntity().getModelId(), -1, viewer);
+            PacketManager.sendEntityDestroyPacket(NPC_ID, viewer); // Success
+            PacketManager.sendRemovePlayerPacket(player, WARDROBE_UUID, viewer); // Success
+
+            // Player
+            PacketManager.sendCameraPacket(player.getEntityId(), viewer);
+            PacketManager.gamemodeChangePacket(player, ServerUtils.convertGamemode(this.originalGamemode)); // Success
+
+            // Armorstand
+            PacketManager.sendEntityDestroyPacket(ARMORSTAND_ID, viewer); // Sucess
+
+            //PacketManager.sendEntityDestroyPacket(player.getEntityId(), viewer); // Success
+            player.setGameMode(this.originalGamemode);
+            VIEWER.showPlayer();
+
+            if (VIEWER.hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
+                PacketManager.ridingMountPacket(player.getEntityId(), VIEWER.getBackpackEntity().getEntityId(), viewer);
+            }
+
+            if (VIEWER.hasCosmeticInSlot(CosmeticSlot.BALLOON)) {
+                PacketManager.sendLeashPacket(VIEWER.getBalloonEntity().getPufferfishBalloonId(), player.getEntityId(), viewer);
+            }
+
+            if (exitLocation == null) {
+                player.teleport(player.getWorld().getSpawnLocation());
+            } else {
+                player.teleport(exitLocation);
+            }
+
+            if (WardrobeSettings.isEquipPumpkin()) {
+                NMSHandlers.getHandler().equipmentSlotUpdate(VIEWER.getPlayer().getEntityId(), EquipmentSlot.HEAD, player.getInventory().getHelmet(), viewer);
+            }
+
+            if (WardrobeSettings.getEnabledBossbar()) {
+                Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.getInstance()).player(player);
+
+                target.hideBossBar(bossBar);
+            }
+
+            VIEWER.updateCosmetic();
+        };
+
+        if (WardrobeSettings.isEnabledTransition()) {
+            MessagesUtil.sendTitle(
+                    VIEWER.getPlayer(),
+                    WardrobeSettings.getTransitionText(),
+                    WardrobeSettings.getTransitionFadeIn(),
+                    WardrobeSettings.getTransitionStay(),
+                    WardrobeSettings.getTransitionFadeOut()
+            );
+            Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), run, WardrobeSettings.getTransitionDelay());
+        } else {
+            run.run();
+        }
     }
 
     public void update() {
