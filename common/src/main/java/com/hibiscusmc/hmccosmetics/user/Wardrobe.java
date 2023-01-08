@@ -124,7 +124,13 @@ public class Wardrobe {
 
 
         if (WardrobeSettings.isEnabledTransition()) {
-            MessagesUtil.sendTitle(VIEWER.getPlayer(), WardrobeSettings.getTransitionText());
+            MessagesUtil.sendTitle(
+                    VIEWER.getPlayer(),
+                    WardrobeSettings.getTransitionText(),
+                    WardrobeSettings.getTransitionFadeIn(),
+                    WardrobeSettings.getTransitionStay(),
+                    WardrobeSettings.getTransitionFadeOut()
+            );
             Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), run, 40);
         } else {
             run.run();
@@ -136,9 +142,6 @@ public class Wardrobe {
         this.active = false;
 
         Player player = VIEWER.getPlayer();
-        MessagesUtil.sendDebugMessages("end");
-        MessagesUtil.sendDebugMessages("NPC ID " + NPC_ID);
-        MessagesUtil.sendDebugMessages("armorstand id " + ARMORSTAND_ID);
 
         List<Player> viewer = List.of(player);
 

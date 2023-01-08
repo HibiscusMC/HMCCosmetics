@@ -49,12 +49,15 @@ wardrobe:
   bossbar:
     enabled: false
     text: "Left-Click to open the menu!"
-    progress: 100
+    progress: 1.0 # Goes between 0.0 -> 1.0
     overlay: PROGRESS
   transition:
     enabled: true
     text: "<black>"
     delay: 40
+    title-fade-in: 2000 # milliseconds
+    title-stay: 2000 # milliseconds
+    title-fade-out: 2000 # milliseconds
   wardrobe-location:
     world: "World"
     x: 0

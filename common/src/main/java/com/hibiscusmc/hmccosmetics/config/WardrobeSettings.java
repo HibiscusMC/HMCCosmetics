@@ -39,6 +39,9 @@ public class WardrobeSettings {
     private static final String TRANSITION_ENABLE_PATH = "enabled";
     private static final String TRANSITION_DELAY_PATH = "delay";
     private static final String TRANSITION_TEXT_PATH = "text";
+    private static final String TRANSITION_FADE_IN_PATH = "title-fade-in";
+    private static final String TRANSITION_STAY_PATH = "title-stay";
+    private static final String TRANSITION_FADE_OUT_PATH = "title-fade-out";
 
     private static ConfigurationNode configRoot;
     private static boolean disableOnDamage;
@@ -63,6 +66,9 @@ public class WardrobeSettings {
     private static boolean enabledTransition;
     private static String transitionText;
     private static int transitionDelay;
+    private static int transitionFadeIn;
+    private static int transitionStay;
+    private static int transitionFadeOut;
 
     public static void load(ConfigurationNode source) {
         configRoot = source;
@@ -99,6 +105,9 @@ public class WardrobeSettings {
         enabledTransition = transitionNode.node(TRANSITION_ENABLE_PATH).getBoolean(false);
         transitionText = transitionNode.node(TRANSITION_TEXT_PATH).getString("");
         transitionDelay = transitionNode.node(TRANSITION_DELAY_PATH).getInt(1);
+        transitionFadeIn = transitionNode.node(TRANSITION_FADE_IN_PATH).getInt(2000);
+        transitionStay = transitionNode.node(TRANSITION_STAY_PATH).getInt(2000);
+        transitionFadeOut = transitionNode.node(TRANSITION_FADE_OUT_PATH).getInt(2000);
 
         try {
             wardrobeLocation = LocationSerializer.INSTANCE.deserialize(Location.class, source.node(STATIC_LOCATION_PATH));
@@ -207,6 +216,15 @@ public class WardrobeSettings {
 
     public static int getTransitionDelay() {
         return transitionDelay;
+    }
+    public static int getTransitionFadeIn() {
+        return transitionFadeIn;
+    }
+    public static int getTransitionStay() {
+        return transitionStay;
+    }
+    public static int getTransitionFadeOut() {
+        return transitionFadeOut;
     }
 
     public static void setWardrobeLocation(Location newLocation) {
