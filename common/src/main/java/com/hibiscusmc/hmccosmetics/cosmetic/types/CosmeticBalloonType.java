@@ -23,8 +23,6 @@ public class CosmeticBalloonType extends Cosmetic {
         String modelId = config.node("model").getString();
 
         this.modelName = modelId;
-
-        setDyable(false);
     }
 
     @Override
