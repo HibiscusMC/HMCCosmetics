@@ -4,6 +4,7 @@ import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.ticxo.modelengine.api.ModelEngineAPI;
+import com.ticxo.modelengine.api.animation.AnimationProperty;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
 import org.bukkit.Color;
@@ -38,6 +39,7 @@ public class BalloonEntity {
         }
         ModeledEntity modeledEntity = ModelEngineAPI.getOrCreateModeledEntity(modelEntity);
         ActiveModel model = ModelEngineAPI.createActiveModel(ModelEngineAPI.getBlueprint(id));
+        model.setCanHurt(false);
         modeledEntity.addModel(model, false);
         if (color != null) {
             modeledEntity.getModels().forEach((d, singleModel) -> {
