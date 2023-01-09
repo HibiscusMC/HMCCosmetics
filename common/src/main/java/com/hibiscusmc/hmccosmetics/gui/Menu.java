@@ -5,6 +5,7 @@ import com.hibiscusmc.hmccosmetics.api.PlayerMenuOpenEvent;
 import com.hibiscusmc.hmccosmetics.config.serializer.ItemSerializer;
 import com.hibiscusmc.hmccosmetics.gui.type.Type;
 import com.hibiscusmc.hmccosmetics.gui.type.Types;
+import com.hibiscusmc.hmccosmetics.hooks.PAPIHook;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.misc.Adventure;
@@ -179,9 +180,11 @@ public class Menu {
         if (itemStack.hasItemMeta()) {
             List<String> processedLore = new ArrayList<>();
 
-            if (itemStack.getItemMeta().hasLore()) {
-                for (String loreLine : itemStack.getItemMeta().getLore()) {
-                    processedLore.add(PlaceholderAPI.setPlaceholders(player, loreLine));
+            if (PAPIHook.isPAPIEnabled()) {
+                if (itemStack.getItemMeta().hasLore()) {
+                    for (String loreLine : itemStack.getItemMeta().getLore()) {
+                        processedLore.add(PlaceholderAPI.setPlaceholders(player, loreLine));
+                    }
                 }
             }
 
