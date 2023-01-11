@@ -98,13 +98,19 @@ tasks {
         relocate("org.bstats", "com.hisbiscusmc.hmccosmetics.bstats")
         relocate("com.zaxxer.hikaricp", "com.hisbiscusmc.hmccosmetics.hikaricp")
         relocate("com.j256.ormlite", "com.hisbiscusmc.hmccosmetics.ormlite")
-        archiveFileName.set("HMCCosmetics.jar")
+        archiveFileName.set("HMCCosmeticsRemapped.jar")
 
         dependencies {
             exclude(dependency("org.yaml:snakeyaml"))
         }
 
-        archiveFile.get().asFile.copyTo(layout.projectDirectory.file("run/plugins/HMCCosmeticsRemapped.jar").asFile, true)
+        doLast {
+            archiveFile.get().asFile.copyTo(layout.projectDirectory.file("run/plugins/HMCCosmeticsRemapped.jar").asFile, true)
+            println("If you use the plugin, consider buying it for: ")
+            println("The custom resource pack, Oraxen + ItemAdder configurations, and Discord support!")
+            println("Polymart: https://polymart.org/resource/1879")
+            println("Spigot: https://www.spigotmc.org/resources/100107/")
+        }
     }
 
     build {
