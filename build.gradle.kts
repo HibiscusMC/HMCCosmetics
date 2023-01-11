@@ -118,7 +118,7 @@ bukkit {
     main = "com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin"
     apiVersion = "1.19"
     authors = listOf("LoJoSho")
-    depend = listOf("ProtocolLib")
+    depend = listOf("ProtocolLib", "PlaceholderAPI")
     softDepend = listOf("ModelEngine", "Oraxen", "ItemsAdder", "HMCColor", "WorldGuard")
     version = "${project.version}"
 
