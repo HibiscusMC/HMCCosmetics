@@ -13,10 +13,12 @@ import com.hibiscusmc.hmccosmetics.gui.special.DyeMenu;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
+import com.hibiscusmc.hmccosmetics.util.ServerUtils;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.apache.commons.lang3.EnumUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Color;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -197,7 +199,7 @@ public class CosmeticCommand implements CommandExecutor {
             return true;
         }
 
-        else if (args[0].equalsIgnoreCase("dye") && args.length == 2) {
+        else if (args[0].equalsIgnoreCase("dye") && args.length >= 2) {
             Player player = sender instanceof Player ? (Player) sender : null;
             if (player == null) return true;
             CosmeticUser user = CosmeticUsers.getUser(player);
@@ -206,7 +208,24 @@ public class CosmeticCommand implements CommandExecutor {
                 MessagesUtil.sendMessage(sender, "no-permission");
                 return true;
             }
-            DyeMenu.openMenu(user, user.getCosmetic(CosmeticSlot.valueOf(args[1])));
+
+            CosmeticSlot slot = CosmeticSlot.valueOf(args[1]);
+            Cosmetic cosmetic = user.getCosmetic(slot);
+
+            if (args.length >= 3) {
+                if (!args[2].contains("#") || args[2].isEmpty()) {
+                    MessagesUtil.sendMessage(player, "invalid-color");
+                    return true;
+                }
+                Color color = ServerUtils.hex2Rgb(args[2]);
+                if (color == null) {
+                    MessagesUtil.sendMessage(player, "invalid-color");
+                    return true;
+                }
+                user.addPlayerCosmetic(cosmetic, color); // #FFFFFF
+            } else {
+                DyeMenu.openMenu(user, cosmetic);
+            }
         }
 
         else if (args[0].equalsIgnoreCase("setlocation")) {

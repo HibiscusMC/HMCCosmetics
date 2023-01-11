@@ -11,6 +11,7 @@ import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.title.Title;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -54,6 +55,13 @@ public class MessagesUtil {
 
     public static void sendMessage(Player player, String key, TagResolver placeholder) {
         Component finalMessage = processString(player, key, placeholder);
+        Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.getInstance()).player(player);
+
+        target.sendMessage(finalMessage);
+    }
+
+    public static void sendMessageNoKey(Player player, String message) {
+        Component finalMessage = processStringNoKey(player, message);
         Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.getInstance()).player(player);
 
         target.sendMessage(finalMessage);
@@ -112,7 +120,11 @@ public class MessagesUtil {
         return Adventure.MINI_MESSAGE.deserialize(message);
     }
 
-
+    public static String processStringNoKeyString(Player player, String message) {
+        message = message.replaceAll("%prefix%", prefix);
+        if (PAPIHook.isPAPIEnabled() && player != null) message = PlaceholderAPI.setPlaceholders(player, message);
+        return message;
+    }
 
     public static void sendDebugMessages(String message) {
         sendDebugMessages(message, Level.INFO);

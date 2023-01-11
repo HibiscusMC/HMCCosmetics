@@ -42,7 +42,7 @@ public class CosmeticCommandTabComplete implements TabCompleter {
         if (!(sender instanceof Player)) return completions;
         CosmeticUser user = CosmeticUsers.getUser(((Player) sender).getUniqueId());
 
-        if (args.length >= 2) {
+        if (args.length == 2) {
             String subcommand = args[0].toLowerCase();
             switch (subcommand) {
                 case "apply" -> {
@@ -73,6 +73,15 @@ public class CosmeticCommandTabComplete implements TabCompleter {
                 }
             }
             StringUtil.copyPartialMatches(args[1], completions, finalCompletitons);
+        }
+        if (args.length == 3) {
+            String subcommand = args[0].toLowerCase();
+            switch (subcommand) {
+                case "dye" -> {
+                    completions.add("#FFFFFF");
+                }
+            }
+            StringUtil.copyPartialMatches(args[2], completions, finalCompletitons);
         }
 
         Collections.sort(finalCompletitons);
