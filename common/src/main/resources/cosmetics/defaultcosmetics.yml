@@ -132,3 +132,12 @@ kite:
   slot: BALLOON
   permission: "hmccosmetics.kite"
   model: kite
+  item:
+    material: PAPER
+    model-data: 7
+    name: "<blue>Kite"
+    lore:
+      - ""
+      - "<gray>Enabled: <#6D9DC5>%HMCCosmetics_equipped_kite%"
+      - "<gray>Allowed: <#6D9DC5>%HMCCosmetics_unlocked_kite%"
+    amount: 1
