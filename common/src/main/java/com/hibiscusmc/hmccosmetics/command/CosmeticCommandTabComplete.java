@@ -3,6 +3,7 @@ package com.hibiscusmc.hmccosmetics.command;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
+import com.hibiscusmc.hmccosmetics.gui.Menu;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
@@ -54,7 +55,9 @@ public class CosmeticCommandTabComplete implements TabCompleter {
                     }
                 }
                 case "menu" -> {
-                    completions.addAll(Menus.getMenuNames());
+                    for (Menu menu : Menus.getMenu()) {
+                        if (menu.canOpen(user.getPlayer())) completions.add(menu.getId());
+                    }
                 }
                 case "dataclear", "wardrobe" -> {
                     for (Player player : Bukkit.getOnlinePlayers()) {
@@ -80,6 +83,12 @@ public class CosmeticCommandTabComplete implements TabCompleter {
                 case "dye" -> {
                     completions.add("#FFFFFF");
                 }
+                case "menu", "apply", "unapply" -> {
+                    for (Player player : Bukkit.getOnlinePlayers()) {
+                        completions.add(player.getName());
+                    }
+                }
+
             }
             StringUtil.copyPartialMatches(args[2], completions, finalCompletitons);
         }

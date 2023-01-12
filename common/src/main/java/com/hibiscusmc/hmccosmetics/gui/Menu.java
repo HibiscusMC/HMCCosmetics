@@ -31,6 +31,7 @@ public class Menu {
     private String title;
     private int rows;
     private ConfigurationNode config;
+    private String permissionNode;
 
     public Menu(String id, ConfigurationNode config) {
         this.id = id;
@@ -38,6 +39,7 @@ public class Menu {
 
         title = config.node("title").getString("chest");
         rows = config.node("rows").getInt(1);
+        permissionNode = config.node("permission").getString("");
 
         Menus.addMenu(this);
     }
@@ -55,8 +57,18 @@ public class Menu {
     }
 
     public void openMenu(CosmeticUser user) {
+        openMenu(user, false);
+    }
+
+    public void openMenu(CosmeticUser user, boolean ignorePermission) {
         Player player = user.getPlayer();
         if (player == null) return;
+        if (!ignorePermission && !permissionNode.isEmpty()) {
+            if (!player.hasPermission(permissionNode) && !player.isOp()) {
+                MessagesUtil.sendMessage(player, "no-permission");
+                return;
+            }
+        }
         final Component component = Adventure.MINI_MESSAGE.deserialize(Placeholder.applyPapiPlaceholders(player, this.title));
         Gui gui = Gui.gui().
                 title(component).
@@ -193,5 +205,15 @@ public class Menu {
             itemStack.setItemMeta(itemMeta);
         }
         return itemStack;
+    }
+
+    public String getPermissionNode() {
+        return permissionNode;
+    }
+
+    public boolean canOpen(Player player) {
+        if (permissionNode.isEmpty()) return true;
+        if (player.isOp() || player.hasPermission(permissionNode)) return true;
+        return false;
     }
 }

@@ -19,6 +19,6 @@ public class ActionMenu extends Action {
             return;
         }
         Menu menu = Menus.getMenu(raw);
-        menu.openMenu(user);
+        menu.openMenu(user, true);
     }
 }
