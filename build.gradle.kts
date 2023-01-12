@@ -130,7 +130,36 @@ bukkit {
 
     commands {
         register("cosmetic") {
-            description = "Base command"
+            description = "Base Cosmetic Command"
+        }
+    }
+    permissions {
+        register("hmccosmetics.cmd.default") {
+            default = BukkitPluginDescription.Permission.Default.TRUE;
+        }
+        register("hmccosmetics.cmd.apply") {
+            default = BukkitPluginDescription.Permission.Default.TRUE;
+        }
+        register("hmccosmetics.cmd.unapply") {
+            default = BukkitPluginDescription.Permission.Default.TRUE;
+        }
+        register("hmccosmetics.cmd.dye") {
+            default = BukkitPluginDescription.Permission.Default.TRUE;
+        }
+        register("hmccosmetics.cmd.wardrobe") {
+            default = BukkitPluginDescription.Permission.Default.TRUE;
+        }
+        register("hmccosmetics.cmd.menu") {
+            default = BukkitPluginDescription.Permission.Default.TRUE;
+        }
+        register("hmccosmetics.cmd.setlocation") {
+            default = BukkitPluginDescription.Permission.Default.OP;
+        }
+        register("hmccosmetics.cmd.dataclear") {
+            default = BukkitPluginDescription.Permission.Default.OP;
+        }
+        register("hmccosmetics.cmd.reload") {
+            default = BukkitPluginDescription.Permission.Default.OP;
         }
     }
 }

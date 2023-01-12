@@ -28,14 +28,14 @@ public class CosmeticCommandTabComplete implements TabCompleter {
         List<String> finalCompletitons = new ArrayList<>();
 
         if (args.length == 1) {
-            completions.add("apply");
-            completions.add("wardrobe");
-            completions.add("unapply");
-            completions.add("menu");
-            completions.add("reload");
-            completions.add("dataclear");
-            completions.add("dye");
-            completions.add("setlocation");
+            if (hasPermission(sender, "hmccosmetics.cmd.apply")) completions.add("apply");
+            if (hasPermission(sender, "hmccosmetics.cmd.unapply")) completions.add("unapply");
+            if (hasPermission(sender, "hmccosmetics.cmd.menu")) completions.add("menu");
+            if (hasPermission(sender, "hmccosmetics.cmd.reload")) completions.add("reload");
+            if (hasPermission(sender, "hmccosmetics.cmd.wardrobe")) completions.add("wardrobe");
+            if (hasPermission(sender, "hmccosmetics.cmd.dataclear")) completions.add("dataclear");
+            if (hasPermission(sender, "hmccosmetics.cmd.dye")) completions.add("dye");
+            if (hasPermission(sender, "hmccosmetics.cmd.setlocation")) completions.add("setlocation");
 
             StringUtil.copyPartialMatches(args[0], completions, finalCompletitons);
         }
@@ -50,8 +50,8 @@ public class CosmeticCommandTabComplete implements TabCompleter {
                     completions.addAll(applyCommandComplete(user, args));
                 }
                 case "unapply" -> {
-                    for (CosmeticSlot slot : CosmeticSlot.values()) {
-                        completions.add(slot.toString().toUpperCase());
+                    for (Cosmetic cosmetic : user.getCosmetic()) {
+                        completions.add(cosmetic.getSlot().toString().toUpperCase());
                     }
                 }
                 case "menu" -> {
@@ -114,5 +114,11 @@ public class CosmeticCommandTabComplete implements TabCompleter {
             }
         }
         return completitions;
+    }
+
+    private boolean hasPermission(CommandSender sender, String permission) {
+        if (sender.isOp()) return true;
+        if (sender.hasPermission(permission)) return true;
+        return false;
     }
 }
