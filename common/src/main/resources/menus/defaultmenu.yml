@@ -6,6 +6,10 @@ items:
       - 1
     item:
       material: hmccosmetics:beanie
+      lore:
+        - ""
+        - "<gray>Enabled: <#6D9DC5>%HMCCosmetics_equipped_beanie%"
+        - "<gray>Allowed: <#6D9DC5>%HMCCosmetics_unlocked_beanie%"
     type: cosmetic
     cosmetic: beanie
   backpack:
@@ -13,6 +17,10 @@ items:
       - 2
     item:
       material: hmccosmetics:backpack
+      lore:
+        - ""
+        - "<gray>Enabled: <#6D9DC5>%HMCCosmetics_equipped_backpack%"
+        - "<gray>Allowed: <#6D9DC5>%HMCCosmetics_unlocked_backpack%"
     type: cosmetic
     cosmetic: backpack
   future_wings:
@@ -20,6 +28,10 @@ items:
       - 3
     item:
       material: hmccosmetics:future_wings
+      lore:
+        - ""
+        - "<gray>Enabled: <#6D9DC5>%HMCCosmetics_equipped_future_wings%"
+        - "<gray>Allowed: <#6D9DC5>%HMCCosmetics_unlocked_future_wings%"
     type: cosmetic
     cosmetic: future_wings
   lantern_cosmetic:
@@ -27,6 +39,10 @@ items:
       - 4
     item:
       material: hmccosmetics:lantern_cosmetic
+      lore:
+        - ""
+        - "<gray>Enabled: <#6D9DC5>%HMCCosmetics_equipped_lantern_cosmetic%"
+        - "<gray>Allowed: <#6D9DC5>%HMCCosmetics_unlocked_lantern_cosmetic%"
     type: cosmetic
     cosmetic: lantern_cosmetic
   baseball_hat:
@@ -34,6 +50,10 @@ items:
       - 5
     item:
       material: hmccosmetics:baseball_hat
+      lore:
+        - ""
+        - "<gray>Enabled: <#6D9DC5>%HMCCosmetics_equipped_baseball_hat%"
+        - "<gray>Allowed: <#6D9DC5>%HMCCosmetics_unlocked_baseball_hat%"
     type: cosmetic
     cosmetic: baseball_hat
   frog_hat:
@@ -41,6 +61,10 @@ items:
       - 6
     item:
       material: hmccosmetics:frog_hat
+      lore:
+        - ""
+        - "<gray>Enabled: <#6D9DC5>%HMCCosmetics_equipped_frog_hat%"
+        - "<gray>Allowed: <#6D9DC5>%HMCCosmetics_unlocked_frog_hat%"  
     type: cosmetic
     cosmetic: frog_hat
   jetpack:
@@ -48,6 +72,10 @@ items:
       - 7
     item:
       material: hmccosmetics:jetpack
+      lore:
+        - ""
+        - "<gray>Enabled: <#6D9DC5>%HMCCosmetics_equipped_jetpack%"
+        - "<gray>Allowed: <#6D9DC5>%HMCCosmetics_unlocked_jetpack%" 
     type: cosmetic
     cosmetic: jetpack
   hammer:
@@ -55,6 +83,10 @@ items:
       - 10
     item:
       material: hmccosmetics:hammer
+      lore:
+        - ""
+        - "<gray>Enabled: <#6D9DC5>%HMCCosmetics_equipped_hammer%"
+        - "<gray>Allowed: <#6D9DC5>%HMCCosmetics_unlocked_hammer%" 
     type: cosmetic
     cosmetic: hammer
   chestplate:
@@ -62,6 +94,10 @@ items:
       - 11
     item:
       material: hmccosmetics:chestplate
+      lore:
+        - ""
+        - "<gray>Enabled: <#6D9DC5>%HMCCosmetics_equipped_chestplate%"
+        - "<gray>Allowed: <#6D9DC5>%HMCCosmetics_unlocked_chestplate%" 
     type: cosmetic
     cosmetic: chestplate
   pants:
@@ -69,6 +105,10 @@ items:
       - 12
     item:
       material: hmccosmetics:pants
+      lore:
+        - ""
+        - "<gray>Enabled: <#6D9DC5>%HMCCosmetics_equipped_pants%"
+        - "<gray>Allowed: <#6D9DC5>%HMCCosmetics_unlocked_pants%" 
     type: cosmetic
     cosmetic: pants
   boots:
@@ -76,6 +116,10 @@ items:
       - 13
     item:
       material: hmccosmetics:boots
+      lore:
+        - ""
+        - "<gray>Enabled: <#6D9DC5>%HMCCosmetics_equipped_boots%"
+        - "<gray>Allowed: <#6D9DC5>%HMCCosmetics_unlocked_boots%" 
     type: cosmetic
     cosmetic: boots
   kite:
@@ -83,5 +127,9 @@ items:
       - 14
     item:
       material: hmccosmetics:kite
+      lore:
+        - ""
+        - "<gray>Enabled: <#6D9DC5>%HMCCosmetics_equipped_kite%"
+        - "<gray>Allowed: <#6D9DC5>%HMCCosmetics_unlocked_kite%" 
     type: cosmetic
     cosmetic: kite
