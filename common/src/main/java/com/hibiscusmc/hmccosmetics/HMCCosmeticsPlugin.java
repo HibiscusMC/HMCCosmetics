@@ -20,6 +20,7 @@ import com.hibiscusmc.hmccosmetics.listener.PlayerGameListener;
 import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.TranslationUtil;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -39,11 +40,14 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
     private static HMCCosmeticsPlugin instance;
     private static boolean disable = false;
     private static YamlConfigurationLoader configLoader;
+    private static final int pluginId = 13873;
 
     @Override
     public void onEnable() {
         // Plugin startup logic
         instance = this;
+        // bstats https://bstats.org/plugin/bukkit/HMCCosmetics/13873
+        final Metrics metrics = new Metrics(this, pluginId);
 
         // NMS version check
         if (!NMSHandlers.getHandler().getSupported()) {
