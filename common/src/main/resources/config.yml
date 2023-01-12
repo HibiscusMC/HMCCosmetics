@@ -6,7 +6,7 @@ config-version: 1
 default-menu: defaultmenu
 debug-mode: false
 database-settings:
-  type: sqlite # INTERNAL (not recommended!), MYSQL, SQLite
+  type: sqlite #MYSQL, SQLite, INTERNAL (not recommended!)
   mysql:
     database: database
     password: cherryBomb
@@ -50,9 +50,9 @@ wardrobe:
     enabled: true
     text: "<black>"
     delay: 40
-    title-fade-in: 2000 # milliseconds
-    title-stay: 2000 # milliseconds
-    title-fade-out: 2000 # milliseconds
+    title-fade-in: 1000 # milliseconds
+    title-stay: 500 # milliseconds
+    title-fade-out: 1000 # milliseconds
   wardrobe-location:
     world: "World"
     x: 0
