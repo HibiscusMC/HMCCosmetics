@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "com.hibiscusmc"
-version = "Infdev"
+version = "2.0"
 
 allprojects {
     apply(plugin = "java")
