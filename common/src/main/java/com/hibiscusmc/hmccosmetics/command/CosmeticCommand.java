@@ -80,7 +80,9 @@ public class CosmeticCommand implements CommandExecutor {
                 Cosmetic cosmetic;
 
                 if (sender instanceof Player) player = ((Player) sender).getPlayer();
-                if (args.length >= 3) player = Bukkit.getPlayer(args[2]);
+                if (sender.hasPermission("hmccosmetics.cmd.apply.other")) {
+                    if (args.length >= 3) player = Bukkit.getPlayer(args[2]);
+                }
 
                 if (args.length == 1) {
                     MessagesUtil.sendMessage(player, "not-enough-args");
@@ -130,7 +132,9 @@ public class CosmeticCommand implements CommandExecutor {
                 CosmeticSlot cosmeticSlot = null;
 
                 if (sender instanceof Player) player = ((Player) sender).getPlayer();
-                if (args.length >= 3) player = Bukkit.getPlayer(args[2]);
+                if (sender.hasPermission("hmccosmetics.cmd.unapply.other")) {
+                    if (args.length >= 3) player = Bukkit.getPlayer(args[2]);
+                }
 
                 if (!EnumUtils.isValidEnum(CosmeticSlot.class, args[1].toUpperCase())) {
                     MessagesUtil.sendMessage(sender, "invalid-slot");
@@ -163,7 +167,9 @@ public class CosmeticCommand implements CommandExecutor {
             }
             case ("wardrobe") -> {
                 if (sender instanceof Player) player = ((Player) sender).getPlayer();
-                if (args.length >= 2) player = Bukkit.getPlayer(args[1]);
+                if (sender.hasPermission("hmccosmetics.cmd.wardrobe.other")) {
+                    if (args.length >= 2) player = Bukkit.getPlayer(args[1]);
+                }
 
                 if (!sender.hasPermission("hmccosmetics.cmd.wardrobe")) {
                     MessagesUtil.sendMessage(sender, "no-permission");
@@ -190,7 +196,9 @@ public class CosmeticCommand implements CommandExecutor {
                 Menu menu = Menus.getMenu(args[1]);
 
                 if (sender instanceof Player) player = ((Player) sender).getPlayer();
-                if (args.length >= 3) player = Bukkit.getPlayer(args[2]);
+                if (sender.hasPermission("hmccosmetics.cmd.menu.other")) {
+                    if (args.length >= 3) player = Bukkit.getPlayer(args[2]);
+                }
                 CosmeticUser user = CosmeticUsers.getUser(player);
 
                 if (user == null) {

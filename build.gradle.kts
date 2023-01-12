@@ -161,6 +161,18 @@ bukkit {
         register("hmccosmetics.cmd.reload") {
             default = BukkitPluginDescription.Permission.Default.OP;
         }
+        register("hmccosmetics.cmd.apply.other") {
+            default = BukkitPluginDescription.Permission.Default.OP;
+        }
+        register("hmccosmetics.cmd.unapply.other") {
+            default = BukkitPluginDescription.Permission.Default.OP;
+        }
+        register("hmccosmetics.cmd.wardrobe.other") {
+            default = BukkitPluginDescription.Permission.Default.OP;
+        }
+        register("hmccosmetics.cmd.menu.other") {
+            default = BukkitPluginDescription.Permission.Default.OP;
+        }
     }
 }
 
