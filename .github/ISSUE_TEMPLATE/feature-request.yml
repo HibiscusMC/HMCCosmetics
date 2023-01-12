@@ -1,0 +1,29 @@
+name: Feature Request
+description: Create a feature request to help us keep track of all features you want to be added
+title: "[FEATURE] <title>"
+labels: [feature]
+
+body:
+  - type: "checkboxes"
+    id: "i-have-checked"
+    attributes:
+      label: "I have checked that..."
+      options:
+        - label: "...such a feature does not exist already"
+          required: true
+        - label: "...such a feature request has not been submitted already"
+          required: true
+  - type: "textarea"
+    id: "description"
+    attributes:
+      label: "Description"
+      description: "A full description of the feature"
+    validations:
+      required: true
+  - type: "textarea"
+    id: "config-changes"
+    attributes:
+      label: "Config Changes"
+      description: "The configuration changes your feature should have"
+    validations:
+      required: false
