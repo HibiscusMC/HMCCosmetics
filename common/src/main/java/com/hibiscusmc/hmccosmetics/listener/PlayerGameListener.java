@@ -194,6 +194,7 @@ public class PlayerGameListener implements Listener {
         //NMSHandlers.getHandler().slotUpdate(event.getPlayer(), event.getPreviousSlot());
         Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
             user.updateCosmetic(CosmeticSlot.MAINHAND);
+            user.updateCosmetic(CosmeticSlot.OFFHAND);
         }, 2);
     }
 
@@ -249,7 +250,7 @@ public class PlayerGameListener implements Listener {
                 PacketContainer packet = new PacketContainer(PacketType.Play.Server.WINDOW_ITEMS);
                 packet.getIntegers().write(0, 0);
                 for (int slot = 0; slot < 46; slot++) {
-                    if (slot >= 5 && slot <= 8 || slot == 45) {
+                    if ((slot >= 5 && slot <= 8) || slot == 45) {
                         if (!items.containsKey(slot)) continue;
                         slotData.set(slot, items.get(slot));
                         MessagesUtil.sendDebugMessages("Set " + slot + " as " + items.get(slot));
@@ -313,6 +314,7 @@ public class PlayerGameListener implements Listener {
                 Menu menu = Menus.getMenu(Settings.getDefaultMenu());
                 if (menu == null) return;
                 menu.openMenu(user);
+                event.setCancelled(true);
             }
         });
     }
