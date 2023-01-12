@@ -47,9 +47,9 @@ public class PlayerGameListener implements Listener {
         registerPlayerEquipmentListener();
         registerPlayerArmListener();
 
-        registerLookMovement();
-        registerMoveListener();
-        registerTeleportMovement();
+        //registerLookMovement();
+        //registerMoveListener();
+        //registerTeleportMovement();
     }
 
     @EventHandler
@@ -98,7 +98,7 @@ public class PlayerGameListener implements Listener {
             user.getBackpackEntity().teleport(event.getTo());
 
             Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
-                user.showBackpack();
+                user.updateCosmetic();
             }, 2);
         }
 
@@ -127,6 +127,7 @@ public class PlayerGameListener implements Listener {
 
         Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
             user.addPlayerCosmetic(cosmetic, color);
+            user.updateCosmetic();
         }, 4);
     }
 

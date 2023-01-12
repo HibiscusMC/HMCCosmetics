@@ -33,7 +33,7 @@ public class CosmeticBalloonType extends Cosmetic {
         if (player == null) return;
         if (user.isInWardrobe()) return;
 
-        List<Player> viewer = PlayerUtils.getNearbyPlayers(player);
+        List<Player> viewer = PacketManager.getViewers(player.getLocation());
         viewer.add(player);
 
         BalloonEntity balloonEntity = user.getBalloonEntity();

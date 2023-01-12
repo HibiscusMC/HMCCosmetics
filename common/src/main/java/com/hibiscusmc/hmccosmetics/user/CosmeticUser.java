@@ -2,6 +2,7 @@ package com.hibiscusmc.hmccosmetics.user;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.api.*;
+import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
@@ -24,12 +25,17 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.scheduler.BukkitTask;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.*;
+import java.util.logging.Level;
 
 public class CosmeticUser {
 
     private UUID uniqueId;
+    private int taskId;
     private HashMap<CosmeticSlot, Cosmetic> playerCosmetics = new HashMap<>();
     private Wardrobe wardrobe;
     private ArmorStand invisibleArmorstand;
@@ -41,13 +47,30 @@ public class CosmeticUser {
     private HashMap<CosmeticSlot, Color> colors = new HashMap<>();
 
     public CosmeticUser() {
-        hideBackpack = false;
-        hideCosmetics = false;
+        // Empty
     }
-
 
     public CosmeticUser(UUID uuid) {
         this.uniqueId = uuid;
+        tick();
+    }
+
+    private void tick() {
+        // Occasionally updates the entity cosmetics
+        Runnable run = () -> {
+            MessagesUtil.sendDebugMessages("tick " + uniqueId, Level.INFO);
+            updateCosmetic();
+        };
+
+        int tickPeriod = Settings.getTickPeriod();
+        if (tickPeriod > 0) {
+            BukkitTask task = Bukkit.getScheduler().runTaskTimer(HMCCosmeticsPlugin.getInstance(), run, 0, tickPeriod);
+            taskId = task.getTaskId();
+        }
+    }
+
+    public void destroy() {
+        Bukkit.getScheduler().cancelTask(taskId);
     }
 
     public UUID getUniqueId() {

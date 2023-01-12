@@ -49,6 +49,7 @@ public class PlayerConnectionListener implements Listener {
         Database.save(user);
         user.despawnBackpack();
         user.despawnBalloon();
+        user.destroy();
         CosmeticUsers.removeUser(user.getUniqueId());
     }
 }

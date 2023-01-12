@@ -23,7 +23,7 @@ public class CosmeticArmorType extends Cosmetic {
     @Override
     public void update(CosmeticUser user) {
         Player player = Bukkit.getPlayer(user.getUniqueId());
-        PacketManager.equipmentSlotUpdate(player, getSlot(), PlayerUtils.getNearbyPlayers(player));
+        PacketManager.equipmentSlotUpdate(player, getSlot(), PacketManager.getViewers(player.getLocation()));
     }
 
     public EquipmentSlot getEquipSlot() {
