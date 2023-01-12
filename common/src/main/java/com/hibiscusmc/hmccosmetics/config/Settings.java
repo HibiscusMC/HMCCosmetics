@@ -26,6 +26,7 @@ public class Settings {
     private static final String DYE_MENU_PATH = "dye-menu";
     private static final String DYE_MENU_NAME = "title";
     private static final String DEBUG_ENABLE_PETH = "debug-mode";
+    private static final String TICK_PERIOD_PATH = "tick-period";
 
     private static String defaultMenu;
     private static String dyeMenuName;
@@ -38,6 +39,7 @@ public class Settings {
     private static boolean debugMode;
     private static int lookDownPitch;
     private static int viewDistance;
+    private static int tickPeriod;
     private static Vector balloonOffset;
 
     public static void load(ConfigurationNode source) {
@@ -63,6 +65,7 @@ public class Settings {
         requireEmptyPants = cosmeticSettings.node(REQUIRE_EMPTY_PANTS_PATH).getBoolean();
         requireEmptyBoots = cosmeticSettings.node(REQUIRE_EMPTY_BOOTS_PATH).getBoolean();
 
+        tickPeriod = cosmeticSettings.node(TICK_PERIOD_PATH).getInt(-1);
         lookDownPitch = cosmeticSettings.node(LOOK_DOWN_PITCH_PATH).getInt();
         viewDistance = cosmeticSettings.node(VIEW_DISTANCE_PATH).getInt();
 
@@ -169,5 +172,9 @@ public class Settings {
 
     public static boolean isDebugEnabled() {
         return debugMode;
+    }
+
+    public static int getTickPeriod() {
+        return tickPeriod;
     }
 }
