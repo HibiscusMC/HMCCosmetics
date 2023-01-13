@@ -8,6 +8,7 @@ import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
 import com.hibiscusmc.hmccosmetics.config.serializer.ItemSerializer;
 import com.hibiscusmc.hmccosmetics.config.serializer.LocationSerializer;
+import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
 import com.hibiscusmc.hmccosmetics.database.Database;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
@@ -25,6 +26,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.ConfigurationNode;
@@ -188,6 +190,12 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
             user.updateCosmetic();
         }
          */
+        for (Cosmetic cosmetic : Cosmetics.values()) {
+            if (cosmetic.getPermission() != null) {
+                if (getInstance().getServer().getPluginManager().getPermission(cosmetic.getPermission()) != null) continue;
+                getInstance().getServer().getPluginManager().addPermission(new Permission(cosmetic.getPermission()));
+            }
+        }
 
         getInstance().getLogger().info("Successfully Enabled HMCCosmetics");
         getInstance().getLogger().info(Cosmetics.values().size() + " Cosmetics Successfully Setup");
