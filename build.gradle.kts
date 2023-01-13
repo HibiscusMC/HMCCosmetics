@@ -26,7 +26,7 @@ allprojects {
         maven("https://jitpack.io")
 
         // ProtocolLib repo
-        //maven("https://repo.dmulloy2.net/repository/public/") ProtocolLib Repo, constantly down
+        maven("https://repo.dmulloy2.net/repository/public/") //ProtocolLib Repo, constantly down
         maven("https://repo.mineinabyss.com/releases/")
 
         // PlaceholderAPI

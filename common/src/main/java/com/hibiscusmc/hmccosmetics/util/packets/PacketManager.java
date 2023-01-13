@@ -20,8 +20,10 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Level;
 
 public class PacketManager extends BasePacket {
 
@@ -281,8 +283,18 @@ public class PacketManager extends BasePacket {
         WrappedGameProfile wrappedGameProfile = new WrappedGameProfile(uuid, name);
         WrappedSignedProperty skinData = PlayerUtils.getSkin(skinnedPlayer);
         if (skinData != null) wrappedGameProfile.getProperties().put("textures", skinData);
-        info.setData(List.of(new PlayerInfoData(wrappedGameProfile, 0, EnumWrappers.NativeGameMode.CREATIVE, WrappedChatComponent.fromText(name))));
+        if (!NMSHandlers.getVersion().contains("v1_19_R2")) {
+            info.setData(List.of(new PlayerInfoData(wrappedGameProfile, 0, EnumWrappers.NativeGameMode.CREATIVE, WrappedChatComponent.fromText(name))));
+        } else {
+            info.getHandle().getPlayerInfoDataLists().write(1, Collections.singletonList(new PlayerInfoData(
+                    wrappedGameProfile,
+                    0,
+                    EnumWrappers.NativeGameMode.CREATIVE,
+                    WrappedChatComponent.fromText(name)
+            )));
+        }
         for (final Player p : sendTo) sendPacket(p, info.getHandle());
+        return;
 
     }
 
@@ -330,16 +342,22 @@ public class PacketManager extends BasePacket {
             final UUID uuid,
             final List<Player> sendTo
     ) {
-        WrapperPlayServerPlayerInfo info = new WrapperPlayServerPlayerInfo();
-        info.setAction(EnumWrappers.PlayerInfoAction.REMOVE_PLAYER);
+        if (!NMSHandlers.getVersion().contains("v1_19_R2")) {
+            WrapperPlayServerPlayerInfo info = new WrapperPlayServerPlayerInfo();
+            info.setAction(EnumWrappers.PlayerInfoAction.REMOVE_PLAYER);
 
-        String name = "Mannequin-" + player.getEntityId();
-        while (name.length() > 16) {
-            name = name.substring(16);
+            String name = "Mannequin-" + player.getEntityId();
+            while (name.length() > 16) {
+                name = name.substring(16);
+            }
+
+            info.setData(List.of(new PlayerInfoData(new WrappedGameProfile(uuid, player.getName()), 0, EnumWrappers.NativeGameMode.CREATIVE, WrappedChatComponent.fromText(name))));
+            for (final Player p : sendTo) sendPacket(p, info.getHandle());
+            return;
         }
-
-        info.setData(List.of(new PlayerInfoData(new WrappedGameProfile(uuid, player.getName()), 0, EnumWrappers.NativeGameMode.CREATIVE, WrappedChatComponent.fromText(name))));
-        for (final Player p : sendTo) sendPacket(p, info.getHandle());
+        PacketContainer packet = new PacketContainer(PacketType.Play.Server.PLAYER_INFO_REMOVE);
+        packet.getUUIDLists().write(0, List.of(uuid));
+        for (final Player p : sendTo) sendPacket(p, packet);
     }
 
     public static void sendLeashPacket(

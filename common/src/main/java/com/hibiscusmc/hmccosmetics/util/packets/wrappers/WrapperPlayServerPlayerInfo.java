@@ -4,8 +4,10 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers.PlayerInfoAction;
 import com.comphenix.protocol.wrappers.PlayerInfoData;
+import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
 
 import java.util.List;
+import java.util.Set;
 
 public class WrapperPlayServerPlayerInfo extends AbstractPacket {
     public static final PacketType TYPE = PacketType.Play.Server.PLAYER_INFO;
@@ -24,7 +26,11 @@ public class WrapperPlayServerPlayerInfo extends AbstractPacket {
     }
 
     public void setAction(PlayerInfoAction value) {
-        handle.getPlayerInfoAction().write(0, value);
+        if (!NMSHandlers.getVersion().contains("v1_19_R2")) {
+            handle.getPlayerInfoAction().write(0, value);
+        } else {
+            handle.getPlayerInfoActions().write(0, Set.of(value));
+        }
     }
 
     public List<PlayerInfoData> getData() {
