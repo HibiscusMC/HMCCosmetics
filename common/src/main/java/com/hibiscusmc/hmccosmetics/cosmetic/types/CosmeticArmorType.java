@@ -23,6 +23,7 @@ public class CosmeticArmorType extends Cosmetic {
     @Override
     public void update(CosmeticUser user) {
         Player player = Bukkit.getPlayer(user.getUniqueId());
+        if (player == null) return;
         if (equipSlot.equals(EquipmentSlot.OFF_HAND)) {
             if (!player.getInventory().getItemInOffHand().getType().isAir()) return;
         }
