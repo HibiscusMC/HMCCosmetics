@@ -186,6 +186,16 @@ public class PlayerGameListener implements Listener {
     }
 
     @EventHandler
+    public void playerOffhandSwap(PlayerSwapHandItemsEvent event) {
+        CosmeticUser user = CosmeticUsers.getUser(event.getPlayer().getUniqueId());
+        if (user == null) return;
+        // Really need to look into optimization of this
+        Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
+            user.updateCosmetic(CosmeticSlot.OFFHAND);
+        }, 2);
+    }
+
+    @EventHandler
     public void onMainHandSwitch(PlayerItemHeldEvent event) {
         CosmeticUser user = CosmeticUsers.getUser(event.getPlayer());
         if (user == null) return;
