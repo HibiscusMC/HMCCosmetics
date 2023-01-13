@@ -17,16 +17,34 @@ allprojects {
 
     repositories {
         mavenCentral()
+
+        // Paper Repo
         maven("https://papermc.io/repo/repository/maven-public/")
         maven("https://oss.sonatype.org/content/repositories/snapshots")
+
+        // Jitpack
         maven("https://jitpack.io")
+
+        // ProtocolLib repo
         //maven("https://repo.dmulloy2.net/repository/public/") ProtocolLib Repo, constantly down
         maven("https://repo.mineinabyss.com/releases/")
+
+        // PlaceholderAPI
         maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
+
+        //Hikari
         maven("https://mvnrepository.com/artifact/com.zaxxer/HikariCP")
+
+        // Citizens
         maven("https://repo.citizensnpcs.co")
+
+        // Worldguard
         maven("https://maven.enginehub.org/repo/")
+
+        // Backup Oraxen repo
         maven("https://repo.skyslycer.de/")
+
+        // MythicMobs
         maven {
             url = uri("https://mvn.lumine.io/repository/maven-public")
             metadataSources {
@@ -135,43 +153,43 @@ bukkit {
     }
     permissions {
         register("hmccosmetics.cmd.default") {
-            default = BukkitPluginDescription.Permission.Default.TRUE;
+            default = BukkitPluginDescription.Permission.Default.TRUE
         }
         register("hmccosmetics.cmd.apply") {
-            default = BukkitPluginDescription.Permission.Default.TRUE;
+            default = BukkitPluginDescription.Permission.Default.TRUE
         }
         register("hmccosmetics.cmd.unapply") {
-            default = BukkitPluginDescription.Permission.Default.TRUE;
+            default = BukkitPluginDescription.Permission.Default.TRUE
         }
         register("hmccosmetics.cmd.dye") {
-            default = BukkitPluginDescription.Permission.Default.TRUE;
+            default = BukkitPluginDescription.Permission.Default.TRUE
         }
         register("hmccosmetics.cmd.wardrobe") {
-            default = BukkitPluginDescription.Permission.Default.TRUE;
+            default = BukkitPluginDescription.Permission.Default.TRUE
         }
         register("hmccosmetics.cmd.menu") {
-            default = BukkitPluginDescription.Permission.Default.TRUE;
+            default = BukkitPluginDescription.Permission.Default.TRUE
         }
         register("hmccosmetics.cmd.setlocation") {
-            default = BukkitPluginDescription.Permission.Default.OP;
+            default = BukkitPluginDescription.Permission.Default.OP
         }
         register("hmccosmetics.cmd.dataclear") {
-            default = BukkitPluginDescription.Permission.Default.OP;
+            default = BukkitPluginDescription.Permission.Default.OP
         }
         register("hmccosmetics.cmd.reload") {
-            default = BukkitPluginDescription.Permission.Default.OP;
+            default = BukkitPluginDescription.Permission.Default.OP
         }
         register("hmccosmetics.cmd.apply.other") {
-            default = BukkitPluginDescription.Permission.Default.OP;
+            default = BukkitPluginDescription.Permission.Default.OP
         }
         register("hmccosmetics.cmd.unapply.other") {
-            default = BukkitPluginDescription.Permission.Default.OP;
+            default = BukkitPluginDescription.Permission.Default.OP
         }
         register("hmccosmetics.cmd.wardrobe.other") {
-            default = BukkitPluginDescription.Permission.Default.OP;
+            default = BukkitPluginDescription.Permission.Default.OP
         }
         register("hmccosmetics.cmd.menu.other") {
-            default = BukkitPluginDescription.Permission.Default.OP;
+            default = BukkitPluginDescription.Permission.Default.OP
         }
     }
 }

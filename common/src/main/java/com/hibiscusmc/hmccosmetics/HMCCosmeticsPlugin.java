@@ -47,7 +47,7 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
         // Plugin startup logic
         instance = this;
         // bstats https://bstats.org/plugin/bukkit/HMCCosmetics/13873
-        final Metrics metrics = new Metrics(this, pluginId);
+        Metrics metrics = new Metrics(this, pluginId);
 
         // NMS version check
         if (!NMSHandlers.getHandler().getSupported()) {

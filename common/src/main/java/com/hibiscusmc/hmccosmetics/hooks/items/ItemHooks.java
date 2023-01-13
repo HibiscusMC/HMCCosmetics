@@ -12,6 +12,7 @@ public class ItemHooks {
     private static HashMap<String, ItemHook> itemHooks = new HashMap<>();
     private static OraxenHook ORAXEN_HOOK = new OraxenHook();
     private static ItemAdderHook ITEMADDER_HOOK = new ItemAdderHook();
+    private static MythicHook MYTHIC_HOOK = new MythicHook();
     private static HMCCosmeticsHook HMCCOSMETIC_HOOK = new HMCCosmeticsHook();
 
     public static ItemHook getItemHook(String id) {
