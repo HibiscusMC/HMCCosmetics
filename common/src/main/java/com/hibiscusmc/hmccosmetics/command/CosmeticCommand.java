@@ -240,6 +240,10 @@ public class CosmeticCommand implements CommandExecutor {
                     return true;
                 }
 
+                if (!EnumUtils.isValidEnum(CosmeticSlot.class, args[1])) {
+                    MessagesUtil.sendMessage(player, "invalid-slot");
+                    return true;
+                }
                 CosmeticSlot slot = CosmeticSlot.valueOf(args[1]);
                 Cosmetic cosmetic = user.getCosmetic(slot);
 
