@@ -1,5 +1,5 @@
-prefix: "<white>HMCCosmetics > "
-reloaded: "%prefix% <gradient:#00ff87:#60efff>Config files reloaded!"
+prefix: "<gradient:#f368ec:#f39cef>HMCCosmetics <GRAY>»<WHITE>"
+reloaded: "%prefix% <gradient:#6D9DC5:#45CDE9>Config files reloaded!"
 not-enough-args: "%prefix% <red>Improper amount of arguments"
 no-permission: "%prefix% <red>No Permission!"
 no-cosmetic-permission: "%prefix% <red>You do not have permission for this cosmetic!"
