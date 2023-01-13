@@ -36,6 +36,8 @@ public class CosmeticCommandTabComplete implements TabCompleter {
             if (hasPermission(sender, "hmccosmetics.cmd.dataclear")) completions.add("dataclear");
             if (hasPermission(sender, "hmccosmetics.cmd.dye")) completions.add("dye");
             if (hasPermission(sender, "hmccosmetics.cmd.setlocation")) completions.add("setlocation");
+            if (hasPermission(sender, "hmccosmetics.cmd.hide")) completions.add("hide");
+            if (hasPermission(sender, "hmccosmetics.cmd.show")) completions.add("show");
 
             StringUtil.copyPartialMatches(args[0], completions, finalCompletitons);
         }
@@ -59,7 +61,7 @@ public class CosmeticCommandTabComplete implements TabCompleter {
                         if (menu.canOpen(user.getPlayer())) completions.add(menu.getId());
                     }
                 }
-                case "dataclear", "wardrobe" -> {
+                case "dataclear", "wardrobe", "hide", "show" -> {
                     for (Player player : Bukkit.getOnlinePlayers()) {
                         completions.add(player.getName());
                     }

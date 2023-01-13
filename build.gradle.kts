@@ -185,6 +185,18 @@ bukkit {
         register("hmccosmetics.cmd.unapply.other") {
             default = BukkitPluginDescription.Permission.Default.OP
         }
+        register("hmccosmetics.cmd.hide") {
+            default = BukkitPluginDescription.Permission.Default.OP
+        }
+        register("hmccosmetics.cmd.show") {
+            default = BukkitPluginDescription.Permission.Default.OP
+        }
+        register("hmccosmetics.cmd.hide.other") {
+            default = BukkitPluginDescription.Permission.Default.OP
+        }
+        register("hmccosmetics.cmd.show.other") {
+            default = BukkitPluginDescription.Permission.Default.OP
+        }
         register("hmccosmetics.cmd.wardrobe.other") {
             default = BukkitPluginDescription.Permission.Default.OP
         }

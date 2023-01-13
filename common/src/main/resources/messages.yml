@@ -14,6 +14,8 @@ set-wardrobe-leaving: "%prefix% <gradient:#6D9DC5:#45CDE9>Set new wardrobe leavi
 
 equip-cosmetic: "%prefix% <gradient:#6D9DC5:#45CDE9>You have equipped <cosmetic>!"
 unequip-cosmetic: "%prefix% <gradient:#6D9DC5:#45CDE9>You have unequipped <cosmetic>!"
+hide-cosmetic: "%prefix% <gradient:#6D9DC5:#45CDE9>Hidden cosmetics"
+show-cosmetic: "%prefix% <gradient:#6D9DC5:#45CDE9>Revealed cosmetics!"
 
 invalid-slot: "%prefix% <red>Invalid cosmetic slot!"
 invalid-player: "%prefix% <red>Invalid Player!"
