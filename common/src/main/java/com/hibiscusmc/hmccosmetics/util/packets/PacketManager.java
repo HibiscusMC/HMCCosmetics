@@ -3,6 +3,7 @@ package com.hibiscusmc.hmccosmetics.util.packets;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.*;
+import com.google.common.collect.Lists;
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
@@ -19,10 +20,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Level;
 
 public class PacketManager extends BasePacket {
@@ -120,9 +118,16 @@ public class PacketManager extends BasePacket {
         packet.getModifier().writeDefaults();
         packet.getIntegers().write(0, entityId);
         WrappedDataWatcher wrapper = new WrappedDataWatcher();
-        wrapper.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(0, WrappedDataWatcher.Registry.get(Byte.class)), (byte) 0x20);
-        packet.getWatchableCollectionModifier().write(0, wrapper.getWatchableObjects());
+        if (!NMSHandlers.getVersion().contains("v1_19_R2")) {
+            wrapper.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(0, WrappedDataWatcher.Registry.get(Byte.class)), (byte) 0x20);
+            packet.getWatchableCollectionModifier().write(0, wrapper.getWatchableObjects());
+        } else {
+            final List<WrappedDataValue> wrappedDataValueList = Lists.newArrayList();
+            wrappedDataValueList.add(new WrappedDataValue(0, WrappedDataWatcher.Registry.get(Byte.class), (byte) 0x20));
+            packet.getDataValueCollectionModifier().write(0, wrappedDataValueList);
+        }
         for (Player p : sendTo) sendPacket(p, packet);
+
     }
 
     public static void sendLookPacket(
