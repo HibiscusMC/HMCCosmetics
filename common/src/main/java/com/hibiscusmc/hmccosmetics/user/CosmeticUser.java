@@ -71,6 +71,8 @@ public class CosmeticUser {
 
     public void destroy() {
         Bukkit.getScheduler().cancelTask(taskId);
+        despawnBackpack();
+        despawnBalloon();
     }
 
     public UUID getUniqueId() {
@@ -259,13 +261,10 @@ public class CosmeticUser {
     public void spawnBackpack(CosmeticBackpackType cosmeticBackpackType) {
         MessagesUtil.sendDebugMessages("spawnBackpack Bukkit - Start");
         Player player = Bukkit.getPlayer(getUniqueId());
-        List<Player> sentTo = PlayerUtils.getNearbyPlayers(player.getLocation());
 
         if (this.invisibleArmorstand != null) return;
 
         this.invisibleArmorstand = (ArmorStand) NMSHandlers.getHandler().spawnBackpack(this, cosmeticBackpackType);
-
-        //player.addPassenger(invisibleArmorstand);
 
         MessagesUtil.sendDebugMessages("spawnBackpack Bukkit - Finish");
     }
@@ -350,8 +349,6 @@ public class CosmeticUser {
     public void hideBackpack() {
         if (hideBackpack == true) return;
         if (hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
-            //CosmeticBackpackType cosmeticBackpackType = (CosmeticBackpackType) getCosmetic(CosmeticSlot.BACKPACK);
-            getPlayer().removePassenger(invisibleArmorstand);
             invisibleArmorstand.getEquipment().clear();
             hideBackpack = true;
         }
@@ -361,7 +358,6 @@ public class CosmeticUser {
         if (hideBackpack == false) return;
         if (hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
             CosmeticBackpackType cosmeticBackpackType = (CosmeticBackpackType) getCosmetic(CosmeticSlot.BACKPACK);
-            getPlayer().addPassenger(invisibleArmorstand);
             ItemStack item = getUserCosmeticItem(cosmeticBackpackType);
             invisibleArmorstand.getEquipment().setHelmet(item);
             hideBackpack = false;
@@ -383,7 +379,6 @@ public class CosmeticUser {
             PacketManager.sendLeashPacket(getBalloonEntity().getPufferfishBalloonId(), -1, viewer);
         }
         if (hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
-            //CosmeticBackpackType cosmeticBackpackType = (CosmeticBackpackType) getCosmetic(CosmeticSlot.BACKPACK);
             invisibleArmorstand.getEquipment().clear();
         }
         updateCosmetic();
