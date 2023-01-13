@@ -27,10 +27,10 @@ public class NMSHandlers {
         String packageVersion = packageName.substring(packageName.lastIndexOf('.') + 1);
 
         for (String version : SUPPORTED_VERSION) {
-            MessagesUtil.sendDebugMessages(packageVersion + " has been detected.", Level.SEVERE);
             if (!version.contains(packageVersion)) {
                 continue;
             }
+            MessagesUtil.sendDebugMessages(packageVersion + " has been detected.", Level.SEVERE);
             try {
                 //Class.forName("org.bukkit.craftbukkit." + version + ".block.CraftBlock").getName();
                 handler = (NMSHandler) Class.forName("com.hibiscusmc.hmccosmetics.nms." + packageVersion + ".NMSHandler").getConstructor().newInstance();
