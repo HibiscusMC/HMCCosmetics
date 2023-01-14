@@ -208,6 +208,9 @@ bukkit {
         register("hmccosmetics.cmd.menu.other") {
             default = BukkitPluginDescription.Permission.Default.OP
         }
+        register("hmccosmetics.unapplydeath.bypass") {
+            default = BukkitPluginDescription.Permission.Default.OP
+        }
     }
 }
 

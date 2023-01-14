@@ -28,6 +28,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
@@ -206,6 +207,16 @@ public class PlayerGameListener implements Listener {
             user.updateCosmetic(CosmeticSlot.MAINHAND);
             user.updateCosmetic(CosmeticSlot.OFFHAND);
         }, 2);
+    }
+
+    @EventHandler
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        CosmeticUser user = CosmeticUsers.getUser(event.getEntity());
+        if (user == null) return;
+
+        if (Settings.getUnapplyOnDeath() && !event.getEntity().hasPermission("hmccosmetics.unapplydeath.bypass")) {
+            user.removeCosmetics();
+        }
     }
 
     private void registerInventoryClickListener() {

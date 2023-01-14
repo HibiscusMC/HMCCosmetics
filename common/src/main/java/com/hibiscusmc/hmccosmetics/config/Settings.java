@@ -27,6 +27,7 @@ public class Settings {
     private static final String DYE_MENU_NAME = "title";
     private static final String DEBUG_ENABLE_PETH = "debug-mode";
     private static final String TICK_PERIOD_PATH = "tick-period";
+    private static final String UNAPPLY_DEATH_PATH = "unapply-on-death";
 
     private static String defaultMenu;
     private static String dyeMenuName;
@@ -37,6 +38,7 @@ public class Settings {
     private static boolean requireEmptyPants;
     private static boolean requireEmptyBoots;
     private static boolean debugMode;
+    private static boolean unapplyOnDeath;
     private static int lookDownPitch;
     private static int viewDistance;
     private static int tickPeriod;
@@ -64,6 +66,7 @@ public class Settings {
         requireEmptyChestPlate = cosmeticSettings.node(REQUIRE_EMPTY_CHEST_PLATE_PATH).getBoolean();
         requireEmptyPants = cosmeticSettings.node(REQUIRE_EMPTY_PANTS_PATH).getBoolean();
         requireEmptyBoots = cosmeticSettings.node(REQUIRE_EMPTY_BOOTS_PATH).getBoolean();
+        unapplyOnDeath = cosmeticSettings.node(UNAPPLY_DEATH_PATH).getBoolean(false);
 
         tickPeriod = cosmeticSettings.node(TICK_PERIOD_PATH).getInt(-1);
         lookDownPitch = cosmeticSettings.node(LOOK_DOWN_PITCH_PATH).getInt();
@@ -176,5 +179,8 @@ public class Settings {
 
     public static int getTickPeriod() {
         return tickPeriod;
+    }
+    public static boolean getUnapplyOnDeath() {
+        return unapplyOnDeath;
     }
 }

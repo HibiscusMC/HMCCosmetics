@@ -20,6 +20,8 @@ cosmetic-settings:
   tick-period: 20 # In ticks, determines how many times a player cosmetics should be updated. -1 to disable.
   # Ticking periods is something that ensures new players near a player get the packets to actually apply to the user.
 
+  unapply-on-death: false # If when a player dies, their cosmetics should be unapplied. If this is true, use hmccosmetics.unapplydeath.bypass to bypass
+
   # view distance in blocks that other players will see the backpack cosmetic
   # setting this to lower than the server player view distance should fix the
   # bug where players see random backpacks. Put -1 to ignore and send packets to everyone.

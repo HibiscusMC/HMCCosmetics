@@ -136,6 +136,13 @@ public class CosmeticUser {
         addPlayerCosmetic(cosmetic);
     }
 
+    public void removeCosmetics() {
+        for (Cosmetic cosmetic : getCosmetic()) {
+            removeCosmeticSlot(cosmetic.getSlot());
+        }
+    }
+
+
     public void removeCosmeticSlot(CosmeticSlot slot) {
         // API
         PlayerCosmeticRemoveEvent event = new PlayerCosmeticRemoveEvent(this, getCosmetic(slot));
