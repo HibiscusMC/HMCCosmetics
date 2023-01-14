@@ -353,6 +353,21 @@ public class CosmeticCommand implements CommandExecutor {
                 user.showCosmetics();
                 return true;
             }
+            case ("debug") -> {
+                if (!sender.hasPermission("hmccosmetics.cmd.debug")) {
+                    MessagesUtil.sendMessage(sender, "no-permission");
+                    return true;
+                }
+
+                if (Settings.getDebugMode()) {
+                    Settings.setDebugMode(false);
+                    MessagesUtil.sendMessage(sender, "debug-disabled");
+                } else {
+                    Settings.setDebugMode(true);
+                    MessagesUtil.sendMessage(sender, "debug-enabled");
+                }
+            }
+
         }
         return true;
     }

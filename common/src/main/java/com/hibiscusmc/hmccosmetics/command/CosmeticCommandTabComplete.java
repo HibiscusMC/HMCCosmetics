@@ -38,6 +38,7 @@ public class CosmeticCommandTabComplete implements TabCompleter {
             if (hasPermission(sender, "hmccosmetics.cmd.setlocation")) completions.add("setlocation");
             if (hasPermission(sender, "hmccosmetics.cmd.hide")) completions.add("hide");
             if (hasPermission(sender, "hmccosmetics.cmd.show")) completions.add("show");
+            if (hasPermission(sender, "hmccosmetics.cmd.debug")) completions.add("debug");
 
             StringUtil.copyPartialMatches(args[0], completions, finalCompletitons);
         }

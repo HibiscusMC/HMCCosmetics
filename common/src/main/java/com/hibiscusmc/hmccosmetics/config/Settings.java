@@ -183,4 +183,17 @@ public class Settings {
     public static boolean getUnapplyOnDeath() {
         return unapplyOnDeath;
     }
+
+    public static boolean getDebugMode() {
+        return debugMode;
+    }
+    public static void setDebugMode(boolean newSetting) {
+        debugMode = newSetting;
+
+        HMCCosmeticsPlugin plugin = HMCCosmeticsPlugin.getInstance();
+
+        plugin.getConfig().set("debug-mode", newSetting);
+
+        plugin.saveConfig();
+    }
 }
