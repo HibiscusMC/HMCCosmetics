@@ -121,7 +121,7 @@ tasks {
         relocate("com.zaxxer.hikaricp", "com.hisbiscusmc.hmccosmetics.hikaricp")
         relocate("com.j256.ormlite", "com.hisbiscusmc.hmccosmetics.ormlite")
         relocate("com.jeff_media.updatechecker", "com.hisbiscusmc.hmccosmetics.updatechecker")
-        archiveFileName.set("HMCCosmeticsRemapped.jar")
+        archiveFileName.set("HMCCosmeticsRemapped-${project.version}.jar")
 
         dependencies {
             exclude(dependency("org.yaml:snakeyaml"))
