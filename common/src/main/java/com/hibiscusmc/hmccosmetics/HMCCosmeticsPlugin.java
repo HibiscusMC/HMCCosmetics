@@ -21,6 +21,8 @@ import com.hibiscusmc.hmccosmetics.listener.PlayerGameListener;
 import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.TranslationUtil;
+import com.jeff_media.updatechecker.UpdateCheckSource;
+import com.jeff_media.updatechecker.UpdateChecker;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -57,6 +59,12 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
+
+        // Update Checker
+        new UpdateChecker(this, UpdateCheckSource.POLYMART, "1879")
+                .setDownloadLink("https://polymart.org/resource/1879")
+                .checkEveryXHours(24)
+                .checkNow();
 
         // File setup
         if (!getDataFolder().exists()) {

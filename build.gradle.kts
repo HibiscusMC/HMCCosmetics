@@ -51,6 +51,9 @@ allprojects {
                 artifact()
             }
         }
+
+        // UpdateChecker
+        maven("https://hub.jeff-media.com/nexus/repository/jeff-media-public/")
     }
 
     dependencies {
@@ -82,6 +85,7 @@ dependencies {
     implementation("dev.triumphteam:triumph-gui:3.1.3")
     implementation("org.spongepowered:configurate-yaml:4.1.2")
     implementation("org.bstats:bstats-bukkit:3.0.0")
+    implementation("com.jeff_media:SpigotUpdateChecker:3.0.0")
 }
 
 tasks {
@@ -116,6 +120,7 @@ tasks {
         relocate("org.bstats", "com.hisbiscusmc.hmccosmetics.bstats")
         relocate("com.zaxxer.hikaricp", "com.hisbiscusmc.hmccosmetics.hikaricp")
         relocate("com.j256.ormlite", "com.hisbiscusmc.hmccosmetics.ormlite")
+        relocate("com.jeff_media.updatechecker", "com.hisbiscusmc.hmccosmetics.updatechecker")
         archiveFileName.set("HMCCosmeticsRemapped.jar")
 
         dependencies {
