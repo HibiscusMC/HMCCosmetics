@@ -3,7 +3,6 @@ package com.hibiscusmc.hmccosmetics.nms.v1_19_R1;
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.ambient.Bat;
 import net.minecraft.world.entity.animal.Cod;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;

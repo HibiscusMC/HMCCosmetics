@@ -4,9 +4,6 @@ import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
 import org.bukkit.Color;
 import org.bukkit.GameMode;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 public class ServerUtils {
 
     private static String COLOR_CHAR = "&";
