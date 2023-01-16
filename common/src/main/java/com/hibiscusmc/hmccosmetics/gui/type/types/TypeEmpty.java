@@ -3,6 +3,7 @@ package com.hibiscusmc.hmccosmetics.gui.type.types;
 import com.hibiscusmc.hmccosmetics.gui.action.Actions;
 import com.hibiscusmc.hmccosmetics.gui.type.Type;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
+import org.bukkit.event.inventory.ClickType;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 
@@ -20,7 +21,7 @@ public class TypeEmpty extends Type {
 
     // This is the code that's run when the item is clicked.
     @Override
-    public void run(CosmeticUser user, ConfigurationNode config) {
+    public void run(CosmeticUser user, ConfigurationNode config, ClickType clickType) {
         List<String> actionStrings = new ArrayList<>(); // List where we keep the actions the server will execute.
         ConfigurationNode actionConfig = config.node("actions"); // Configuration node that actions are under.
 
@@ -30,6 +31,15 @@ public class TypeEmpty extends Type {
             // We add that to a List of Strings, before running those actions through the server. This is not the area where we deal
             // with actions, mearly what should be done for each item.
             if (!actionConfig.node("any").virtual()) actionStrings.addAll(actionConfig.node("any").getList(String.class));
+
+            if (clickType != null) {
+                if (clickType.isLeftClick()) {
+                    if (!actionConfig.node("left-click").virtual()) actionStrings.addAll(actionConfig.node("left-click").getList(String.class));
+                }
+                if (clickType.isRightClick()) {
+                    if (!actionConfig.node("right-click").virtual()) actionStrings.addAll(actionConfig.node("right-click").getList(String.class));
+                }
+            }
 
             // We run the actions once we got the raw strings from the config.
             Actions.runActions(user, actionStrings);

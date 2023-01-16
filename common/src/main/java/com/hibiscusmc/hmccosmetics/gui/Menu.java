@@ -17,6 +17,7 @@ import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.spongepowered.configurate.ConfigurationNode;
@@ -150,7 +151,8 @@ public class Menu {
 
             Type finalType = type;
             guiItem.setAction(event -> {
-                if (finalType != null) finalType.run(user, config);
+                final ClickType clickType = event.getClick();
+                if (finalType != null) finalType.run(user, config, clickType);
 
                 for (int i : slots) {
                     gui.updateItem(i, updateLore(player, originalItem.clone()));

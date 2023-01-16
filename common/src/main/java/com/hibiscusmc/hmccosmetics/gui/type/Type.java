@@ -1,6 +1,7 @@
 package com.hibiscusmc.hmccosmetics.gui.type;
 
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.spongepowered.configurate.ConfigurationNode;
 
@@ -18,6 +19,9 @@ public class Type {
     }
 
     public void run(CosmeticUser user, ConfigurationNode config) {
+        run(user, config, null);
+    }
+    public void run(CosmeticUser user, ConfigurationNode config, ClickType clickType) {
         // Override
     }
 

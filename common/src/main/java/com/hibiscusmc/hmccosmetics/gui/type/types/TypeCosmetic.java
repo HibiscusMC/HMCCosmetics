@@ -7,6 +7,7 @@ import com.hibiscusmc.hmccosmetics.gui.special.DyeMenu;
 import com.hibiscusmc.hmccosmetics.gui.type.Type;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
+import org.bukkit.event.inventory.ClickType;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 
@@ -20,7 +21,7 @@ public class TypeCosmetic extends Type {
     }
 
     @Override
-    public void run(CosmeticUser user, ConfigurationNode config) {
+    public void run(CosmeticUser user, ConfigurationNode config, ClickType clickType) {
         if (config.node("cosmetic").virtual()) return;
         String cosmeticName = config.node("cosmetic").getString();
         Cosmetic cosmetic = Cosmetics.getCosmetic(cosmeticName);
@@ -39,6 +40,15 @@ public class TypeCosmetic extends Type {
 
         try {
             if (!actionConfig.node("any").virtual()) actionStrings.addAll(actionConfig.node("any").getList(String.class));
+
+            if (clickType != null) {
+                if (clickType.isLeftClick()) {
+                    if (!actionConfig.node("left-click").virtual()) actionStrings.addAll(actionConfig.node("left-click").getList(String.class));
+                }
+                if (clickType.isRightClick()) {
+                    if (!actionConfig.node("right-click").virtual()) actionStrings.addAll(actionConfig.node("right-click").getList(String.class));
+                }
+            }
 
             if (user.getCosmetic(cosmetic.getSlot()) == cosmetic) {
                 if (!actionConfig.node("on-unequip").virtual()) actionStrings.addAll(actionConfig.node("on-unequip").getList(String.class));
@@ -61,7 +71,6 @@ public class TypeCosmetic extends Type {
             throw new RuntimeException(e);
         }
 
-        //user.toggleCosmetic(cosmetic);
         user.updateCosmetic(cosmetic.getSlot());
     }
 }
