@@ -221,3 +221,16 @@ java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(17
     ))
 }
+
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            groupId = "${project.group}"
+            artifactId = "${project.name}"
+            version = "${project.version}"
+
+            from(components["java"])
+        }
+    }
+}
