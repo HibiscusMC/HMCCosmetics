@@ -100,22 +100,22 @@ public class BalloonEntity {
     }
 
     public UUID getModelUnqiueId() {
-        return modelEntity.getUniqueId();
+        return getModelEntity().getUniqueId();
     }
 
     public int getModelId() {
-        return modelEntity.getEntityId();
+        return getModelEntity().getEntityId();
     }
 
     public Location getLocation() {
-        return this.modelEntity.getLocation();
+        return this.getModelEntity().getLocation();
     }
 
     public void setLocation(Location location) {
-        this.modelEntity.teleport(location);
+        this.getModelEntity().teleport(location);
     }
 
     public void setVelocity(Vector vector) {
-        this.modelEntity.setVelocity(vector);
+        this.getModelEntity().setVelocity(vector);
     }
 }
