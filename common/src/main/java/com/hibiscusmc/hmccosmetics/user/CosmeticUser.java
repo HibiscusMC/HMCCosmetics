@@ -135,8 +135,9 @@ public class CosmeticUser {
     }
 
     public void removeCosmetics() {
-        for (Cosmetic cosmetic : getCosmetic()) {
-            removeCosmeticSlot(cosmetic.getSlot());
+        // Small optimization could be made, but Concurrent modification prevents us from both getting and removing
+        for (CosmeticSlot slot : CosmeticSlot.values()) {
+            removeCosmeticSlot(slot);
         }
     }
 
