@@ -21,7 +21,9 @@ public class ItemAdderHook extends ItemHook implements Listener {
     @Override
     public ItemStack get(String itemid) {
         if (enabled) {
-            return CustomStack.getInstance(itemid).getItemStack();
+            CustomStack stack = CustomStack.getInstance(itemid);
+            if (stack == null) return null;
+            return stack.getItemStack();
         } else {
             return new ItemStack(Material.AIR);
         }
