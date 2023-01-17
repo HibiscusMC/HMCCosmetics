@@ -306,6 +306,20 @@ public class CosmeticUser {
         this.invisibleArmorstand = null;
     }
 
+    public void respawnBackpack() {
+        if (!hasCosmeticInSlot(CosmeticSlot.BACKPACK)) return;
+        final Cosmetic cosmetic = getCosmetic(CosmeticSlot.BACKPACK);
+        despawnBackpack();
+        spawnBackpack((CosmeticBackpackType) cosmetic);
+    }
+
+    public void respawnBalloon() {
+        if (!hasCosmeticInSlot(CosmeticSlot.BALLOON)) return;
+        final Cosmetic cosmetic = getCosmetic(CosmeticSlot.BALLOON);
+        despawnBalloon();
+        spawnBalloon((CosmeticBalloonType) cosmetic);
+    }
+
     public void removeArmor(CosmeticSlot slot) {
         PacketManager.equipmentSlotUpdate(getPlayer().getEntityId(), this, slot, PlayerUtils.getNearbyPlayers(getPlayer()));
     }

@@ -62,6 +62,8 @@ public class Wardrobe {
 
         VIEWER.hidePlayer();
         List<Player> viewer = List.of(player);
+        List<Player> outsideViewers = PacketManager.getViewers(viewingLocation);
+        outsideViewers.remove(player);
 
         MessagesUtil.sendMessage(player, "opened-wardrobe");
 
@@ -141,6 +143,8 @@ public class Wardrobe {
         Player player = VIEWER.getPlayer();
 
         List<Player> viewer = List.of(player);
+        List<Player> outsideViewers = PacketManager.getViewers(viewingLocation);
+        outsideViewers.remove(player);
 
         MessagesUtil.sendMessage(player, "closed-wardrobe");
 
@@ -164,11 +168,13 @@ public class Wardrobe {
             VIEWER.showPlayer();
 
             if (VIEWER.hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
-                PacketManager.ridingMountPacket(player.getEntityId(), VIEWER.getBackpackEntity().getEntityId(), viewer);
+                VIEWER.respawnBackpack();
+                //PacketManager.ridingMountPacket(player.getEntityId(), VIEWER.getBackpackEntity().getEntityId(), viewer);
             }
 
             if (VIEWER.hasCosmeticInSlot(CosmeticSlot.BALLOON)) {
-                PacketManager.sendLeashPacket(VIEWER.getBalloonEntity().getPufferfishBalloonId(), player.getEntityId(), viewer);
+                VIEWER.respawnBalloon();
+                //PacketManager.sendLeashPacket(VIEWER.getBalloonEntity().getPufferfishBalloonId(), player.getEntityId(), viewer);
             }
 
             if (exitLocation == null) {
@@ -217,13 +223,15 @@ public class Wardrobe {
                 }
                 MessagesUtil.sendDebugMessages("Update ");
                 List<Player> viewer = List.of(VIEWER.getPlayer());
+                List<Player> outsideViewers = PacketManager.getViewers(viewingLocation);
+                outsideViewers.remove(VIEWER.getPlayer());
 
                 Location location = WardrobeSettings.getWardrobeLocation().clone();
                 int yaw = data.get();
                 location.setYaw(yaw);
 
                 PacketManager.sendLookPacket(NPC_ID, location, viewer);
-                //VIEWER.updateCosmetic();
+                VIEWER.hidePlayer();
                 int rotationSpeed = WardrobeSettings.getRotationSpeed();
                 location.setYaw(getNextYaw(yaw - 30, rotationSpeed));
                 PacketManager.sendRotationPacket(NPC_ID, location, true, viewer);
@@ -238,11 +246,14 @@ public class Wardrobe {
                     PacketManager.sendTeleportPacket(VIEWER.getArmorstandId(), location, false, viewer);
                     PacketManager.ridingMountPacket(NPC_ID, VIEWER.getBackpackEntity().getEntityId(), viewer);
                     VIEWER.getBackpackEntity().setRotation(nextyaw, 0);
+                    PacketManager.sendEntityDestroyPacket(VIEWER.getArmorstandId(), outsideViewers);
                 }
 
                 if (VIEWER.hasCosmeticInSlot(CosmeticSlot.BALLOON)) {
                     PacketManager.sendTeleportPacket(VIEWER.getBalloonEntity().getPufferfishBalloonId(), WardrobeSettings.getWardrobeLocation().add(Settings.getBalloonOffset()), false, viewer);
                     VIEWER.getBalloonEntity().getModelEntity().teleport(WardrobeSettings.getWardrobeLocation().add(Settings.getBalloonOffset()));
+                    PacketManager.sendLeashPacket(VIEWER.getBalloonEntity().getPufferfishBalloonId(), -1, outsideViewers);
+                    PacketManager.sendEntityDestroyPacket(VIEWER.getBalloonEntity().getModelId(), outsideViewers);
                     //PacketManager.sendLeashPacket(VIEWER.getBalloonEntity().getModelId(), NPC_ID, viewer); // Pufferfish goes away for some reason?
                 }
 
