@@ -17,6 +17,7 @@ public class InvisibleArmorstand extends ArmorStand {
         setInvisible(true);
         setInvulnerable(true);
         setMarker(true);
+        setSilent(true);
         getBukkitLivingEntity().setCollidable(false);
         persist = false;
     }
