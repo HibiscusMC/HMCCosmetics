@@ -39,15 +39,18 @@ public class Wardrobe {
     private Location exitLocation;
     private BossBar bossBar;
     private boolean active;
+    private WardrobeStatus wardrobeStatus;
 
     public Wardrobe(CosmeticUser user) {
         NPC_ID = NMSHandlers.getHandler().getNextEntityId();
         ARMORSTAND_ID = NMSHandlers.getHandler().getNextEntityId();
         WARDROBE_UUID = UUID.randomUUID();
         VIEWER = user;
+        wardrobeStatus = WardrobeStatus.SETUP;
     }
 
     public void start() {
+        setWardrobeStatus(WardrobeStatus.STARTING);
         Player player = VIEWER.getPlayer();
 
         this.originalGamemode = player.getGameMode();
@@ -121,6 +124,7 @@ public class Wardrobe {
 
             this.active = true;
             update();
+            setWardrobeStatus(WardrobeStatus.RUNNING);
         };
 
 
@@ -140,6 +144,7 @@ public class Wardrobe {
     }
 
     public void end() {
+        setWardrobeStatus(WardrobeStatus.STOPPING);
         Player player = VIEWER.getPlayer();
 
         List<Player> viewer = List.of(player);
@@ -195,19 +200,7 @@ public class Wardrobe {
 
             VIEWER.updateCosmetic();
         };
-
-        if (WardrobeSettings.isEnabledTransition()) {
-            MessagesUtil.sendTitle(
-                    VIEWER.getPlayer(),
-                    WardrobeSettings.getTransitionText(),
-                    WardrobeSettings.getTransitionFadeIn(),
-                    WardrobeSettings.getTransitionStay(),
-                    WardrobeSettings.getTransitionFadeOut()
-            );
-            Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), run, WardrobeSettings.getTransitionDelay());
-        } else {
-            run.run();
-        }
+        run.run();
     }
 
     public void update() {
@@ -277,5 +270,20 @@ public class Wardrobe {
 
     public int getArmorstandId() {
         return ARMORSTAND_ID;
+    }
+
+    public WardrobeStatus getWardrobeStatus() {
+        return wardrobeStatus;
+    }
+
+    public void setWardrobeStatus(WardrobeStatus status) {
+        this.wardrobeStatus = status;
+    }
+
+    public enum WardrobeStatus {
+        SETUP,
+        STARTING,
+        RUNNING,
+        STOPPING,
     }
 }

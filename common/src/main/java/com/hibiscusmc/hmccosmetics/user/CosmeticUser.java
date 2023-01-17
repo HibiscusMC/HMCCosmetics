@@ -246,9 +246,25 @@ public class CosmeticUser {
         if (event.isCancelled()) {
             return;
         }
+        if (!getWardrobe().getWardrobeStatus().equals(Wardrobe.WardrobeStatus.RUNNING)) return;
 
-        wardrobe.end();
-        wardrobe = null;
+        getWardrobe().setWardrobeStatus(Wardrobe.WardrobeStatus.STOPPING);
+
+        if (WardrobeSettings.isEnabledTransition()) {
+            MessagesUtil.sendTitle(
+                    getPlayer(),
+                    WardrobeSettings.getTransitionText(),
+                    WardrobeSettings.getTransitionFadeIn(),
+                    WardrobeSettings.getTransitionStay(),
+                    WardrobeSettings.getTransitionFadeOut()
+            );
+            Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
+                wardrobe.end();
+                wardrobe = null;
+            }, WardrobeSettings.getTransitionDelay());
+        } else {
+
+        }
     }
 
     public boolean isInWardrobe() {
