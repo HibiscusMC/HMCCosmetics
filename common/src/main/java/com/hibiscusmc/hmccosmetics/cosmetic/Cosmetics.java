@@ -2,11 +2,13 @@ package com.hibiscusmc.hmccosmetics.cosmetic;
 
 import com.google.common.collect.HashBiMap;
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
+import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticArmorType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBackpackType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticMainhandType;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
+import org.apache.commons.lang3.EnumUtils;
 import org.spongepowered.configurate.CommentedConfigurationNode;
 import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.ConfigurationNode;
@@ -14,6 +16,7 @@ import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
 import java.io.File;
 import java.util.Set;
+import java.util.logging.Level;
 
 public class Cosmetics {
 
@@ -78,23 +81,27 @@ public class Cosmetics {
 
     private static void setupCosmetics(CommentedConfigurationNode config) {
         for (ConfigurationNode cosmeticConfig : config.childrenMap().values()) {
-            String id = cosmeticConfig.key().toString();
-            MessagesUtil.sendDebugMessages("Attempting to add " + id);
-            switch (CosmeticSlot.valueOf(cosmeticConfig.node("slot").getString())) {
-                case BALLOON -> {
-                    new CosmeticBalloonType(id, cosmeticConfig);
+            try {
+                String id = cosmeticConfig.key().toString();
+                MessagesUtil.sendDebugMessages("Attempting to add " + id);
+                ConfigurationNode slotNode = cosmeticConfig.node("slot");
+                if (slotNode.virtual()) {
+                    MessagesUtil.sendDebugMessages("Unable to create " + id + " because there is no slot defined!", Level.WARNING);
+                    continue;
                 }
-                case BACKPACK -> {
-                    new CosmeticBackpackType(id, cosmeticConfig);
+                if (!EnumUtils.isValidEnum(CosmeticSlot.class, slotNode.getString())) {
+                    MessagesUtil.sendDebugMessages("Unable to create " + id + " because " + slotNode.getString() + " is not a valid slot!", Level.WARNING);
+                    continue;
                 }
-                case MAINHAND -> {
-                    new CosmeticMainhandType(id, cosmeticConfig);
+                switch (CosmeticSlot.valueOf(cosmeticConfig.node("slot").getString())) {
+                    case BALLOON -> new CosmeticBalloonType(id, cosmeticConfig);
+                    case BACKPACK -> new CosmeticBackpackType(id, cosmeticConfig);
+                    case MAINHAND -> new CosmeticMainhandType(id, cosmeticConfig);
+                    default -> new CosmeticArmorType(id, cosmeticConfig);
                 }
-                default -> {
-                    new CosmeticArmorType(id, cosmeticConfig);
-                }
+            } catch (Exception e) {
+                if (Settings.isDebugEnabled()) e.printStackTrace();
             }
-            //new Cosmetic(id, cosmeticConfig);
         }
     }
 }
