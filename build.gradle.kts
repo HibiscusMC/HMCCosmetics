@@ -58,6 +58,17 @@ allprojects {
 
     dependencies {
 
+        compileOnly("com.mojang:authlib:1.5.25")
+        compileOnly("org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT")
+        compileOnly("org.jetbrains:annotations:23.0.0")
+        compileOnly("com.comphenix.protocol:ProtocolLib:5.0.0-SNAPSHOT")
+        compileOnly("me.clip:placeholderapi:2.11.1")
+        compileOnly("com.ticxo.modelengine:api:R3.0.1")
+        compileOnly("com.github.oraxen:oraxen:-SNAPSHOT")
+        compileOnly("com.github.LoneDev6:API-ItemsAdder:3.2.5")
+        compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.1.0-SNAPSHOT")
+        compileOnly("it.unimi.dsi:fastutil:8.5.11")
+
     }
 }
 
@@ -65,18 +76,6 @@ dependencies {
     implementation(project(path = ":common"))
     implementation(project(path = ":v1_19_R1", configuration = "reobf"))
     implementation(project(path = ":v1_19_R2", configuration = "reobf"))
-    //implementation(files("v1_19_R1/build/libs/1_19_R1-unspecified.jar"))
-
-    compileOnly("com.mojang:authlib:1.5.25")
-    compileOnly("org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT")
-    compileOnly("org.jetbrains:annotations:23.0.0")
-    compileOnly("com.comphenix.protocol:ProtocolLib:5.0.0-SNAPSHOT")
-    compileOnly("me.clip:placeholderapi:2.11.1")
-    compileOnly("com.ticxo.modelengine:api:R3.0.1")
-    compileOnly("com.github.oraxen:oraxen:-SNAPSHOT")
-    compileOnly("com.github.LoneDev6:API-ItemsAdder:3.2.5")
-    compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.1.0-SNAPSHOT")
-    compileOnly("it.unimi.dsi:fastutil:8.5.11")
 
     //compileOnly("com.github.Fisher2911:FisherLib:master-SNAPSHOT")
     implementation("net.kyori:adventure-api:4.11.0")
