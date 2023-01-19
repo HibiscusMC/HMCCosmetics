@@ -1,6 +1,7 @@
 package com.hibiscusmc.hmccosmetics.gui;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
+import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.spongepowered.configurate.CommentedConfigurationNode;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
 
 public class Menus {
 
@@ -67,7 +69,12 @@ public class Menus {
                 } catch (ConfigurateException e) {
                     throw new RuntimeException(e);
                 }
-                new Menu(FilenameUtils.removeExtension(child.getName()), root);
+                try {
+                    new Menu(FilenameUtils.removeExtension(child.getName()), root);
+                } catch (Exception e) {
+                    MessagesUtil.sendDebugMessages("Unable to create menu in " + child, Level.WARNING);
+                    if (Settings.isDebugEnabled()) e.printStackTrace();
+                }
             }
         }
     }
