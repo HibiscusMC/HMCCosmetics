@@ -47,6 +47,7 @@ public class MessagesUtil {
 
     public static void sendMessage(CommandSender sender, String key) {
         Component finalMessage = processString(null, key);
+        if (finalMessage == null) return;
         Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.getInstance()).sender(sender);
 
         target.sendMessage(finalMessage);
@@ -130,7 +131,7 @@ public class MessagesUtil {
     }
 
     public static void sendDebugMessages(String message, Level level) {
-        if (!Settings.isDebugEnabled() && level != Level.SEVERE) return;
+        if (!Settings.isDebugEnabled() && level == Level.INFO) return;
         HMCCosmeticsPlugin.getInstance().getLogger().log(level, message);
     }
 }
