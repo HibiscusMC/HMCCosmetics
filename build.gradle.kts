@@ -74,6 +74,7 @@ allprojects {
 
 dependencies {
     implementation(project(path = ":common"))
+    implementation(project(path = ":v1_18_R2", configuration = "reobf"))
     implementation(project(path = ":v1_19_R1", configuration = "reobf"))
     implementation(project(path = ":v1_19_R2", configuration = "reobf"))
 
@@ -108,6 +109,7 @@ tasks {
     }
 
     shadowJar {
+        dependsOn(":v1_18_R2:reobfJar")
         dependsOn(":v1_19_R1:reobfJar")
         dependsOn(":v1_19_R2:reobfJar")
         mergeServiceFiles()
@@ -144,7 +146,7 @@ tasks {
 bukkit {
     load = BukkitPluginDescription.PluginLoadOrder.POSTWORLD
     main = "com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin"
-    apiVersion = "1.19"
+    apiVersion = "1.16"
     authors = listOf("LoJoSho")
     depend = listOf("ProtocolLib", "PlaceholderAPI")
     softDepend = listOf("ModelEngine", "Oraxen", "ItemsAdder", "HMCColor", "WorldGuard", "MythicMobs")
