@@ -1,6 +1,7 @@
 package com.hibiscusmc.hmccosmetics.entities;
 
 import com.hibiscusmc.hmccosmetics.config.Settings;
+import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
 import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.ticxo.modelengine.api.ModelEngineAPI;
@@ -8,20 +9,21 @@ import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
 import org.bukkit.Color;
 import org.bukkit.Location;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import java.util.UUID;
 import java.util.logging.Level;
 
-// This includes the Pufferfish (The Pufferfish that's what the player leashes to) and the model (MEGEntity)
 public class BalloonEntity {
 
+    private BalloonType balloonType;
     private final int balloonID;
     private final UUID uniqueID;
-    private final Entity modelEntity;
-    private ModeledEntity modeledEntity;
+    private final ArmorStand modelEntity;
 
     public BalloonEntity(Location location) {
         this.uniqueID = UUID.randomUUID();
@@ -29,62 +31,91 @@ public class BalloonEntity {
         this.modelEntity = NMSHandlers.getHandler().getMEGEntity(location.add(Settings.getBalloonOffset()));
     }
 
-    public void spawnModel(final String id, Color color) {
+    public void spawnModel(CosmeticBalloonType cosmeticBalloonType, Color color) {
+        // redo this
+        if (cosmeticBalloonType.getModelName() != null) {
+            balloonType = BalloonType.MODELENGINE;
+        } else {
+            if (cosmeticBalloonType.getItem() != null) {
+                balloonType = BalloonType.ITEM;
+            } else {
+                balloonType = BalloonType.NONE;
+            }
+        }
+        MessagesUtil.sendDebugMessages("balloontype is " + balloonType);
 
-        MessagesUtil.sendDebugMessages("Attempting Spawning for " + id);
-        if (ModelEngineAPI.api.getModelRegistry().getBlueprint(id) == null) {
-            MessagesUtil.sendDebugMessages("Invalid Model Engine Blueprint " + id, Level.SEVERE);
-            return;
+        if (balloonType == BalloonType.MODELENGINE) {
+            String id = cosmeticBalloonType.getModelName();
+            MessagesUtil.sendDebugMessages("Attempting Spawning for " + id);
+            if (ModelEngineAPI.api.getModelRegistry().getBlueprint(id) == null) {
+                MessagesUtil.sendDebugMessages("Invalid Model Engine Blueprint " + id, Level.SEVERE);
+                return;
+            }
+            ModeledEntity modeledEntity = ModelEngineAPI.getOrCreateModeledEntity(modelEntity);
+            ActiveModel model = ModelEngineAPI.createActiveModel(ModelEngineAPI.getBlueprint(id));
+            model.setCanHurt(false);
+            modeledEntity.addModel(model, false);
+            if (color != null) {
+                modeledEntity.getModels().forEach((d, singleModel) -> {
+                    singleModel.getRendererHandler().setColor(color);
+                    singleModel.getRendererHandler().update();
+                });
+            }
+        } else {
+            modelEntity.getEquipment().setHelmet(cosmeticBalloonType.getItem());
         }
-        ModeledEntity modeledEntity = ModelEngineAPI.getOrCreateModeledEntity(modelEntity);
-        ActiveModel model = ModelEngineAPI.createActiveModel(ModelEngineAPI.getBlueprint(id));
-        model.setCanHurt(false);
-        modeledEntity.addModel(model, false);
-        if (color != null) {
-            modeledEntity.getModels().forEach((d, singleModel) -> {
-                singleModel.getRendererHandler().setColor(color);
-                singleModel.getRendererHandler().update();
-            });
-        }
-        this.modeledEntity = modeledEntity;
     }
 
     public void remove() {
-        final ModeledEntity entity = ModelEngineAPI.api.getModeledEntity(modelEntity.getUniqueId());
+        if (balloonType == BalloonType.MODELENGINE) {
+            final ModeledEntity entity = ModelEngineAPI.api.getModeledEntity(modelEntity.getUniqueId());
 
-        if (entity == null) return;
+            if (entity == null) return;
 
-        for (final Player player : entity.getRangeManager().getPlayerInRange()) {
-            entity.hideFromPlayer(player);
+            for (final Player player : entity.getRangeManager().getPlayerInRange()) {
+                entity.hideFromPlayer(player);
+            }
+            entity.destroy();
         }
 
-        //ModelEngineAPI.removeModeledEntity(megEntity.getUniqueId());
-        entity.destroy();
         modelEntity.remove();
     }
 
-    public void addPlayerToModel(final Player player, final String id) {
-        addPlayerToModel(player, id, null);
+    public void addPlayerToModel(final Player player, final CosmeticBalloonType cosmeticBalloonType) {
+        addPlayerToModel(player, cosmeticBalloonType, null);
     }
 
-    public void addPlayerToModel(final Player player, final String id, Color color) {
-        final ModeledEntity model = ModelEngineAPI.api.getModeledEntity(modelEntity.getUniqueId());
-        if (model == null) {
-            spawnModel(id, color);
-            MessagesUtil.sendDebugMessages("model is null");
+    public void addPlayerToModel(final Player player, final CosmeticBalloonType cosmeticBalloonType, Color color) {
+        if (balloonType == BalloonType.MODELENGINE) {
+            final ModeledEntity model = ModelEngineAPI.api.getModeledEntity(modelEntity.getUniqueId());
+            if (model == null) {
+                spawnModel(cosmeticBalloonType, color);
+                MessagesUtil.sendDebugMessages("model is null");
+                return;
+            }
+            //if (model.getRangeManager().getPlayerInRange().contains(player)) return;
+            model.showToPlayer(player);
+            MessagesUtil.sendDebugMessages("Show to player");
             return;
         }
-        //if (model.getRangeManager().getPlayerInRange().contains(player)) return;
-        model.showToPlayer(player);
-        MessagesUtil.sendDebugMessages("Show to player");
+        if (balloonType == BalloonType.ITEM) {
+            modelEntity.getEquipment().setHelmet(cosmeticBalloonType.getItem());
+        }
     }
     public void removePlayerFromModel(final Player player) {
-        final ModeledEntity model = ModelEngineAPI.api.getModeledEntity(modelEntity.getUniqueId());
+        if (balloonType == BalloonType.MODELENGINE) {
+            final ModeledEntity model = ModelEngineAPI.api.getModeledEntity(modelEntity.getUniqueId());
 
-        if (model == null) return;
+            if (model == null) return;
 
-        model.hideFromPlayer(player);
-        MessagesUtil.sendDebugMessages("Hidden from player");
+            model.hideFromPlayer(player);
+            MessagesUtil.sendDebugMessages("Hidden from player");
+            return;
+        }
+        if (balloonType == BalloonType.ITEM) {
+            modelEntity.getEquipment().clear();
+            return;
+        }
     }
 
     public Entity getModelEntity() {
@@ -117,5 +148,11 @@ public class BalloonEntity {
 
     public void setVelocity(Vector vector) {
         this.getModelEntity().setVelocity(vector);
+    }
+
+    public enum BalloonType {
+        MODELENGINE,
+        ITEM,
+        NONE
     }
 }

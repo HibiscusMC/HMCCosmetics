@@ -33,6 +33,7 @@ import org.bukkit.craftbukkit.v1_19_R2.CraftWorld;
 import org.bukkit.craftbukkit.v1_19_R2.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_19_R2.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.v1_19_R2.scoreboard.CraftScoreboard;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent;
@@ -71,8 +72,8 @@ public class NMSHandler implements com.hibiscusmc.hmccosmetics.nms.NMSHandler {
     }
 
     @Override
-    public org.bukkit.entity.Entity getMEGEntity(Location loc) {
-        return new MEGEntity(loc).getBukkitEntity();
+    public ArmorStand getMEGEntity(Location loc) {
+        return (ArmorStand) new MEGEntity(loc).getBukkitEntity();
     }
 
     @Override
@@ -103,8 +104,8 @@ public class NMSHandler implements com.hibiscusmc.hmccosmetics.nms.NMSHandler {
         List<Player> sentTo = PlayerUtils.getNearbyPlayers(player.getLocation());
         balloonEntity1.getModelEntity().teleport(user.getPlayer().getLocation().add(Settings.getBalloonOffset()));
 
-        balloonEntity1.spawnModel(cosmeticBalloonType.getModelName(), user.getCosmeticColor(cosmeticBalloonType.getSlot()));
-        balloonEntity1.addPlayerToModel(player, cosmeticBalloonType.getModelName(), user.getCosmeticColor(cosmeticBalloonType.getSlot()));
+        balloonEntity1.spawnModel(cosmeticBalloonType, user.getCosmeticColor(cosmeticBalloonType.getSlot()));
+        balloonEntity1.addPlayerToModel(player, cosmeticBalloonType, user.getCosmeticColor(cosmeticBalloonType.getSlot()));
 
         PacketManager.sendEntitySpawnPacket(newLoc, balloonEntity1.getPufferfishBalloonId(), EntityType.PUFFERFISH, balloonEntity1.getPufferfishBalloonUniqueId(), sentTo);
         PacketManager.sendInvisibilityPacket(balloonEntity1.getPufferfishBalloonId(), sentTo);

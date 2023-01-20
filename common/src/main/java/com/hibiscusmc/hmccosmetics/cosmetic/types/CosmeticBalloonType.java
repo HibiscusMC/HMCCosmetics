@@ -43,9 +43,9 @@ public class CosmeticBalloonType extends Cosmetic {
             return;
         }
 
-        Vector velocity = newLocation.clone().toVector().subtract(currentLocation.clone().toVector());
+        Vector velocity = newLocation.toVector().subtract(currentLocation.toVector());
+        balloonEntity.setVelocity(velocity.multiply(1.1));
         balloonEntity.setLocation(newLocation);
-        balloonEntity.setVelocity(velocity);
 
         PacketManager.sendTeleportPacket(balloonEntity.getPufferfishBalloonId(), newLocation, false, viewer);
         if (!user.getHidden()) PacketManager.sendLeashPacket(balloonEntity.getPufferfishBalloonId(), player.getEntityId(), viewer);

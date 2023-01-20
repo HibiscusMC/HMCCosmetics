@@ -6,6 +6,7 @@ import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
 import com.hibiscusmc.hmccosmetics.entities.BalloonEntity;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import org.bukkit.Location;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -20,7 +21,7 @@ public interface NMSHandler {
 
     Entity getInvisibleArmorstand(Location loc);
 
-    Entity getMEGEntity(Location loc);
+    ArmorStand getMEGEntity(Location loc);
 
     Entity spawnBackpack(CosmeticUser user, CosmeticBackpackType cosmeticBackpackType);
 
