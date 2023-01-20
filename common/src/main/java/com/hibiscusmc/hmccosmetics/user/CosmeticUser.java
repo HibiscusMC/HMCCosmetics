@@ -42,6 +42,7 @@ public class CosmeticUser {
     // Cosmetic Settings/Toggles
     private boolean hideBackpack;
     private boolean hideCosmetics;
+    private HiddenReason hiddenReason;
     private HashMap<CosmeticSlot, Color> colors = new HashMap<>();
 
     public CosmeticUser() {
@@ -400,15 +401,16 @@ public class CosmeticUser {
         }
     }
 
-    public void hideCosmetics() {
+    public void hideCosmetics(HiddenReason reason) {
         if (hideCosmetics == true) return;
-        PlayerCosmeticHideEvent event = new PlayerCosmeticHideEvent(this);
+        PlayerCosmeticHideEvent event = new PlayerCosmeticHideEvent(this, reason);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             return;
         }
 
         hideCosmetics = true;
+        hiddenReason = reason;
         if (hasCosmeticInSlot(CosmeticSlot.BALLOON)) {
             getBalloonEntity().removePlayerFromModel(getPlayer());
             List<Player> viewer = PlayerUtils.getNearbyPlayers(getPlayer());
@@ -429,7 +431,9 @@ public class CosmeticUser {
         if (event.isCancelled()) {
             return;
         }
+
         hideCosmetics = false;
+        hiddenReason = HiddenReason.NONE;
         if (hasCosmeticInSlot(CosmeticSlot.BALLOON)) {
             CosmeticBalloonType balloonType = (CosmeticBalloonType) getCosmetic(CosmeticSlot.BALLOON);
             getBalloonEntity().addPlayerToModel(getPlayer(), balloonType);
@@ -447,5 +451,15 @@ public class CosmeticUser {
 
     public boolean getHidden() {
         return this.hideCosmetics;
+    }
+
+    public HiddenReason getHiddenReason() {
+        return hiddenReason;
+    }
+
+    public enum HiddenReason {
+        NONE,
+        WORLDGUARD,
+        PLUGIN
     }
 }

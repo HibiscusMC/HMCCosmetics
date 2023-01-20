@@ -8,10 +8,12 @@ import org.bukkit.event.HandlerList;
 public class PlayerCosmeticHideEvent extends Event implements Cancellable {
 
     private CosmeticUser user;
+    private CosmeticUser.HiddenReason reason;
     private boolean isCancelled;
 
-    public PlayerCosmeticHideEvent(CosmeticUser user) {
+    public PlayerCosmeticHideEvent(CosmeticUser user, CosmeticUser.HiddenReason reason) {
         this.user = user;
+        this.reason = reason;
         this.isCancelled = false;
     }
 
@@ -38,5 +40,8 @@ public class PlayerCosmeticHideEvent extends Event implements Cancellable {
 
     public CosmeticUser getUser() {
         return user;
+    }
+    public CosmeticUser.HiddenReason getReason() {
+        return reason;
     }
 }
