@@ -18,6 +18,7 @@ public class Actions {
     private static ActionPlayerCommand ACTION_CONSOLE_COMMAND = new ActionPlayerCommand();
     private static ActionConsoleCommand ACTION_PLAYER_COMMAND = new ActionConsoleCommand();
     private static ActionCloseMenu ACTION_EXIT_MENU = new ActionCloseMenu();
+    private static ActionSound ACTION_SOUND = new ActionSound();
 
 
     public static Action getAction(String id) {
