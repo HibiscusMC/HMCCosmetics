@@ -48,6 +48,7 @@ wardrobe:
     text: "Left-Click to open the menu!"
     progress: 1.0 # Goes between 0.0 -> 1.0
     overlay: PROGRESS
+    color: BLUE
   transition:
     enabled: true
     text: "<black>"
