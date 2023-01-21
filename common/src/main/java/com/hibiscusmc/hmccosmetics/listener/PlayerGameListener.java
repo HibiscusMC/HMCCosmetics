@@ -278,6 +278,7 @@ public class PlayerGameListener implements Listener {
                     }
                 }
                 packet.getItemListModifier().write(0, slotData);
+                packet.getItemModifier().write(0, event.getPacket().getItemModifier().read(0));
                 event.setPacket(packet);
                 MessagesUtil.sendDebugMessages("Menu Fired, updated cosmetics " + " on slotdata " + windowID + " with " + slotData.size());
                 /*
