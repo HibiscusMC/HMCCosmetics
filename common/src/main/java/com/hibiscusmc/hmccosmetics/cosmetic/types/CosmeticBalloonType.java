@@ -5,21 +5,44 @@ import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.entities.BalloonEntity;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
+import org.apache.commons.lang3.EnumUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 import org.spongepowered.configurate.ConfigurationNode;
+import org.spongepowered.configurate.serialize.SerializationException;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class CosmeticBalloonType extends Cosmetic {
 
     private String modelName;
+    private List<String> dyableParts;
+    //private HashMap<Animations, String> animationBalloons;
+
     public CosmeticBalloonType(String id, ConfigurationNode config) {
         super(id, config);
 
         String modelId = config.node("model").getString();
+
+        try {
+            if (!config.node("dyable-parts").virtual()) dyableParts = config.node("dyable-parts").getList(String.class);
+
+            /*
+            if (!config.node("animations").virtual()) {
+                for (ConfigurationNode animationNode : config.node("animations").childrenMap().values()) {
+                    if (EnumUtils.isValidEnum(Animations.class, animationNode.key().toString().toUpperCase())) continue;
+                    animationBalloons.put(Animations.valueOf(animationNode.key().toString().toUpperCase()), animationNode.getString());
+                }
+            }
+             */
+
+        } catch (SerializationException e) {
+            // Seriously?
+            throw new RuntimeException(e);
+        }
 
         this.modelName = modelId;
     }
@@ -54,4 +77,18 @@ public class CosmeticBalloonType extends Cosmetic {
     public String getModelName() {
         return this.modelName;
     }
+
+    public List<String> getDyableParts() {
+        return dyableParts;
+    }
+
+    public boolean isDyablePart(String name) {
+        return dyableParts.contains(name);
+    }
+
+    /*
+    public String getAnimation(Animations animation) {
+        return animationBalloons.get(animation);
+    }
+     */
 }

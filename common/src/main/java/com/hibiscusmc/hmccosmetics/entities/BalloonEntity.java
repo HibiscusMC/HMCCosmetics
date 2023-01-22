@@ -12,7 +12,6 @@ import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import java.util.UUID;
@@ -57,11 +56,15 @@ public class BalloonEntity {
             modeledEntity.addModel(model, false);
             if (color != null) {
                 modeledEntity.getModels().forEach((d, singleModel) -> {
-                    singleModel.getRendererHandler().setColor(color);
-                    singleModel.getRendererHandler().update();
+                    if (cosmeticBalloonType.isDyablePart(d)) {
+                        singleModel.getRendererHandler().setColor(color);
+                        singleModel.getRendererHandler().update();
+                    }
                 });
             }
-        } else {
+            return;
+        }
+        if (balloonType == BalloonType.ITEM) {
             modelEntity.getEquipment().setHelmet(cosmeticBalloonType.getItem());
         }
     }
