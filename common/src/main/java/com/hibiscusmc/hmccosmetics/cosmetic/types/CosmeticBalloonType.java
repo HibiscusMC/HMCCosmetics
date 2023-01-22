@@ -83,6 +83,9 @@ public class CosmeticBalloonType extends Cosmetic {
     }
 
     public boolean isDyablePart(String name) {
+        // If player does not define parts, dye whole model
+        if (dyableParts == null) return true;
+        if (dyableParts.isEmpty()) return true;
         return dyableParts.contains(name);
     }
 
