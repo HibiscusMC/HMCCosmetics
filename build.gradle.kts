@@ -54,6 +54,9 @@ allprojects {
 
         // UpdateChecker
         maven("https://hub.jeff-media.com/nexus/repository/jeff-media-public/")
+
+        // ParticleHelper
+        maven("https://repo.bytecode.space/repository/maven-public/")
     }
 
     dependencies {
@@ -86,6 +89,7 @@ dependencies {
     implementation("org.spongepowered:configurate-yaml:4.1.2")
     implementation("org.bstats:bstats-bukkit:3.0.0")
     implementation("com.jeff_media:SpigotUpdateChecker:3.0.0")
+    implementation("com.owen1212055:particlehelper:1.0.0-SNAPSHOT")
 }
 
 tasks {
@@ -122,6 +126,7 @@ tasks {
         relocate("com.zaxxer.hikaricp", "com.hisbiscusmc.hmccosmetics.hikaricp")
         relocate("com.j256.ormlite", "com.hisbiscusmc.hmccosmetics.ormlite")
         relocate("com.jeff_media.updatechecker", "com.hisbiscusmc.hmccosmetics.updatechecker")
+        relocate("com.woen1212055.particlehelper", "com.hisbiscusmc.hmccosmetics.particlehelper")
         archiveFileName.set("HMCCosmeticsRemapped-${project.version}.jar")
 
         dependencies {

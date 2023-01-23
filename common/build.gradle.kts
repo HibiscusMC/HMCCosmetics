@@ -24,6 +24,7 @@ dependencies {
     implementation("org.spongepowered:configurate-yaml:4.1.2")
     implementation("org.bstats:bstats-bukkit:3.0.0")
     implementation("com.jeff_media:SpigotUpdateChecker:3.0.0")
+    implementation("com.owen1212055:particlehelper:1.0.0-SNAPSHOT")
 }
 
 java {

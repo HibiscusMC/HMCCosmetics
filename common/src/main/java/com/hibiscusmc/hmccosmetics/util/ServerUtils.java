@@ -1,8 +1,18 @@
 package com.hibiscusmc.hmccosmetics.util;
 
 import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
+import com.owen1212055.particlehelper.api.particle.MultiParticle;
+import com.owen1212055.particlehelper.api.particle.Particle;
+import com.owen1212055.particlehelper.api.particle.types.*;
+import com.owen1212055.particlehelper.api.particle.types.dust.transition.TransitionDustParticle;
+import com.owen1212055.particlehelper.api.particle.types.note.MultiNoteParticle;
 import org.bukkit.Color;
 import org.bukkit.GameMode;
+import org.bukkit.Material;
+import org.jetbrains.annotations.Nullable;
+
+import java.math.BigInteger;
+import java.util.Arrays;
 
 public class ServerUtils {
 
@@ -34,6 +44,86 @@ public class ServerUtils {
                     Integer.valueOf(colorStr.substring(5, 7), 16));
         } catch (StringIndexOutOfBoundsException e) {
             return null;
+        }
+    }
+
+    // particle amount offsetxyz
+    // Ex. HEART 10 0.1 0.1 0.1
+    public static Particle addParticleValues(Particle particle, String[] split) {
+        var counter = 1;
+        if (particle instanceof MultiParticle multiParticle) {
+            multiParticle.setCount(getBigInteger(split[counter]).intValue());
+            counter++;
+            multiParticle.setXOffset(getBigInteger(split[counter]).floatValue());
+            counter++;
+            multiParticle.setYOffset(getBigInteger(split[counter]).floatValue());
+            counter++;
+            multiParticle.setZOffset(getBigInteger(split[counter]).floatValue());
+            counter++;
+            if (multiParticle instanceof MultiNoteParticle multiNoteParticle) {
+                multiNoteParticle.setColorMultplier(getBigInteger(split[counter]).intValue());
+                counter++;
+            }
+        }
+        if (particle instanceof ColorableParticle colorableParticle && colorFromString(split[counter]) != null) {
+            colorableParticle.setColor(colorFromString(split[counter]));
+            counter++;
+        }
+        if (particle instanceof TransitionDustParticle transitionDustParticle && colorFromString(split[counter]) != null) {
+            transitionDustParticle.setFadeColor(colorFromString(split[counter]));
+            counter++;
+        }
+        if (particle instanceof MaterialParticle materialParticle && Material.getMaterial(split[counter]) != null) {
+            materialParticle.setMaterial(Material.getMaterial(split[counter]));
+            counter++;
+        }
+        if (particle instanceof SpeedModifiableParticle speedModifiableParticle) {
+            speedModifiableParticle.setSpeed(getBigInteger(split[counter]).floatValue());
+            counter++;
+        }
+        if (particle instanceof DelayableParticle delayableParticle) {
+            delayableParticle.setDelay(getBigInteger(split[counter]).intValue());
+            counter++;
+        }
+        if (particle instanceof SizeableParticle sizeableParticle) {
+            sizeableParticle.setSize(getBigInteger(split[counter]).floatValue());
+            counter++;
+        }
+        if (particle instanceof RollableParticle rollableParticle) {
+            rollableParticle.setRoll(getBigInteger(split[counter]).floatValue());
+        }
+        return particle;
+    }
+
+    private static BigInteger getBigInteger(String string) {
+        try {
+            return new BigInteger(string);
+        } catch (Exception e) {
+            return BigInteger.valueOf(1);
+        }
+    }
+
+    /**
+     * Parse a color from a string.
+     * Formats: #RRGGBB; R,G,B
+     *
+     * @param color The string
+     * @return The color, if the string can't be parsed, null is returned
+     */
+    public static Color colorFromString(@Nullable String color) {
+        if (color == null) {
+            return null;
+        }
+        try {
+            var decodedColor = java.awt.Color.decode(color.startsWith("#") ? color : "#" + color);
+            return Color.fromRGB(decodedColor.getRed(), decodedColor.getGreen(), decodedColor.getBlue());
+        } catch (NumberFormatException invalidHex) {
+            try {
+                var rgbValues = Arrays.stream(color.split(",")).map(Integer::parseInt).toArray(Integer[]::new);
+                return Color.fromRGB(rgbValues[0], rgbValues[1], rgbValues[2]);
+            } catch (Exception invalidRgb) {
+                return null;
+            }
         }
     }
 }

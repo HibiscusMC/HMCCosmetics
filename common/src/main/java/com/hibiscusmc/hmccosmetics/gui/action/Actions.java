@@ -21,6 +21,7 @@ public class Actions {
     private static ActionSound ACTION_SOUND = new ActionSound();
     private static ActionEquip ACTION_EQUIP = new ActionEquip();
     private static ActionUnequip ACTION_UNEQUIP = new ActionUnequip();
+    private static ActionParticle ACTION_PARTICLE = new ActionParticle();
 
 
     public static Action getAction(String id) {
