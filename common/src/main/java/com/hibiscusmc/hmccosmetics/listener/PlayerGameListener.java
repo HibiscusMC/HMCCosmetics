@@ -24,10 +24,12 @@ import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityPotionEffectEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -35,6 +37,7 @@ import org.bukkit.event.player.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -194,6 +197,23 @@ public class PlayerGameListener implements Listener {
         Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
             user.updateCosmetic(CosmeticSlot.OFFHAND);
         }, 2);
+    }
+
+    @EventHandler
+    public void playerInvisibility(EntityPotionEffectEvent event) {
+        if (event.isCancelled()) return;
+        if (!event.getModifiedType().equals(PotionEffectType.INVISIBILITY)) return;
+        if (!event.getEntityType().equals(EntityType.PLAYER)) return;
+        Player player = (Player) event.getEntity();
+        CosmeticUser user = CosmeticUsers.getUser(player);
+        if (event.getAction().equals(EntityPotionEffectEvent.Action.ADDED)) {
+            user.hideCosmetics(CosmeticUser.HiddenReason.PLUGIN);
+            return;
+        }
+        if (event.getAction().equals(EntityPotionEffectEvent.Action.CLEARED) || event.getAction().equals(EntityPotionEffectEvent.Action.REMOVED)) {
+            user.showCosmetics();
+            return;
+        }
     }
 
     @EventHandler
