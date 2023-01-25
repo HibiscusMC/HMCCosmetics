@@ -7,6 +7,7 @@ import com.hibiscusmc.hmccosmetics.gui.type.Type;
 import com.hibiscusmc.hmccosmetics.gui.type.Types;
 import com.hibiscusmc.hmccosmetics.hooks.PAPIHook;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
+import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.misc.Adventure;
 import com.hibiscusmc.hmccosmetics.util.misc.Placeholder;
@@ -137,8 +138,6 @@ public class Menu {
                 MessagesUtil.sendDebugMessages("something went wrong! " + item);
                 continue;
             }
-            ItemStack originalItem = item.clone();
-            item = updateLore(player, item);
 
             Type type = null;
 
@@ -146,6 +145,9 @@ public class Menu {
                 String typeId = config.node("type").getString();
                 if (Types.isType(typeId)) type = Types.getType(typeId);
             }
+
+            ItemStack originalItem = item.clone();
+            item = updateLore(user, item, type, config);
 
             GuiItem guiItem = ItemBuilder.from(item).asGuiItem();
 
@@ -155,7 +157,7 @@ public class Menu {
                 if (finalType != null) finalType.run(user, config, clickType);
 
                 for (int i : slots) {
-                    gui.updateItem(i, updateLore(player, originalItem.clone()));
+                    gui.updateItem(i, updateLore(user, originalItem.clone(), finalType, config));
                     MessagesUtil.sendDebugMessages("Updated slot " + i);
                 }
             });
@@ -190,21 +192,9 @@ public class Menu {
         return slots;
     }
 
-    private ItemStack updateLore(Player player, ItemStack itemStack) {
+    private ItemStack updateLore(CosmeticUser user, ItemStack itemStack, Type type, ConfigurationNode config) {
         if (itemStack.hasItemMeta()) {
-            List<String> processedLore = new ArrayList<>();
-
-            if (PAPIHook.isPAPIEnabled()) {
-                if (itemStack.getItemMeta().hasLore()) {
-                    for (String loreLine : itemStack.getItemMeta().getLore()) {
-                        processedLore.add(PlaceholderAPI.setPlaceholders(player, loreLine));
-                    }
-                }
-            }
-
-            ItemMeta itemMeta = itemStack.getItemMeta();
-            itemMeta.setLore(processedLore);
-            itemStack.setItemMeta(itemMeta);
+            itemStack.setItemMeta(type.setLore(user, config, itemStack.getItemMeta()));
         }
         return itemStack;
     }

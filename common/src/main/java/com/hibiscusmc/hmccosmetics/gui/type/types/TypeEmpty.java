@@ -2,8 +2,11 @@ package com.hibiscusmc.hmccosmetics.gui.type.types;
 
 import com.hibiscusmc.hmccosmetics.gui.action.Actions;
 import com.hibiscusmc.hmccosmetics.gui.type.Type;
+import com.hibiscusmc.hmccosmetics.hooks.PAPIHook;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
+import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.event.inventory.ClickType;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 
@@ -46,6 +49,21 @@ public class TypeEmpty extends Type {
         } catch (SerializationException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public ItemMeta setLore(CosmeticUser user, ConfigurationNode config, ItemMeta itemMeta) {
+        List<String> processedLore = new ArrayList<>();
+
+        if (PAPIHook.isPAPIEnabled()) {
+            if (itemMeta.hasLore()) {
+                for (String loreLine : itemMeta.getLore()) {
+                    processedLore.add(PlaceholderAPI.setPlaceholders(user.getPlayer(), loreLine));
+                }
+            }
+        }
+
+        return itemMeta;
     }
 
     // That's it! Now, add it as a static in another one of your classes (such as your main class) and you are good to go.
