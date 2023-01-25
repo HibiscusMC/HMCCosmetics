@@ -40,10 +40,10 @@ public class ActionParticle extends Action {
             MessagesUtil.sendDebugMessages("The particle " + rawString[0] + " is not supported by this action!");
             return;
         }
-        Particle particle1 = ServerUtils.addParticleValues((Particle) particleType, rawString);
+        particle = ServerUtils.addParticleValues(particle, rawString);
         Location location = user.getPlayer().getLocation();
         for (Player player : PacketManager.getViewers(location)) {
-            particle1.compile().send(player, location);
+            particle.compile().send(player, location);
         }
     }
 }
