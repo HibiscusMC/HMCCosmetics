@@ -436,7 +436,7 @@ public class CosmeticUser {
         hiddenReason = HiddenReason.NONE;
         if (hasCosmeticInSlot(CosmeticSlot.BALLOON)) {
             CosmeticBalloonType balloonType = (CosmeticBalloonType) getCosmetic(CosmeticSlot.BALLOON);
-            getBalloonEntity().addPlayerToModel(getPlayer(), balloonType);
+            getBalloonEntity().addPlayerToModel(this, balloonType);
             List<Player> viewer = PlayerUtils.getNearbyPlayers(getPlayer());
             PacketManager.sendLeashPacket(getBalloonEntity().getPufferfishBalloonId(), getPlayer().getEntityId(), viewer);
         }

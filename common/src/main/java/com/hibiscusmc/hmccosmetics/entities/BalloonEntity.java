@@ -3,6 +3,7 @@ package com.hibiscusmc.hmccosmetics.entities;
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
 import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
+import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.ticxo.modelengine.api.ModelEngineAPI;
 import com.ticxo.modelengine.api.model.ActiveModel;
@@ -84,11 +85,11 @@ public class BalloonEntity {
         modelEntity.remove();
     }
 
-    public void addPlayerToModel(final Player player, final CosmeticBalloonType cosmeticBalloonType) {
-        addPlayerToModel(player, cosmeticBalloonType, null);
+    public void addPlayerToModel(final CosmeticUser user, final CosmeticBalloonType cosmeticBalloonType) {
+        addPlayerToModel(user, cosmeticBalloonType, null);
     }
 
-    public void addPlayerToModel(final Player player, final CosmeticBalloonType cosmeticBalloonType, Color color) {
+    public void addPlayerToModel(final CosmeticUser user, final CosmeticBalloonType cosmeticBalloonType, Color color) {
         if (balloonType == BalloonType.MODELENGINE) {
             final ModeledEntity model = ModelEngineAPI.api.getModeledEntity(modelEntity.getUniqueId());
             if (model == null) {
@@ -97,12 +98,12 @@ public class BalloonEntity {
                 return;
             }
             //if (model.getRangeManager().getPlayerInRange().contains(player)) return;
-            model.showToPlayer(player);
+            model.showToPlayer(user.getPlayer());
             MessagesUtil.sendDebugMessages("Show to player");
             return;
         }
         if (balloonType == BalloonType.ITEM) {
-            modelEntity.getEquipment().setHelmet(cosmeticBalloonType.getItem());
+            modelEntity.getEquipment().setHelmet(user.getUserCosmeticItem(cosmeticBalloonType));
         }
     }
     public void removePlayerFromModel(final Player player) {
