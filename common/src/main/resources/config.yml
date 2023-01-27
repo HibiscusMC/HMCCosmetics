@@ -32,7 +32,7 @@ cosmetic-settings:
     y: 3
     z: 0.5
 dye-menu:
-  title: "<white>"
+  title: "§f"
 wardrobe:
   # spawn static wardrobe if in this radius of wardrobe-location
   static-radius: 10

@@ -1,9 +1,9 @@
 title: "<white>"
-rows: 5
+rows: 6
 items:
   beanie:
     slots:
-      - 1
+      - 0
     item:
       material: hmccosmetics:beanie
       lore:
@@ -14,7 +14,7 @@ items:
     cosmetic: beanie
   backpack:
     slots:
-      - 2
+      - 1
     item:
       material: hmccosmetics:backpack
       lore:
@@ -25,7 +25,7 @@ items:
     cosmetic: backpack
   future_wings:
     slots:
-      - 3
+      - 2
     item:
       material: hmccosmetics:future_wings
       lore:
@@ -36,7 +36,7 @@ items:
     cosmetic: future_wings
   lantern_cosmetic:
     slots:
-      - 4
+      - 3
     item:
       material: hmccosmetics:lantern_cosmetic
       lore:
@@ -47,7 +47,7 @@ items:
     cosmetic: lantern_cosmetic
   baseball_hat:
     slots:
-      - 5
+      - 4
     item:
       material: hmccosmetics:baseball_hat
       lore:
@@ -58,7 +58,7 @@ items:
     cosmetic: baseball_hat
   frog_hat:
     slots:
-      - 6
+      - 5
     item:
       material: hmccosmetics:frog_hat
       lore:
@@ -69,7 +69,7 @@ items:
     cosmetic: frog_hat
   jetpack:
     slots:
-      - 7
+      - 6
     item:
       material: hmccosmetics:jetpack
       lore:
@@ -80,7 +80,7 @@ items:
     cosmetic: jetpack
   hammer:
     slots:
-      - 10
+      - 7
     item:
       material: hmccosmetics:hammer
       lore:
@@ -91,7 +91,7 @@ items:
     cosmetic: hammer
   chestplate:
     slots:
-      - 11
+      - 8
     item:
       material: hmccosmetics:chestplate
       lore:
@@ -102,7 +102,7 @@ items:
     cosmetic: chestplate
   pants:
     slots:
-      - 12
+      - 9
     item:
       material: hmccosmetics:pants
       lore:
@@ -113,7 +113,7 @@ items:
     cosmetic: pants
   boots:
     slots:
-      - 13
+      - 10
     item:
       material: hmccosmetics:boots
       lore:
@@ -124,7 +124,7 @@ items:
     cosmetic: boots
   kite:
     slots:
-      - 14
+      - 11
     item:
       material: hmccosmetics:kite
       lore:
