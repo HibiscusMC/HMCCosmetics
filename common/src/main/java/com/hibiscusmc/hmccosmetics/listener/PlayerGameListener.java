@@ -319,13 +319,11 @@ public class PlayerGameListener implements Listener {
         ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(HMCCosmeticsPlugin.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Server.ENTITY_EQUIPMENT) {
             @Override
             public void onPacketSending(PacketEvent event) {
-                MessagesUtil.sendDebugMessages("equipment packet is activated");
                 Player player = event.getPlayer(); // Player that's sent
                 int entityID = event.getPacket().getIntegers().read(0);
                 // User
                 CosmeticUser user = CosmeticUsers.getUser(entityID);
                 if (user == null) {
-                    MessagesUtil.sendDebugMessages("equipment packet is activated - user null");
                     return;
                 }
 
