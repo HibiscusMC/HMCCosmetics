@@ -42,7 +42,10 @@ public class DyeMenu {
                 //user.removeCosmeticSlot(cosmetic);
                 user.addPlayerCosmetic(cosmetic, color);
                 player.setItemOnCursor(new ItemStack(Material.AIR));
-                Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), player::closeInventory, 2);
+                Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
+                    player.closeInventory();
+                    user.updateCosmetic(cosmetic.getSlot());
+                }, 2);
             } else event.setCancelled(true);
         });
 
