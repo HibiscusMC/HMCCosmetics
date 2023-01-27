@@ -34,7 +34,7 @@ public class NMSHandlers {
             if (!selectedVersion.contains(packageVersion)) {
                 continue;
             }
-            MessagesUtil.sendDebugMessages(packageVersion + " has been detected.", Level.SEVERE);
+            MessagesUtil.sendDebugMessages(packageVersion + " has been detected.", Level.INFO);
             version = packageVersion;
             try {
                 //Class.forName("org.bukkit.craftbukkit." + version + ".block.CraftBlock").getName();
