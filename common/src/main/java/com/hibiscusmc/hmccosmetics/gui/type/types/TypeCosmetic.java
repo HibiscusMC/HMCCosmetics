@@ -1,7 +1,9 @@
 package com.hibiscusmc.hmccosmetics.gui.type.types;
 
+import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
+import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticArmorType;
 import com.hibiscusmc.hmccosmetics.gui.action.Actions;
 import com.hibiscusmc.hmccosmetics.gui.special.DyeMenu;
 import com.hibiscusmc.hmccosmetics.gui.type.Type;
@@ -11,7 +13,9 @@ import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.misc.StringUtils;
 import com.hibiscusmc.hmccosmetics.util.misc.Utils;
 import me.clip.placeholderapi.PlaceholderAPI;
+import org.bukkit.Bukkit;
 import org.bukkit.event.inventory.ClickType;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
@@ -76,8 +80,15 @@ public class TypeCosmetic extends Type {
         } catch (SerializationException e) {
             throw new RuntimeException(e);
         }
-
-        user.updateCosmetic(cosmetic.getSlot());
+        // Fixes issue with offhand cosmetics not appearing. Yes, I know this is dumb
+        Runnable run = () -> user.updateCosmetic(cosmetic.getSlot());
+        if (cosmetic instanceof CosmeticArmorType) {
+            if (((CosmeticArmorType) cosmetic).getEquipSlot().equals(EquipmentSlot.OFF_HAND)) {
+                Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), run, 1);
+                return;
+            }
+        }
+        run.run();
     }
 
     @Override
