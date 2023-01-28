@@ -158,7 +158,7 @@ bukkit {
     apiVersion = "1.16"
     authors = listOf("LoJoSho")
     depend = listOf("ProtocolLib", "PlaceholderAPI")
-    softDepend = listOf("ModelEngine", "Oraxen", "ItemsAdder", "HMCColor", "WorldGuard", "MythicMobs")
+    softDepend = listOf("ModelEngine", "Oraxen", "ItemsAdder", "Looty", "HMCColor", "WorldGuard", "MythicMobs")
     version = "${project.version}"
 
     commands {
