@@ -23,8 +23,7 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.inventory.meta.*;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.*;
@@ -210,9 +209,14 @@ public class CosmeticUser {
         }
         if (item.hasItemMeta()) {
             ItemMeta itemMeta = item.getItemMeta();
-            if (itemMeta instanceof LeatherArmorMeta) {
-                if (colors.containsKey(cosmetic.getSlot())) {
-                    ((LeatherArmorMeta) itemMeta).setColor(colors.get(cosmetic.getSlot()));
+            if (colors.containsKey(cosmetic.getSlot())) {
+                Color color = colors.get(cosmetic.getSlot());
+                if (itemMeta instanceof LeatherArmorMeta leatherMeta) {
+                    leatherMeta.setColor(color);
+                } else if (itemMeta instanceof PotionMeta potionMeta) {
+                    potionMeta.setColor(color);
+                } else if (itemMeta instanceof MapMeta mapMeta) {
+                    mapMeta.setColor(color);
                 }
             }
             item.setItemMeta(itemMeta);
