@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 
 public class DyeMenu {
@@ -29,16 +30,19 @@ public class DyeMenu {
         Player player = user.getPlayer();
         Gui gui = HMCColorApi.INSTANCE.colorMenu();
         gui.updateTitle(Placeholder.applyPapiPlaceholders(player, Settings.getDyeMenuName()));
-        gui.setItem(19, new GuiItem(originalItem));
+        gui.setItem(10, new GuiItem(originalItem));
         gui.setDefaultTopClickAction(event -> {
-            if (event.getSlot() == 25) {
-                ItemStack item = event.getInventory().getItem(25);
+            if (event.getSlot() == 16) {
+                ItemStack item = event.getInventory().getItem(16);
                 if (item == null) return;
                 ItemMeta meta = item.getItemMeta();
                 if (meta == null) return;
-                Color color = meta instanceof LeatherArmorMeta ? ((LeatherArmorMeta) meta).getColor() :
-                        meta instanceof PotionMeta ? ((PotionMeta) meta).getColor() : null;
+
+                Color color = meta instanceof LeatherArmorMeta leatherMeta ? leatherMeta.getColor() :
+                        meta instanceof PotionMeta potionMeta ? potionMeta.getColor() :
+                                meta instanceof MapMeta mapMeta ? mapMeta.getColor() : null;
                 if (color == null) return;
+
                 //user.removeCosmeticSlot(cosmetic);
                 user.addPlayerCosmetic(cosmetic, color);
                 player.setItemOnCursor(new ItemStack(Material.AIR));
