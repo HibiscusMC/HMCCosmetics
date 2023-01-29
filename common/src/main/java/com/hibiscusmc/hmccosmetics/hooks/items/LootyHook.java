@@ -14,7 +14,7 @@ public class LootyHook extends ItemHook implements Listener {
 
     @Override
     public ItemStack get(String itemid) {
-        if (itemid.split(":").length != 2) return null;
+        if (PrefabKey.Companion.ofOrNull(itemid) == null) return null;
         return LootyFactory.INSTANCE.createFromPrefab(PrefabKey.Companion.of(itemid));
     }
 }
