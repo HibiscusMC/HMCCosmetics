@@ -1,0 +1,27 @@
+prefix: "<gradient:#f368ec:#f39cef>HMCCosmetics <GRAY>»<WHITE>"
+reloaded: "%prefix% <gradient:#6D9DC5:#45CDE9>Config files reloaded!"
+not-enough-args: "%prefix% <red>Improper amount of arguments"
+no-permission: "%prefix% <red>No Permission!"
+no-cosmetic-permission: "%prefix% <red>You do not have permission for this cosmetic!"
+no-cosmetic-slot: "%prefix% <red>There are no cosmetics in that slot!"
+
+opened-wardrobe: "%prefix% <gradient:#6D9DC5:#45CDE9>Opened wardrobe!"
+closed-wardrobe: "%prefix% <gradient:#6D9DC5:#45CDE9>Closed wardrobe!"
+not-near-wardrobe: "%prefix% <red>You are not near the wardrobe!"
+set-wardrobe-location: "%prefix% <gradient:#6D9DC5:#45CDE9>Set new wardrobe location!"
+set-wardrobe-viewing: "%prefix% <gradient:#6D9DC5:#45CDE9>Set new wardrobe viewing location!"
+set-wardrobe-leaving: "%prefix% <gradient:#6D9DC5:#45CDE9>Set new wardrobe leaving location!"
+
+equip-cosmetic: "%prefix% <gradient:#6D9DC5:#45CDE9>You have equipped <cosmetic>!"
+unequip-cosmetic: "%prefix% <gradient:#6D9DC5:#45CDE9>You have unequipped <cosmetic>!"
+hide-cosmetic: "%prefix% <gradient:#6D9DC5:#45CDE9>Hidden cosmetics"
+show-cosmetic: "%prefix% <gradient:#6D9DC5:#45CDE9>Revealed cosmetics!"
+
+invalid-slot: "%prefix% <red>Invalid cosmetic slot!"
+invalid-player: "%prefix% <red>Invalid Player!"
+invalid-menu: "%prefix% <red>Invalid Menu!"
+invalid-cosmetic: "%prefix% <red>Invalid Cosmetic!"
+invalid-color: "%prefix% <red>Invalid Color!"
+
+debug-enabled: "%prefix% <gradient:#6D9DC5:#45CDE9>Enabled Debug Mode!"
+debug-disabled: "%prefix% <gradient:#6D9DC5:#45CDE9>Disabled Debug Mode!"

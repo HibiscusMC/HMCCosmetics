@@ -2,74 +2,98 @@ import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
 
 plugins {
     id("java")
-    id("com.github.johnrengelman.shadow") version "7.1.1"
-    id("io.papermc.paperweight.userdev") version "1.3.8"
-    id("xyz.jpenilla.run-paper") version "1.0.6"
+    id("maven-publish")
+    id("com.github.johnrengelman.shadow") version "7.1.2"
+    id("xyz.jpenilla.run-paper") version "2.0.0"
     id("net.minecrell.plugin-yml.bukkit") version "0.5.2"
 }
 
 group = "com.hibiscusmc"
-version = "Infdev"
+version = "2.1.0"
 
-bukkit {
-    load = BukkitPluginDescription.PluginLoadOrder.POSTWORLD
-    main = "com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin"
-    apiVersion = "1.19"
-    authors = listOf("LoJoSho")
-    depend = listOf("ProtocolLib")
-    softDepend = listOf("ModelEngine")
-    version = "${project.version}"
+allprojects {
+    apply(plugin = "java")
+    apply(plugin = "java-library")
 
-    commands {
-        register("cosmetic") {
-            description = "Base command"
+    repositories {
+        mavenCentral()
+
+        // Paper Repo
+        maven("https://papermc.io/repo/repository/maven-public/")
+        maven("https://oss.sonatype.org/content/repositories/snapshots")
+
+        // Jitpack
+        maven("https://jitpack.io")
+
+        // ProtocolLib repo
+        maven("https://repo.dmulloy2.net/repository/public/") //ProtocolLib Repo, constantly down
+        maven("https://repo.mineinabyss.com/releases/")
+
+        // PlaceholderAPI
+        maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
+
+        //Hikari
+        maven("https://mvnrepository.com/artifact/com.zaxxer/HikariCP")
+
+        // Citizens
+        maven("https://repo.citizensnpcs.co")
+
+        // Worldguard
+        maven("https://maven.enginehub.org/repo/")
+
+        // Backup Oraxen repo
+        maven("https://repo.skyslycer.de/")
+
+        // MythicMobs
+        maven {
+            url = uri("https://mvn.lumine.io/repository/maven-public")
+            metadataSources {
+                artifact()
+            }
         }
+
+        // UpdateChecker
+        maven("https://hub.jeff-media.com/nexus/repository/jeff-media-public/")
+
+        // ParticleHelper
+        maven("https://repo.bytecode.space/repository/maven-public/")
     }
-}
 
-repositories {
-    mavenCentral()
-    maven("https://papermc.io/repo/repository/maven-public/")
-    maven("https://oss.sonatype.org/content/repositories/snapshots")
-    maven("https://jitpack.io")
-    maven("https://repo.mineinabyss.com/releases/")
-    maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
-    maven("https://mvnrepository.com/artifact/com.zaxxer/HikariCP")
-    maven("https://repo.citizensnpcs.co")
-    //maven("https://mvn.lumine.io/repository/maven-public")
-    maven {
-        url = uri("https://mvn.lumine.io/repository/maven-public")
-        metadataSources {
-            artifact()
-        }
+    dependencies {
+
+        compileOnly("com.mojang:authlib:1.5.25")
+        compileOnly("org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT")
+        compileOnly("org.jetbrains:annotations:23.0.0")
+        compileOnly("com.comphenix.protocol:ProtocolLib:5.0.0-SNAPSHOT")
+        compileOnly("me.clip:placeholderapi:2.11.1")
+        compileOnly("com.ticxo.modelengine:api:R3.0.1")
+        compileOnly("com.github.oraxen:oraxen:-SNAPSHOT")
+        compileOnly("com.github.LoneDev6:API-ItemsAdder:3.2.5")
+        compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.1.0-SNAPSHOT")
+        compileOnly("it.unimi.dsi:fastutil:8.5.11")
+
     }
 }
 
 dependencies {
-    paperDevBundle("1.19.2-R0.1-SNAPSHOT")
-    compileOnly("com.mojang:authlib:1.5.25")
-    compileOnly("org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT")
-    compileOnly("org.jetbrains:annotations:23.0.0")
-    compileOnly("com.comphenix.protocol:ProtocolLib:5.0.0-SNAPSHOT")
-    compileOnly("me.clip:placeholderapi:2.11.1")
-    compileOnly("com.ticxo.modelengine:api:R3.0.0")
+    implementation(project(path = ":common"))
+    implementation(project(path = ":v1_17_R1", configuration = "reobf"))
+    implementation(project(path = ":v1_18_R2", configuration = "reobf"))
+    implementation(project(path = ":v1_19_R1", configuration = "reobf"))
+    implementation(project(path = ":v1_19_R2", configuration = "reobf"))
+
+    //compileOnly("com.github.Fisher2911:FisherLib:master-SNAPSHOT")
     implementation("net.kyori:adventure-api:4.11.0")
     implementation ("net.kyori:adventure-text-minimessage:4.11.0")
     implementation("net.kyori:adventure-platform-bukkit:4.1.2")
     implementation("dev.triumphteam:triumph-gui:3.1.3")
     implementation("org.spongepowered:configurate-yaml:4.1.2")
     implementation("org.bstats:bstats-bukkit:3.0.0")
+    implementation("com.jeff_media:SpigotUpdateChecker:3.0.0")
+    implementation("com.owen1212055:particlehelper:1.0.0-SNAPSHOT")
 }
 
 tasks {
-
-    build {
-        dependsOn(shadowJar)
-    }
-
-    assemble {
-        dependsOn(reobfJar)
-    }
 
     compileJava {
         options.encoding = Charsets.UTF_8.name()
@@ -85,22 +109,118 @@ tasks {
         filteringCharset = Charsets.UTF_8.name()
     }
 
-    reobfJar {
-        outputJar.set(layout.projectDirectory.file("run/plugins/HMCCosmeticsRemapped.jar"))
+    runServer {
+        minecraftVersion("1.19.2")
     }
 
     shadowJar {
-        relocate("dev.triumphteam.gui", "com.hisbiscus.hmccosmetics.gui")
-        relocate("me.mattstudios.mf", "com.hisbiscus.hmccosmetics.mf")
-        relocate("net.kyori.adventure", "com.hisbiscus.hmccosmetics.adventure")
-        relocate("org.spongepowered.configurate", "com.hisbiscus.hmccosmetics.configurate")
-        relocate("org.bstats", "com.hisbiscus.hmccosmetics.bstats")
-        relocate("com.zaxxer.hikaricp", "com.hisbiscus.hmccosmetics.hikaricp")
-        relocate("com.j256.ormlite", "com.hisbiscus.hmccosmetics.ormlite")
-        archiveFileName.set("HMCCosmetics.jar")
+        dependsOn(":v1_17_R1:reobfJar")
+        dependsOn(":v1_18_R2:reobfJar")
+        dependsOn(":v1_19_R1:reobfJar")
+        dependsOn(":v1_19_R2:reobfJar")
+        mergeServiceFiles()
+
+        relocate("dev.triumphteam.gui", "com.hisbiscusmc.hmccosmetics.gui")
+        relocate("me.mattstudios.mf", "com.hisbiscusmc.hmccosmetics.mf")
+        relocate("net.kyori.adventure", "com.hisbiscusmc.hmccosmetics.adventure")
+        relocate("org.spongepowered.configurate", "com.hisbiscusmc.hmccosmetics.configurate")
+        relocate("org.bstats", "com.hisbiscusmc.hmccosmetics.bstats")
+        relocate("com.zaxxer.hikaricp", "com.hisbiscusmc.hmccosmetics.hikaricp")
+        relocate("com.j256.ormlite", "com.hisbiscusmc.hmccosmetics.ormlite")
+        relocate("com.jeff_media.updatechecker", "com.hisbiscusmc.hmccosmetics.updatechecker")
+        relocate("com.woen1212055.particlehelper", "com.hisbiscusmc.hmccosmetics.particlehelper")
+        archiveFileName.set("HMCCosmeticsRemapped-${project.version}.jar")
 
         dependencies {
             exclude(dependency("org.yaml:snakeyaml"))
+        }
+
+        doLast {
+            archiveFile.get().asFile.copyTo(layout.projectDirectory.file("run/plugins/HMCCosmeticsRemapped.jar").asFile, true)
+            println("If you use the plugin, consider buying it for: ")
+            println("The custom resource pack, Oraxen + ItemAdder configurations, and Discord support!")
+            println("Polymart: https://polymart.org/resource/1879")
+            println("Spigot: https://www.spigotmc.org/resources/100107/")
+        }
+    }
+
+    build {
+        dependsOn(shadowJar)
+    }
+}
+
+
+bukkit {
+    load = BukkitPluginDescription.PluginLoadOrder.POSTWORLD
+    main = "com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin"
+    apiVersion = "1.16"
+    authors = listOf("LoJoSho")
+    depend = listOf("ProtocolLib", "PlaceholderAPI")
+    softDepend = listOf("ModelEngine", "Oraxen", "ItemsAdder", "HMCColor", "WorldGuard", "MythicMobs")
+    version = "${project.version}"
+
+    commands {
+        register("cosmetic") {
+            description = "Base Cosmetic Command"
+        }
+    }
+    permissions {
+        register("hmccosmetics.cmd.default") {
+            default = BukkitPluginDescription.Permission.Default.TRUE
+        }
+        register("hmccosmetics.cmd.apply") {
+            default = BukkitPluginDescription.Permission.Default.TRUE
+        }
+        register("hmccosmetics.cmd.unapply") {
+            default = BukkitPluginDescription.Permission.Default.TRUE
+        }
+        register("hmccosmetics.cmd.dye") {
+            default = BukkitPluginDescription.Permission.Default.TRUE
+        }
+        register("hmccosmetics.cmd.wardrobe") {
+            default = BukkitPluginDescription.Permission.Default.TRUE
+        }
+        register("hmccosmetics.cmd.menu") {
+            default = BukkitPluginDescription.Permission.Default.TRUE
+        }
+        register("hmccosmetics.cmd.setlocation") {
+            default = BukkitPluginDescription.Permission.Default.OP
+        }
+        register("hmccosmetics.cmd.dataclear") {
+            default = BukkitPluginDescription.Permission.Default.OP
+        }
+        register("hmccosmetics.cmd.reload") {
+            default = BukkitPluginDescription.Permission.Default.OP
+        }
+        register("hmccosmetics.cmd.apply.other") {
+            default = BukkitPluginDescription.Permission.Default.OP
+        }
+        register("hmccosmetics.cmd.unapply.other") {
+            default = BukkitPluginDescription.Permission.Default.OP
+        }
+        register("hmccosmetics.cmd.hide") {
+            default = BukkitPluginDescription.Permission.Default.OP
+        }
+        register("hmccosmetics.cmd.show") {
+            default = BukkitPluginDescription.Permission.Default.OP
+        }
+        register("hmccosmetics.cmd.hide.other") {
+            default = BukkitPluginDescription.Permission.Default.OP
+        }
+        register("hmccosmetics.cmd.show.other") {
+            default = BukkitPluginDescription.Permission.Default.OP
+        }
+        register("hmccosmetics.cmd.wardrobe.other") {
+            default = BukkitPluginDescription.Permission.Default.OP
+        }
+        register("hmccosmetics.cmd.menu.other") {
+            default = BukkitPluginDescription.Permission.Default.OP
+        }
+        register("hmccosmetics.cmd.debug") {
+            default = BukkitPluginDescription.Permission.Default.OP
+        }
+        register("hmccosmetics.unapplydeath.bypass") {
+            default = BukkitPluginDescription.Permission.Default.OP
         }
     }
 }
@@ -108,4 +228,17 @@ tasks {
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(17
     ))
+}
+
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            groupId = "${project.group}"
+            artifactId = "${project.name}"
+            version = "${project.version}"
+
+            from(components["java"])
+        }
+    }
 }

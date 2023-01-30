@@ -1,0 +1,95 @@
+beanie:
+  slot: HELMET
+  permission: "hmccosmetics.beanie"
+  dyeable: true
+  item:
+    material: LEATHER_HORSE_ARMOR
+    model-data: 2
+    name: "<rainbow>Colorful Hat</rainbow>"
+    amount: 1
+backpack:
+  slot: BACKPACK
+  permission: "hmccosmetics.backpack"
+  item:
+    material: PAPER
+    model-data: 4
+    name: "<blue>Backpack"
+    amount: 1
+future_wings:
+  slot: BACKPACK
+  permission: "hmccosmetics.future_wings"
+  item:
+    material: PAPER
+    model-data: 9
+    name: "<#d24c9f>Future Wings"
+    amount: 1
+lantern_cosmetic:
+  slot: OFFHAND
+  permission: "hmccosmetics.lantern_cosmetic"
+  item:
+    material: PAPER
+    model-data: 5
+    name: "<blue>Lantern Cosmetic"
+    amount: 1
+baseball_hat:
+  slot: HELMET
+  permission: "hmccosmetics.baseball_hat"
+  item:
+    material: PAPER
+    model-data: 6
+    name: "<blue>Baseball Hat"
+    amount: 1
+frog_hat:
+  slot: HELMET
+  permission: "hmccosmetics.frog_hat"
+  item:
+    material: PAPER
+    model-data: 11
+    name: "<blue>Frog Hat"
+    amount: 1
+jetpack:
+  slot: BACKPACK
+  permission: "hmccosmetics.jetpack"
+  item:
+    material: PAPER
+    model-data: 12
+    name: "<blue>Jetpack"
+    amount: 1
+hammer:
+  slot: OFFHAND
+  permission: "hmccosmetics.hammer"
+  item:
+    material: PAPER
+    model-data: 13
+    name: "<blue>Hammer"
+    amount: 1
+chestplate:
+  slot: CHESTPLATE
+  permission: "hmccosmetics.chestplate"
+  item:
+    material: DIAMOND_CHESTPLATE
+    name: "<blue>Chestplate"
+    amount: 1
+pants:
+  slot: LEGGINGS
+  permission: "hmccosmetics.pants"
+  item:
+    material: DIAMOND_LEGGINGS
+    name: "<blue>Pants"
+    amount: 1
+boots:
+  slot: BOOTS
+  permission: "hmccosmetics.boots"
+  item:
+    material: DIAMOND_BOOTS
+    name: "<blue>Boots"
+    amount: 1
+kite:
+  slot: BALLOON
+  permission: "hmccosmetics.kite"
+  model: kite
+  item:
+    material: PAPER
+    model-data: 7
+    name: "<blue>Kite"
+    amount: 1

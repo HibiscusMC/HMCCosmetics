@@ -1,8 +1,0 @@
-title: "<white>"
-rows: 5
-items:
-  1:
-    item:
-      material: LEATHER_HORSE_ARMOR
-      amount: 1
-    action: "equip niftyhat"

@@ -1,0 +1,79 @@
+#
+# HMCCosmetics Configuration (Remapped)
+#
+config-version: 1
+
+default-menu: defaultmenu
+debug-mode: false
+database-settings:
+  type: sqlite #MYSQL, SQLite, INTERNAL (not recommended!)
+  mysql:
+    database: database
+    password: cherryBomb
+    port: 3306
+    host: localhost
+    user: username
+  delay:
+    enabled: false # This is for if other plugins need to handle certain aspects of a player first.
+    delay: 20 # In ticks
+cosmetic-settings:
+  tick-period: 20 # In ticks, determines how many times a player cosmetics should be updated. -1 to disable.
+  # Ticking periods is something that ensures new players near a player get the packets to actually apply to the user.
+
+  unapply-on-death: false # If when a player dies, their cosmetics should be unapplied. If this is true, use hmccosmetics.unapplydeath.bypass to bypass
+
+  # view distance in blocks that other players will see the backpack cosmetic
+  # setting this to lower than the server player view distance should fix the
+  # bug where players see random backpacks. Put -1 to ignore and send packets to everyone.
+  view-distance: 32
+  # how the balloon should be positioned relative to the player
+  balloon-offset:
+    x: 0.5
+    y: 3
+    z: 0.5
+dye-menu:
+  title: "§f"
+wardrobe:
+  # spawn static wardrobe if in this radius of wardrobe-location
+  static-radius: 10
+  # how much yaw should change per tick, set to 0 for none
+  rotation-speed: 3
+  # Applies a pumpkin for an overlay of the player while in the wardrobe.
+  equip-pumpkin: false
+  # Rather than having a set exit location, this will send the player back to where they entered the wardrobe. Not recommended for WG regions
+  return-last-location: false
+  # Bossbar that shows when a player is in a wardrobe.
+  bossbar:
+    enabled: false
+    text: "Left-Click to open the menu!"
+    progress: 1.0 # Goes between 0.0 -> 1.0
+    overlay: PROGRESS
+    color: BLUE
+  transition:
+    enabled: true
+    text: "<black>"
+    delay: 40
+    title-fade-in: 1000 # milliseconds
+    title-stay: 500 # milliseconds
+    title-fade-out: 1000 # milliseconds
+  wardrobe-location:
+    world: "World"
+    x: 0
+    y: 0
+    z: 0
+    yaw: 0
+    pitch: 0
+  viewer-location:
+    world: "World"
+    x: 5
+    y: 0
+    z: 5
+    yaw: 0
+    pitch: 0
+  leave-location:
+    world: "World"
+    x: 5
+    y: 5
+    z: 5
+    yaw: 0
+    pitch: 0
