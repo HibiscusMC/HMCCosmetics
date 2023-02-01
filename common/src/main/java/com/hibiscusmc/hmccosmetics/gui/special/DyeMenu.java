@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 
 public class DyeMenu {
@@ -36,9 +37,12 @@ public class DyeMenu {
                 if (item == null) return;
                 ItemMeta meta = item.getItemMeta();
                 if (meta == null) return;
-                Color color = meta instanceof LeatherArmorMeta ? ((LeatherArmorMeta) meta).getColor() :
-                        meta instanceof PotionMeta ? ((PotionMeta) meta).getColor() : null;
+
+                Color color = meta instanceof LeatherArmorMeta leatherMeta ? leatherMeta.getColor() :
+                        meta instanceof PotionMeta potionMeta ? potionMeta.getColor() :
+                                meta instanceof MapMeta mapMeta ? mapMeta.getColor() : null;
                 if (color == null) return;
+
                 //user.removeCosmeticSlot(cosmetic);
                 user.addPlayerCosmetic(cosmetic, color);
                 player.setItemOnCursor(new ItemStack(Material.AIR));
