@@ -45,6 +45,7 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
     private static boolean disable = false;
     private static YamlConfigurationLoader configLoader;
     private static final int pluginId = 13873;
+    private static boolean hasModelEngine = false;
 
     @Override
     public void onEnable() {
@@ -92,6 +93,13 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             new PAPIHook().register();
         }
+
+        // ModelEngine
+        if (Bukkit.getPluginManager().getPlugin("ModelEngine") != null) {
+            hasModelEngine = true;
+        }
+
+        // WorldGuard
         if (Bukkit.getPluginManager().getPlugin("WorldGuard") != null) {
             getServer().getPluginManager().registerEvents(new WGListener(), this);
         }
@@ -228,5 +236,9 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
         } catch (ConfigurateException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static boolean hasModelEngine() {
+        return hasModelEngine;
     }
 }

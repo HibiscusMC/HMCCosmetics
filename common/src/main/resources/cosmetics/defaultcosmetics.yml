@@ -87,7 +87,7 @@ boots:
 kite:
   slot: BALLOON
   permission: "hmccosmetics.kite"
-  model: kite
+  model: kite # This is the ModelEngine model it will use. If you do not have ModelEngine installed, it will default to the item.
   item:
     material: PAPER
     model-data: 7

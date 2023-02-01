@@ -1,5 +1,6 @@
 package com.hibiscusmc.hmccosmetics.entities;
 
+import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
 import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
@@ -33,7 +34,7 @@ public class BalloonEntity {
 
     public void spawnModel(CosmeticBalloonType cosmeticBalloonType, Color color) {
         // redo this
-        if (cosmeticBalloonType.getModelName() != null) {
+        if (cosmeticBalloonType.getModelName() != null && HMCCosmeticsPlugin.hasModelEngine()) {
             balloonType = BalloonType.MODELENGINE;
         } else {
             if (cosmeticBalloonType.getItem() != null) {
