@@ -460,6 +460,9 @@ public class CosmeticUser {
     public enum HiddenReason {
         NONE,
         WORLDGUARD,
-        PLUGIN
+        PLUGIN,
+        POTION,
+        ACTION,
+        COMMAND
     }
 }

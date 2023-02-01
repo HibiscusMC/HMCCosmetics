@@ -327,7 +327,7 @@ public class CosmeticCommand implements CommandExecutor {
 
                 CosmeticUser user = CosmeticUsers.getUser(player);
                 MessagesUtil.sendMessage(sender, "hide-cosmetic");
-                user.hideCosmetics(CosmeticUser.HiddenReason.PLUGIN);
+                user.hideCosmetics(CosmeticUser.HiddenReason.COMMAND);
                 return true;
             }
             case ("show") -> {

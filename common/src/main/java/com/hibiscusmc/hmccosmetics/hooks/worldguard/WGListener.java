@@ -24,9 +24,10 @@ public class WGListener implements Listener {
         RegionContainer region = WorldGuard.getInstance().getPlatform().getRegionContainer();
         RegionQuery query = region.createQuery();
         ApplicableRegionSet set = query.getApplicableRegions(loc);
-        // TODO: Add more cosmetics
-        if (set.getRegions().size() == 0) {
-            user.showCosmetics();
+        if (user.getHidden()) {
+            if (user.getHiddenReason() == CosmeticUser.HiddenReason.WORLDGUARD && set.getRegions().size() == 0) {
+                user.showCosmetics();
+            }
         }
         for (ProtectedRegion protectedRegion : set.getRegions()) {
             if (protectedRegion.getFlags().containsKey(WGHook.getCosmeticEnableFlag())) {

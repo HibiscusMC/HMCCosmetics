@@ -22,6 +22,9 @@ public class Actions {
     private static ActionEquip ACTION_EQUIP = new ActionEquip();
     private static ActionUnequip ACTION_UNEQUIP = new ActionUnequip();
     private static ActionParticle ACTION_PARTICLE = new ActionParticle();
+    private static ActionCosmeticShow ACTION_SHOW = new ActionCosmeticShow();
+    private static ActionCosmeticHide ACTION_HIDE = new ActionCosmeticHide();
+    private static ActionCosmeticToggle ACTION_TOGGLE = new ActionCosmeticToggle();
 
 
     public static Action getAction(String id) {
@@ -40,7 +43,7 @@ public class Actions {
         for (String a : raw) {
             String id = StringUtils.substringBetween(a, "[", "]").toUpperCase();
             String message = StringUtils.substringAfter(a, "] ");
-            MessagesUtil.sendDebugMessages("ID is " + id + " // Message is " + message);
+            MessagesUtil.sendDebugMessages("ID is " + id + " // Raw Data is " + message);
             if (isAction(id)) {
                 getAction(id).run(user, message);
             } else {
