@@ -31,7 +31,7 @@ public class ItemAdderHook extends ItemHook implements Listener {
 
     @EventHandler
     public void onItemAdderDataLoad(ItemsAdderLoadDataEvent event) {
-        if (this.enabled) return;
+        if (enabled) return; // Only run on the first event fired; ignore all rest
         this.enabled = true;
         HMCCosmeticsPlugin.setup();
     }
