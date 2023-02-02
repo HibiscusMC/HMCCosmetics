@@ -13,6 +13,8 @@ import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticArmorType;
+import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBackpackType;
+import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
 import com.hibiscusmc.hmccosmetics.gui.Menu;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
@@ -109,8 +111,10 @@ public class PlayerGameListener implements Listener {
         if (event.getCause().equals(PlayerTeleportEvent.TeleportCause.NETHER_PORTAL) || event.getCause().equals(PlayerTeleportEvent.TeleportCause.END_PORTAL)) return;
 
         if (user.hasCosmeticInSlot(CosmeticSlot.BALLOON)) {
+            final CosmeticBalloonType cosmeticBalloonType = (CosmeticBalloonType) user.getCosmetic(CosmeticSlot.BALLOON);
+            user.despawnBalloon();
             Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
-                user.updateCosmetic(CosmeticSlot.BALLOON);
+                user.spawnBalloon(cosmeticBalloonType);
             }, 2);
         }
     }
