@@ -206,6 +206,7 @@ public class PlayerGameListener implements Listener {
         if (!event.getEntityType().equals(EntityType.PLAYER)) return;
         Player player = (Player) event.getEntity();
         CosmeticUser user = CosmeticUsers.getUser(player);
+        if (user == null) return;
         if (event.getAction().equals(EntityPotionEffectEvent.Action.ADDED)) {
             user.hideCosmetics(CosmeticUser.HiddenReason.POTION);
             return;
