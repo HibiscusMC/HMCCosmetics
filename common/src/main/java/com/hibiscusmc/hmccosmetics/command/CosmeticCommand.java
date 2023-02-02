@@ -248,7 +248,7 @@ public class CosmeticCommand implements CommandExecutor {
                 Cosmetic cosmetic = user.getCosmetic(slot);
 
                 if (args.length >= 3) {
-                    if (!args[2].contains("#") || args[2].isEmpty()) {
+                    if (args[2].isEmpty()) {
                         MessagesUtil.sendMessage(player, "invalid-color");
                         return true;
                     }

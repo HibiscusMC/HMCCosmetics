@@ -2,6 +2,7 @@ package com.hibiscusmc.hmccosmetics.config.serializer;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.hooks.items.ItemHooks;
+import com.hibiscusmc.hmccosmetics.util.ServerUtils;
 import com.hibiscusmc.hmccosmetics.util.builder.ColorBuilder;
 import com.hibiscusmc.hmccosmetics.util.misc.StringUtils;
 import com.hibiscusmc.hmccosmetics.util.misc.Utils;
@@ -126,7 +127,11 @@ public class ItemSerializer implements TypeSerializer<ItemStack> {
 
         if (!colorNode.virtual()) {
             if (ColorBuilder.canBeColored(item.getType())) {
-                itemMeta = ColorBuilder.color(itemMeta, Color.fromRGB(redNode.getInt(0), greenNode.getInt(0), blueNode.getInt(0)));
+                if (!redNode.virtual()) {
+                    itemMeta = ColorBuilder.color(itemMeta, Color.fromRGB(redNode.getInt(0), greenNode.getInt(0), blueNode.getInt(0)));
+                } else {
+                    itemMeta = ColorBuilder.color(itemMeta, ServerUtils.hex2Rgb(colorNode.getString("#FFFFFF")));
+                }
             }
         }
 

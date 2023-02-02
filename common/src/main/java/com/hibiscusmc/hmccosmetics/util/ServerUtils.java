@@ -37,6 +37,16 @@ public class ServerUtils {
     }
 
     public static Color hex2Rgb(String colorStr) {
+        if (colorStr.startsWith("#")) return Color.fromRGB(Integer.valueOf(colorStr.substring(1), 16));
+        if (colorStr.startsWith("0x")) return Color.fromRGB(Integer.valueOf(colorStr.substring(2), 16));
+        if (colorStr.contains(",")) {
+            String[] colorString = colorStr.replace(" ", "").split(",");
+            for (String color : colorString) if (Integer.valueOf(color) == null) return Color.WHITE;
+            Color.fromRGB(Integer.valueOf(colorString[0]), Integer.valueOf(colorString[1]), Integer.valueOf(colorString[2]));
+        }
+
+        return Color.WHITE;
+        /* Old method
         try {
             return Color.fromRGB(
                     Integer.valueOf(colorStr.substring(1, 3), 16),
@@ -45,6 +55,7 @@ public class ServerUtils {
         } catch (StringIndexOutOfBoundsException e) {
             return null;
         }
+         */
     }
 
     // particle amount offsetxyz
