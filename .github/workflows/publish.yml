@@ -13,6 +13,8 @@ jobs:
     env:
       HAS_TOKEN: ${{ secrets.REPO_PASSWORD != '' }}
     steps:
+      - name: Elevate Permissions
+        run: chmod +x gradlew
       - uses: actions/checkout@v2.3.4
       - name: Set up Java
         uses: actions/setup-java@v2
