@@ -20,10 +20,10 @@ jobs:
           distribution: 'temurin'
           java-version: 17
       - name: Build with Gradle
-        run: ./gradlew api:clean api:build --no-daemon --stacktrace
+        run: ./gradlew clean build --no-daemon --stacktrace
       - name: Publish to Nexus
         if: ${{ env.HAS_TOKEN == 'true' }}
-        run: ./gradlew api:publishMavenPublicationToSkyRepositoryRepository
+        run: ./gradlew publishMavenPublicationToHibiscusMCRepositoryRepository
         env:
           REPO_USERNAME: ${{ secrets.REPO_USERNAME }}
           REPO_PASSWORD: ${{ secrets.REPO_PASSWORD }}
