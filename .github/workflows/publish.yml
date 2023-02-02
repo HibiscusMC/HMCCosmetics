@@ -1,0 +1,29 @@
+name: Publish to HibiscusMC Repository
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    if: "!contains(github.event.head_commit.message, 'dependabot') && !contains(github.event.head_commit.message, 'nopush')"
+    environment: build
+    runs-on: ubuntu-latest
+    env:
+      HAS_TOKEN: ${{ secrets.REPO_PASSWORD != '' }}
+    steps:
+      - uses: actions/checkout@v2.3.4
+      - name: Set up Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: 17
+      - name: Build with Gradle
+        run: ./gradlew api:clean api:build --no-daemon --stacktrace
+      - name: Publish to Nexus
+        if: ${{ env.HAS_TOKEN == 'true' }}
+        run: ./gradlew api:publishMavenPublicationToSkyRepositoryRepository
+        env:
+          REPO_USERNAME: ${{ secrets.REPO_USERNAME }}
+          REPO_PASSWORD: ${{ secrets.REPO_PASSWORD }}
