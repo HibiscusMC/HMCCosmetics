@@ -26,6 +26,7 @@ import com.jeff_media.updatechecker.UpdateChecker;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.Permission;
@@ -46,6 +47,8 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
     private static YamlConfigurationLoader configLoader;
     private static final int pluginId = 13873;
     private static boolean hasModelEngine = false;
+    private static boolean onLatestVersion = true;
+    private static String latestVersion = "";
 
     @Override
     public void onEnable() {
@@ -62,11 +65,24 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
         }
 
         // Update Checker
-        new UpdateChecker(this, UpdateCheckSource.POLYMART, "1879")
-                .setDownloadLink("https://polymart.org/resource/1879")
+        UpdateChecker checker = new UpdateChecker(this, UpdateCheckSource.POLYMART, "1879")
+                .onSuccess((commandSenders, latestVersion) -> {
+                    this.latestVersion = (String) latestVersion;
+                    if (!this.latestVersion.equalsIgnoreCase(getDescription().getVersion())) {
+                        getLogger().info("+++++++++++++++++++++++++++++++++++");
+                        getLogger().info("There is a new update for HMCCosmetics!");
+                        getLogger().info("Please download it as soon as possible for possible fixes and new features.");
+                        getLogger().info("Current Version " + getDescription().getVersion() + " | Latest Version " + latestVersion);
+                        getLogger().info("Spigot: https://www.spigotmc.org/resources/100107/");
+                        getLogger().info("Polymart: https://polymart.org/resource/1879");
+                        getLogger().info("+++++++++++++++++++++++++++++++++++");
+                    }
+                })
+                .setNotifyRequesters(false)
+                .setNotifyOpsOnJoin(false)
                 .checkEveryXHours(24)
                 .checkNow();
-
+        onLatestVersion = checker.isUsingLatestVersion();
         // File setup
         if (!getDataFolder().exists()) {
             saveDefaultConfig();
@@ -240,5 +256,11 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
 
     public static boolean hasModelEngine() {
         return hasModelEngine;
+    }
+    public static boolean isOnLatestVersion() {
+        return onLatestVersion;
+    }
+    public static String getLatestVersion() {
+        return latestVersion;
     }
 }
