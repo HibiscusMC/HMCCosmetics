@@ -14,11 +14,20 @@ public class ActionMenu extends Action {
 
     @Override
     public void run(CosmeticUser user, String raw) {
+        boolean ignorePermission = false;
+
+        raw = raw.replaceAll(" ", ""); // Removes all spaces
+
+        if (raw.contains("-o")) {
+            raw = raw.replaceAll("-o", "");
+            ignorePermission = true;
+        }
         if (!Menus.hasMenu(raw)) {
             HMCCosmeticsPlugin.getInstance().getLogger().info("Invalid Action Menu -> " + raw);
             return;
         }
         Menu menu = Menus.getMenu(raw);
-        menu.openMenu(user, true);
+        HMCCosmeticsPlugin.getInstance().getLogger().info(raw + " | " + ignorePermission);
+        menu.openMenu(user, ignorePermission);
     }
 }
