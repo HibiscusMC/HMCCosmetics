@@ -87,10 +87,15 @@ public class CosmeticCommand implements CommandExecutor {
                     return true;
                 }
                 Cosmetic cosmetic;
+                Color color = Color.WHITE;
 
                 if (sender instanceof Player) player = ((Player) sender).getPlayer();
                 if (sender.hasPermission("hmccosmetics.cmd.apply.other")) {
                     if (args.length >= 3) player = Bukkit.getPlayer(args[2]);
+                }
+
+                if (sender.hasPermission("hmccosmetics.cmd.apply.color")) {
+                    if (args.length >= 4) color = ServerUtils.hex2Rgb(args[3]);
                 }
 
                 if (args.length == 1) {
@@ -124,7 +129,7 @@ public class CosmeticCommand implements CommandExecutor {
 
                 if (!silent) MessagesUtil.sendMessage(player, "equip-cosmetic", placeholders);
 
-                user.addPlayerCosmetic(cosmetic);
+                user.addPlayerCosmetic(cosmetic, color);
                 user.updateCosmetic(cosmetic.getSlot());
                 return true;
             }

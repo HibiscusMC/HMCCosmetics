@@ -91,9 +91,18 @@ public class CosmeticCommandTabComplete implements TabCompleter {
                         completions.add(player.getName());
                     }
                 }
-
             }
             StringUtil.copyPartialMatches(args[2], completions, finalCompletitons);
+        }
+
+        if (args.length == 4) {
+            String subcommand = args[0].toLowerCase();
+            switch (subcommand) {
+                case "apply" -> {
+                    completions.add("#FFFFFF");
+                }
+            }
+            StringUtil.copyPartialMatches(args[3], completions, finalCompletitons);
         }
 
         Collections.sort(finalCompletitons);
