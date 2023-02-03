@@ -1,10 +1,13 @@
 package com.hibiscusmc.hmccosmetics.database.types;
 
+import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
+import org.apache.commons.lang3.EnumUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,6 +37,9 @@ public class Data {
     // BACKPACK=colorfulbackpack&RRGGBB,HELMET=niftyhat,BALLOON=colorfulballoon,CHESTPLATE=niftychestplate
     public String steralizeData(CosmeticUser user) {
         String data = "";
+        if (user.getHidden()) {
+            data = "HIDDEN=" + user.getHiddenReason();
+        }
         for (Cosmetic cosmetic : user.getCosmetic()) {
             Color color = user.getCosmeticColor(cosmetic.getSlot());
             String input = cosmetic.getSlot() + "=" + cosmetic.getId();
@@ -47,7 +53,7 @@ public class Data {
         return data;
     }
 
-    public Map<CosmeticSlot, Map<Cosmetic, Color>> desteralizedata(String raw) {
+    public Map<CosmeticSlot, Map<Cosmetic, Color>> desteralizedata(CosmeticUser user, String raw) {
         Map<CosmeticSlot, Map<Cosmetic, Color>> cosmetics = new HashMap<>();
 
         String[] rawData = raw.split(",");
@@ -57,8 +63,15 @@ public class Data {
             CosmeticSlot slot = null;
             Cosmetic cosmetic = null;
             MessagesUtil.sendDebugMessages("First split (suppose slot) " + splitData[0]);
+            if (splitData[0].equalsIgnoreCase("HIDDEN")) {
+                if (EnumUtils.isValidEnum(CosmeticUser.HiddenReason.class, splitData[1])) {
+                    Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> {
+                        user.hideCosmetics(CosmeticUser.HiddenReason.valueOf(splitData[1]));
+                    });
+                }
+                continue;
+            }
             if (CosmeticSlot.valueOf(splitData[0]) != null) slot = CosmeticSlot.valueOf(splitData[0]);
-
             if (splitData[1].contains("&")) {
                 String[] colorSplitData = splitData[1].split("&");
                 if (Cosmetics.hasCosmetic(colorSplitData[0])) cosmetic = Cosmetics.getCosmetic(colorSplitData[0]);

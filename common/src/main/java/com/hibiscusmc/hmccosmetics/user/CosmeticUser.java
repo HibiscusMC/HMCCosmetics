@@ -191,6 +191,7 @@ public class CosmeticUser {
     public ItemStack getUserCosmeticItem(Cosmetic cosmetic) {
         ItemStack item = null;
         if (hideCosmetics) {
+            if (cosmetic instanceof CosmeticBackpackType || cosmetic instanceof CosmeticBalloonType) return new ItemStack(Material.AIR);
             return getPlayer().getInventory().getItem(InventoryUtils.getEquipmentSlot(cosmetic.getSlot()));
         }
         if (cosmetic instanceof CosmeticArmorType || cosmetic instanceof CosmeticMainhandType || cosmetic instanceof CosmeticBackpackType) {

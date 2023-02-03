@@ -38,7 +38,7 @@ public class InternalData extends Data {
         if (!player.getPersistentDataContainer().has(key, PersistentDataType.STRING)) return user;
         String rawData = player.getPersistentDataContainer().get(key, PersistentDataType.STRING);
 
-        Map<CosmeticSlot, Map<Cosmetic, Color>> a = desteralizedata(rawData);
+        Map<CosmeticSlot, Map<Cosmetic, Color>> a = desteralizedata(user, rawData);
         for (Map<Cosmetic, Color> cosmeticColors : a.values()) {
             for (Cosmetic cosmetic : cosmeticColors.keySet()) {
                 Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> {

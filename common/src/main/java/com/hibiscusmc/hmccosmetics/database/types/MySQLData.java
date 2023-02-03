@@ -82,7 +82,7 @@ public class MySQLData extends Data {
                 ResultSet rs = preparedStatement.executeQuery();
                 if (rs.next()) {
                     String rawData = rs.getString("COSMETICS");
-                    Map<CosmeticSlot, Map<Cosmetic, Color>> cosmetics = desteralizedata(rawData);
+                    Map<CosmeticSlot, Map<Cosmetic, Color>> cosmetics = desteralizedata(user, rawData);
                     for (Map<Cosmetic, Color> cosmeticColors : cosmetics.values()) {
                         for (Cosmetic cosmetic : cosmeticColors.keySet()) {
                             Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> {
