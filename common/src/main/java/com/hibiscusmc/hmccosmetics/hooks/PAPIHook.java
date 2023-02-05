@@ -54,7 +54,9 @@ public class PAPIHook extends PlaceholderExpansion {
                 }
                 if (placeholderArgs.get(1) != null) {
                     Cosmetic cosmetic = Cosmetics.getCosmetic(placeholderArgs.get(1));
-                    if (user.getCosmetic(cosmetic.getSlot()).getId() == cosmetic.getId()) return "true";
+                    Cosmetic currentCosmetic = user.getCosmetic(cosmetic.getSlot());
+                    if (cosmetic == null || currentCosmetic == null) return "false";
+                    if (currentCosmetic.getId() == cosmetic.getId()) return "true";
                     return "false";
                 }
             case "current":
