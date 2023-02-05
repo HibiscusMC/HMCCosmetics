@@ -73,7 +73,7 @@ public class CosmeticCommand implements CommandExecutor {
 
         switch (firstArgs) {
             case ("reload") -> {
-                if (!sender.hasPermission("HMCCosmetics.cmd.reload") || !sender.isOp()) {
+                if (!sender.hasPermission("HMCCosmetics.cmd.reload") && !sender.isOp()) {
                     if (!silent) MessagesUtil.sendMessage(sender, "no-permission");
                     return true;
                 }
