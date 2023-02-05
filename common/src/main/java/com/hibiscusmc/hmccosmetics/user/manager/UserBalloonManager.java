@@ -1,4 +1,4 @@
-package com.hibiscusmc.hmccosmetics.entities;
+package com.hibiscusmc.hmccosmetics.user.manager;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.Settings;
@@ -19,14 +19,14 @@ import org.bukkit.util.Vector;
 import java.util.UUID;
 import java.util.logging.Level;
 
-public class BalloonEntity {
+public class UserBalloonManager {
 
     private BalloonType balloonType;
     private final int balloonID;
     private final UUID uniqueID;
     private final ArmorStand modelEntity;
 
-    public BalloonEntity(Location location) {
+    public UserBalloonManager(Location location) {
         this.uniqueID = UUID.randomUUID();
         this.balloonID = NMSHandlers.getHandler().getNextEntityId();
         this.modelEntity = NMSHandlers.getHandler().getMEGEntity(location.add(Settings.getBalloonOffset()));

@@ -10,7 +10,8 @@ import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticArmorType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBackpackType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticMainhandType;
-import com.hibiscusmc.hmccosmetics.entities.BalloonEntity;
+import com.hibiscusmc.hmccosmetics.user.manager.UserBackpackManager;
+import com.hibiscusmc.hmccosmetics.user.manager.UserBalloonManager;
 import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
 import com.hibiscusmc.hmccosmetics.util.InventoryUtils;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
@@ -35,18 +36,13 @@ public class CosmeticUser {
     private int taskId;
     private HashMap<CosmeticSlot, Cosmetic> playerCosmetics = new HashMap<>();
     private Wardrobe wardrobe;
-    private ArmorStand invisibleArmorstand;
-    private BalloonEntity balloonEntity;
+    private UserBalloonManager userBalloonManager;
+    private UserBackpackManager userBackpackManager;
 
     // Cosmetic Settings/Toggles
-    private boolean hideBackpack;
     private boolean hideCosmetics;
     private HiddenReason hiddenReason;
     private HashMap<CosmeticSlot, Color> colors = new HashMap<>();
-
-    public CosmeticUser() {
-        // Empty
-    }
 
     public CosmeticUser(UUID uuid) {
         this.uniqueId = uuid;
@@ -84,16 +80,8 @@ public class CosmeticUser {
     public Collection<Cosmetic> getCosmetic() {
         return playerCosmetics.values();
     }
-
-    public int getArmorstandId() {
-        return invisibleArmorstand.getEntityId();
-    }
-
-    public Entity getBackpackEntity() {
-        return this.invisibleArmorstand;
-    }
-    public BalloonEntity getBalloonEntity() {
-        return this.balloonEntity;
+    public UserBalloonManager getBalloonEntity() {
+        return this.userBalloonManager;
     }
 
     public void addPlayerCosmetic(Cosmetic cosmetic) {
@@ -287,22 +275,25 @@ public class CosmeticUser {
     }
 
     public void spawnBackpack(CosmeticBackpackType cosmeticBackpackType) {
-        MessagesUtil.sendDebugMessages("spawnBackpack Bukkit - Start");
-        Player player = Bukkit.getPlayer(getUniqueId());
+        this.userBackpackManager = new UserBackpackManager(this);
+        userBackpackManager.spawnBackpack(cosmeticBackpackType);
+    }
 
-        if (this.invisibleArmorstand != null) return;
+    public void despawnBackpack() {
+        userBackpackManager.despawnBackpack();
+        userBackpackManager = null;
+    }
 
-        this.invisibleArmorstand = (ArmorStand) NMSHandlers.getHandler().spawnBackpack(this, cosmeticBackpackType);
-
-        MessagesUtil.sendDebugMessages("spawnBackpack Bukkit - Finish");
+    public UserBackpackManager getUserBackpackManager() {
+        return userBackpackManager;
     }
 
     public void spawnBalloon(CosmeticBalloonType cosmeticBalloonType) {
         Player player = Bukkit.getPlayer(getUniqueId());
 
-        if (this.balloonEntity != null) return;
+        if (this.userBalloonManager != null) return;
 
-        this.balloonEntity = NMSHandlers.getHandler().spawnBalloon(this, cosmeticBalloonType);
+        this.userBalloonManager = NMSHandlers.getHandler().spawnBalloon(this, cosmeticBalloonType);
 
         List<Player> viewer = PlayerUtils.getNearbyPlayers(player);
         viewer.add(player);
@@ -311,21 +302,13 @@ public class CosmeticUser {
     }
 
     public void despawnBalloon() {
-        if (this.balloonEntity == null) return;
+        if (this.userBalloonManager == null) return;
         List<Player> sentTo = PlayerUtils.getNearbyPlayers(getPlayer().getLocation());
 
-        PacketManager.sendEntityDestroyPacket(balloonEntity.getPufferfishBalloonId(), sentTo);
+        PacketManager.sendEntityDestroyPacket(userBalloonManager.getPufferfishBalloonId(), sentTo);
 
-        this.balloonEntity.remove();
-        this.balloonEntity = null;
-    }
-
-    public void despawnBackpack() {
-        Player player = Bukkit.getPlayer(getUniqueId());
-        if (invisibleArmorstand == null) return;
-        invisibleArmorstand.setHealth(0);
-        invisibleArmorstand.remove();
-        this.invisibleArmorstand = null;
+        this.userBalloonManager.remove();
+        this.userBalloonManager = null;
     }
 
     public void respawnBackpack() {
@@ -388,24 +371,6 @@ public class CosmeticUser {
         }
     }
 
-    public void hideBackpack() {
-        if (hideBackpack == true) return;
-        if (hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
-            invisibleArmorstand.getEquipment().clear();
-            hideBackpack = true;
-        }
-    }
-
-    public void showBackpack() {
-        if (hideBackpack == false) return;
-        if (hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
-            CosmeticBackpackType cosmeticBackpackType = (CosmeticBackpackType) getCosmetic(CosmeticSlot.BACKPACK);
-            ItemStack item = getUserCosmeticItem(cosmeticBackpackType);
-            invisibleArmorstand.getEquipment().setHelmet(item);
-            hideBackpack = false;
-        }
-    }
-
     public void hideCosmetics(HiddenReason reason) {
         if (hideCosmetics == true) return;
         PlayerCosmeticHideEvent event = new PlayerCosmeticHideEvent(this, reason);
@@ -422,7 +387,7 @@ public class CosmeticUser {
             PacketManager.sendLeashPacket(getBalloonEntity().getPufferfishBalloonId(), -1, viewer);
         }
         if (hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
-            invisibleArmorstand.getEquipment().clear();
+            userBackpackManager.getArmorstand().getEquipment().clear();
         }
         updateCosmetic();
         MessagesUtil.sendDebugMessages("HideCosmetics");
@@ -448,7 +413,7 @@ public class CosmeticUser {
         if (hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
             CosmeticBackpackType cosmeticBackpackType = (CosmeticBackpackType) getCosmetic(CosmeticSlot.BACKPACK);
             ItemStack item = getUserCosmeticItem(cosmeticBackpackType);
-            invisibleArmorstand.getEquipment().setHelmet(item);
+            userBackpackManager.getArmorstand().getEquipment().setHelmet(item);
         }
         updateCosmetic();
         MessagesUtil.sendDebugMessages("ShowCosmetics");

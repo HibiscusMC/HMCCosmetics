@@ -100,7 +100,7 @@ public class Wardrobe {
 
             // Misc
             if (VIEWER.hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
-                PacketManager.ridingMountPacket(NPC_ID, VIEWER.getBackpackEntity().getEntityId(), viewer);
+                PacketManager.ridingMountPacket(NPC_ID, VIEWER.getUserBackpackManager().getFirstArmorstandId(), viewer);
             }
 
             if (VIEWER.hasCosmeticInSlot(CosmeticSlot.BALLOON)) {
@@ -236,10 +236,10 @@ public class Wardrobe {
                 }
 
                 if (VIEWER.hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
-                    PacketManager.sendTeleportPacket(VIEWER.getArmorstandId(), location, false, viewer);
-                    PacketManager.ridingMountPacket(NPC_ID, VIEWER.getBackpackEntity().getEntityId(), viewer);
-                    VIEWER.getBackpackEntity().setRotation(nextyaw, 0);
-                    PacketManager.sendEntityDestroyPacket(VIEWER.getArmorstandId(), outsideViewers);
+                    PacketManager.sendTeleportPacket(VIEWER.getUserBackpackManager().getFirstArmorstandId(), location, false, viewer);
+                    PacketManager.ridingMountPacket(NPC_ID, VIEWER.getUserBackpackManager().getFirstArmorstandId(), viewer);
+                    VIEWER.getUserBackpackManager().getArmorstand().setRotation(nextyaw, 0);
+                    PacketManager.sendEntityDestroyPacket(VIEWER.getUserBackpackManager().getFirstArmorstandId(), outsideViewers);
                 }
 
                 if (VIEWER.hasCosmeticInSlot(CosmeticSlot.BALLOON)) {

@@ -99,9 +99,9 @@ public class PlayerGameListener implements Listener {
         }
 
         if (user.hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
-            user.hideBackpack();
+            user.getUserBackpackManager().hideBackpack();
 
-            user.getBackpackEntity().teleport(event.getTo());
+            user.getUserBackpackManager().getArmorstand().teleport(event.getTo());
 
             Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
                 user.updateCosmetic();

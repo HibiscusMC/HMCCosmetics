@@ -25,15 +25,15 @@ public class CosmeticBackpackType extends Cosmetic {
 
         if (user.isInWardrobe()) return;
 
-        if (loc.getWorld() != user.getBackpackEntity().getWorld()) {
-            user.getBackpackEntity().teleport(loc);
+        if (loc.getWorld() != user.getUserBackpackManager().getArmorstand().getWorld()) {
+            user.getUserBackpackManager().getArmorstand().teleport(loc);
         }
 
-        user.getBackpackEntity().teleport(loc);
+        user.getUserBackpackManager().getArmorstand().teleport(loc);
 
-        PacketManager.sendRidingPacket(player.getEntityId(), user.getBackpackEntity().getEntityId(), loc);
+        PacketManager.sendRidingPacket(player.getEntityId(), user.getUserBackpackManager().getFirstArmorstandId(), loc);
 
-        user.getBackpackEntity().setRotation(loc.getYaw(), loc.getPitch());
-        user.showBackpack();
+        user.getUserBackpackManager().getArmorstand().setRotation(loc.getYaw(), loc.getPitch());
+        user.getUserBackpackManager().showBackpack();
     }
 }

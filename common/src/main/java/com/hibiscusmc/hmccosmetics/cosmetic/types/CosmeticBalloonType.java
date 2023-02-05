@@ -2,10 +2,9 @@ package com.hibiscusmc.hmccosmetics.cosmetic.types;
 
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
-import com.hibiscusmc.hmccosmetics.entities.BalloonEntity;
+import com.hibiscusmc.hmccosmetics.user.manager.UserBalloonManager;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
-import org.apache.commons.lang3.EnumUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -13,7 +12,6 @@ import org.bukkit.util.Vector;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 
-import java.util.HashMap;
 import java.util.List;
 
 public class CosmeticBalloonType extends Cosmetic {
@@ -58,20 +56,20 @@ public class CosmeticBalloonType extends Cosmetic {
         List<Player> viewer = PacketManager.getViewers(player.getLocation());
         viewer.add(player);
 
-        BalloonEntity balloonEntity = user.getBalloonEntity();
+        UserBalloonManager userBalloonManager = user.getBalloonEntity();
 
-        if (player.getLocation().getWorld() != balloonEntity.getLocation().getWorld()) {
-            balloonEntity.getModelEntity().teleport(newLocation);
-            PacketManager.sendTeleportPacket(balloonEntity.getPufferfishBalloonId(), newLocation, false, viewer);
+        if (player.getLocation().getWorld() != userBalloonManager.getLocation().getWorld()) {
+            userBalloonManager.getModelEntity().teleport(newLocation);
+            PacketManager.sendTeleportPacket(userBalloonManager.getPufferfishBalloonId(), newLocation, false, viewer);
             return;
         }
 
         Vector velocity = newLocation.toVector().subtract(currentLocation.toVector());
-        balloonEntity.setVelocity(velocity.multiply(1.1));
-        balloonEntity.setLocation(newLocation);
+        userBalloonManager.setVelocity(velocity.multiply(1.1));
+        userBalloonManager.setLocation(newLocation);
 
-        PacketManager.sendTeleportPacket(balloonEntity.getPufferfishBalloonId(), newLocation, false, viewer);
-        if (!user.getHidden()) PacketManager.sendLeashPacket(balloonEntity.getPufferfishBalloonId(), player.getEntityId(), viewer);
+        PacketManager.sendTeleportPacket(userBalloonManager.getPufferfishBalloonId(), newLocation, false, viewer);
+        if (!user.getHidden()) PacketManager.sendLeashPacket(userBalloonManager.getPufferfishBalloonId(), player.getEntityId(), viewer);
     }
 
     public String getModelName() {

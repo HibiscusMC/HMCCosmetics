@@ -3,7 +3,7 @@ package com.hibiscusmc.hmccosmetics.nms;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBackpackType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
-import com.hibiscusmc.hmccosmetics.entities.BalloonEntity;
+import com.hibiscusmc.hmccosmetics.user.manager.UserBalloonManager;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
@@ -25,7 +25,7 @@ public interface NMSHandler {
 
     Entity spawnBackpack(CosmeticUser user, CosmeticBackpackType cosmeticBackpackType);
 
-    BalloonEntity spawnBalloon(CosmeticUser user, CosmeticBalloonType cosmeticBalloonType);
+    UserBalloonManager spawnBalloon(CosmeticUser user, CosmeticBalloonType cosmeticBalloonType);
 
     void equipmentSlotUpdate(
             int entityId,
