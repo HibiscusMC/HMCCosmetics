@@ -46,7 +46,7 @@ public class CosmeticCommand implements CommandExecutor {
             }
 
             CosmeticUser user = CosmeticUsers.getUser(((Player) sender).getUniqueId());
-            Menu menu = Menus.getMenu(Settings.getDefaultMenu());
+            Menu menu = Menus.getDefaultMenu();
 
             if (user == null) {
                 MessagesUtil.sendMessage(sender, "invalid-player");
