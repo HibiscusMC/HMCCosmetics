@@ -287,6 +287,7 @@ public class CosmeticUser {
     }
 
     public void despawnBackpack() {
+        if (userBackpackManager == null) return;
         userBackpackManager.despawnBackpack();
         userBackpackManager = null;
     }

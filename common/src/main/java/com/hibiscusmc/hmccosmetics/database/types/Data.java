@@ -1,6 +1,7 @@
 package com.hibiscusmc.hmccosmetics.database.types;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
+import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
@@ -55,6 +56,7 @@ public class Data {
 
     public Map<CosmeticSlot, Map<Cosmetic, Color>> desteralizedata(CosmeticUser user, String raw) {
         Map<CosmeticSlot, Map<Cosmetic, Color>> cosmetics = new HashMap<>();
+        boolean checkPermission = Settings.getForcePermissionJoin();
 
         String[] rawData = raw.split(",");
         for (String a : rawData) {
@@ -76,10 +78,20 @@ public class Data {
                 String[] colorSplitData = splitData[1].split("&");
                 if (Cosmetics.hasCosmetic(colorSplitData[0])) cosmetic = Cosmetics.getCosmetic(colorSplitData[0]);
                 if (slot == null || cosmetic == null) continue;
+                if (cosmetic.requiresPermission() && checkPermission) {
+                    if (!user.getPlayer().hasPermission(cosmetic.getPermission())) {
+                        continue;
+                    }
+                }
                 cosmetics.put(slot, Map.of(cosmetic, Color.fromRGB(Integer.parseInt(colorSplitData[1]))));
             } else {
                 if (Cosmetics.hasCosmetic(splitData[1])) cosmetic = Cosmetics.getCosmetic(splitData[1]);
                 if (slot == null || cosmetic == null) continue;
+                if (cosmetic.requiresPermission() && checkPermission) {
+                    if (!user.getPlayer().hasPermission(cosmetic.getPermission())) {
+                        continue;
+                    }
+                }
                 HashMap<Cosmetic, Color> cosmeticColorHashMap = new HashMap<>();
                 cosmeticColorHashMap.put(cosmetic, null);
                 cosmetics.put(slot, cosmeticColorHashMap);
