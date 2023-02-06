@@ -46,6 +46,24 @@ public class Wardrobe {
         ARMORSTAND_ID = NMSHandlers.getHandler().getNextEntityId();
         WARDROBE_UUID = UUID.randomUUID();
         VIEWER = user;
+
+        exitLocation = WardrobeSettings.getLeaveLocation();
+        viewingLocation = WardrobeSettings.getViewerLocation();
+        npcLocation = WardrobeSettings.getWardrobeLocation();
+
+        wardrobeStatus = WardrobeStatus.SETUP;
+    }
+
+    public Wardrobe(CosmeticUser user, Location exitLocation, Location viewingLocation, Location npcLocation) {
+        NPC_ID = NMSHandlers.getHandler().getNextEntityId();
+        ARMORSTAND_ID = NMSHandlers.getHandler().getNextEntityId();
+        WARDROBE_UUID = UUID.randomUUID();
+        VIEWER = user;
+
+        this.exitLocation = exitLocation;
+        this.viewingLocation = viewingLocation;
+        this.npcLocation = npcLocation;
+
         wardrobeStatus = WardrobeStatus.SETUP;
     }
 
@@ -56,12 +74,7 @@ public class Wardrobe {
         this.originalGamemode = player.getGameMode();
         if (WardrobeSettings.isReturnLastLocation()) {
             this.exitLocation = player.getLocation().clone();
-        } else {
-            this.exitLocation = WardrobeSettings.getLeaveLocation();
         }
-
-        viewingLocation = WardrobeSettings.getViewerLocation();
-        npcLocation = WardrobeSettings.getWardrobeLocation();
 
         VIEWER.hidePlayer();
         List<Player> viewer = List.of(player);

@@ -19,6 +19,7 @@ import com.hibiscusmc.hmccosmetics.util.PlayerUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -214,7 +215,15 @@ public class CosmeticUser {
     }
 
     public void enterWardrobe() {
-        if (!WardrobeSettings.inDistanceOfStatic(getPlayer().getLocation())) {
+        enterWardrobe(false);
+    }
+
+    public void enterWardrobe(boolean ignoreDistance) {
+        enterWardrobe(ignoreDistance, WardrobeSettings.getLeaveLocation(), WardrobeSettings.getViewerLocation(), WardrobeSettings.getWardrobeLocation());
+    }
+
+    public void enterWardrobe(boolean ignoreDistance, Location exitLocation, Location viewingLocation, Location npcLocation) {
+        if (!WardrobeSettings.inDistanceOfStatic(getPlayer().getLocation()) && !ignoreDistance) {
             MessagesUtil.sendMessage(getPlayer(), "not-near-wardrobe");
             return;
         }
@@ -225,7 +234,7 @@ public class CosmeticUser {
         }
 
         if (wardrobe == null) {
-            wardrobe = new Wardrobe(this);
+            wardrobe = new Wardrobe(this, exitLocation, viewingLocation, npcLocation);
             wardrobe.start();
         }
     }
@@ -256,8 +265,6 @@ public class CosmeticUser {
                 wardrobe.end();
                 wardrobe = null;
             }, WardrobeSettings.getTransitionDelay());
-        } else {
-
         }
     }
 
