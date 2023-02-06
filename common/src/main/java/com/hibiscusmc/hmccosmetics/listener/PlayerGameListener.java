@@ -13,7 +13,6 @@ import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticArmorType;
-import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBackpackType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
 import com.hibiscusmc.hmccosmetics.gui.Menu;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
@@ -356,7 +355,7 @@ public class PlayerGameListener implements Listener {
                 CosmeticUser user = CosmeticUsers.getUser(player);
                 if (user == null) return;
                 if (!user.isInWardrobe()) return;
-                Menu menu = Menus.getMenu(Settings.getDefaultMenu());
+                Menu menu = Menus.getDefaultMenu();
                 if (menu == null) return;
                 menu.openMenu(user);
                 event.setCancelled(true);
