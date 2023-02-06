@@ -107,23 +107,27 @@ public class TypeCosmetic extends Type {
         } else {
             ConfigurationNode itemConfig = config.node("item");
             if (itemConfig.virtual()) return itemMeta;
-            if (itemConfig.node("locked-name").virtual() && itemConfig.node("locked-name").virtual()) {
+            if (itemConfig.node("locked-name").virtual() && itemConfig.node("locked-lore").virtual()) {
                 return processLoreLines(user, itemMeta);
             }
             try {
-                itemMeta.getLore().clear();
+                List<String> lockedLore = itemMeta.getLore();
+                String lockedName = itemMeta.getDisplayName();
 
-                List<String> lockedLore = Utils.replaceIfNull(itemConfig.node("locked-lore").getList(String.class),
-                                new ArrayList<String>()).
-                        stream().map(StringUtils::parseStringToString).collect(Collectors.toList());
+                if (!itemConfig.node("locked-lore").virtual()) {
+                    lockedLore = Utils.replaceIfNull(itemConfig.node("locked-lore").getList(String.class),
+                                    new ArrayList<String>()).
+                            stream().map(StringUtils::parseStringToString).collect(Collectors.toList());
+                }
+                if (!itemConfig.node("locked-name").virtual()) {
+                    lockedName = StringUtils.parseStringToString(Utils.replaceIfNull(itemConfig.node("locked-name").getString(), ""));
+                }
 
-                if (PAPIHook.isPAPIEnabled()) {
-                    String lockedName = StringUtils.parseStringToString(Utils.replaceIfNull(itemConfig.node("locked-name").getString(), ""));
-                    itemMeta.setDisplayName(PlaceholderAPI.setPlaceholders(user.getPlayer(), lockedName));
-                    if (itemMeta.hasLore()) {
-                        for (String loreLine : lockedLore) {
-                            processedLore.add(PlaceholderAPI.setPlaceholders(user.getPlayer(), loreLine));
-                        }
+                itemMeta.setDisplayName(PlaceholderAPI.setPlaceholders(user.getPlayer(), lockedName));
+                if (itemMeta.hasLore()) {
+                    itemMeta.getLore().clear();
+                    for (String loreLine : lockedLore) {
+                        processedLore.add(PlaceholderAPI.setPlaceholders(user.getPlayer(), loreLine));
                     }
                 }
             } catch (Exception e) {
