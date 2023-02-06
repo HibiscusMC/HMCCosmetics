@@ -39,7 +39,7 @@ public class Menus {
         return MENUS.containsValue(menu);
     }
 
-    public static Menu getDefaultMenu() { return MENUS.get(Settings.getDefaultMenu()); }
+    public static Menu getDefaultMenu() { return Menus.getMenu(Settings.getDefaultMenu()); }
 
     public static List<String> getMenuNames() {
         List<String> names = new ArrayList<>();
