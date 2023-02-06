@@ -260,7 +260,7 @@ public class Wardrobe {
                     VIEWER.getBalloonEntity().getModelEntity().teleport(WardrobeSettings.getWardrobeLocation().add(Settings.getBalloonOffset()));
                     PacketManager.sendLeashPacket(VIEWER.getBalloonEntity().getPufferfishBalloonId(), -1, outsideViewers);
                     PacketManager.sendEntityDestroyPacket(VIEWER.getBalloonEntity().getModelId(), outsideViewers);
-                    //PacketManager.sendLeashPacket(VIEWER.getBalloonEntity().getModelId(), NPC_ID, viewer); // Pufferfish goes away for some reason?
+                    PacketManager.sendLeashPacket(VIEWER.getBalloonEntity().getPufferfishBalloonId(), NPC_ID, viewer); // Pufferfish goes away for some reason?
                 }
 
                 if (WardrobeSettings.isEquipPumpkin()) {
