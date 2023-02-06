@@ -122,7 +122,7 @@ public class Wardrobe {
                 //PacketManager.sendLeashPacket(VIEWER.getBalloonEntity().getModelId(), NPC_ID, viewer);
 
                 PacketManager.sendTeleportPacket(VIEWER.getBalloonEntity().getPufferfishBalloonId(), npcLocation.clone().add(Settings.getBalloonOffset()), false, viewer);
-                PacketManager.sendTeleportPacket(VIEWER.getBalloonEntity().getModelId(), npcLocation.clone().add(Settings.getBalloonOffset()), false, viewer);
+                VIEWER.getBalloonEntity().getModelEntity().teleport(npcLocation.clone().add(Settings.getBalloonOffset()));
             }
 
             if (WardrobeSettings.getEnabledBossbar()) {
