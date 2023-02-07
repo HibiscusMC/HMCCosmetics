@@ -114,13 +114,6 @@ public class CosmeticUser {
             spawnBalloon(balloonType);
         }
     }
-    public void toggleCosmetic(Cosmetic cosmetic) {
-        if (hasCosmeticInSlot(cosmetic.getSlot())) {
-            removeCosmeticSlot(cosmetic.getSlot());
-            return;
-        }
-        addPlayerCosmetic(cosmetic);
-    }
 
     public void removeCosmetics() {
         // Small optimization could be made, but Concurrent modification prevents us from both getting and removing
