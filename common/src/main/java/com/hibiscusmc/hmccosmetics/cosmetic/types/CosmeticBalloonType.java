@@ -48,11 +48,11 @@ public class CosmeticBalloonType extends Cosmetic {
     @Override
     public void update(CosmeticUser user) {
         Player player = Bukkit.getPlayer(user.getUniqueId());
-        UserBalloonManager userBalloonManager = user.getBalloonEntity();
+        UserBalloonManager userBalloonManager = user.getBalloonManager();
         Location newLocation = player.getLocation();
         if (player == null || userBalloonManager == null || newLocation == null) return;
         if (user.isInWardrobe()) return;
-        Location currentLocation = user.getBalloonEntity().getLocation();
+        Location currentLocation = user.getBalloonManager().getLocation();
         newLocation = newLocation.clone().add(Settings.getBalloonOffset());
 
         List<Player> viewer = PacketManager.getViewers(player.getLocation());
