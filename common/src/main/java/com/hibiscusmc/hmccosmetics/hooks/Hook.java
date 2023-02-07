@@ -1,20 +1,25 @@
-package com.hibiscusmc.hmccosmetics.hooks.items;
+package com.hibiscusmc.hmccosmetics.hooks;
 
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
-public class ItemHook implements Listener {
+public class Hook implements Listener {
 
     private String id;
     private boolean active;
+    private boolean itemHook;
 
-    public ItemHook(String id) {
+    public Hook(String id) {
         this.id = id;
         active = false;
-        ItemHooks.addItemHook(this);
+        Hooks.addHook(this);
     }
 
-    public ItemStack get(String itemid) {
+    public void load() {
+        // Override
+    }
+
+    public ItemStack getItem(String itemid) {
         return null;
         // Override
     }
@@ -29,5 +34,13 @@ public class ItemHook implements Listener {
 
     public boolean getActive() {
         return this.active;
+    }
+
+    public void setEnabledItemHook(boolean enabled) {
+        itemHook = enabled;
+    }
+
+    public boolean hasEnabledItemHook() {
+        return itemHook;
     }
 }

@@ -7,7 +7,7 @@ import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticArmorType;
 import com.hibiscusmc.hmccosmetics.gui.action.Actions;
 import com.hibiscusmc.hmccosmetics.gui.special.DyeMenu;
 import com.hibiscusmc.hmccosmetics.gui.type.Type;
-import com.hibiscusmc.hmccosmetics.hooks.PAPIHook;
+import com.hibiscusmc.hmccosmetics.hooks.Hooks;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.misc.StringUtils;
@@ -123,11 +123,15 @@ public class TypeCosmetic extends Type {
                     lockedName = StringUtils.parseStringToString(Utils.replaceIfNull(itemConfig.node("locked-name").getString(), ""));
                 }
 
-                itemMeta.setDisplayName(PlaceholderAPI.setPlaceholders(user.getPlayer(), lockedName));
+                if (Hooks.isActiveHook("PlaceHolderAPI")) {
+                    lockedName = PlaceholderAPI.setPlaceholders(user.getPlayer(), lockedName);
+                }
+                itemMeta.setDisplayName(lockedName);
                 if (itemMeta.hasLore()) {
                     itemMeta.getLore().clear();
                     for (String loreLine : lockedLore) {
-                        processedLore.add(PlaceholderAPI.setPlaceholders(user.getPlayer(), loreLine));
+                        if (Hooks.isActiveHook("PlaceHolderAPI")) loreLine = PlaceholderAPI.setPlaceholders(user.getPlayer(), loreLine);
+                        processedLore.add(loreLine);
                     }
                 }
             } catch (Exception e) {
@@ -142,11 +146,11 @@ public class TypeCosmetic extends Type {
     private ItemMeta processLoreLines(CosmeticUser user, ItemMeta itemMeta) {
         List<String> processedLore = new ArrayList<>();
 
-        if (PAPIHook.isPAPIEnabled()) {
-            if (itemMeta.hasLore()) {
-                for (String loreLine : itemMeta.getLore()) {
-                    processedLore.add(PlaceholderAPI.setPlaceholders(user.getPlayer(), loreLine));
-                }
+        if (itemMeta.hasLore()) {
+            for (String loreLine : itemMeta.getLore()) {
+                if (Hooks.isActiveHook("PlaceholderAPI"))
+                    loreLine = PlaceholderAPI.setPlaceholders(user.getPlayer(), loreLine);
+                processedLore.add(loreLine);
             }
         }
 

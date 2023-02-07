@@ -1,7 +1,7 @@
 package com.hibiscusmc.hmccosmetics.config.serializer;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
-import com.hibiscusmc.hmccosmetics.hooks.items.ItemHooks;
+import com.hibiscusmc.hmccosmetics.hooks.Hooks;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.ServerUtils;
 import com.hibiscusmc.hmccosmetics.util.builder.ColorBuilder;
@@ -74,7 +74,7 @@ public class ItemSerializer implements TypeSerializer<ItemStack> {
 
         String material = materialNode.getString();
 
-        ItemStack item = ItemHooks.getItem(material);
+        ItemStack item = Hooks.getItem(material);
         if (item == null) {
             HMCCosmeticsPlugin.getInstance().getLogger().severe("Invalid Material -> " + material);
             return new ItemStack(Material.AIR);

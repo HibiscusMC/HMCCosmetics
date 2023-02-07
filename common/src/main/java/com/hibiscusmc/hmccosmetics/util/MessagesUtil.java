@@ -3,7 +3,8 @@ package com.hibiscusmc.hmccosmetics.util;
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
-import com.hibiscusmc.hmccosmetics.hooks.PAPIHook;
+import com.hibiscusmc.hmccosmetics.hooks.Hooks;
+import com.hibiscusmc.hmccosmetics.hooks.placeholders.HMCPlaceholderExpansion;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.misc.Adventure;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -95,7 +96,7 @@ public class MessagesUtil {
         if (!messages.containsKey(key)) return null;
         if (messages.get(key) == null) return null;
         String message = messages.get(key);
-        if (PAPIHook.isPAPIEnabled() && player != null) message = PlaceholderAPI.setPlaceholders(player, message);
+        if (Hooks.isActiveHook("PlaceholderAPI") && player != null) message = PlaceholderAPI.setPlaceholders(player, message);
         message = message.replaceAll("%prefix%", prefix);
         if (placeholders != null ) {
             return Adventure.MINI_MESSAGE.deserialize(message, placeholders);
@@ -113,7 +114,7 @@ public class MessagesUtil {
 
     public static Component processStringNoKey(Player player, String message, TagResolver placeholders) {
         message = message.replaceAll("%prefix%", prefix);
-        if (PAPIHook.isPAPIEnabled() && player != null) message = PlaceholderAPI.setPlaceholders(player, message);
+        if (Hooks.isActiveHook("PlaceholderAPI") && player != null) message = PlaceholderAPI.setPlaceholders(player, message);
         if (placeholders != null ) {
             return Adventure.MINI_MESSAGE.deserialize(message, placeholders);
         }
@@ -122,7 +123,7 @@ public class MessagesUtil {
 
     public static String processStringNoKeyString(Player player, String message) {
         message = message.replaceAll("%prefix%", prefix);
-        if (PAPIHook.isPAPIEnabled() && player != null) message = PlaceholderAPI.setPlaceholders(player, message);
+        if (Hooks.isActiveHook("PlaceholderAPI") && player != null) message = PlaceholderAPI.setPlaceholders(player, message);
         return message;
     }
 

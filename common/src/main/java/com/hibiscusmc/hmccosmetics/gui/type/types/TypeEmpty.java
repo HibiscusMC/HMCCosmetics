@@ -2,7 +2,8 @@ package com.hibiscusmc.hmccosmetics.gui.type.types;
 
 import com.hibiscusmc.hmccosmetics.gui.action.Actions;
 import com.hibiscusmc.hmccosmetics.gui.type.Type;
-import com.hibiscusmc.hmccosmetics.hooks.PAPIHook;
+import com.hibiscusmc.hmccosmetics.hooks.Hooks;
+import com.hibiscusmc.hmccosmetics.hooks.placeholders.HMCPlaceholderExpansion;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.event.inventory.ClickType;
@@ -55,11 +56,11 @@ public class TypeEmpty extends Type {
     public ItemMeta setLore(CosmeticUser user, ConfigurationNode config, ItemMeta itemMeta) {
         List<String> processedLore = new ArrayList<>();
 
-        if (PAPIHook.isPAPIEnabled()) {
-            if (itemMeta.hasLore()) {
-                for (String loreLine : itemMeta.getLore()) {
-                    processedLore.add(PlaceholderAPI.setPlaceholders(user.getPlayer(), loreLine));
-                }
+        if (itemMeta.hasLore()) {
+            for (String loreLine : itemMeta.getLore()) {
+                if (Hooks.isActiveHook("PlaceholderAPI"))
+                    loreLine = PlaceholderAPI.setPlaceholders(user.getPlayer(), loreLine);
+                processedLore.add(loreLine);
             }
         }
 

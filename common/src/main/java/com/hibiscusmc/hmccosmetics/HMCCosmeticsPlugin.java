@@ -12,8 +12,8 @@ import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
 import com.hibiscusmc.hmccosmetics.database.Database;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
-import com.hibiscusmc.hmccosmetics.hooks.PAPIHook;
-import com.hibiscusmc.hmccosmetics.hooks.items.ItemHooks;
+import com.hibiscusmc.hmccosmetics.hooks.Hooks;
+import com.hibiscusmc.hmccosmetics.hooks.placeholders.HMCPlaceholderExpansion;
 import com.hibiscusmc.hmccosmetics.hooks.worldguard.WGHook;
 import com.hibiscusmc.hmccosmetics.hooks.worldguard.WGListener;
 import com.hibiscusmc.hmccosmetics.listener.PlayerConnectionListener;
@@ -26,7 +26,6 @@ import com.jeff_media.updatechecker.UpdateChecker;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.Permission;
@@ -104,11 +103,6 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
 
         // Database
         new Database();
-
-        // PAPI
-        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-            new PAPIHook().register();
-        }
 
         // ModelEngine
         if (Bukkit.getPluginManager().getPlugin("ModelEngine") != null) {
@@ -197,8 +191,8 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
             throw new RuntimeException(e);
         }
 
-        // ItemHooks
-        ItemHooks.setup();
+        // Misc Hooks setup (like items)
+        Hooks.setup();
 
         // Cosmetics setup
         Cosmetics.setup();

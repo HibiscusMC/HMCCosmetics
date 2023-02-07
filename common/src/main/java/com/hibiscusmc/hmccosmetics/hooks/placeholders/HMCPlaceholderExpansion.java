@@ -1,4 +1,4 @@
-package com.hibiscusmc.hmccosmetics.hooks;
+package com.hibiscusmc.hmccosmetics.hooks.placeholders;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
@@ -16,11 +16,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.List;
 
-public class PAPIHook extends PlaceholderExpansion {
+public class HMCPlaceholderExpansion extends PlaceholderExpansion {
 
     private static boolean papiEnabled = false;
 
-    public PAPIHook() {
+    public HMCPlaceholderExpansion() {
         papiEnabled = true;
     }
 
@@ -66,6 +66,7 @@ public class PAPIHook extends PlaceholderExpansion {
                 if (placeholderArgs.get(1) != null) {
                     CosmeticSlot slot = CosmeticSlot.valueOf(placeholderArgs.get(1).toUpperCase());
                     if (slot == null) return null;
+                    if (user.getCosmetic(slot) == null) return null;
                     if (placeholderArgs.size() == 2) return user.getCosmetic(slot).getId();
                     switch (placeholderArgs.get(2).toLowerCase()) {
                         case "material" -> {
@@ -160,9 +161,5 @@ public class PAPIHook extends PlaceholderExpansion {
             return String.valueOf(item.getItemMeta().getLore());
         }
         return null;
-    }
-
-    public static boolean isPAPIEnabled() {
-        return papiEnabled;
     }
 }

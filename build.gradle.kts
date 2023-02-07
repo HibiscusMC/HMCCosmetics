@@ -68,9 +68,6 @@ allprojects {
         compileOnly("com.ticxo.modelengine:api:R3.0.1")
         compileOnly("com.github.oraxen:oraxen:-SNAPSHOT")
         compileOnly("com.github.LoneDev6:API-ItemsAdder:3.2.5")
-        compileOnly("com.mineinabyss:idofront:0.12.111")
-        compileOnly("com.mineinabyss:geary-papermc-core:0.19.113")
-        compileOnly("com.mineinabyss:looty:0.8.67")
         compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.1.0-SNAPSHOT")
         compileOnly("it.unimi.dsi:fastutil:8.5.11")
 
@@ -157,8 +154,8 @@ bukkit {
     main = "com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin"
     apiVersion = "1.16"
     authors = listOf("LoJoSho")
-    depend = listOf("ProtocolLib", "PlaceholderAPI")
-    softDepend = listOf("ModelEngine", "Oraxen", "ItemsAdder", "Looty", "HMCColor", "WorldGuard", "MythicMobs")
+    depend = listOf("ProtocolLib")
+    softDepend = listOf("ModelEngine", "Oraxen", "ItemsAdder", "Looty", "HMCColor", "WorldGuard", "MythicMobs", "PlaceholderAPI")
     version = "${project.version}"
 
     commands {
