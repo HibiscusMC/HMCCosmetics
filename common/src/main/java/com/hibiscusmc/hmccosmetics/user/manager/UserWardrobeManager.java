@@ -1,10 +1,11 @@
-package com.hibiscusmc.hmccosmetics.user;
+package com.hibiscusmc.hmccosmetics.user.manager;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
+import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.ServerUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
@@ -26,7 +27,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class Wardrobe {
+public class UserWardrobeManager {
 
     private int NPC_ID;
     private String npcName;
@@ -41,7 +42,7 @@ public class Wardrobe {
     private boolean active;
     private WardrobeStatus wardrobeStatus;
 
-    public Wardrobe(CosmeticUser user) {
+    public UserWardrobeManager(CosmeticUser user) {
         NPC_ID = NMSHandlers.getHandler().getNextEntityId();
         ARMORSTAND_ID = NMSHandlers.getHandler().getNextEntityId();
         WARDROBE_UUID = UUID.randomUUID();
@@ -54,7 +55,7 @@ public class Wardrobe {
         wardrobeStatus = WardrobeStatus.SETUP;
     }
 
-    public Wardrobe(CosmeticUser user, Location exitLocation, Location viewingLocation, Location npcLocation) {
+    public UserWardrobeManager(CosmeticUser user, Location exitLocation, Location viewingLocation, Location npcLocation) {
         NPC_ID = NMSHandlers.getHandler().getNextEntityId();
         ARMORSTAND_ID = NMSHandlers.getHandler().getNextEntityId();
         WARDROBE_UUID = UUID.randomUUID();

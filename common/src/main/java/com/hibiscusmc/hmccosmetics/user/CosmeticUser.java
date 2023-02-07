@@ -13,6 +13,7 @@ import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticMainhandType;
 import com.hibiscusmc.hmccosmetics.user.manager.UserBackpackManager;
 import com.hibiscusmc.hmccosmetics.user.manager.UserBalloonManager;
 import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
+import com.hibiscusmc.hmccosmetics.user.manager.UserWardrobeManager;
 import com.hibiscusmc.hmccosmetics.util.InventoryUtils;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.PlayerUtils;
@@ -21,8 +22,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.*;
@@ -36,7 +35,7 @@ public class CosmeticUser {
     private UUID uniqueId;
     private int taskId;
     private HashMap<CosmeticSlot, Cosmetic> playerCosmetics = new HashMap<>();
-    private Wardrobe wardrobe;
+    private UserWardrobeManager userWardrobeManager;
     private UserBalloonManager userBalloonManager;
     private UserBackpackManager userBackpackManager;
 
@@ -233,14 +232,14 @@ public class CosmeticUser {
             return;
         }
 
-        if (wardrobe == null) {
-            wardrobe = new Wardrobe(this, exitLocation, viewingLocation, npcLocation);
-            wardrobe.start();
+        if (userWardrobeManager == null) {
+            userWardrobeManager = new UserWardrobeManager(this, exitLocation, viewingLocation, npcLocation);
+            userWardrobeManager.start();
         }
     }
 
-    public Wardrobe getWardrobe() {
-        return wardrobe;
+    public UserWardrobeManager getWardrobe() {
+        return userWardrobeManager;
     }
 
     public void leaveWardrobe() {
@@ -249,9 +248,9 @@ public class CosmeticUser {
         if (event.isCancelled()) {
             return;
         }
-        if (!getWardrobe().getWardrobeStatus().equals(Wardrobe.WardrobeStatus.RUNNING)) return;
+        if (!getWardrobe().getWardrobeStatus().equals(UserWardrobeManager.WardrobeStatus.RUNNING)) return;
 
-        getWardrobe().setWardrobeStatus(Wardrobe.WardrobeStatus.STOPPING);
+        getWardrobe().setWardrobeStatus(UserWardrobeManager.WardrobeStatus.STOPPING);
 
         if (WardrobeSettings.isEnabledTransition()) {
             MessagesUtil.sendTitle(
@@ -262,14 +261,14 @@ public class CosmeticUser {
                     WardrobeSettings.getTransitionFadeOut()
             );
             Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
-                wardrobe.end();
-                wardrobe = null;
+                userWardrobeManager.end();
+                userWardrobeManager = null;
             }, WardrobeSettings.getTransitionDelay());
         }
     }
 
     public boolean isInWardrobe() {
-        if (wardrobe == null) return false;
+        if (userWardrobeManager == null) return false;
         return true;
     }
 
