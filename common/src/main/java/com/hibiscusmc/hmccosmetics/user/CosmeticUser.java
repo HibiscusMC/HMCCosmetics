@@ -6,13 +6,11 @@ import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
-import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticArmorType;
-import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBackpackType;
-import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
-import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticMainhandType;
+import com.hibiscusmc.hmccosmetics.cosmetic.types.*;
 import com.hibiscusmc.hmccosmetics.user.manager.UserBackpackManager;
 import com.hibiscusmc.hmccosmetics.user.manager.UserBalloonManager;
 import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
+import com.hibiscusmc.hmccosmetics.user.manager.UserEmoteManager;
 import com.hibiscusmc.hmccosmetics.user.manager.UserWardrobeManager;
 import com.hibiscusmc.hmccosmetics.util.InventoryUtils;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
@@ -38,6 +36,7 @@ public class CosmeticUser {
     private UserWardrobeManager userWardrobeManager;
     private UserBalloonManager userBalloonManager;
     private UserBackpackManager userBackpackManager;
+    private UserEmoteManager userEmoteManager;
 
     // Cosmetic Settings/Toggles
     private boolean hideCosmetics;
@@ -46,6 +45,7 @@ public class CosmeticUser {
 
     public CosmeticUser(UUID uuid) {
         this.uniqueId = uuid;
+        userEmoteManager = new UserEmoteManager(this);
         tick();
     }
 
@@ -213,6 +213,10 @@ public class CosmeticUser {
 
     public UserWardrobeManager getWardrobeManager() {
         return userWardrobeManager;
+    }
+
+    public UserEmoteManager getUserEmoteManager() {
+        return userEmoteManager;
     }
 
     public void enterWardrobe() {
@@ -436,6 +440,7 @@ public class CosmeticUser {
         PLUGIN,
         POTION,
         ACTION,
-        COMMAND
+        COMMAND,
+        EMOTE
     }
 }

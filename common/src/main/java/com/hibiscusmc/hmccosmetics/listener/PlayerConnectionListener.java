@@ -58,6 +58,7 @@ public class PlayerConnectionListener implements Listener {
             }
         }
         if (user.isInWardrobe()) user.leaveWardrobe();
+        if (user.getUserEmoteManager().isPlayingEmote()) user.getUserEmoteManager().stopEmote();
         Database.save(user);
         user.destroy();
         CosmeticUsers.removeUser(user.getUniqueId());

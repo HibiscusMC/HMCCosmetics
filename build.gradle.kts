@@ -56,6 +56,9 @@ allprojects {
 
         // ParticleHelper
         maven("https://repo.bytecode.space/repository/maven-public/")
+
+        // PlayerAnimator
+        maven("https://mvn.lumine.io/repository/maven/")
     }
 
     dependencies {
@@ -93,6 +96,7 @@ dependencies {
     implementation("org.bstats:bstats-bukkit:3.0.0")
     implementation("com.jeff_media:SpigotUpdateChecker:3.0.0")
     implementation("com.owen1212055:particlehelper:1.0.0-SNAPSHOT")
+    implementation("com.ticxo.playeranimator:PlayerAnimator:R1.2.5")
 }
 
 tasks {
@@ -131,6 +135,7 @@ tasks {
         relocate("com.j256.ormlite", "com.hisbiscusmc.hmccosmetics.ormlite")
         relocate("com.jeff_media.updatechecker", "com.hisbiscusmc.hmccosmetics.updatechecker")
         relocate("com.owen1212055.particlehelper", "com.hisbiscusmc.hmccosmetics.particlehelper")
+        relocate("com.ticxo.playeranimator", "com.hisbiscusmc.hmccosmetics.playeranimator")
         archiveFileName.set("HMCCosmeticsRemapped-${project.version}.jar")
 
         dependencies {

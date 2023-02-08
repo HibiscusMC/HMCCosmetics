@@ -23,6 +23,8 @@ import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.TranslationUtil;
 import com.jeff_media.updatechecker.UpdateCheckSource;
 import com.jeff_media.updatechecker.UpdateChecker;
+import com.ticxo.playeranimator.PlayerAnimatorImpl;
+import com.ticxo.playeranimator.api.PlayerAnimator;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -90,6 +92,9 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
             saveResource("cosmetics/defaultcosmetics.yml", false);
             saveResource("menus/defaultmenu.yml", false);
         }
+
+        // Player Animator
+        PlayerAnimatorImpl.initialize(this);
 
         setup();
 
@@ -220,6 +225,17 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
             if (cosmetic.getPermission() != null) {
                 if (getInstance().getServer().getPluginManager().getPermission(cosmetic.getPermission()) != null) continue;
                 getInstance().getServer().getPluginManager().addPermission(new Permission(cosmetic.getPermission()));
+            }
+        }
+
+        File emoteFolder = new File(getInstance().getDataFolder().getPath() + "/emotes/");
+        if (emoteFolder.exists()) {
+            PlayerAnimator.api.getAnimationManager().clearRegistry();
+            File[] emotesFiles = emoteFolder.listFiles();
+            for (File emoteFile : emotesFiles) {
+                if (!emoteFile.getName().contains("bbmodel")) continue;
+                String animationName = emoteFile.getName().replaceAll("bbmodel", "");
+                PlayerAnimator.api.getAnimationManager().importAnimations(animationName, emoteFile);
             }
         }
 

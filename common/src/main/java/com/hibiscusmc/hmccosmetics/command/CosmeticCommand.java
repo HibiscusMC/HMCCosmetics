@@ -6,6 +6,7 @@ import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
+import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticEmoteType;
 import com.hibiscusmc.hmccosmetics.database.Database;
 import com.hibiscusmc.hmccosmetics.gui.Menu;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
@@ -380,7 +381,12 @@ public class CosmeticCommand implements CommandExecutor {
                     if (!silent) MessagesUtil.sendMessage(sender, "debug-enabled");
                 }
             }
+            case ("emote") -> {
+                CosmeticUser user = CosmeticUsers.getUser(player);
 
+                CosmeticEmoteType cosmeticEmoteType = (CosmeticEmoteType) user.getCosmetic(CosmeticSlot.EMOTE);
+                cosmeticEmoteType.run(user);
+            }
         }
         return true;
     }
