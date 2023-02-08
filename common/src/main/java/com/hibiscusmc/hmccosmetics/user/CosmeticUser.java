@@ -134,6 +134,9 @@ public class CosmeticUser {
         if (slot == CosmeticSlot.BALLOON) {
             despawnBalloon();
         }
+        if (slot == CosmeticSlot.EMOTE) {
+
+        }
         colors.remove(slot);
         playerCosmetics.remove(slot);
         removeArmor(slot);

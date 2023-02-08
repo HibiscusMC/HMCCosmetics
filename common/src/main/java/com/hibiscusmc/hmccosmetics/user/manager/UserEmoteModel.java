@@ -1,6 +1,8 @@
 package com.hibiscusmc.hmccosmetics.user.manager;
 
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
+import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
+import com.ticxo.playeranimator.api.PlayerAnimator;
 import com.ticxo.playeranimator.api.model.player.PlayerModel;
 
 public class UserEmoteModel extends PlayerModel {
@@ -15,6 +17,8 @@ public class UserEmoteModel extends PlayerModel {
 
     @Override
     public void playAnimation(String id) {
+        id = id + "\\bbmodel\\" + id;
+        MessagesUtil.sendDebugMessages("playAnimation " + id);
         super.playAnimation(id);
         user.hidePlayer();
         user.hideCosmetics(CosmeticUser.HiddenReason.EMOTE);

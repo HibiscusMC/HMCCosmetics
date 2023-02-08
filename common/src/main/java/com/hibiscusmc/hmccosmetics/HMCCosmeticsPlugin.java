@@ -25,6 +25,7 @@ import com.jeff_media.updatechecker.UpdateCheckSource;
 import com.jeff_media.updatechecker.UpdateChecker;
 import com.ticxo.playeranimator.PlayerAnimatorImpl;
 import com.ticxo.playeranimator.api.PlayerAnimator;
+import com.ticxo.playeranimator.api.animation.pack.AnimationPack;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -40,6 +41,9 @@ import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public final class HMCCosmeticsPlugin extends JavaPlugin {
 
@@ -234,8 +238,13 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
             File[] emotesFiles = emoteFolder.listFiles();
             for (File emoteFile : emotesFiles) {
                 if (!emoteFile.getName().contains("bbmodel")) continue;
-                String animationName = emoteFile.getName().replaceAll("bbmodel", "");
-                PlayerAnimator.api.getAnimationManager().importAnimations(animationName, emoteFile);
+                String animationName = emoteFile.getName().replaceAll(".bbmodel", "");
+                PlayerAnimator.api.getAnimationManager().importAnimations(emoteFile.getName(), emoteFile);
+                MessagesUtil.sendDebugMessages("Added '" + animationName + "' to Player Animator ");
+            }
+
+            for (Map.Entry<String, AnimationPack> packEntry : PlayerAnimator.api.getAnimationManager().getRegistry().entrySet()) {
+                //Set<String> animationNames = packEntry.getValue().getAnimations().keySet().stream().map(animation -> packEntry.getKey().replace(":", ".") + "." + animation).collect(Collectors.toSet());
             }
         }
 

@@ -7,6 +7,7 @@ import com.hibiscusmc.hmccosmetics.gui.Menu;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
+import com.ticxo.playeranimator.api.PlayerAnimator;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -76,6 +77,9 @@ public class CosmeticCommandTabComplete implements TabCompleter {
                     completions.add("wardrobelocation");
                     completions.add("viewerlocation");
                     completions.add("leavelocation");
+                }
+                case "emote" -> {
+                    completions.addAll(PlayerAnimator.api.getAnimationManager().getRegistry().keySet());
                 }
             }
             StringUtil.copyPartialMatches(args[1], completions, finalCompletitons);
