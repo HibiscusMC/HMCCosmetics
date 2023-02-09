@@ -13,7 +13,6 @@ import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
 import com.hibiscusmc.hmccosmetics.database.Database;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
 import com.hibiscusmc.hmccosmetics.hooks.Hooks;
-import com.hibiscusmc.hmccosmetics.hooks.placeholders.HMCPlaceholderExpansion;
 import com.hibiscusmc.hmccosmetics.hooks.worldguard.WGHook;
 import com.hibiscusmc.hmccosmetics.hooks.worldguard.WGListener;
 import com.hibiscusmc.hmccosmetics.listener.PlayerConnectionListener;
@@ -26,6 +25,7 @@ import com.jeff_media.updatechecker.UpdateChecker;
 import com.ticxo.playeranimator.PlayerAnimatorImpl;
 import com.ticxo.playeranimator.api.PlayerAnimator;
 import com.ticxo.playeranimator.api.animation.pack.AnimationPack;
+import org.apache.commons.io.FilenameUtils;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -239,7 +239,7 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
             for (File emoteFile : emotesFiles) {
                 if (!emoteFile.getName().contains("bbmodel")) continue;
                 String animationName = emoteFile.getName().replaceAll(".bbmodel", "");
-                PlayerAnimator.api.getAnimationManager().importAnimations(emoteFile.getName(), emoteFile);
+                PlayerAnimator.api.getAnimationManager().importAnimations(FilenameUtils.removeExtension(emoteFile.getName()), emoteFile);
                 MessagesUtil.sendDebugMessages("Added '" + animationName + "' to Player Animator ");
             }
 
