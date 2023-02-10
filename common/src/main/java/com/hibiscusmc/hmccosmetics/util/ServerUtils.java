@@ -137,4 +137,13 @@ public class ServerUtils {
             }
         }
     }
+
+    public static int getNextYaw(final int current, final int rotationSpeed) {
+        int nextYaw = current + rotationSpeed;
+        if (nextYaw > 179) {
+            nextYaw = (current + rotationSpeed) - 358;
+            return nextYaw;
+        }
+        return nextYaw;
+    }
 }

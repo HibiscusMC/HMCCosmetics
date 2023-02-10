@@ -11,6 +11,7 @@ import com.ticxo.playeranimator.api.model.player.PlayerModel;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
@@ -36,19 +37,25 @@ public class UserEmoteModel extends PlayerModel {
         id = id + "." + id + "." + id; // Make into a format that playerAnimator works with. Requires 3 splits.
         super.playAnimation(id);
         emotePlaying = id;
-        user.getPlayer().setInvisible(true);
-        user.hideCosmetics(CosmeticUser.HiddenReason.EMOTE);
-
         // Add config option that either allows player to move or forces them into a spot.
         Player player = user.getPlayer();
         List<Player> viewer = List.of(user.getPlayer());
 
         Location newLocation = player.getLocation().clone();
         newLocation.setPitch(0);
-        Location behindPlayerLoc = player.getLocation().add(newLocation.getDirection().normalize().multiply(-3));
+        double DISTANCE = Settings.getEmoteDistance();
+        Location thirdPersonLocation = newLocation.add(newLocation.getDirection().normalize().multiply(DISTANCE));
+        if (thirdPersonLocation.getBlock().getType() != Material.AIR) {
+            stopAnimation();
+            MessagesUtil.sendMessage(player, "emote-blocked");
+            return;
+        }
+        user.getPlayer().setInvisible(true);
+        user.hideCosmetics(CosmeticUser.HiddenReason.EMOTE);
+
         originalGamemode = player.getGameMode();
 
-        PacketManager.sendEntitySpawnPacket(behindPlayerLoc, armorstandId, EntityType.ARMOR_STAND, UUID.randomUUID(), viewer);
+        PacketManager.sendEntitySpawnPacket(thirdPersonLocation, armorstandId, EntityType.ARMOR_STAND, UUID.randomUUID(), viewer);
         PacketManager.sendInvisibilityPacket(armorstandId, viewer);
         PacketManager.sendLookPacket(armorstandId, player.getLocation(), viewer);
 
@@ -78,8 +85,10 @@ public class UserEmoteModel extends PlayerModel {
         Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> {
             PacketManager.sendCameraPacket(user.getPlayer().getEntityId(), viewer);
             PacketManager.sendEntityDestroyPacket(armorstandId, viewer);
-            PacketManager.gamemodeChangePacket(user.getPlayer(), ServerUtils.convertGamemode(this.originalGamemode));
-            user.getPlayer().setGameMode(this.originalGamemode);
+            if (this.originalGamemode != null) {
+                PacketManager.gamemodeChangePacket(user.getPlayer(), ServerUtils.convertGamemode(this.originalGamemode));
+                user.getPlayer().setGameMode(this.originalGamemode);
+            }
 
             if (user.getPlayer() != null) user.getPlayer().setInvisible(false);
             user.showPlayer();

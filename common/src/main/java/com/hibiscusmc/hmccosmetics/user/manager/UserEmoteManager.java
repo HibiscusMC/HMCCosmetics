@@ -15,8 +15,8 @@ public class UserEmoteManager {
 
     public void playEmote(CosmeticEmoteType cosmeticEmoteType) {
         MessagesUtil.sendDebugMessages("playEmote " + cosmeticEmoteType.getAnimationId());
-        model = new UserEmoteModel(user);
         try {
+            model = new UserEmoteModel(user);
             model.playAnimation(cosmeticEmoteType.getAnimationId());
         } catch (Exception e) {
             e.printStackTrace();
