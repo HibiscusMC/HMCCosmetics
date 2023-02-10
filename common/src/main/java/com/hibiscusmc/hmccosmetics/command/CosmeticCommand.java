@@ -386,6 +386,9 @@ public class CosmeticCommand implements CommandExecutor {
                     if (!silent) MessagesUtil.sendMessage(sender, "no-permission");
                     return true;
                 }
+                if (sender.hasPermission("hmccosmetics.cmd.emote.other")) {
+                    if (args.length >= 2) player = Bukkit.getPlayer(args[1]);
+                }
                 CosmeticUser user = CosmeticUsers.getUser(player);
                 if (!user.hasCosmeticInSlot(CosmeticSlot.EMOTE)) {
                     if (!silent) MessagesUtil.sendMessage(sender, "emote-none");

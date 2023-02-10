@@ -40,6 +40,7 @@ public class CosmeticCommandTabComplete implements TabCompleter {
             if (hasPermission(sender, "hmccosmetics.cmd.hide")) completions.add("hide");
             if (hasPermission(sender, "hmccosmetics.cmd.show")) completions.add("show");
             if (hasPermission(sender, "hmccosmetics.cmd.debug")) completions.add("debug");
+            if (hasPermission(sender, "hmccosmetics.cmd.emote")) completions.add("emote");
 
             StringUtil.copyPartialMatches(args[0], completions, finalCompletitons);
         }
@@ -63,7 +64,7 @@ public class CosmeticCommandTabComplete implements TabCompleter {
                         if (menu.canOpen(user.getPlayer())) completions.add(menu.getId());
                     }
                 }
-                case "dataclear", "wardrobe", "hide", "show" -> {
+                case "dataclear", "wardrobe", "hide", "show", "emote" -> {
                     for (Player player : Bukkit.getOnlinePlayers()) {
                         completions.add(player.getName());
                     }
@@ -77,9 +78,6 @@ public class CosmeticCommandTabComplete implements TabCompleter {
                     completions.add("wardrobelocation");
                     completions.add("viewerlocation");
                     completions.add("leavelocation");
-                }
-                case "emote" -> {
-                    completions.addAll(PlayerAnimator.api.getAnimationManager().getRegistry().keySet());
                 }
             }
             StringUtil.copyPartialMatches(args[1], completions, finalCompletitons);

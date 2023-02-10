@@ -190,11 +190,14 @@ bukkit {
         register("hmccosmetics.cmd.menu") {
             default = BukkitPluginDescription.Permission.Default.TRUE
         }
+        register("hmccosmetics.emote.shiftrun") {
+            default = BukkitPluginDescription.Permission.Default.TRUE
+        }
         register("hmccosmetics.cmd.emote") {
             default = BukkitPluginDescription.Permission.Default.TRUE
         }
-        register("hmccosmetics.emote.shiftrun") {
-            default = BukkitPluginDescription.Permission.Default.TRUE
+        register("hmccosmetics.cmd.emote.other") {
+            default = BukkitPluginDescription.Permission.Default.OP
         }
         register("hmccosmetics.cmd.setlocation") {
             default = BukkitPluginDescription.Permission.Default.OP
