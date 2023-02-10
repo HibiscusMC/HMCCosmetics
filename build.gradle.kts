@@ -64,7 +64,7 @@ allprojects {
     dependencies {
 
         compileOnly("com.mojang:authlib:1.5.25")
-        compileOnly("org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT")
+        compileOnly("org.spigotmc:spigot-api:1.17.1-R0.1-SNAPSHOT")
         compileOnly("org.jetbrains:annotations:23.0.0")
         compileOnly("com.comphenix.protocol:ProtocolLib:5.0.0-SNAPSHOT")
         compileOnly("me.clip:placeholderapi:2.11.1")
@@ -160,7 +160,7 @@ tasks {
 bukkit {
     load = BukkitPluginDescription.PluginLoadOrder.POSTWORLD
     main = "com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin"
-    apiVersion = "1.16"
+    apiVersion = "1.17"
     authors = listOf("LoJoSho")
     depend = listOf("ProtocolLib")
     softDepend = listOf("ModelEngine", "Oraxen", "ItemsAdder", "Looty", "HMCColor", "WorldGuard", "MythicMobs", "PlaceholderAPI")
