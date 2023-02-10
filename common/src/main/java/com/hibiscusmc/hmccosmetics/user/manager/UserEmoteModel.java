@@ -14,7 +14,10 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -40,6 +43,10 @@ public class UserEmoteModel extends PlayerModel {
         // Add config option that either allows player to move or forces them into a spot.
         Player player = user.getPlayer();
         List<Player> viewer = List.of(user.getPlayer());
+        List<Player> outsideViewers = PacketManager.getViewers(player.getLocation());
+        outsideViewers.remove(player);
+
+        PacketManager.equipmentSlotUpdate(player, true, outsideViewers);
 
         Location newLocation = player.getLocation().clone();
         newLocation.setPitch(0);
@@ -83,17 +90,22 @@ public class UserEmoteModel extends PlayerModel {
         despawn();
         Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> {
             if (user.getPlayer() == null) return;
+            Player player = user.getPlayer();
             List<Player> viewer = List.of(user.getPlayer());
             if (viewer == null) return;
-            int entityId = user.getPlayer().getEntityId();
+            List<Player> outsideViewers = PacketManager.getViewers(player.getLocation());
+            outsideViewers.remove(player);
+
+            int entityId = player.getEntityId();
             PacketManager.sendCameraPacket(entityId, viewer);
             PacketManager.sendEntityDestroyPacket(armorstandId, viewer);
             if (this.originalGamemode != null) {
-                PacketManager.gamemodeChangePacket(user.getPlayer(), ServerUtils.convertGamemode(this.originalGamemode));
-                user.getPlayer().setGameMode(this.originalGamemode);
+                PacketManager.gamemodeChangePacket(player, ServerUtils.convertGamemode(this.originalGamemode));
+                player.setGameMode(this.originalGamemode);
             }
 
-            if (user.getPlayer() != null) user.getPlayer().setInvisible(false);
+            if (user.getPlayer() != null) player.setInvisible(false);
+            PacketManager.equipmentSlotUpdate(player, false, outsideViewers);
             user.showPlayer();
             user.showCosmetics();
         });
