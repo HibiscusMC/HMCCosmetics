@@ -81,9 +81,12 @@ public class UserEmoteModel extends PlayerModel {
     public void stopAnimation() {
         emotePlaying = null;
         despawn();
-        List<Player> viewer = List.of(user.getPlayer());
         Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> {
-            PacketManager.sendCameraPacket(user.getPlayer().getEntityId(), viewer);
+            if (user.getPlayer() == null) return;
+            List<Player> viewer = List.of(user.getPlayer());
+            if (viewer == null) return;
+            int entityId = user.getPlayer().getEntityId();
+            PacketManager.sendCameraPacket(entityId, viewer);
             PacketManager.sendEntityDestroyPacket(armorstandId, viewer);
             if (this.originalGamemode != null) {
                 PacketManager.gamemodeChangePacket(user.getPlayer(), ServerUtils.convertGamemode(this.originalGamemode));

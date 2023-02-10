@@ -39,7 +39,9 @@ public class Data {
     public String steralizeData(CosmeticUser user) {
         String data = "";
         if (user.getHidden()) {
-            data = "HIDDEN=" + user.getHiddenReason();
+            if (shouldHiddenSave(user.getHiddenReason())) {
+                data = "HIDDEN=" + user.getHiddenReason();
+            }
         }
         for (Cosmetic cosmetic : user.getCosmetic()) {
             Color color = user.getCosmeticColor(cosmetic.getSlot());
@@ -98,5 +100,16 @@ public class Data {
             }
         }
         return cosmetics;
+    }
+
+    private boolean shouldHiddenSave(CosmeticUser.HiddenReason reason) {
+        switch (reason) {
+            case EMOTE, NONE -> {
+                return false;
+            }
+            default -> {
+                return true;
+            }
+        }
     }
 }
