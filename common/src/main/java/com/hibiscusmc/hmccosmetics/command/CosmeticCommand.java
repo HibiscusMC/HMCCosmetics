@@ -382,10 +382,19 @@ public class CosmeticCommand implements CommandExecutor {
                 }
             }
             case ("emote") -> {
+                if (!sender.hasPermission("hmccosmetics.cmd.emote")) {
+                    if (!silent) MessagesUtil.sendMessage(sender, "no-permission");
+                    return true;
+                }
                 CosmeticUser user = CosmeticUsers.getUser(player);
+                if (!user.hasCosmeticInSlot(CosmeticSlot.EMOTE)) {
+                    if (!silent) MessagesUtil.sendMessage(sender, "emote-none");
+                    return true;
+                }
 
                 CosmeticEmoteType cosmeticEmoteType = (CosmeticEmoteType) user.getCosmetic(CosmeticSlot.EMOTE);
                 cosmeticEmoteType.run(user);
+                return true;
             }
         }
         return true;
