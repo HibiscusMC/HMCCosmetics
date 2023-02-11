@@ -156,6 +156,7 @@ public class PlayerGameListener implements Listener {
 
     @EventHandler
     public void onPlayerLook(PlayerMoveEvent event) {
+        if (event.isCancelled()) return;
         // TODO: Move to packets
         CosmeticUser user = CosmeticUsers.getUser(event.getPlayer().getUniqueId());
         if (user == null) return;
