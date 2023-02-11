@@ -31,6 +31,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.ClickType;
@@ -211,6 +212,14 @@ public class PlayerGameListener implements Listener {
         Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
             user.updateCosmetic(CosmeticSlot.OFFHAND);
         }, 2);
+    }
+
+    @EventHandler
+    public void onPlayerPickupItem(EntityPickupItemEvent event) {
+        if (!(event.getEntity() instanceof Player)) return;
+        CosmeticUser user = CosmeticUsers.getUser(event.getEntity().getUniqueId());
+        if (user == null) return;
+        if (user.isInWardrobe()) event.setCancelled(true);
     }
 
     @EventHandler
