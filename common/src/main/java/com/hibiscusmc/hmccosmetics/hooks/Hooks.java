@@ -2,6 +2,8 @@ package com.hibiscusmc.hmccosmetics.hooks;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.hooks.items.*;
+import com.hibiscusmc.hmccosmetics.hooks.misc.HookPremiumVanish;
+import com.hibiscusmc.hmccosmetics.hooks.misc.HookSuperVanish;
 import com.hibiscusmc.hmccosmetics.hooks.placeholders.HookPlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -17,6 +19,8 @@ public class Hooks {
     private static HookMythic MYTHIC_HOOK = new HookMythic();
     private static HookHMCCosmetics HMCCOSMETIC_HOOK = new HookHMCCosmetics();
     private static HookPlaceholderAPI PAPI_HOOK = new HookPlaceholderAPI();
+    private static HookPremiumVanish PREMIUM_VANISH_HOOK = new HookPremiumVanish();
+    private static HookSuperVanish SUPER_VANISH_HOOK = new HookSuperVanish();
 
     public static Hook getHook(String id) {
         return hooks.get(id.toLowerCase());

@@ -76,6 +76,7 @@ allprojects {
         compileOnly("com.mineinabyss:looty:0.8.67")
         compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.1.0-SNAPSHOT")
         compileOnly("it.unimi.dsi:fastutil:8.5.11")
+        compileOnly("com.github.LeonMangler:SuperVanish:6.2.6-4")
 
     }
 }
