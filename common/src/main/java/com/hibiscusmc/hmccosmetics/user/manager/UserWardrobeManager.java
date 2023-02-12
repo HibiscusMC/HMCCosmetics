@@ -223,7 +223,7 @@ public class UserWardrobeManager {
         BukkitRunnable runnable = new BukkitRunnable() {
             @Override
             public void run() {
-                if (active == false) {
+                if (active == false || VIEWER.getPlayer() == null) {
                     MessagesUtil.sendDebugMessages("Active is false");
                     this.cancel();
                     return;
