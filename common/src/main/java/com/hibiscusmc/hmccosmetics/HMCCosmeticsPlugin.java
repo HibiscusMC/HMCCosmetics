@@ -96,6 +96,9 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
             saveResource("cosmetics/defaultcosmetics.yml", false);
             saveResource("menus/defaultmenu.yml", false);
         }
+        // Emote folder setup
+        File emoteFile = new File(getDataFolder().getPath() + "/emotes");
+        if (!emoteFile.exists()) emoteFile.mkdir();
 
         // Player Animator
         PlayerAnimatorImpl.initialize(this);
