@@ -18,6 +18,7 @@ dependencies {
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.1.0-SNAPSHOT")
     compileOnly("it.unimi.dsi:fastutil:8.5.11")
     compileOnly("io.lumine:Mythic-Dist:5.2.1")
+    compileOnly("com.github.LeonMangler:SuperVanish:6.2.6-4")
 
     //compileOnly("com.github.Fisher2911:FisherLib:master-SNAPSHOT")
     implementation("net.kyori:adventure-api:4.12.0")
