@@ -133,3 +133,27 @@ items:
         - "<gray>Allowed: <#6D9DC5>%HMCCosmetics_unlocked_kite%" 
     type: cosmetic
     cosmetic: kite
+  handstand:
+    slots:
+      - 12
+    item:
+      material: PAPER
+      name: "<blue>Handstand Emote"
+    type: cosmetic
+    cosmetic: handstand
+  meditate:
+    slots:
+      - 13
+    item:
+      material: PAPER
+      name: "<blue>Meditate Emote"
+    type: cosmetic
+    cosmetic: meditate
+  thinking:
+    slots:
+      - 14
+    item:
+      material: PAPER
+      name: "<blue>Thinking Emote"
+    type: cosmetic
+    cosmetic: thinking

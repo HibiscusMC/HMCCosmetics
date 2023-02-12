@@ -29,6 +29,7 @@ public class Settings {
     private static final String TICK_PERIOD_PATH = "tick-period";
     private static final String UNAPPLY_DEATH_PATH = "unapply-on-death";
     private static final String FORCE_PERMISSION_JOIN_PATH = "force-permission-join";
+    private static final String EMOTE_DISTANCE_PATH = "emote-distance";
 
     private static String defaultMenu;
     private static String dyeMenuName;
@@ -44,6 +45,7 @@ public class Settings {
     private static int lookDownPitch;
     private static int viewDistance;
     private static int tickPeriod;
+    private static double emoteDistance;
     private static Vector balloonOffset;
 
     public static void load(ConfigurationNode source) {
@@ -70,6 +72,7 @@ public class Settings {
         requireEmptyBoots = cosmeticSettings.node(REQUIRE_EMPTY_BOOTS_PATH).getBoolean();
         unapplyOnDeath = cosmeticSettings.node(UNAPPLY_DEATH_PATH).getBoolean(false);
         forcePermissionJoin = cosmeticSettings.node(FORCE_PERMISSION_JOIN_PATH).getBoolean(false);
+        emoteDistance = cosmeticSettings.node(EMOTE_DISTANCE_PATH).getDouble(-3);
 
         tickPeriod = cosmeticSettings.node(TICK_PERIOD_PATH).getInt(-1);
         lookDownPitch = cosmeticSettings.node(LOOK_DOWN_PITCH_PATH).getInt();
@@ -192,6 +195,10 @@ public class Settings {
 
     public static boolean getDebugMode() {
         return debugMode;
+    }
+
+    public static double getEmoteDistance() {
+        return emoteDistance;
     }
     public static void setDebugMode(boolean newSetting) {
         debugMode = newSetting;

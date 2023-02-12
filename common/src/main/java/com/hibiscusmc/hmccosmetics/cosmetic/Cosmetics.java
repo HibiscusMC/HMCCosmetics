@@ -3,10 +3,7 @@ package com.hibiscusmc.hmccosmetics.cosmetic;
 import com.google.common.collect.HashBiMap;
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.Settings;
-import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticArmorType;
-import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBackpackType;
-import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
-import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticMainhandType;
+import com.hibiscusmc.hmccosmetics.cosmetic.types.*;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import org.apache.commons.lang3.EnumUtils;
 import org.spongepowered.configurate.CommentedConfigurationNode;
@@ -97,6 +94,7 @@ public class Cosmetics {
                     case BALLOON -> new CosmeticBalloonType(id, cosmeticConfig);
                     case BACKPACK -> new CosmeticBackpackType(id, cosmeticConfig);
                     case MAINHAND -> new CosmeticMainhandType(id, cosmeticConfig);
+                    case EMOTE -> new CosmeticEmoteType(id, cosmeticConfig);
                     default -> new CosmeticArmorType(id, cosmeticConfig);
                 }
             } catch (Exception e) {

@@ -6,6 +6,7 @@ import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
+import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticEmoteType;
 import com.hibiscusmc.hmccosmetics.database.Database;
 import com.hibiscusmc.hmccosmetics.gui.Menu;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
@@ -380,7 +381,24 @@ public class CosmeticCommand implements CommandExecutor {
                     if (!silent) MessagesUtil.sendMessage(sender, "debug-enabled");
                 }
             }
+            case ("emote") -> {
+                if (!sender.hasPermission("hmccosmetics.cmd.emote")) {
+                    if (!silent) MessagesUtil.sendMessage(sender, "no-permission");
+                    return true;
+                }
+                if (sender.hasPermission("hmccosmetics.cmd.emote.other")) {
+                    if (args.length >= 2) player = Bukkit.getPlayer(args[1]);
+                }
+                CosmeticUser user = CosmeticUsers.getUser(player);
+                if (!user.hasCosmeticInSlot(CosmeticSlot.EMOTE)) {
+                    if (!silent) MessagesUtil.sendMessage(sender, "emote-none");
+                    return true;
+                }
 
+                CosmeticEmoteType cosmeticEmoteType = (CosmeticEmoteType) user.getCosmetic(CosmeticSlot.EMOTE);
+                cosmeticEmoteType.run(user);
+                return true;
+            }
         }
         return true;
     }

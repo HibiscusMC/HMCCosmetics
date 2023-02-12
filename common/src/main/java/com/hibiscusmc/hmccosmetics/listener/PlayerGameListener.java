@@ -14,6 +14,7 @@ import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticArmorType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
+import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticEmoteType;
 import com.hibiscusmc.hmccosmetics.gui.Menu;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
@@ -30,6 +31,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.ClickType;
@@ -80,8 +82,12 @@ public class PlayerGameListener implements Listener {
     public void onPlayerShift(PlayerToggleSneakEvent event) {
         CosmeticUser user = CosmeticUsers.getUser(event.getPlayer().getUniqueId());
 
-        if (!event.isSneaking()) return;
         if (user == null) return;
+        if (event.isSneaking()) {
+            user.getUserEmoteManager().stopEmote();
+        }
+
+        if (!event.isSneaking()) return;
         if (!user.isInWardrobe()) return;
 
         user.leaveWardrobe();
@@ -150,6 +156,7 @@ public class PlayerGameListener implements Listener {
 
     @EventHandler
     public void onPlayerLook(PlayerMoveEvent event) {
+        if (event.isCancelled()) return;
         // TODO: Move to packets
         CosmeticUser user = CosmeticUsers.getUser(event.getPlayer().getUniqueId());
         if (user == null) return;
@@ -197,9 +204,23 @@ public class PlayerGameListener implements Listener {
         CosmeticUser user = CosmeticUsers.getUser(event.getPlayer().getUniqueId());
         if (user == null) return;
         // Really need to look into optimization of this
+        if (user.hasCosmeticInSlot(CosmeticSlot.EMOTE) && event.getPlayer().isSneaking() && event.getPlayer().hasPermission("hmccosmetics.emote.shiftrun")) {
+            CosmeticEmoteType cosmeticEmoteType = (CosmeticEmoteType) user.getCosmetic(CosmeticSlot.EMOTE);
+            cosmeticEmoteType.run(user);
+            event.setCancelled(true);
+            return;
+        }
         Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
             user.updateCosmetic(CosmeticSlot.OFFHAND);
         }, 2);
+    }
+
+    @EventHandler
+    public void onPlayerPickupItem(EntityPickupItemEvent event) {
+        if (!(event.getEntity() instanceof Player)) return;
+        CosmeticUser user = CosmeticUsers.getUser(event.getEntity().getUniqueId());
+        if (user == null) return;
+        if (user.isInWardrobe()) event.setCancelled(true);
     }
 
     @EventHandler

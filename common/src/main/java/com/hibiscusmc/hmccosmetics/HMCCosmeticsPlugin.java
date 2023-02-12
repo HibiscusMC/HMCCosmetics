@@ -13,7 +13,6 @@ import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
 import com.hibiscusmc.hmccosmetics.database.Database;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
 import com.hibiscusmc.hmccosmetics.hooks.Hooks;
-import com.hibiscusmc.hmccosmetics.hooks.placeholders.HMCPlaceholderExpansion;
 import com.hibiscusmc.hmccosmetics.hooks.worldguard.WGHook;
 import com.hibiscusmc.hmccosmetics.hooks.worldguard.WGListener;
 import com.hibiscusmc.hmccosmetics.listener.PlayerConnectionListener;
@@ -23,6 +22,10 @@ import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.TranslationUtil;
 import com.jeff_media.updatechecker.UpdateCheckSource;
 import com.jeff_media.updatechecker.UpdateChecker;
+import com.ticxo.playeranimator.PlayerAnimatorImpl;
+import com.ticxo.playeranimator.api.PlayerAnimator;
+import com.ticxo.playeranimator.api.animation.pack.AnimationPack;
+import org.apache.commons.io.FilenameUtils;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -38,6 +41,9 @@ import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public final class HMCCosmeticsPlugin extends JavaPlugin {
 
@@ -90,6 +96,12 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
             saveResource("cosmetics/defaultcosmetics.yml", false);
             saveResource("menus/defaultmenu.yml", false);
         }
+        // Emote folder setup
+        File emoteFile = new File(getDataFolder().getPath() + "/emotes");
+        if (!emoteFile.exists()) emoteFile.mkdir();
+
+        // Player Animator
+        PlayerAnimatorImpl.initialize(this);
 
         setup();
 
@@ -220,6 +232,22 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
             if (cosmetic.getPermission() != null) {
                 if (getInstance().getServer().getPluginManager().getPermission(cosmetic.getPermission()) != null) continue;
                 getInstance().getServer().getPluginManager().addPermission(new Permission(cosmetic.getPermission()));
+            }
+        }
+
+        File emoteFolder = new File(getInstance().getDataFolder().getPath() + "/emotes/");
+        if (emoteFolder.exists()) {
+            PlayerAnimator.api.getAnimationManager().clearRegistry();
+            File[] emotesFiles = emoteFolder.listFiles();
+            for (File emoteFile : emotesFiles) {
+                if (!emoteFile.getName().contains("bbmodel")) continue;
+                String animationName = emoteFile.getName().replaceAll(".bbmodel", "");
+                PlayerAnimator.api.getAnimationManager().importAnimations(FilenameUtils.removeExtension(emoteFile.getName()), emoteFile);
+                MessagesUtil.sendDebugMessages("Added '" + animationName + "' to Player Animator ");
+            }
+
+            for (Map.Entry<String, AnimationPack> packEntry : PlayerAnimator.api.getAnimationManager().getRegistry().entrySet()) {
+                //Set<String> animationNames = packEntry.getValue().getAnimations().keySet().stream().map(animation -> packEntry.getKey().replace(":", ".") + "." + animation).collect(Collectors.toSet());
             }
         }
 

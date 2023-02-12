@@ -16,9 +16,12 @@ import com.hibiscusmc.hmccosmetics.util.packets.wrappers.WrapperPlayServerPlayer
 import com.hibiscusmc.hmccosmetics.util.packets.wrappers.WrapperPlayServerRelEntityMove;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -71,6 +74,17 @@ public class PacketManager extends BasePacket {
 
     public static void equipmentSlotUpdate(
             Player player,
+            boolean empty,
+            List<Player> sendTo
+    ) {
+        for (EquipmentSlot slot : EquipmentSlot.values()) {
+            ItemStack item = player.getInventory().getItem(slot);
+            if (empty) item = new ItemStack(Material.AIR);
+            NMSHandlers.getHandler().equipmentSlotUpdate(player.getEntityId(), slot, item, sendTo);
+        }
+    }
+    public static void equipmentSlotUpdate(
+            Player player,
             CosmeticSlot cosmetic,
             List<Player> sendTo
     ) {
@@ -91,7 +105,7 @@ public class PacketManager extends BasePacket {
             CosmeticSlot cosmeticSlot,
             List<Player> sendTo
     ) {
-        if (cosmeticSlot == CosmeticSlot.BACKPACK || cosmeticSlot == CosmeticSlot.BALLOON) return;
+        if (cosmeticSlot == CosmeticSlot.BACKPACK || cosmeticSlot == CosmeticSlot.BALLOON || cosmeticSlot == CosmeticSlot.EMOTE) return;
 
         NMSHandlers.getHandler().equipmentSlotUpdate(entityId, user, cosmeticSlot, sendTo);
     }

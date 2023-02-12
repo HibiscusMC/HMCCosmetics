@@ -7,6 +7,7 @@ import com.hibiscusmc.hmccosmetics.gui.Menu;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
+import com.ticxo.playeranimator.api.PlayerAnimator;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -39,6 +40,7 @@ public class CosmeticCommandTabComplete implements TabCompleter {
             if (hasPermission(sender, "hmccosmetics.cmd.hide")) completions.add("hide");
             if (hasPermission(sender, "hmccosmetics.cmd.show")) completions.add("show");
             if (hasPermission(sender, "hmccosmetics.cmd.debug")) completions.add("debug");
+            if (hasPermission(sender, "hmccosmetics.cmd.emote")) completions.add("emote");
 
             StringUtil.copyPartialMatches(args[0], completions, finalCompletitons);
         }
@@ -62,7 +64,7 @@ public class CosmeticCommandTabComplete implements TabCompleter {
                         if (menu.canOpen(user.getPlayer())) completions.add(menu.getId());
                     }
                 }
-                case "dataclear", "wardrobe", "hide", "show" -> {
+                case "dataclear", "wardrobe", "hide", "show", "emote" -> {
                     for (Player player : Bukkit.getOnlinePlayers()) {
                         completions.add(player.getName());
                     }

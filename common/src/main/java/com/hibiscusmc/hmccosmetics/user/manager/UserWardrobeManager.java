@@ -223,7 +223,7 @@ public class UserWardrobeManager {
         BukkitRunnable runnable = new BukkitRunnable() {
             @Override
             public void run() {
-                if (active == false) {
+                if (active == false || VIEWER.getPlayer() == null) {
                     MessagesUtil.sendDebugMessages("Active is false");
                     this.cancel();
                     return;
@@ -240,9 +240,9 @@ public class UserWardrobeManager {
                 PacketManager.sendLookPacket(NPC_ID, location, viewer);
                 VIEWER.hidePlayer();
                 int rotationSpeed = WardrobeSettings.getRotationSpeed();
-                location.setYaw(getNextYaw(yaw - 30, rotationSpeed));
+                location.setYaw(ServerUtils.getNextYaw(yaw - 30, rotationSpeed));
                 PacketManager.sendRotationPacket(NPC_ID, location, true, viewer);
-                int nextyaw = getNextYaw(yaw, rotationSpeed);
+                int nextyaw = ServerUtils.getNextYaw(yaw, rotationSpeed);
                 data.set(nextyaw);
 
                 for (CosmeticSlot slot : CosmeticSlot.values()) {
@@ -271,15 +271,6 @@ public class UserWardrobeManager {
         };
 
         runnable.runTaskTimer(HMCCosmeticsPlugin.getInstance(), 0, 2);
-    }
-
-    private static int getNextYaw(final int current, final int rotationSpeed) {
-        int nextYaw = current + rotationSpeed;
-        if (nextYaw > 179) {
-            nextYaw = (current + rotationSpeed) - 358;
-            return nextYaw;
-        }
-        return nextYaw;
     }
 
     public int getArmorstandId() {
