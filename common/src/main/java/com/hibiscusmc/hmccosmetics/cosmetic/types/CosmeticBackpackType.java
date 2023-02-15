@@ -10,12 +10,14 @@ import org.spongepowered.configurate.ConfigurationNode;
 
 public class CosmeticBackpackType extends Cosmetic {
 
-    ConfigurationNode config;
+    private String modelName;
+    private ConfigurationNode config;
 
     public CosmeticBackpackType(String id, ConfigurationNode config) {
         super(id, config);
 
         this.config = config;
+        modelName = config.node("model").getString();
     }
 
     @Override
@@ -35,5 +37,9 @@ public class CosmeticBackpackType extends Cosmetic {
 
         user.getUserBackpackManager().getArmorstand().setRotation(loc.getYaw(), loc.getPitch());
         user.getUserBackpackManager().showBackpack();
+    }
+
+    public String getModelName() {
+        return modelName;
     }
 }
