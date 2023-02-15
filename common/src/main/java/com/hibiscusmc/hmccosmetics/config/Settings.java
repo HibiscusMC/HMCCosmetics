@@ -25,6 +25,8 @@ public class Settings {
     private static final String PARTICLE_COUNT = "particle-count";
     private static final String DYE_MENU_PATH = "dye-menu";
     private static final String DYE_MENU_NAME = "title";
+    private static final String DYE_MENU_INPUT_SLOT = "input-slot";
+    private static final String DYE_MENU_OUTPUT_SLOT = "output-slot";
     private static final String DEBUG_ENABLE_PETH = "debug-mode";
     private static final String TICK_PERIOD_PATH = "tick-period";
     private static final String UNAPPLY_DEATH_PATH = "unapply-on-death";
@@ -33,6 +35,8 @@ public class Settings {
 
     private static String defaultMenu;
     private static String dyeMenuName;
+    private static int dyeMenuInputSlot;
+    private static int dyeMenuOutputSlot;
     private static int configVersion;
     private static boolean requireEmptyHelmet;
     private static boolean requireEmptyOffHand;
@@ -85,6 +89,8 @@ public class Settings {
         ConfigurationNode dyeMenuSettings = source.node(DYE_MENU_PATH);
 
         dyeMenuName = dyeMenuSettings.node(DYE_MENU_NAME).getString("Dye Menu");
+        dyeMenuInputSlot = dyeMenuSettings.node(DYE_MENU_INPUT_SLOT).getInt(19);
+        dyeMenuOutputSlot = dyeMenuSettings.node(DYE_MENU_OUTPUT_SLOT).getInt(25);
     }
 
     private static Vector loadVector(final ConfigurationNode config) {
@@ -178,6 +184,8 @@ public class Settings {
     public static String getDyeMenuName() {
         return dyeMenuName;
     }
+    public static int getDyeMenuInputSlot() { return dyeMenuInputSlot; }
+    public static int getDyeMenuOutputSlot() { return dyeMenuOutputSlot; }
 
     public static boolean isDebugEnabled() {
         return debugMode;
