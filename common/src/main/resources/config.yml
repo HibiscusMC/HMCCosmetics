@@ -38,6 +38,8 @@ dye-menu:
   # If you use ItemsAdder, set this to "§f:offset_-8::cosmetics_gui:"
   # If you use Oraxen, set this to "<glyph:neg_shift_8><glyph:dye_menu>"
   title: "§f"
+  input-slot: 19
+  output-slot: 25
 wardrobe:
   # spawn static wardrobe if in this radius of wardrobe-location
   static-radius: 10
