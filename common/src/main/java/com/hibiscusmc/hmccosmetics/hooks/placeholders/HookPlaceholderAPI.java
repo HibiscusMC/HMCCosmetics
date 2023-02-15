@@ -5,7 +5,7 @@ import com.hibiscusmc.hmccosmetics.hooks.Hook;
 public class HookPlaceholderAPI extends Hook {
 
     public HookPlaceholderAPI() {
-        super("placeholderapi");
+        super("PlaceholderAPI");
     }
 
     @Override
