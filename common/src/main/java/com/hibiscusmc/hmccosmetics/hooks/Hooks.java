@@ -66,7 +66,8 @@ public class Hooks {
     }
 
     public static boolean isActiveHook(String id) {
-        if (!hooks.containsKey(getHook(id))) return false;
-        return hooks.get(getHook(id)).getActive();
+        Hook hook = getHook(id);
+        if (hook == null) return false;
+        return hook.getActive();
     }
 }
