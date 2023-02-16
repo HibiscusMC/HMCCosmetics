@@ -30,10 +30,10 @@ public class DyeMenu {
         Player player = user.getPlayer();
         Gui gui = HMCColorApi.INSTANCE.colorMenu();
         gui.updateTitle(Placeholder.applyPapiPlaceholders(player, Settings.getDyeMenuName()));
-        gui.setItem(19, new GuiItem(originalItem));
+        gui.setItem(Settings.getDyeMenuInputSlot(), new GuiItem(originalItem));
         gui.setDefaultTopClickAction(event -> {
-            if (event.getSlot() == 25) {
-                ItemStack item = event.getInventory().getItem(25);
+            if (event.getSlot() == Settings.getDyeMenuOutputSlot()) {
+                ItemStack item = event.getInventory().getItem(Settings.getDyeMenuOutputSlot());
                 if (item == null) return;
                 ItemMeta meta = item.getItemMeta();
                 if (meta == null) return;
