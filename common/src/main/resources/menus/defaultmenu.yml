@@ -157,3 +157,14 @@ items:
       name: "<blue>Thinking Emote"
     type: cosmetic
     cosmetic: thinking
+  explorer_backpack:
+    slots:
+      - 15
+    item:
+      material: hmccosmetics:explorer_backpack
+      lore:
+        - ""
+        - "<gray>Enabled: <#6D9DC5>%HMCCosmetics_equipped_explorer_backpack%"
+        - "<gray>Allowed: <#6D9DC5>%HMCCosmetics_unlocked_explorer_backpack%" 
+    type: cosmetic
+    cosmetic: explorer_backpack

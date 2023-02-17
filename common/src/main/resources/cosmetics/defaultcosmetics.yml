@@ -102,3 +102,12 @@ meditate:
 thinking:
   slot: EMOTE
   animation: thinking
+explorer_backpack:
+  slot: BACKPACK
+  permission: "hmccosmetics.explorer_backpack"
+  dyeable: true
+  item:
+    material: LEATHER_HORSE_ARMOR
+    model-data: 3
+    name: "<white>Explorer's Backpack"
+    amount: 1
