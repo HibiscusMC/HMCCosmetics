@@ -23,7 +23,7 @@ public class CosmeticBackpackType extends Cosmetic {
     @Override
     public void update(CosmeticUser user) {
         Player player = Bukkit.getPlayer(user.getUniqueId());
-        Location loc = player.getLocation().clone();
+        Location loc = player.getLocation().clone().add(0, 2, 0);
 
         if (user.isInWardrobe()) return;
 
