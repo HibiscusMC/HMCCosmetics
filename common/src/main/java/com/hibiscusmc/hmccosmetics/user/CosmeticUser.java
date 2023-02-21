@@ -286,6 +286,7 @@ public class CosmeticUser {
     }
 
     public void spawnBackpack(CosmeticBackpackType cosmeticBackpackType) {
+        if (this.userBackpackManager != null) return;
         this.userBackpackManager = new UserBackpackManager(this);
         userBackpackManager.spawnBackpack(cosmeticBackpackType);
     }
@@ -296,7 +297,10 @@ public class CosmeticUser {
         userBackpackManager = null;
     }
 
-
+    public boolean isBackupSpawned() {
+        if (this.userBackpackManager == null) return false;
+        return true;
+    }
 
     public void spawnBalloon(CosmeticBalloonType cosmeticBalloonType) {
         Player player = Bukkit.getPlayer(getUniqueId());

@@ -13,6 +13,7 @@ import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticArmorType;
+import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBackpackType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticEmoteType;
 import com.hibiscusmc.hmccosmetics.gui.Menu;
@@ -28,12 +29,10 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Pose;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityPickupItemEvent;
-import org.bukkit.event.entity.EntityPotionEffectEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
@@ -157,12 +156,36 @@ public class PlayerGameListener implements Listener {
     @EventHandler
     public void onPlayerLook(PlayerMoveEvent event) {
         if (event.isCancelled()) return;
+        Player player = event.getPlayer();
         // TODO: Move to packets
-        CosmeticUser user = CosmeticUsers.getUser(event.getPlayer().getUniqueId());
+        CosmeticUser user = CosmeticUsers.getUser(player);
         if (user == null) return;
         // Really need to look into optimization of this
         user.updateCosmetic(CosmeticSlot.BACKPACK);
         user.updateCosmetic(CosmeticSlot.BALLOON);
+    }
+
+    @EventHandler
+    public void onPlayerPoseChange(EntityPoseChangeEvent event) {
+        MessagesUtil.sendDebugMessages("EntityPoseChangeEvent");
+        if (!(event.getEntity() instanceof Player)) return;
+        Player player = ((Player) event.getEntity()).getPlayer();
+        CosmeticUser user = CosmeticUsers.getUser(player);
+        if (user == null) return;
+        if (!user.hasCosmeticInSlot(CosmeticSlot.BACKPACK)) return;
+        Pose pose = event.getPose();
+        if (pose.equals(Pose.STANDING)) {
+            MessagesUtil.sendDebugMessages("Standing");
+            if (!user.isBackupSpawned()) {
+                user.spawnBackpack((CosmeticBackpackType) user.getCosmetic(CosmeticSlot.BACKPACK));
+                MessagesUtil.sendDebugMessages("backpack is not spawned");
+            }
+            return;
+        }
+        if (pose.equals(Pose.SLEEPING) || pose.equals(Pose.SWIMMING) || pose.equals(Pose.FALL_FLYING)) {
+            MessagesUtil.sendDebugMessages("misc");
+            user.despawnBackpack();
+        }
     }
 
     @EventHandler

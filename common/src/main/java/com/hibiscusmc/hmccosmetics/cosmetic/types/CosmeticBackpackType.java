@@ -26,7 +26,7 @@ public class CosmeticBackpackType extends Cosmetic {
         Location loc = player.getLocation().clone().add(0, 2, 0);
 
         if (user.isInWardrobe()) return;
-
+        if (!user.isBackupSpawned()) return;
         if (loc.getWorld() != user.getUserBackpackManager().getArmorstand().getWorld()) {
             user.getUserBackpackManager().getArmorstand().teleport(loc);
         }
