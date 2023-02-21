@@ -114,6 +114,7 @@ public class UserWardrobeManager {
 
             // Misc
             if (user.hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
+                user.getUserBackpackManager().getArmorstand().teleport(npcLocation.clone().add(0, 2, 0));
                 PacketManager.ridingMountPacket(NPC_ID, user.getUserBackpackManager().getFirstArmorstandId(), viewer);
             }
 
