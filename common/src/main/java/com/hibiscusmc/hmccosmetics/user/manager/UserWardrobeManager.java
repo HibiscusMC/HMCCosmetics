@@ -114,7 +114,7 @@ public class UserWardrobeManager {
 
             // Misc
             if (user.hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
-                user.getUserBackpackManager().getArmorstand().teleport(npcLocation.clone().add(0, 2, 0));
+                user.getUserBackpackManager().getFirstArmorstand().teleport(npcLocation.clone().add(0, 2, 0));
                 PacketManager.ridingMountPacket(NPC_ID, user.getUserBackpackManager().getFirstArmorstandId(), viewer);
             }
 
@@ -253,7 +253,7 @@ public class UserWardrobeManager {
                 if (user.hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
                     PacketManager.sendTeleportPacket(user.getUserBackpackManager().getFirstArmorstandId(), location, false, viewer);
                     PacketManager.ridingMountPacket(NPC_ID, user.getUserBackpackManager().getFirstArmorstandId(), viewer);
-                    user.getUserBackpackManager().getArmorstand().setRotation(nextyaw, 0);
+                    user.getUserBackpackManager().getFirstArmorstand().setRotation(nextyaw, 0);
                     PacketManager.sendEntityDestroyPacket(user.getUserBackpackManager().getFirstArmorstandId(), outsideViewers);
                 }
 
