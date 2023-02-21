@@ -167,7 +167,6 @@ public class PlayerGameListener implements Listener {
 
     @EventHandler
     public void onPlayerPoseChange(EntityPoseChangeEvent event) {
-        MessagesUtil.sendDebugMessages("EntityPoseChangeEvent");
         if (!(event.getEntity() instanceof Player)) return;
         Player player = ((Player) event.getEntity()).getPlayer();
         CosmeticUser user = CosmeticUsers.getUser(player);
@@ -175,15 +174,12 @@ public class PlayerGameListener implements Listener {
         if (!user.hasCosmeticInSlot(CosmeticSlot.BACKPACK)) return;
         Pose pose = event.getPose();
         if (pose.equals(Pose.STANDING)) {
-            MessagesUtil.sendDebugMessages("Standing");
             if (!user.isBackupSpawned()) {
                 user.spawnBackpack((CosmeticBackpackType) user.getCosmetic(CosmeticSlot.BACKPACK));
-                MessagesUtil.sendDebugMessages("backpack is not spawned");
             }
             return;
         }
         if (pose.equals(Pose.SLEEPING) || pose.equals(Pose.SWIMMING) || pose.equals(Pose.FALL_FLYING)) {
-            MessagesUtil.sendDebugMessages("misc");
             user.despawnBackpack();
         }
     }
