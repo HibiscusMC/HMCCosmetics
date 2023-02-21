@@ -25,8 +25,7 @@ public class CosmeticBackpackType extends Cosmetic {
         Player player = Bukkit.getPlayer(user.getUniqueId());
         Location loc = player.getLocation().clone().add(0, 2, 0);
 
-        if (user.isInWardrobe()) return;
-        if (!user.isBackupSpawned()) return;
+        if (user.isInWardrobe() || !user.isBackupSpawned()) return;
         if (loc.getWorld() != user.getUserBackpackManager().getArmorstand().getWorld()) {
             user.getUserBackpackManager().getArmorstand().teleport(loc);
         }
