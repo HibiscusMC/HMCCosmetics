@@ -394,6 +394,10 @@ public class PlayerGameListener implements Listener {
                 Player player = event.getPlayer();
                 CosmeticUser user = CosmeticUsers.getUser(player);
                 if (user == null) return;
+                if (user.getUserEmoteManager().isPlayingEmote()) {
+                    event.setCancelled(true);
+                    return;
+                }
                 if (!user.isInWardrobe()) return;
                 Menu menu = Menus.getDefaultMenu();
                 if (menu == null) return;
