@@ -15,6 +15,7 @@ import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.ServerUtils;
+import com.ticxo.playeranimator.api.PlayerAnimator;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.apache.commons.lang3.EnumUtils;
@@ -401,6 +402,38 @@ public class CosmeticCommand implements CommandExecutor {
 
                 CosmeticEmoteType cosmeticEmoteType = (CosmeticEmoteType) user.getCosmetic(CosmeticSlot.EMOTE);
                 cosmeticEmoteType.run(user);
+                return true;
+            }
+
+            case ("playemote") -> {
+                // /cosmetic playEmote <emoteId> [playerName]
+                if (!sender.hasPermission("hmccosmetics.cmd.playemote")) {
+                    if (!silent) MessagesUtil.sendMessage(sender, "no-permission");
+                    return true;
+                }
+
+                if (args.length < 2) {
+                    if (!silent) MessagesUtil.sendMessage(player, "not-enough-args");
+                    return true;
+                }
+
+                if (args.length >= 2) {
+                    if (!PlayerAnimator.api.getAnimationManager().getRegistry().keySet().contains(args[1])) {
+                        MessagesUtil.sendDebugMessages("Did not contain " + args[1]);
+                        if (!silent) MessagesUtil.sendMessage(sender, "emote-invalid");
+                        return true;
+                    }
+                }
+
+                if (sender.hasPermission("hmccosmetics.cmd.playemote.other")) {
+                    if (args.length >= 3) player = Bukkit.getPlayer(args[2]);
+                }
+                if (player == null) {
+                    if (!silent) MessagesUtil.sendMessage(sender, "invalid-player");
+                    return true;
+                }
+                CosmeticUser user = CosmeticUsers.getUser(player);
+                user.getUserEmoteManager().playEmote(args[1]);
                 return true;
             }
         }

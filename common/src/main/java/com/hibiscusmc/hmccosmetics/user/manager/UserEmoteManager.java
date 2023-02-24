@@ -15,11 +15,15 @@ public class UserEmoteManager {
 
     public void playEmote(CosmeticEmoteType cosmeticEmoteType) {
         MessagesUtil.sendDebugMessages("playEmote " + cosmeticEmoteType.getAnimationId());
+        playEmote(cosmeticEmoteType.getAnimationId());
+    }
+
+    public void playEmote(String animationId) {
         if (isPlayingEmote()) return;
         if (user.isInWardrobe()) return;
         try {
             model = new UserEmoteModel(user);
-            model.playAnimation(cosmeticEmoteType.getAnimationId());
+            model.playAnimation(animationId);
         } catch (Exception e) {
             e.printStackTrace();
         }

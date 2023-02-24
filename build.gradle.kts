@@ -197,6 +197,12 @@ bukkit {
         register("hmccosmetics.cmd.emote") {
             default = BukkitPluginDescription.Permission.Default.TRUE
         }
+        register("hmccosmetics.cmd.playemote") {
+            default = BukkitPluginDescription.Permission.Default.OP
+        }
+        register("hmccosmetics.cmd.playemote.other") {
+            default = BukkitPluginDescription.Permission.Default.OP
+        }
         register("hmccosmetics.cmd.emote.other") {
             default = BukkitPluginDescription.Permission.Default.OP
         }

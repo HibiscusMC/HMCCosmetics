@@ -37,7 +37,8 @@ public class UserEmoteModel extends PlayerModel {
 
     @Override
     public void playAnimation(String id) {
-        id = id + "." + id + "." + id; // Make into a format that playerAnimator works with. Requires 3 splits.
+        if (id.contains(":")) id = id.split(":", 2)[1];
+        if (!id.contains(".")) id = id + "." + id + "." + id; // Make into a format that playerAnimator works with. Requires 3 splits.
         super.playAnimation(id);
         emotePlaying = id;
         // Add config option that either allows player to move or forces them into a spot.

@@ -26,7 +26,7 @@ public class CosmeticCommandTabComplete implements TabCompleter {
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
         List<String> completions = new ArrayList<>();
-        List<String> finalCompletitons = new ArrayList<>();
+        List<String> finalCompletions = new ArrayList<>();
 
         if (args.length == 1) {
             if (hasPermission(sender, "hmccosmetics.cmd.apply")) completions.add("apply");
@@ -41,8 +41,9 @@ public class CosmeticCommandTabComplete implements TabCompleter {
             if (hasPermission(sender, "hmccosmetics.cmd.show")) completions.add("show");
             if (hasPermission(sender, "hmccosmetics.cmd.debug")) completions.add("debug");
             if (hasPermission(sender, "hmccosmetics.cmd.emote")) completions.add("emote");
+            if (hasPermission(sender, "hmccosmetics.cmd.playemote")) completions.add("playemote");
 
-            StringUtil.copyPartialMatches(args[0], completions, finalCompletitons);
+            StringUtil.copyPartialMatches(args[0], completions, finalCompletions);
         }
 
         if (!(sender instanceof Player)) return completions;
@@ -79,8 +80,11 @@ public class CosmeticCommandTabComplete implements TabCompleter {
                     completions.add("viewerlocation");
                     completions.add("leavelocation");
                 }
+                case "playemote" -> {
+                    completions.addAll(PlayerAnimator.api.getAnimationManager().getRegistry().keySet());
+                }
             }
-            StringUtil.copyPartialMatches(args[1], completions, finalCompletitons);
+            StringUtil.copyPartialMatches(args[1], completions, finalCompletions);
         }
         if (args.length == 3) {
             String subcommand = args[0].toLowerCase();
@@ -88,13 +92,13 @@ public class CosmeticCommandTabComplete implements TabCompleter {
                 case "dye" -> {
                     completions.add("#FFFFFF");
                 }
-                case "menu", "apply", "unapply" -> {
+                case "menu", "apply", "unapply", "playemote" -> {
                     for (Player player : Bukkit.getOnlinePlayers()) {
                         completions.add(player.getName());
                     }
                 }
             }
-            StringUtil.copyPartialMatches(args[2], completions, finalCompletitons);
+            StringUtil.copyPartialMatches(args[2], completions, finalCompletions);
         }
 
         if (args.length == 4) {
@@ -104,11 +108,11 @@ public class CosmeticCommandTabComplete implements TabCompleter {
                     completions.add("#FFFFFF");
                 }
             }
-            StringUtil.copyPartialMatches(args[3], completions, finalCompletitons);
+            StringUtil.copyPartialMatches(args[3], completions, finalCompletions);
         }
 
-        Collections.sort(finalCompletitons);
-        return finalCompletitons;
+        Collections.sort(finalCompletions);
+        return finalCompletions;
     }
 
     private static List<String> applyCommandComplete(CosmeticUser user, String[] args) {
