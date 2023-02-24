@@ -24,7 +24,7 @@ import java.util.List;
 public class CosmeticCommandTabComplete implements TabCompleter {
     @Nullable
     @Override
-    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String @NotNull [] args) {
         List<String> completions = new ArrayList<>();
         List<String> finalCompletions = new ArrayList<>();
 
@@ -115,7 +115,8 @@ public class CosmeticCommandTabComplete implements TabCompleter {
         return finalCompletions;
     }
 
-    private static List<String> applyCommandComplete(CosmeticUser user, String[] args) {
+    @NotNull
+    private static List<String> applyCommandComplete(CosmeticUser user, String @NotNull [] args) {
         List<String> completitions = new ArrayList<>();
 
         if (args.length == 2) {
@@ -134,7 +135,7 @@ public class CosmeticCommandTabComplete implements TabCompleter {
         return completitions;
     }
 
-    private boolean hasPermission(CommandSender sender, String permission) {
+    private boolean hasPermission(@NotNull CommandSender sender, String permission) {
         if (sender.isOp()) return true;
         if (sender.hasPermission(permission)) return true;
         return false;
