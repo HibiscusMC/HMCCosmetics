@@ -133,14 +133,14 @@ public class PlayerGameListener implements Listener {
             return;
         }
 
-        final Cosmetic cosmetic = user.getCosmetic(CosmeticSlot.BALLOON);
-        final Color color = user.getCosmeticColor(CosmeticSlot.BALLOON);
-        user.removeCosmeticSlot(CosmeticSlot.BALLOON);
+        if (user.hasCosmeticInSlot(CosmeticSlot.BALLOON)) {
+            user.despawnBalloon();
 
-        Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
-            user.addPlayerCosmetic(cosmetic, color);
-            user.updateCosmetic();
-        }, 4);
+            Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
+                user.spawnBalloon((CosmeticBalloonType) user.getCosmetic(CosmeticSlot.BALLOON));
+                user.updateCosmetic();
+            }, 4);
+        }
     }
 
     @EventHandler
