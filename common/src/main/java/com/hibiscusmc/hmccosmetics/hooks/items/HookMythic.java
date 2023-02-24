@@ -12,7 +12,7 @@ public class HookMythic extends Hook implements Listener {
     }
 
     @Override
-    public ItemStack getItem(String itemid) {
-        return MythicBukkit.inst().getItemManager().getItemStack(itemid);
+    public ItemStack getItem(String itemId) {
+        return MythicBukkit.inst().getItemManager().getItemStack(itemId);
     }
 }

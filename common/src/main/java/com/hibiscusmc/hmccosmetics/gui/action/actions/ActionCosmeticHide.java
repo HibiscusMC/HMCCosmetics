@@ -2,6 +2,7 @@ package com.hibiscusmc.hmccosmetics.gui.action.actions;
 
 import com.hibiscusmc.hmccosmetics.gui.action.Action;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
+import org.jetbrains.annotations.NotNull;
 
 public class ActionCosmeticHide extends Action {
 
@@ -10,10 +11,9 @@ public class ActionCosmeticHide extends Action {
     }
 
     @Override
-    public void run(CosmeticUser user, String raw) {
+    public void run(@NotNull CosmeticUser user, String raw) {
         if (!user.getHidden()) {
             user.hideCosmetics(CosmeticUser.HiddenReason.ACTION);
-            return;
         }
     }
 }

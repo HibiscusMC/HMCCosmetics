@@ -4,6 +4,7 @@ import com.hibiscusmc.hmccosmetics.gui.action.Action;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.logging.Level;
 
@@ -15,7 +16,7 @@ public class ActionSound extends Action {
     }
 
     @Override
-    public void run(CosmeticUser user, String raw) {
+    public void run(@NotNull CosmeticUser user, @NotNull String raw) {
         Player player = user.getPlayer();
         String[] processedString = raw.split(" ");
 

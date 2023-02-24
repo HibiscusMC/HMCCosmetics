@@ -14,8 +14,8 @@ public class HookOraxen extends Hook implements Listener {
     }
 
     @Override
-    public ItemStack getItem(String itemid) {
-        ItemBuilder builder = OraxenItems.getItemById(itemid);
+    public ItemStack getItem(String itemId) {
+        ItemBuilder builder = OraxenItems.getItemById(itemId);
         if (builder == null) return null;
         return builder.build();
     }

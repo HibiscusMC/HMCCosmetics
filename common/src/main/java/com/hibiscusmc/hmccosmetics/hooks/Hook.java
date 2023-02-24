@@ -5,7 +5,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class Hook implements Listener {
 
-    private String id;
+    private final String id;
     private boolean active;
     private boolean itemHook;
 
@@ -19,7 +19,7 @@ public class Hook implements Listener {
         // Override
     }
 
-    public ItemStack getItem(String itemid) {
+    public ItemStack getItem(String itemId) {
         return null;
         // Override
     }

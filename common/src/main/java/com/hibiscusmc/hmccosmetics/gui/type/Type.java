@@ -7,7 +7,7 @@ import org.spongepowered.configurate.ConfigurationNode;
 
 public class Type {
 
-    private String id;
+    private final String id;
 
     public Type(String id) {
         this.id = id;

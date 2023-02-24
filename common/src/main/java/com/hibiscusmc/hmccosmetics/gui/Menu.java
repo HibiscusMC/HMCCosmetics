@@ -17,6 +17,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 
@@ -25,13 +27,13 @@ import java.util.List;
 
 public class Menu {
 
-    private String id;
-    private String title;
-    private int rows;
-    private ConfigurationNode config;
-    private String permissionNode;
+    private final String id;
+    private final String title;
+    private final int rows;
+    private final ConfigurationNode config;
+    private final String permissionNode;
 
-    public Menu(String id, ConfigurationNode config) {
+    public Menu(String id, @NotNull ConfigurationNode config) {
         this.id = id;
         this.config = config;
 
@@ -58,7 +60,7 @@ public class Menu {
         openMenu(user, false);
     }
 
-    public void openMenu(CosmeticUser user, boolean ignorePermission) {
+    public void openMenu(@NotNull CosmeticUser user, boolean ignorePermission) {
         Player player = user.getPlayer();
         if (player == null) return;
         if (!ignorePermission && !permissionNode.isEmpty()) {
@@ -97,7 +99,8 @@ public class Menu {
 
     }
 
-    private Gui getItems(CosmeticUser user, Gui gui) {
+    @Contract("_, _ -> param2")
+    private Gui getItems(@NotNull CosmeticUser user, Gui gui) {
         Player player = user.getPlayer();
 
         for (ConfigurationNode config : config.node("items").childrenMap().values()) {
@@ -164,7 +167,8 @@ public class Menu {
         return gui;
     }
 
-    private List<Integer> getSlots(List<String> slotString) {
+    @NotNull
+    private List<Integer> getSlots(@NotNull List<String> slotString) {
         List<Integer> slots = new ArrayList<>();
 
         for (String a : slotString) {
@@ -181,6 +185,7 @@ public class Menu {
         return slots;
     }
 
+    @NotNull
     private List<Integer> getSlots(int small, int max) {
         List<Integer> slots = new ArrayList<>();
 
@@ -188,7 +193,9 @@ public class Menu {
         return slots;
     }
 
-    private ItemStack updateLore(CosmeticUser user, ItemStack itemStack, Type type, ConfigurationNode config) {
+    @Contract("_, _, _, _ -> param2")
+    @NotNull
+    private ItemStack updateLore(CosmeticUser user, @NotNull ItemStack itemStack, Type type, ConfigurationNode config) {
         if (itemStack.hasItemMeta()) {
             itemStack.setItemMeta(type.setLore(user, config, itemStack.getItemMeta()));
         }
@@ -201,7 +208,6 @@ public class Menu {
 
     public boolean canOpen(Player player) {
         if (permissionNode.isEmpty()) return true;
-        if (player.isOp() || player.hasPermission(permissionNode)) return true;
-        return false;
+        return player.isOp() || player.hasPermission(permissionNode);
     }
 }

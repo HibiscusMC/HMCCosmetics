@@ -8,12 +8,14 @@ import com.hibiscusmc.hmccosmetics.hooks.placeholders.HookPlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 
 public class Hooks {
 
-    private static HashMap<String, Hook> hooks = new HashMap<>();
+    private static final HashMap<String, Hook> hooks = new HashMap<>();
     private static HookOraxen ORAXEN_HOOK = new HookOraxen();
     private static HookItemAdder ITEMADDER_HOOK = new HookItemAdder();
     private static HookLooty LOOTY_HOOK = new HookLooty();
@@ -23,11 +25,11 @@ public class Hooks {
     private static HookPremiumVanish PREMIUM_VANISH_HOOK = new HookPremiumVanish();
     private static HookSuperVanish SUPER_VANISH_HOOK = new HookSuperVanish();
 
-    public static Hook getHook(String id) {
+    public static Hook getHook(@NotNull String id) {
         return hooks.get(id.toLowerCase());
     }
 
-    public static boolean isItemHook(String id) {
+    public static boolean isItemHook(@NotNull String id) {
         return hooks.containsKey(id.toLowerCase());
     }
 
@@ -46,7 +48,8 @@ public class Hooks {
         }
     }
 
-    public static ItemStack getItem(String raw) {
+    @Nullable
+    public static ItemStack getItem(@NotNull String raw) {
         if (!raw.contains(":")) {
             Material mat = Material.getMaterial(raw.toUpperCase());
             if (mat == null) return null;
@@ -61,8 +64,7 @@ public class Hooks {
         Hook hook = getHook(split[0]);
         if (!hook.hasEnabledItemHook()) return null;
         if (!hook.getActive()) return null;
-        ItemStack item = hook.getItem(split[1]);
-        return item;
+        return hook.getItem(split[1]);
     }
 
     public static boolean isActiveHook(String id) {

@@ -4,13 +4,14 @@ import com.hibiscusmc.hmccosmetics.gui.action.actions.*;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.List;
 
 public class Actions {
 
-    private static HashMap<String, Action> actions = new HashMap<>();
+    private static final HashMap<String, Action> actions = new HashMap<>();
 
     // [ID]
     private static ActionMessage ACTION_MESSAGE = new ActionMessage();
@@ -27,11 +28,11 @@ public class Actions {
     private static ActionCosmeticToggle ACTION_TOGGLE = new ActionCosmeticToggle();
 
 
-    public static Action getAction(String id) {
+    public static Action getAction(@NotNull String id) {
         return actions.get(id.toUpperCase());
     }
 
-    public static boolean isAction(String id) {
+    public static boolean isAction(@NotNull String id) {
         return actions.containsKey(id.toUpperCase());
     }
 
@@ -39,7 +40,7 @@ public class Actions {
         actions.put(action.getId().toUpperCase(), action);
     }
 
-    public static void runActions(CosmeticUser user, List<String> raw) {
+    public static void runActions(CosmeticUser user, @NotNull List<String> raw) {
         for (String a : raw) {
             String id = StringUtils.substringBetween(a, "[", "]").toUpperCase();
             String message = StringUtils.substringAfter(a, "] ");

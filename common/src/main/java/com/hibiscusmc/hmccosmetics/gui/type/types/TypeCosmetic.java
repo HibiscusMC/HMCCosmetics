@@ -17,6 +17,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 
@@ -31,7 +33,7 @@ public class TypeCosmetic extends Type {
     }
 
     @Override
-    public void run(CosmeticUser user, ConfigurationNode config, ClickType clickType) {
+    public void run(CosmeticUser user, @NotNull ConfigurationNode config, ClickType clickType) {
         if (config.node("cosmetic").virtual()) return;
         String cosmeticName = config.node("cosmetic").getString();
         Cosmetic cosmetic = Cosmetics.getCosmetic(cosmeticName);
@@ -92,7 +94,7 @@ public class TypeCosmetic extends Type {
     }
 
     @Override
-    public ItemMeta setLore(CosmeticUser user, ConfigurationNode config, ItemMeta itemMeta) {
+    public ItemMeta setLore(CosmeticUser user, @NotNull ConfigurationNode config, ItemMeta itemMeta) {
         List<String> processedLore = new ArrayList<>();
 
         if (config.node("cosmetic").virtual()) return processLoreLines(user, itemMeta);;
@@ -143,7 +145,9 @@ public class TypeCosmetic extends Type {
         return itemMeta;
     }
 
-    private ItemMeta processLoreLines(CosmeticUser user, ItemMeta itemMeta) {
+    @Contract("_, _ -> param2")
+    @NotNull
+    private ItemMeta processLoreLines(CosmeticUser user, @NotNull ItemMeta itemMeta) {
         List<String> processedLore = new ArrayList<>();
 
         if (itemMeta.hasLore()) {

@@ -21,9 +21,9 @@ public class HookItemAdder extends Hook implements Listener {
     }
 
     @Override
-    public ItemStack getItem(String itemid) {
+    public ItemStack getItem(String itemId) {
         if (enabled) {
-            CustomStack stack = CustomStack.getInstance(itemid);
+            CustomStack stack = CustomStack.getInstance(itemId);
             if (stack == null) return null;
             return stack.getItemStack();
         } else {

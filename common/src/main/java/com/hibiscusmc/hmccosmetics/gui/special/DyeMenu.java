@@ -17,13 +17,12 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.inventory.meta.PotionMeta;
+import org.jetbrains.annotations.NotNull;
 
 public class DyeMenu {
 
     // Yes, I do know how tacted on this feels.
-
-
-    public static void openMenu(CosmeticUser user, Cosmetic cosmetic) {
+    public static void openMenu(@NotNull CosmeticUser user, Cosmetic cosmetic) {
         ItemStack originalItem = user.getUserCosmeticItem(cosmetic);
         if (originalItem == null || !cosmetic.isDyable()) return;
 
