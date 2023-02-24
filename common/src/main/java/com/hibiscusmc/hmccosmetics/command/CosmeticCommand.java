@@ -34,7 +34,7 @@ public class CosmeticCommand implements CommandExecutor {
     //             0      1        2
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String @NotNull [] args) {
         boolean silent = false;
 
         if (args.length == 0) {
@@ -69,7 +69,10 @@ public class CosmeticCommand implements CommandExecutor {
 
         if (sender.hasPermission("HMCCosmetics.cmd.silent") || sender.isOp()) {
             for (String singleArg : args) {
-                if (singleArg.equalsIgnoreCase("-s")) silent = true;
+                if (singleArg.equalsIgnoreCase("-s")) {
+                    silent = true;
+                    break;
+                }
             }
         }
 
@@ -145,7 +148,7 @@ public class CosmeticCommand implements CommandExecutor {
                     return true;
                 }
 
-                CosmeticSlot cosmeticSlot = null;
+                CosmeticSlot cosmeticSlot;
 
                 if (sender instanceof Player) player = ((Player) sender).getPlayer();
                 if (sender.hasPermission("hmccosmetics.cmd.unapply.other")) {
