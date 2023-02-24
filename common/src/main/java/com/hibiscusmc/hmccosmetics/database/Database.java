@@ -16,22 +16,20 @@ public class Database {
 
     private static Data data;
 
+    @Deprecated
     private static InternalData INTERNAL_DATA  = new InternalData();
-    private static MySQLData MYSQL_DATA = new MySQLData();
-    private static SQLiteData SQLITE_DATA = new SQLiteData();
+
+    private static final MySQLData MYSQL_DATA = new MySQLData();
+    private static final SQLiteData SQLITE_DATA = new SQLiteData();
 
     public Database() {
         String databaseType = DatabaseSettings.getDatabaseType();
         data = INTERNAL_DATA; // default
-        if (databaseType.equalsIgnoreCase("INTERNAL")) {
-            data = INTERNAL_DATA;
-        }
         if (databaseType.equalsIgnoreCase("MySQL")) {
             data = MYSQL_DATA;
         }
         if (databaseType.equalsIgnoreCase("sqlite")) {
             data = SQLITE_DATA;
-
         }
         MessagesUtil.sendDebugMessages("Database is " + data);
 

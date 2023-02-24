@@ -14,6 +14,7 @@ import org.bukkit.persistence.PersistentDataType;
 import java.util.Map;
 import java.util.UUID;
 
+@Deprecated
 public class InternalData extends Data {
 
     NamespacedKey key = new NamespacedKey(HMCCosmeticsPlugin.getInstance(), "cosmetics");
@@ -27,7 +28,7 @@ public class InternalData extends Data {
     public void save(CosmeticUser user) {
         Player player = Bukkit.getPlayer(user.getUniqueId());
 
-        player.getPersistentDataContainer().set(key, PersistentDataType.STRING, steralizeData(user));
+        player.getPersistentDataContainer().set(key, PersistentDataType.STRING, serializeData(user));
     }
 
     @Override
@@ -38,7 +39,7 @@ public class InternalData extends Data {
         if (!player.getPersistentDataContainer().has(key, PersistentDataType.STRING)) return user;
         String rawData = player.getPersistentDataContainer().get(key, PersistentDataType.STRING);
 
-        Map<CosmeticSlot, Map<Cosmetic, Color>> a = desteralizedata(user, rawData);
+        Map<CosmeticSlot, Map<Cosmetic, Color>> a = deserializeData(user, rawData);
         for (Map<Cosmetic, Color> cosmeticColors : a.values()) {
             for (Cosmetic cosmetic : cosmeticColors.keySet()) {
                 Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> {

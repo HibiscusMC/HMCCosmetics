@@ -14,29 +14,27 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
 public class UserEmoteModel extends PlayerModel {
 
-    private CosmeticUser user;
+    private final CosmeticUser user;
     private String emotePlaying;
-    private int armorstandId;
+    private final int armorStandId;
     private GameMode originalGamemode;
 
-    public UserEmoteModel(CosmeticUser user) {
+    public UserEmoteModel(@NotNull CosmeticUser user) {
         super(user.getPlayer());
         this.user = user;
-        armorstandId = NMSHandlers.getHandler().getNextEntityId();
+        armorStandId = NMSHandlers.getHandler().getNextEntityId();
         getRangeManager().setRenderDistance(Settings.getViewDistance());
     }
 
     @Override
-    public void playAnimation(String id) {
+    public void playAnimation(@NotNull String id) {
         if (id.contains(":")) id = id.split(":", 2)[1];
         if (!id.contains(".")) id = id + "." + id + "." + id; // Make into a format that playerAnimator works with. Requires 3 splits.
         super.playAnimation(id);
@@ -63,12 +61,12 @@ public class UserEmoteModel extends PlayerModel {
 
         originalGamemode = player.getGameMode();
 
-        PacketManager.sendEntitySpawnPacket(thirdPersonLocation, armorstandId, EntityType.ARMOR_STAND, UUID.randomUUID(), viewer);
-        PacketManager.sendInvisibilityPacket(armorstandId, viewer);
-        PacketManager.sendLookPacket(armorstandId, player.getLocation(), viewer);
+        PacketManager.sendEntitySpawnPacket(thirdPersonLocation, armorStandId, EntityType.ARMOR_STAND, UUID.randomUUID(), viewer);
+        PacketManager.sendInvisibilityPacket(armorStandId, viewer);
+        PacketManager.sendLookPacket(armorStandId, player.getLocation(), viewer);
 
         PacketManager.gamemodeChangePacket(player, 3);
-        PacketManager.sendCameraPacket(armorstandId, viewer);
+        PacketManager.sendCameraPacket(armorStandId, viewer);
 
         MessagesUtil.sendDebugMessages("playAnimation run");
     }
@@ -99,7 +97,7 @@ public class UserEmoteModel extends PlayerModel {
 
             int entityId = player.getEntityId();
             PacketManager.sendCameraPacket(entityId, viewer);
-            PacketManager.sendEntityDestroyPacket(armorstandId, viewer);
+            PacketManager.sendEntityDestroyPacket(armorStandId, viewer);
             if (this.originalGamemode != null) {
                 PacketManager.gamemodeChangePacket(player, ServerUtils.convertGamemode(this.originalGamemode));
                 player.setGameMode(this.originalGamemode);
@@ -113,7 +111,6 @@ public class UserEmoteModel extends PlayerModel {
     }
 
     public boolean isPlayingAnimation() {
-        if (emotePlaying == null) return false;
-        return true;
+        return emotePlaying != null;
     }
 }

@@ -3,6 +3,7 @@ package com.hibiscusmc.hmccosmetics.user.manager;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticEmoteType;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
+import org.jetbrains.annotations.NotNull;
 
 public class UserEmoteManager {
 
@@ -13,7 +14,7 @@ public class UserEmoteManager {
         this.user = user;
     }
 
-    public void playEmote(CosmeticEmoteType cosmeticEmoteType) {
+    public void playEmote(@NotNull CosmeticEmoteType cosmeticEmoteType) {
         MessagesUtil.sendDebugMessages("playEmote " + cosmeticEmoteType.getAnimationId());
         playEmote(cosmeticEmoteType.getAnimationId());
     }

@@ -10,6 +10,7 @@ import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import org.apache.commons.lang3.EnumUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -36,7 +37,7 @@ public class Data {
         // Override
     }
     // BACKPACK=colorfulbackpack&RRGGBB,HELMET=niftyhat,BALLOON=colorfulballoon,CHESTPLATE=niftychestplate
-    public String steralizeData(CosmeticUser user) {
+    public String serializeData(@NotNull CosmeticUser user) {
         String data = "";
         if (user.getHidden()) {
             if (shouldHiddenSave(user.getHiddenReason())) {
@@ -56,7 +57,7 @@ public class Data {
         return data;
     }
 
-    public Map<CosmeticSlot, Map<Cosmetic, Color>> desteralizedata(CosmeticUser user, String raw) {
+    public Map<CosmeticSlot, Map<Cosmetic, Color>> deserializeData(CosmeticUser user, @NotNull String raw) {
         Map<CosmeticSlot, Map<Cosmetic, Color>> cosmetics = new HashMap<>();
         boolean checkPermission = Settings.getForcePermissionJoin();
 
@@ -102,7 +103,7 @@ public class Data {
         return cosmetics;
     }
 
-    private boolean shouldHiddenSave(CosmeticUser.HiddenReason reason) {
+    private boolean shouldHiddenSave(CosmeticUser.@NotNull HiddenReason reason) {
         switch (reason) {
             case EMOTE, NONE -> {
                 return false;
