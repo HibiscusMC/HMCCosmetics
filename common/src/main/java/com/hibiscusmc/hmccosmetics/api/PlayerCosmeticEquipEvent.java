@@ -5,10 +5,11 @@ import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
 
 public class PlayerCosmeticEquipEvent extends Event implements Cancellable {
 
-    private CosmeticUser user;
+    private final CosmeticUser user;
     private Cosmetic cosmetic;
     private boolean isCancelled;
 
@@ -31,6 +32,7 @@ public class PlayerCosmeticEquipEvent extends Event implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
 
     @Override
+    @NotNull
     public HandlerList getHandlers() {
         return handlers;
     }
@@ -47,7 +49,7 @@ public class PlayerCosmeticEquipEvent extends Event implements Cancellable {
         return cosmetic;
     }
 
-    public void setCosmetic() {
+    public void setCosmetic(Cosmetic cosmetic) {
         this.cosmetic = cosmetic;
     }
 }
