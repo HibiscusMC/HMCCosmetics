@@ -6,6 +6,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 public class Keys {
 
@@ -13,7 +14,7 @@ public class Keys {
     public static final NamespacedKey ITEM_KEY = new NamespacedKey(plugin, "cosmetic");
     public static final NamespacedKey TOKEN_KEY = new NamespacedKey(plugin, "token-key");
 
-    public static void setKey(final ItemStack itemStack) {
+    public static void setKey(final @NotNull ItemStack itemStack) {
         final ItemMeta itemMeta = itemStack.getItemMeta();
 
         if (itemMeta == null) {
@@ -26,7 +27,7 @@ public class Keys {
     }
 
     public static <T, Z> void setKey(
-            final ItemStack itemStack,
+            final @NotNull ItemStack itemStack,
             final NamespacedKey key,
             final PersistentDataType<T, Z> type,
             final Z value) {
@@ -41,7 +42,7 @@ public class Keys {
         itemStack.setItemMeta(itemMeta);
     }
 
-    public static boolean hasKey(final ItemStack itemStack) {
+    public static boolean hasKey(final @NotNull ItemStack itemStack) {
         final ItemMeta itemMeta = itemStack.getItemMeta();
 
         if (itemMeta == null) {
@@ -51,7 +52,7 @@ public class Keys {
         return itemMeta.getPersistentDataContainer().has(ITEM_KEY, PersistentDataType.BYTE);
     }
 
-    public static <T, Z> boolean hasKey(final ItemStack itemStack, final NamespacedKey key, final PersistentDataType<T, Z> type) {
+    public static <T, Z> boolean hasKey(final @NotNull ItemStack itemStack, final NamespacedKey key, final PersistentDataType<T, Z> type) {
         final ItemMeta itemMeta = itemStack.getItemMeta();
 
         if (itemMeta == null) {
@@ -62,7 +63,7 @@ public class Keys {
     }
 
     @Nullable
-    public static <T, Z> Z getValue(final ItemStack itemStack, final NamespacedKey key, final PersistentDataType<T, Z> type) {
+    public static <T, Z> Z getValue(final @NotNull ItemStack itemStack, final NamespacedKey key, final PersistentDataType<T, Z> type) {
         final ItemMeta itemMeta = itemStack.getItemMeta();
 
         if (itemMeta == null) {

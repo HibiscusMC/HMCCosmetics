@@ -15,6 +15,8 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.title.Title;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
 
 import java.time.Duration;
@@ -24,9 +26,9 @@ import java.util.logging.Level;
 public class MessagesUtil {
 
     private static String prefix;
-    private static HashMap<String, String> messages = new HashMap<>();
+    private static final HashMap<String, String> messages = new HashMap<>();
 
-    public static void setup(ConfigurationNode config) {
+    public static void setup(@NotNull ConfigurationNode config) {
         prefix = config.node("prefix").getString("");
         for (ConfigurationNode node : config.childrenMap().values()) {
             if (node.virtual()) continue;
@@ -35,7 +37,7 @@ public class MessagesUtil {
         }
      }
 
-    public static void sendMessage(CosmeticUser user, String key) {
+    public static void sendMessage(@NotNull CosmeticUser user, String key) {
         sendMessage(user.getPlayer(), key);
     }
 
@@ -92,6 +94,7 @@ public class MessagesUtil {
         return processString(player, key, null);
     }
 
+    @Nullable
     public static Component processString(Player player, String key, TagResolver placeholders) {
         if (!messages.containsKey(key)) return null;
         if (messages.get(key) == null) return null;
@@ -104,14 +107,17 @@ public class MessagesUtil {
         return Adventure.MINI_MESSAGE.deserialize(message);
     }
 
+    @NotNull
     public static Component processStringNoKey(String message) {
         return processStringNoKey(null, message, null);
     }
 
+    @NotNull
     public static Component processStringNoKey(Player player, String message) {
         return processStringNoKey(player, message, null);
     }
 
+    @NotNull
     public static Component processStringNoKey(Player player, String message, TagResolver placeholders) {
         message = message.replaceAll("%prefix%", prefix);
         if (Hooks.isActiveHook("PlaceholderAPI") && player != null) message = PlaceholderAPI.setPlaceholders(player, message);

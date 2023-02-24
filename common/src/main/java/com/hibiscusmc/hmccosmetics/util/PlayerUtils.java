@@ -6,12 +6,15 @@ import com.hibiscusmc.hmccosmetics.config.Settings;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class PlayerUtils {
 
+    @Nullable
     public static WrappedSignedProperty getSkin(Player player) {
         WrappedSignedProperty skinData = WrappedGameProfile.fromPlayer(player).getProperties()
                 .get("textures").stream().findAny().orElse(null);
@@ -22,11 +25,13 @@ public class PlayerUtils {
         return new WrappedSignedProperty("textures", skinData.getValue(), skinData.getSignature());
     }
 
-    public static List<Player> getNearbyPlayers(Player player) {
+    @NotNull
+    public static List<Player> getNearbyPlayers(@NotNull Player player) {
         return getNearbyPlayers(player.getLocation());
     }
 
-    public static List<Player> getNearbyPlayers(Location location) {
+    @NotNull
+    public static List<Player> getNearbyPlayers(@NotNull Location location) {
         List<Player> players = new ArrayList<>();
         int viewDistance = Settings.getViewDistance();
         for (Entity entity : location.getWorld().getNearbyEntities(location, viewDistance, viewDistance, viewDistance)) {
