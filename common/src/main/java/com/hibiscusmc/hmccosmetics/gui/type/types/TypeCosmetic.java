@@ -14,6 +14,7 @@ import com.hibiscusmc.hmccosmetics.util.misc.StringUtils;
 import com.hibiscusmc.hmccosmetics.util.misc.Utils;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -37,13 +38,14 @@ public class TypeCosmetic extends Type {
         if (config.node("cosmetic").virtual()) return;
         String cosmeticName = config.node("cosmetic").getString();
         Cosmetic cosmetic = Cosmetics.getCosmetic(cosmeticName);
+        Player player = user.getPlayer();
         if (cosmetic == null) {
-            MessagesUtil.sendMessage(user.getPlayer(), "invalid-cosmetic");
+            MessagesUtil.sendMessage(player, "invalid-cosmetic");
             return;
         }
 
         if (!user.canEquipCosmetic(cosmetic)) {
-            MessagesUtil.sendMessage(user.getPlayer(), "no-cosmetic-permission");
+            MessagesUtil.sendMessage(player, "no-cosmetic-permission");
             return;
         }
 

@@ -2,6 +2,7 @@ package com.hibiscusmc.hmccosmetics.hooks;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.hooks.items.*;
+import com.hibiscusmc.hmccosmetics.hooks.misc.HookHMCColor;
 import com.hibiscusmc.hmccosmetics.hooks.misc.HookPremiumVanish;
 import com.hibiscusmc.hmccosmetics.hooks.misc.HookSuperVanish;
 import com.hibiscusmc.hmccosmetics.hooks.placeholders.HookPlaceholderAPI;
@@ -24,6 +25,7 @@ public class Hooks {
     private static HookPlaceholderAPI PAPI_HOOK = new HookPlaceholderAPI();
     private static HookPremiumVanish PREMIUM_VANISH_HOOK = new HookPremiumVanish();
     private static HookSuperVanish SUPER_VANISH_HOOK = new HookSuperVanish();
+    private static HookHMCColor HMC_COLOR_HOOK = new HookHMCColor();
 
     public static Hook getHook(@NotNull String id) {
         return hooks.get(id.toLowerCase());
