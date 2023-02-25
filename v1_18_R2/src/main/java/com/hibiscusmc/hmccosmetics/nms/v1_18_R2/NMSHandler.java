@@ -66,9 +66,15 @@ public class NMSHandler implements com.hibiscusmc.hmccosmetics.nms.NMSHandler {
     }
 
     @Override
-    public org.bukkit.entity.Entity getInvisibleArmorstand(Location loc) {
-        InvisibleArmorstand invisibleArmorstand = new InvisibleArmorstand(loc);
-        return invisibleArmorstand.getBukkitEntity();
+    public org.bukkit.entity.Entity getHMCArmorStand(Location loc) {
+        HMCArmorStand hmcArmorStand = new HMCArmorStand(loc);
+        return hmcArmorStand.getBukkitEntity();
+    }
+
+    @Override
+    public org.bukkit.entity.Entity spawnHMCParticleCloud(Location location) {
+        HMCParticleCloud hmcParticleCloud = new HMCParticleCloud(location);
+        return hmcParticleCloud.getBukkitEntity();
     }
 
     @Override
@@ -78,7 +84,7 @@ public class NMSHandler implements com.hibiscusmc.hmccosmetics.nms.NMSHandler {
 
     @Override
     public org.bukkit.entity.Entity spawnBackpack(CosmeticUser user, CosmeticBackpackType cosmeticBackpackType) {
-        InvisibleArmorstand invisibleArmorstand = new InvisibleArmorstand(user.getPlayer().getLocation());
+        HMCArmorStand invisibleArmorstand = new HMCArmorStand(user.getPlayer().getLocation());
 
         ItemStack item = user.getUserCosmeticItem(cosmeticBackpackType);
 

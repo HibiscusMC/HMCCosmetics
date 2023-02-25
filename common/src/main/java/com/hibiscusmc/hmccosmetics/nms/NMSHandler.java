@@ -19,11 +19,13 @@ public interface NMSHandler {
 
     Entity getEntity(int entityId);
 
-    Entity getInvisibleArmorstand(Location loc);
+    Entity getHMCArmorStand(Location loc);
 
     ArmorStand getMEGEntity(Location loc);
 
     Entity spawnBackpack(CosmeticUser user, CosmeticBackpackType cosmeticBackpackType);
+
+    Entity spawnHMCParticleCloud(Location location);
 
     UserBalloonManager spawnBalloon(CosmeticUser user, CosmeticBalloonType cosmeticBalloonType);
 
