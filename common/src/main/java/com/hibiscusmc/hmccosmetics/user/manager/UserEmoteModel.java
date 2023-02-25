@@ -16,6 +16,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -35,13 +36,16 @@ public class UserEmoteModel extends PlayerModel {
 
     @Override
     public void playAnimation(@NotNull String id) {
-        if (id.contains(":")) id = id.split(":", 2)[1];
+        if (id.contains(":")) id = id.split(":", 2)[1]; // A:B -> B -> B.B.B
         if (!id.contains(".")) id = id + "." + id + "." + id; // Make into a format that playerAnimator works with. Requires 3 splits.
+
         super.playAnimation(id);
+
         emotePlaying = id;
+
         // Add config option that either allows player to move or forces them into a spot.
         Player player = user.getPlayer();
-        List<Player> viewer = List.of(user.getPlayer());
+        List<Player> viewer = Collections.singletonList(user.getPlayer());
         List<Player> outsideViewers = PacketManager.getViewers(player.getLocation());
         outsideViewers.remove(player);
 
@@ -49,13 +53,16 @@ public class UserEmoteModel extends PlayerModel {
 
         Location newLocation = player.getLocation().clone();
         newLocation.setPitch(0);
+
         double DISTANCE = Settings.getEmoteDistance();
+
         Location thirdPersonLocation = newLocation.add(newLocation.getDirection().normalize().multiply(DISTANCE));
         if (thirdPersonLocation.getBlock().getType() != Material.AIR) {
             stopAnimation();
             MessagesUtil.sendMessage(player, "emote-blocked");
             return;
         }
+
         user.getPlayer().setInvisible(true);
         user.hideCosmetics(CosmeticUser.HiddenReason.EMOTE);
 
@@ -88,10 +95,10 @@ public class UserEmoteModel extends PlayerModel {
         emotePlaying = null;
         despawn();
         Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> {
-            if (user.getPlayer() == null) return;
             Player player = user.getPlayer();
-            List<Player> viewer = List.of(user.getPlayer());
-            if (viewer == null) return;
+            if (player == null) return;
+
+            List<Player> viewer = Collections.singletonList(player);
             List<Player> outsideViewers = PacketManager.getViewers(player.getLocation());
             outsideViewers.remove(player);
 
