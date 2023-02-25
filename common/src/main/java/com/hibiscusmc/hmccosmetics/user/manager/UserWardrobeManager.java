@@ -3,6 +3,7 @@ package com.hibiscusmc.hmccosmetics.user.manager;
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
+import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
@@ -211,6 +212,13 @@ public class UserWardrobeManager {
                 Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.getInstance()).player(player);
 
                 target.hideBossBar(bossBar);
+            }
+
+            // For Wardrobe Temp Cosmetics
+            for (Cosmetic cosmetic : user.getCosmetic()) {
+                if (cosmetic.requiresPermission()) {
+                    if (!player.hasPermission(cosmetic.getPermission())) user.removeCosmeticSlot(cosmetic.getSlot());
+                }
             }
 
             user.updateCosmetic();
