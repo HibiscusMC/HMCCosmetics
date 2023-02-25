@@ -15,6 +15,7 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 import java.util.logging.Level;
@@ -26,13 +27,13 @@ public class UserBalloonManager {
     private final UUID uniqueID;
     private final ArmorStand modelEntity;
 
-    public UserBalloonManager(Location location) {
+    public UserBalloonManager(@NotNull Location location) {
         this.uniqueID = UUID.randomUUID();
         this.balloonID = NMSHandlers.getHandler().getNextEntityId();
         this.modelEntity = NMSHandlers.getHandler().getMEGEntity(location.add(Settings.getBalloonOffset()));
     }
 
-    public void spawnModel(CosmeticBalloonType cosmeticBalloonType, Color color) {
+    public void spawnModel(@NotNull CosmeticBalloonType cosmeticBalloonType, Color color) {
         // redo this
         if (cosmeticBalloonType.getModelName() != null && HMCCosmeticsPlugin.hasModelEngine()) {
             balloonType = BalloonType.MODELENGINE;

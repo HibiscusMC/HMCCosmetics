@@ -14,8 +14,8 @@ public class HookHMCCosmetics extends Hook implements Listener {
     }
 
     @Override
-    public ItemStack getItem(String itemid) {
-        Cosmetic cosmetic = Cosmetics.getCosmetic(itemid);
+    public ItemStack getItem(String itemId) {
+        Cosmetic cosmetic = Cosmetics.getCosmetic(itemId);
         if (cosmetic == null) return null;
         return cosmetic.getItem();
     }

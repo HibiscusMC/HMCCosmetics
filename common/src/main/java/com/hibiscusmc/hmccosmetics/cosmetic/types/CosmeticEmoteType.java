@@ -3,11 +3,12 @@ package com.hibiscusmc.hmccosmetics.cosmetic.types;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.ConfigurationNode;
 
 public class CosmeticEmoteType extends Cosmetic {
 
-    private String animationId;
+    private final String animationId;
 
     public CosmeticEmoteType(String id, ConfigurationNode config) {
         super(id, config);
@@ -21,7 +22,7 @@ public class CosmeticEmoteType extends Cosmetic {
         // Nothing
     }
 
-    public void run(CosmeticUser user) {
+    public void run(@NotNull CosmeticUser user) {
         user.getUserEmoteManager().playEmote(this);
     }
 

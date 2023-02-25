@@ -25,22 +25,25 @@ public class HMCPlaceholderExpansion extends PlaceholderExpansion {
     }
 
     @Override
-    public @NotNull String getIdentifier() {
+    @NotNull
+    public String getIdentifier() {
         return "HMCCosmetics";
     }
 
     @Override
-    public @NotNull String getAuthor() {
+    @NotNull
+    public String getAuthor() {
         return "HibiscusMC";
     }
 
     @Override
-    public @NotNull String getVersion() {
+    @NotNull
+    public String getVersion() {
         return HMCCosmeticsPlugin.getInstance().getDescription().getVersion();
     }
 
     @Override
-    public String onRequest(OfflinePlayer player, String params) {
+    public String onRequest(@NotNull OfflinePlayer player, @NotNull String params) {
         if (!player.isOnline()) return null;
         CosmeticUser user = CosmeticUsers.getUser(player.getPlayer());
         if (user == null) return null;
@@ -132,13 +135,13 @@ public class HMCPlaceholderExpansion extends PlaceholderExpansion {
         return null;
     }
 
-    public String getMaterial(Cosmetic cosmetic) {
+    public String getMaterial(@NotNull Cosmetic cosmetic) {
         ItemStack item = cosmetic.getItem();
         if (item == null) return null;
         return cosmetic.getItem().getType().toString();
     }
 
-    public String getModelData(Cosmetic cosmetic) {
+    public String getModelData(@NotNull Cosmetic cosmetic) {
         ItemStack item = cosmetic.getItem();
         if (item == null) return null;
         if (!item.hasItemMeta()) return null;
@@ -146,7 +149,7 @@ public class HMCPlaceholderExpansion extends PlaceholderExpansion {
         return String.valueOf(itemMeta.getCustomModelData());
     }
 
-    public String getItemName(Cosmetic cosmetic) {
+    public String getItemName(@NotNull Cosmetic cosmetic) {
         ItemStack item = cosmetic.getItem();
         if (item == null) return null;
         if (!item.hasItemMeta()) return null;
@@ -154,7 +157,7 @@ public class HMCPlaceholderExpansion extends PlaceholderExpansion {
         return itemMeta.getDisplayName();
     }
 
-    public String getItemLore(Cosmetic cosmetic) {
+    public String getItemLore(@NotNull Cosmetic cosmetic) {
         ItemStack item = cosmetic.getItem();
         if (item == null) return null;
         if (item.hasItemMeta()) {

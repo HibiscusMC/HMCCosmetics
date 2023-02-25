@@ -3,6 +3,8 @@ package com.hibiscusmc.hmccosmetics.util;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import org.bukkit.inventory.EquipmentSlot;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class InventoryUtils {
@@ -58,6 +60,8 @@ public class InventoryUtils {
         };
     }
 
+    @Contract(pure = true)
+    @Nullable
     public static CosmeticSlot BukkitCosmeticSlot(int slot) {
         switch (slot) {
             case 36 -> {
@@ -81,6 +85,8 @@ public class InventoryUtils {
         }
     }
 
+    @Contract(pure = true)
+    @Nullable
     public static CosmeticSlot NMSCosmeticSlot(int slot) {
         switch (slot) {
             case 5 -> {
@@ -104,7 +110,9 @@ public class InventoryUtils {
         }
     }
 
-    public static EquipmentSlot getEquipmentSlot(CosmeticSlot slot) {
+    @Contract(pure = true)
+    @Nullable
+    public static EquipmentSlot getEquipmentSlot(@NotNull CosmeticSlot slot) {
         switch (slot) {
             case HELMET -> {
                 return EquipmentSlot.HEAD;

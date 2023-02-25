@@ -52,7 +52,7 @@ public class SQLiteData extends Data {
             try {
                 PreparedStatement preparedSt = preparedStatement("REPLACE INTO COSMETICDATABASE(UUID,COSMETICS) VALUES(?,?);");
                 preparedSt.setString(1, user.getUniqueId().toString());
-                preparedSt.setString(2, steralizeData(user));
+                preparedSt.setString(2, serializeData(user));
                 preparedSt.executeUpdate();
             } catch (SQLException e) {
                 throw new RuntimeException(e);
@@ -76,7 +76,7 @@ public class SQLiteData extends Data {
                 ResultSet rs = preparedStatement.executeQuery();
                 if (rs.next()) {
                     String rawData = rs.getString("COSMETICS");
-                    Map<CosmeticSlot, Map<Cosmetic, Color>> cosmetics = desteralizedata(user, rawData);
+                    Map<CosmeticSlot, Map<Cosmetic, Color>> cosmetics = deserializeData(user, rawData);
                     for (Map<Cosmetic, Color> cosmeticColors : cosmetics.values()) {
                         for (Cosmetic cosmetic : cosmeticColors.keySet()) {
                             Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> {
@@ -114,9 +114,6 @@ public class SQLiteData extends Data {
         //Bukkit.getScheduler().runTaskAsynchronously(HMCCosmeticsPlugin.getInstance(), () -> {
 
         //close Connection if still active
-        if (connection != null) {
-            //close();
-        }
 
         File dataFolder = new File(HMCCosmeticsPlugin.getInstance().getDataFolder(), "database.db");
 
@@ -151,11 +148,7 @@ public class SQLiteData extends Data {
 
     private boolean isConnectionOpen() {
         try {
-            if (connection == null || connection.isClosed()) {
-                return false;
-            } else {
-                return true;
-            }
+            return connection != null && !connection.isClosed();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

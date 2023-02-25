@@ -6,11 +6,12 @@ import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.ConfigurationNode;
 
 public class CosmeticBackpackType extends Cosmetic {
 
-    private String modelName;
+    private final String modelName;
     private ConfigurationNode config;
 
     public CosmeticBackpackType(String id, ConfigurationNode config) {
@@ -21,20 +22,22 @@ public class CosmeticBackpackType extends Cosmetic {
     }
 
     @Override
-    public void update(CosmeticUser user) {
+    public void update(@NotNull CosmeticUser user) {
         Player player = Bukkit.getPlayer(user.getUniqueId());
+        if (player == null) return;
+
         Location loc = player.getLocation().clone().add(0, 2, 0);
 
         if (user.isInWardrobe() || !user.isBackupSpawned()) return;
-        if (loc.getWorld() != user.getUserBackpackManager().getArmorstand().getWorld()) {
-            user.getUserBackpackManager().getArmorstand().teleport(loc);
+        if (loc.getWorld() != user.getUserBackpackManager().getArmorStand().getWorld()) {
+            user.getUserBackpackManager().getArmorStand().teleport(loc);
         }
 
-        user.getUserBackpackManager().getArmorstand().teleport(loc);
+        user.getUserBackpackManager().getArmorStand().teleport(loc);
 
-        PacketManager.sendRidingPacket(player.getEntityId(), user.getUserBackpackManager().getFirstArmorstandId(), loc);
+        PacketManager.sendRidingPacket(player.getEntityId(), user.getUserBackpackManager().getFirstArmorStandId(), loc);
 
-        user.getUserBackpackManager().getArmorstand().setRotation(loc.getYaw(), loc.getPitch());
+        user.getUserBackpackManager().getArmorStand().setRotation(loc.getYaw(), loc.getPitch());
         user.getUserBackpackManager().showBackpack();
     }
 

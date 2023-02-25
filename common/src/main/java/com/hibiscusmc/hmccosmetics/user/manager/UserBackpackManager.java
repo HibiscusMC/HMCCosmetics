@@ -17,8 +17,8 @@ import java.util.logging.Level;
 public class UserBackpackManager {
 
     private boolean hideBackpack;
-    private ArmorStand invisibleArmorstand;
-    private CosmeticUser user;
+    private ArmorStand invisibleArmorStand;
+    private final CosmeticUser user;
     private BackpackType backpackType;
 
     public UserBackpackManager(CosmeticUser user) {
@@ -27,27 +27,27 @@ public class UserBackpackManager {
         backpackType = BackpackType.NORMAL;
     }
 
-    public int getFirstArmorstandId() {
-        return invisibleArmorstand.getEntityId();
+    public int getFirstArmorStandId() {
+        return invisibleArmorStand.getEntityId();
     }
 
-    public ArmorStand getArmorstand() {
-        return invisibleArmorstand;
+    public ArmorStand getArmorStand() {
+        return invisibleArmorStand;
     }
 
     public void spawnBackpack(CosmeticBackpackType cosmeticBackpackType) {
         MessagesUtil.sendDebugMessages("spawnBackpack Bukkit - Start");
 
-        if (this.invisibleArmorstand != null) return;
+        if (this.invisibleArmorStand != null) return;
 
-        this.invisibleArmorstand = (ArmorStand) NMSHandlers.getHandler().spawnBackpack(user, cosmeticBackpackType);
+        this.invisibleArmorStand = (ArmorStand) NMSHandlers.getHandler().spawnBackpack(user, cosmeticBackpackType);
 
         if (cosmeticBackpackType.getModelName() != null && HMCCosmeticsPlugin.hasModelEngine()) {
             if (ModelEngineAPI.api.getModelRegistry().getBlueprint(cosmeticBackpackType.getModelName()) == null) {
                 MessagesUtil.sendDebugMessages("Invalid Model Engine Blueprint " + cosmeticBackpackType.getModelName(), Level.SEVERE);
                 return;
             }
-            ModeledEntity modeledEntity = ModelEngineAPI.getOrCreateModeledEntity(invisibleArmorstand);
+            ModeledEntity modeledEntity = ModelEngineAPI.getOrCreateModeledEntity(invisibleArmorStand);
             ActiveModel model = ModelEngineAPI.createActiveModel(ModelEngineAPI.getBlueprint(cosmeticBackpackType.getModelName()));
             model.setCanHurt(false);
             modeledEntity.addModel(model, false);
@@ -57,23 +57,23 @@ public class UserBackpackManager {
     }
 
     public void despawnBackpack() {
-        if (invisibleArmorstand == null) return;
-        invisibleArmorstand.setHealth(0);
-        invisibleArmorstand.remove();
-        this.invisibleArmorstand = null;
+        if (invisibleArmorStand == null) return;
+        invisibleArmorStand.setHealth(0);
+        invisibleArmorStand.remove();
+        this.invisibleArmorStand = null;
     }
 
     public void hideBackpack() {
-        if (user.getHidden() == true) return;
-        getArmorstand().getEquipment().clear();
+        if (user.getHidden()) return;
+        getArmorStand().getEquipment().clear();
         hideBackpack = true;
     }
 
     public void showBackpack() {
-        if (hideBackpack == false) return;
+        if (!hideBackpack) return;
         CosmeticBackpackType cosmeticBackpackType = (CosmeticBackpackType) user.getCosmetic(CosmeticSlot.BACKPACK);
         ItemStack item = user.getUserCosmeticItem(cosmeticBackpackType);
-        getArmorstand().getEquipment().setHelmet(item);
+        getArmorStand().getEquipment().setHelmet(item);
         hideBackpack = false;
     }
 

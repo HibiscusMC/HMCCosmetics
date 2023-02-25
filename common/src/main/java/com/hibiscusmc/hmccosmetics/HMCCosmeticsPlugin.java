@@ -42,8 +42,6 @@ import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public final class HMCCosmeticsPlugin extends JavaPlugin {
 

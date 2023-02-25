@@ -1,12 +1,13 @@
 package com.hibiscusmc.hmccosmetics.gui.action;
 
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
+import org.jetbrains.annotations.NotNull;
 
 public class Action {
 
-    private String id;
+    private final String id;
 
-    public Action(String id) {
+    public Action(@NotNull String id) {
         this.id = id.toUpperCase();
         Actions.addAction(this);
     }

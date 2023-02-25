@@ -37,7 +37,6 @@ public class NMSHandlers {
             MessagesUtil.sendDebugMessages(packageVersion + " has been detected.", Level.INFO);
             version = packageVersion;
             try {
-                //Class.forName("org.bukkit.craftbukkit." + version + ".block.CraftBlock").getName();
                 handler = (NMSHandler) Class.forName("com.hibiscusmc.hmccosmetics.nms." + packageVersion + ".NMSHandler").getConstructor().newInstance();
                 return;
             } catch (ClassNotFoundException | InvocationTargetException | InstantiationException |

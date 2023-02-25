@@ -8,6 +8,7 @@ import de.myzelyam.api.vanish.PlayerShowEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.jetbrains.annotations.NotNull;
 
 public class HookSuperVanish extends Hook implements Listener {
 
@@ -18,7 +19,7 @@ public class HookSuperVanish extends Hook implements Listener {
     }
 
     @EventHandler
-    public void onPlayerVanish(PlayerHideEvent event) {
+    public void onPlayerVanish(@NotNull PlayerHideEvent event) {
         Player player = event.getPlayer();
         CosmeticUser user = CosmeticUsers.getUser(player);
         if (user == null) return;
@@ -26,7 +27,7 @@ public class HookSuperVanish extends Hook implements Listener {
     }
 
     @EventHandler
-    public void onPlayerShow(PlayerShowEvent event) {
+    public void onPlayerShow(@NotNull PlayerShowEvent event) {
         Player player = event.getPlayer();
         CosmeticUser user = CosmeticUsers.getUser(player);
         if (user == null) return;

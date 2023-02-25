@@ -5,6 +5,7 @@ import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
@@ -19,7 +20,7 @@ public class Cosmetic {
     private CosmeticSlot slot;
     private boolean dyable;
 
-    protected Cosmetic(String id, ConfigurationNode config) {
+    protected Cosmetic(String id, @NotNull ConfigurationNode config) {
         this.id = id;
         if (!config.node("permission").virtual()) {
             this.permission = config.node("permission").getString();
@@ -58,8 +59,7 @@ public class Cosmetic {
     }
 
     public boolean requiresPermission() {
-        if (permission == null) return false;
-        return true;
+        return permission != null;
     }
 
     public void setId(String id) {

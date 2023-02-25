@@ -29,7 +29,7 @@ public class Utils {
         return original;
     }
 
-    public static <T> T replaceIf(final @Nullable T original, final T replacement, final Predicate<T> predicate) {
+    public static <T> T replaceIf(final @Nullable T original, final T replacement, final @NotNull Predicate<T> predicate) {
         if (predicate.test(original)) return replacement;
         return original;
     }

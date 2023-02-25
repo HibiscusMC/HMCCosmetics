@@ -4,6 +4,8 @@ import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import org.apache.commons.io.FilenameUtils;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.CommentedConfigurationNode;
 import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
@@ -17,21 +19,23 @@ import java.util.logging.Level;
 
 public class Menus {
 
-    private static HashMap<String, Menu> MENUS = new HashMap<>();
+    private static final HashMap<String, Menu> MENUS = new HashMap<>();
 
     public static void addMenu(Menu menu) {
         MENUS.put(menu.getId().toUpperCase(), menu);
     }
 
-    public static Menu getMenu(String id) {
+    public static Menu getMenu(@NotNull String id) {
         return MENUS.get(id.toUpperCase());
     }
 
+    @Contract(pure = true)
+    @NotNull
     public static Collection<Menu> getMenu() {
         return MENUS.values();
     }
 
-    public static boolean hasMenu(String id) {
+    public static boolean hasMenu(@NotNull String id) {
         return MENUS.containsKey(id.toUpperCase());
     }
 
@@ -41,6 +45,7 @@ public class Menus {
 
     public static Menu getDefaultMenu() { return Menus.getMenu(Settings.getDefaultMenu()); }
 
+    @NotNull
     public static List<String> getMenuNames() {
         List<String> names = new ArrayList<>();
 

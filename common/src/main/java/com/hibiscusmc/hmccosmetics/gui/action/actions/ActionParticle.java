@@ -5,7 +5,6 @@ import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.ServerUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
-import com.owen1212055.particlehelper.api.particle.Particle;
 import com.owen1212055.particlehelper.api.particle.types.BlockDataParticle;
 import com.owen1212055.particlehelper.api.particle.types.DestinationParticle;
 import com.owen1212055.particlehelper.api.particle.types.velocity.VelocityParticle;
@@ -14,6 +13,7 @@ import com.owen1212055.particlehelper.api.type.Particles;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 public class ActionParticle extends Action {
 
@@ -22,7 +22,7 @@ public class ActionParticle extends Action {
     }
 
     @Override
-    public void run(CosmeticUser user, String raw) {
+    public void run(CosmeticUser user, @NotNull String raw) {
         String[] rawString = raw.split(" ");
         var particleType = Particles.fromKey(NamespacedKey.minecraft(rawString[0].toLowerCase()));
         if (particleType == null) {

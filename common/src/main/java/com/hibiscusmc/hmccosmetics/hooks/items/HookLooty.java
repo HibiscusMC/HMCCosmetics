@@ -14,8 +14,8 @@ public class HookLooty extends Hook implements Listener {
     }
 
     @Override
-    public ItemStack getItem(String itemid) {
-        PrefabKey prefabKey = PrefabKey.Companion.ofOrNull(itemid);
+    public ItemStack getItem(String itemId) {
+        PrefabKey prefabKey = PrefabKey.Companion.ofOrNull(itemId);
         if (prefabKey == null) return null;
         return LootyFactory.INSTANCE.createFromPrefab(prefabKey);
     }

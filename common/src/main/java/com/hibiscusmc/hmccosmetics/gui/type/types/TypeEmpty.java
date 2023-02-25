@@ -8,6 +8,7 @@ import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 
@@ -25,7 +26,7 @@ public class TypeEmpty extends Type {
 
     // This is the code that's run when the item is clicked.
     @Override
-    public void run(CosmeticUser user, ConfigurationNode config, ClickType clickType) {
+    public void run(CosmeticUser user, @NotNull ConfigurationNode config, ClickType clickType) {
         List<String> actionStrings = new ArrayList<>(); // List where we keep the actions the server will execute.
         ConfigurationNode actionConfig = config.node("actions"); // Configuration node that actions are under.
 
@@ -53,7 +54,7 @@ public class TypeEmpty extends Type {
     }
 
     @Override
-    public ItemMeta setLore(CosmeticUser user, ConfigurationNode config, ItemMeta itemMeta) {
+    public ItemMeta setLore(CosmeticUser user, ConfigurationNode config, @NotNull ItemMeta itemMeta) {
         List<String> processedLore = new ArrayList<>();
 
         if (itemMeta.hasLore()) {

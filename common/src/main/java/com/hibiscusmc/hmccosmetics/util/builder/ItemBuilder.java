@@ -8,6 +8,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +35,7 @@ public class ItemBuilder {
      * @param itemStack builder ItemStack
      */
 
-    ItemBuilder(final ItemStack itemStack) {
+    ItemBuilder(final @NotNull ItemStack itemStack) {
         this.material = itemStack.getType();
         this.itemMeta = itemStack.hasItemMeta() ? itemStack.getItemMeta()
                 : Bukkit.getItemFactory().getItemMeta(this.material);
@@ -44,6 +46,8 @@ public class ItemBuilder {
      * @return
      */
 
+    @Contract("_ -> new")
+    @NotNull
     public static ItemBuilder from(final Material material) {
         return new ItemBuilder(material);
     }
@@ -52,7 +56,8 @@ public class ItemBuilder {
      * @param itemStack builder ItemStack
      * @return
      */
-
+    @Contract("_ -> new")
+    @NotNull
     public static ItemBuilder from(final ItemStack itemStack) {
         return new ItemBuilder(itemStack);
     }

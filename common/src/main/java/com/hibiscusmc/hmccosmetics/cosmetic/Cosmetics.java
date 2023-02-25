@@ -6,6 +6,8 @@ import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.*;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import org.apache.commons.lang3.EnumUtils;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.CommentedConfigurationNode;
 import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.ConfigurationNode;
@@ -17,7 +19,7 @@ import java.util.logging.Level;
 
 public class Cosmetics {
 
-    private static HashBiMap<String, Cosmetic> COSMETICS = HashBiMap.create();
+    private static final HashBiMap<String, Cosmetic> COSMETICS = HashBiMap.create();
 
     public static void addCosmetic(Cosmetic cosmetic) {
         COSMETICS.put(cosmetic.getId(), cosmetic);
@@ -35,10 +37,14 @@ public class Cosmetics {
         return COSMETICS.get(id);
     }
 
+    @Contract(pure = true)
+    @NotNull
     public static Set<Cosmetic> values() {
         return COSMETICS.values();
     }
 
+    @Contract(pure = true)
+    @NotNull
     public static Set<String> keys() {
         return COSMETICS.keySet();
     }
@@ -76,7 +82,7 @@ public class Cosmetics {
         }
     }
 
-    private static void setupCosmetics(CommentedConfigurationNode config) {
+    private static void setupCosmetics(@NotNull CommentedConfigurationNode config) {
         for (ConfigurationNode cosmeticConfig : config.childrenMap().values()) {
             try {
                 String id = cosmeticConfig.key().toString();

@@ -401,7 +401,7 @@ public class CosmeticUser {
             PacketManager.sendLeashPacket(getBalloonManager().getPufferfishBalloonId(), -1, viewer);
         }
         if (hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
-            userBackpackManager.getArmorstand().getEquipment().clear();
+            userBackpackManager.getArmorStand().getEquipment().clear();
         }
         updateCosmetic();
         MessagesUtil.sendDebugMessages("HideCosmetics");
@@ -427,7 +427,7 @@ public class CosmeticUser {
         if (hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
             CosmeticBackpackType cosmeticBackpackType = (CosmeticBackpackType) getCosmetic(CosmeticSlot.BACKPACK);
             ItemStack item = getUserCosmeticItem(cosmeticBackpackType);
-            userBackpackManager.getArmorstand().getEquipment().setHelmet(item);
+            userBackpackManager.getArmorStand().getEquipment().setHelmet(item);
         }
         updateCosmetic();
         MessagesUtil.sendDebugMessages("ShowCosmetics");

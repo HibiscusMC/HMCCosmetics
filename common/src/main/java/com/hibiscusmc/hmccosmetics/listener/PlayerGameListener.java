@@ -23,7 +23,6 @@ import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import com.hibiscusmc.hmccosmetics.util.InventoryUtils;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import org.bukkit.Bukkit;
-import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Entity;
@@ -105,7 +104,7 @@ public class PlayerGameListener implements Listener {
         if (user.hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
             user.getUserBackpackManager().hideBackpack();
 
-            user.getUserBackpackManager().getArmorstand().teleport(event.getTo());
+            user.getUserBackpackManager().getArmorStand().teleport(event.getTo());
 
             Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
                 user.updateCosmetic();

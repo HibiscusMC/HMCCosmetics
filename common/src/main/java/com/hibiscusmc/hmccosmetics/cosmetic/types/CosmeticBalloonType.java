@@ -9,6 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 
@@ -16,7 +17,7 @@ import java.util.List;
 
 public class CosmeticBalloonType extends Cosmetic {
 
-    private String modelName;
+    private final String modelName;
     private List<String> dyableParts;
     //private HashMap<Animations, String> animationBalloons;
 
@@ -46,12 +47,14 @@ public class CosmeticBalloonType extends Cosmetic {
     }
 
     @Override
-    public void update(CosmeticUser user) {
+    public void update(@NotNull CosmeticUser user) {
         Player player = Bukkit.getPlayer(user.getUniqueId());
         UserBalloonManager userBalloonManager = user.getBalloonManager();
-        Location newLocation = player.getLocation();
-        if (player == null || userBalloonManager == null || newLocation == null) return;
+
+        if (player == null || userBalloonManager == null) return;
         if (user.isInWardrobe()) return;
+
+        Location newLocation = player.getLocation();
         Location currentLocation = user.getBalloonManager().getLocation();
         newLocation = newLocation.clone().add(Settings.getBalloonOffset());
 

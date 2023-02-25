@@ -12,11 +12,12 @@ import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.jetbrains.annotations.NotNull;
 
 public class WGListener implements Listener {
 
     @EventHandler
-    public void onPlayerMove(PlayerMoveEvent event) {
+    public void onPlayerMove(@NotNull PlayerMoveEvent event) {
         CosmeticUser user = CosmeticUsers.getUser(event.getPlayer());
         if (user == null) return;
         Location location = event.getPlayer().getLocation();

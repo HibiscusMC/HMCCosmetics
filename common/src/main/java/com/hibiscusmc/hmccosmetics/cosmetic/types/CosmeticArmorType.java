@@ -7,11 +7,12 @@ import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.ConfigurationNode;
 
 public class CosmeticArmorType extends Cosmetic {
 
-    private EquipmentSlot equipSlot;
+    private final EquipmentSlot equipSlot;
 
     public CosmeticArmorType(String id, ConfigurationNode config) {
         super(id, config);
@@ -20,7 +21,7 @@ public class CosmeticArmorType extends Cosmetic {
     }
 
     @Override
-    public void update(CosmeticUser user) {
+    public void update(@NotNull CosmeticUser user) {
         Player player = Bukkit.getPlayer(user.getUniqueId());
         if (player == null) return;
         if (equipSlot.equals(EquipmentSlot.OFF_HAND)) {
