@@ -24,6 +24,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -79,7 +80,7 @@ public class UserWardrobeManager {
         }
 
         user.hidePlayer();
-        List<Player> viewer = List.of(player);
+        List<Player> viewer = Collections.singletonList(player);
         List<Player> outsideViewers = PacketManager.getViewers(viewingLocation);
         outsideViewers.remove(player);
 
@@ -163,7 +164,7 @@ public class UserWardrobeManager {
         setWardrobeStatus(WardrobeStatus.STOPPING);
         Player player = user.getPlayer();
 
-        List<Player> viewer = List.of(player);
+        List<Player> viewer = Collections.singletonList(player);
         List<Player> outsideViewers = PacketManager.getViewers(viewingLocation);
         outsideViewers.remove(player);
 
@@ -232,15 +233,16 @@ public class UserWardrobeManager {
         BukkitRunnable runnable = new BukkitRunnable() {
             @Override
             public void run() {
-                if (active == false || user.getPlayer() == null) {
+                Player player = user.getPlayer();
+                if (active == false || player == null) {
                     MessagesUtil.sendDebugMessages("Active is false");
                     this.cancel();
                     return;
                 }
                 MessagesUtil.sendDebugMessages("Update ");
-                List<Player> viewer = List.of(user.getPlayer());
+                List<Player> viewer = Collections.singletonList(player);
                 List<Player> outsideViewers = PacketManager.getViewers(viewingLocation);
-                outsideViewers.remove(user.getPlayer());
+                outsideViewers.remove(player);
 
                 Location location = WardrobeSettings.getWardrobeLocation().clone();
                 int yaw = data.get();
