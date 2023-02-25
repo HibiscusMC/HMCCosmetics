@@ -26,36 +26,24 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class UserWardrobeManager {
 
-    private int NPC_ID;
+    private final int NPC_ID;
+    private final int ARMORSTAND_ID;
+    private final UUID WARDROBE_UUID;
     private String npcName;
-    private UUID WARDROBE_UUID;
-    private int ARMORSTAND_ID;
     private GameMode originalGamemode;
-    private CosmeticUser user;
-    private Location viewingLocation;
-    private Location npcLocation;
+    private final CosmeticUser user;
+    private final Location viewingLocation;
+    private final Location npcLocation;
     private Location exitLocation;
     private BossBar bossBar;
     private boolean active;
     private WardrobeStatus wardrobeStatus;
-
-    public UserWardrobeManager(CosmeticUser user) {
-        NPC_ID = NMSHandlers.getHandler().getNextEntityId();
-        ARMORSTAND_ID = NMSHandlers.getHandler().getNextEntityId();
-        WARDROBE_UUID = UUID.randomUUID();
-        this.user = user;
-
-        exitLocation = WardrobeSettings.getLeaveLocation();
-        viewingLocation = WardrobeSettings.getViewerLocation();
-        npcLocation = WardrobeSettings.getWardrobeLocation();
-
-        wardrobeStatus = WardrobeStatus.SETUP;
-    }
 
     public UserWardrobeManager(CosmeticUser user, Location exitLocation, Location viewingLocation, Location npcLocation) {
         NPC_ID = NMSHandlers.getHandler().getNextEntityId();
@@ -199,11 +187,7 @@ public class UserWardrobeManager {
                 //PacketManager.sendLeashPacket(VIEWER.getBalloonEntity().getPufferfishBalloonId(), player.getEntityId(), viewer);
             }
 
-            if (exitLocation == null) {
-                player.teleport(player.getWorld().getSpawnLocation());
-            } else {
-                player.teleport(exitLocation);
-            }
+            player.teleport(Objects.requireNonNullElseGet(exitLocation, () -> player.getWorld().getSpawnLocation()));
 
             if (WardrobeSettings.isEquipPumpkin()) {
                 NMSHandlers.getHandler().equipmentSlotUpdate(user.getPlayer().getEntityId(), EquipmentSlot.HEAD, player.getInventory().getHelmet(), viewer);
@@ -234,7 +218,7 @@ public class UserWardrobeManager {
             @Override
             public void run() {
                 Player player = user.getPlayer();
-                if (active == false || player == null) {
+                if (!active || player == null) {
                     MessagesUtil.sendDebugMessages("Active is false");
                     this.cancel();
                     return;
@@ -284,7 +268,7 @@ public class UserWardrobeManager {
         runnable.runTaskTimer(HMCCosmeticsPlugin.getInstance(), 0, 2);
     }
 
-    public int getArmorstandId() {
+    public int getCameraId() {
         return ARMORSTAND_ID;
     }
 
