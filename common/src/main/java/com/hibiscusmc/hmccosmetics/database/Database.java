@@ -24,13 +24,15 @@ public class Database {
 
     public Database() {
         String databaseType = DatabaseSettings.getDatabaseType();
-        data = INTERNAL_DATA; // default
+        data = SQLITE_DATA; // default
         if (databaseType.equalsIgnoreCase("MySQL")) {
             data = MYSQL_DATA;
         }
+        /* SQLite is the default database. Might change in the future, so keep code here in case.
         if (databaseType.equalsIgnoreCase("sqlite")) {
             data = SQLITE_DATA;
         }
+         */
         MessagesUtil.sendDebugMessages("Database is " + data);
 
         setup();
