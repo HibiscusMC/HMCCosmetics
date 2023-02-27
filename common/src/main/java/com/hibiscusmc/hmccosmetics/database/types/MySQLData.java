@@ -7,6 +7,7 @@ import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.*;
 import java.util.Map;
@@ -100,11 +101,11 @@ public class MySQLData extends Data {
     }
 
     @Override
-    public void clear(UUID unqiueId) {
+    public void clear(UUID uniqueId) {
         Bukkit.getScheduler().runTaskAsynchronously(HMCCosmeticsPlugin.getInstance(), () -> {
             try {
                 PreparedStatement preparedSt = preparedStatement("DELETE FROM COSMETICDATABASE WHERE UUID=?;");
-                preparedSt.setString(1, unqiueId.toString());
+                preparedSt.setString(1, uniqueId.toString());
                 preparedSt.executeUpdate();
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -114,30 +115,25 @@ public class MySQLData extends Data {
     }
 
     private void openConnection() throws SQLException {
-        if (connection != null && !connection.isClosed()) {
-            return;
+        // Bukkit.getScheduler().runTaskAsynchronously(HMCCosmeticsPlugin.getInstance(), () -> {
+        // ...
+        // });
+        // connection = DriverManager.getConnection("jdbc:mysql://" + DatabaseSettings.getHost() + ":" + DatabaseSettings.getPort() + "/" + DatabaseSettings.getDatabase(), setupProperties());
+
+        if (connection != null && !connection.isClosed()) return;
+
+        // Close connection if still active
+        if (connection != null) {
+            close();
         }
-        //Bukkit.getScheduler().runTaskAsynchronously(HMCCosmeticsPlugin.getInstance(), () -> {
 
-            //close Connection if still active
-            if (connection != null) {
-                close();
-            }
-
-            //connect to database host
-            try {
-                Class.forName("com.mysql.jdbc.Driver");
-
-                connection = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database, setupProperties());
-
-            } catch (SQLException e) {
-                System.out.println(e.getMessage());
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-
-        //});
-        //connection = DriverManager.getConnection("jdbc:mysql://" + DatabaseSettings.getHost() + ":" + DatabaseSettings.getPort() + "/" + DatabaseSettings.getDatabase(), setupProperties());
+        // Connect to database host
+        try {
+            // Class.forName("com.mysql.jdbc.Driver");
+            connection = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database, setupProperties());
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     public void close() {
@@ -150,6 +146,7 @@ public class MySQLData extends Data {
         });
     }
 
+    @NotNull
     private Properties setupProperties() {
         Properties props = new Properties();
         props.put("user", user);
@@ -168,14 +165,17 @@ public class MySQLData extends Data {
 
     public PreparedStatement preparedStatement(String query) {
         PreparedStatement ps = null;
+
         if (!isConnectionOpen()) {
             HMCCosmeticsPlugin.getInstance().getLogger().info("Connection is not open");
         }
+
         try {
             ps = connection.prepareStatement(query);
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         return ps;
     }
 }
