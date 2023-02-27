@@ -4,6 +4,7 @@ import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.DatabaseSettings;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.*;
 import java.util.Properties;
@@ -18,6 +19,7 @@ public class MySQLData extends SQLData {
     private String password;
     private int port;
 
+    @Nullable
     private Connection connection;
 
     @Override
@@ -73,7 +75,7 @@ public class MySQLData extends SQLData {
         try {
             if (isConnectionOpen()) {
                 return;
-            } else close(); // Close connection if still active
+            } else if (connection != null) close(); // Close connection if still active
         } catch (RuntimeException e) {
             e.printStackTrace(); // If isConnectionOpen() throws error
         }
@@ -92,8 +94,9 @@ public class MySQLData extends SQLData {
     public void close() {
         Bukkit.getScheduler().runTaskAsynchronously(HMCCosmeticsPlugin.getInstance(), () -> {
             try {
+                if (connection == null) throw new NullPointerException();
                 connection.close();
-            } catch (SQLException e) {
+            } catch (SQLException | NullPointerException e) {
                 System.out.println(e.getMessage());
             }
         });
@@ -125,8 +128,9 @@ public class MySQLData extends SQLData {
         }
 
         try {
+            if (connection == null) throw new NullPointerException();
             ps = connection.prepareStatement(query);
-        } catch (SQLException e) {
+        } catch (SQLException | NullPointerException e) {
             e.printStackTrace();
         }
 
