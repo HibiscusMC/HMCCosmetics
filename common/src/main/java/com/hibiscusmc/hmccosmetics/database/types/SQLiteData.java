@@ -66,10 +66,12 @@ public class SQLiteData extends SQLData {
 
         // Connect to database host
         try {
-            // Class.forName("org.sqlite.JDBC");
+            Class.forName("org.sqlite.JDBC");
             connection = DriverManager.getConnection("jdbc:sqlite:" + dataFolder);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 
