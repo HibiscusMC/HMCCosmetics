@@ -33,11 +33,12 @@ public class MySQLData extends SQLData {
         HMCCosmeticsPlugin plugin = HMCCosmeticsPlugin.getInstance();
         try {
             openConnection();
+            if (connection == null) throw new NullPointerException("Connection is null");
             connection.prepareStatement("CREATE TABLE IF NOT EXISTS `COSMETICDATABASE` " +
                     "(UUID varchar(36) PRIMARY KEY, " +
                     "COSMETICS MEDIUMTEXT " +
                     ");").execute();
-        } catch (SQLException e) {
+        } catch (SQLException | NullPointerException e) {
             plugin.getLogger().severe("");
             plugin.getLogger().severe("");
             plugin.getLogger().severe("MySQL DATABASE CAN NOT BE REACHED.");
@@ -94,7 +95,7 @@ public class MySQLData extends SQLData {
     public void close() {
         Bukkit.getScheduler().runTaskAsynchronously(HMCCosmeticsPlugin.getInstance(), () -> {
             try {
-                if (connection == null) throw new NullPointerException();
+                if (connection == null) throw new NullPointerException("Connection is null");
                 connection.close();
             } catch (SQLException | NullPointerException e) {
                 System.out.println(e.getMessage());
@@ -128,7 +129,7 @@ public class MySQLData extends SQLData {
         }
 
         try {
-            if (connection == null) throw new NullPointerException();
+            if (connection == null) throw new NullPointerException("Connection is null");
             ps = connection.prepareStatement(query);
         } catch (SQLException | NullPointerException e) {
             e.printStackTrace();
