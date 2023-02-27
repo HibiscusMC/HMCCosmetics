@@ -56,8 +56,7 @@ public class MySQLData extends Data {
     @Override
     public void save(CosmeticUser user) {
         Runnable run = () -> {
-            try {
-                PreparedStatement preparedSt = preparedStatement("REPLACE INTO COSMETICDATABASE(UUID,COSMETICS) VALUES(?,?);");
+            try (PreparedStatement preparedSt = preparedStatement("REPLACE INTO COSMETICDATABASE(UUID,COSMETICS) VALUES(?,?);")) {
                 preparedSt.setString(1, user.getUniqueId().toString());
                 preparedSt.setString(2, serializeData(user));
                 preparedSt.executeUpdate();
