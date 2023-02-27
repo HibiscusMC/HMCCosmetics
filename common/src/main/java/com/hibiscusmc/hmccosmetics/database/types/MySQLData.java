@@ -52,8 +52,7 @@ public class MySQLData extends SQLData {
     @Override
     public void clear(UUID uniqueId) {
         Bukkit.getScheduler().runTaskAsynchronously(HMCCosmeticsPlugin.getInstance(), () -> {
-            try {
-                PreparedStatement preparedSt = preparedStatement("DELETE FROM COSMETICDATABASE WHERE UUID=?;");
+            try (PreparedStatement preparedSt = preparedStatement("DELETE FROM COSMETICDATABASE WHERE UUID=?;")) {
                 preparedSt.setString(1, uniqueId.toString());
                 preparedSt.executeUpdate();
             } catch (SQLException e) {
@@ -70,11 +69,13 @@ public class MySQLData extends SQLData {
         // });
         // connection = DriverManager.getConnection("jdbc:mysql://" + DatabaseSettings.getHost() + ":" + DatabaseSettings.getPort() + "/" + DatabaseSettings.getDatabase(), setupProperties());
 
-        if (connection != null && !connection.isClosed()) return;
-
-        // Close connection if still active
-        if (connection != null) {
-            close();
+        // Connection isn't null AND Connection isn't closed :: return
+        try {
+            if (isConnectionOpen()) {
+                return;
+            } else close(); // Close connection if still active
+        } catch (RuntimeException e) {
+            e.printStackTrace(); // If isConnectionOpen() throws error
         }
 
         // Connect to database host
@@ -107,7 +108,7 @@ public class MySQLData extends SQLData {
         return props;
     }
 
-    private boolean isConnectionOpen() {
+    private boolean isConnectionOpen() throws RuntimeException {
         try {
             return connection != null && !connection.isClosed();
         } catch (SQLException e) {
