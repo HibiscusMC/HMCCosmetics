@@ -107,29 +107,23 @@ public class SQLiteData extends Data {
 
 
     private void openConnection() throws SQLException {
-        if (connection != null && !connection.isClosed()) {
-            return;
-        }
-        //Bukkit.getScheduler().runTaskAsynchronously(HMCCosmeticsPlugin.getInstance(), () -> {
+        // Bukkit.getScheduler().runTaskAsynchronously(HMCCosmeticsPlugin.getInstance(), () -> {
+        // ...
+        // });
+        // connection = DriverManager.getConnection("jdbc:mysql://" + DatabaseSettings.getHost() + ":" + DatabaseSettings.getPort() + "/" + DatabaseSettings.getDatabase(), setupProperties());
 
-        //close Connection if still active
+        if (connection != null && !connection.isClosed()) return;
 
+        // Close Connection if still active
         File dataFolder = new File(HMCCosmeticsPlugin.getInstance().getDataFolder(), "database.db");
 
-        //connect to database host
+        // Connect to database host
         try {
-            Class.forName("org.sqlite.JDBC");
-
+            // Class.forName("org.sqlite.JDBC");
             connection = DriverManager.getConnection("jdbc:sqlite:" + dataFolder);
-
         } catch (SQLException e) {
             System.out.println(e.getMessage());
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
         }
-
-        //});
-        //connection = DriverManager.getConnection("jdbc:mysql://" + DatabaseSettings.getHost() + ":" + DatabaseSettings.getPort() + "/" + DatabaseSettings.getDatabase(), setupProperties());
     }
 
     public PreparedStatement preparedStatement(String query) {
