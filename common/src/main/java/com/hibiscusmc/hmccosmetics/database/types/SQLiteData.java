@@ -17,10 +17,12 @@ public class SQLiteData extends SQLData {
     @Override
     public void setup() {
         File dataFolder = new File(HMCCosmeticsPlugin.getInstance().getDataFolder(), "database.db");
+        boolean exists = dataFolder.exists();
 
-        if (!dataFolder.exists()){
+        if (!exists) {
             try {
-                dataFolder.createNewFile();
+                boolean created = dataFolder.createNewFile();
+                if (!created) throw new IOException("File didn't exist but now does");
             } catch (IOException e) {
                 MessagesUtil.sendDebugMessages("File write error. Database will not work properly", Level.SEVERE);
             }
