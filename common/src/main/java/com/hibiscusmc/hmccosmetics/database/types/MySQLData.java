@@ -63,8 +63,6 @@ public class MySQLData extends SQLData {
                 e.printStackTrace();
             }
         });
-
-        // TODO (Something)
     }
 
     private void openConnection() throws SQLException {
