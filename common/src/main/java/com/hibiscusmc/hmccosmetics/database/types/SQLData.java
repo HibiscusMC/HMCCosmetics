@@ -15,12 +15,13 @@ import java.util.UUID;
 
 public abstract class SQLData extends Data {
     @Override
-    @SuppressWarnings("Duplicates") // Duplicate is from deprecated InternalData
+    @SuppressWarnings({"Duplicates", "resource"}) // Duplicate is from deprecated InternalData
     public CosmeticUser get(UUID uniqueId) {
         CosmeticUser user = new CosmeticUser(uniqueId);
 
         Bukkit.getScheduler().runTaskAsynchronously(HMCCosmeticsPlugin.getInstance(), () -> {
-            try (PreparedStatement preparedStatement = preparedStatement("SELECT * FROM COSMETICDATABASE WHERE UUID = ?;")) {
+            try {
+                PreparedStatement preparedStatement = preparedStatement("SELECT * FROM COSMETICDATABASE WHERE UUID = ?;");
                 preparedStatement.setString(1, uniqueId.toString());
                 ResultSet rs = preparedStatement.executeQuery();
                 if (rs.next()) {
@@ -44,9 +45,11 @@ public abstract class SQLData extends Data {
     }
 
     @Override
+    @SuppressWarnings("resource")
     public void save(CosmeticUser user) {
         Runnable run = () -> {
-            try (PreparedStatement preparedSt = preparedStatement("REPLACE INTO COSMETICDATABASE(UUID,COSMETICS) VALUES(?,?);")) {
+            try {
+                PreparedStatement preparedSt = preparedStatement("REPLACE INTO COSMETICDATABASE(UUID,COSMETICS) VALUES(?,?);");
                 preparedSt.setString(1, user.getUniqueId().toString());
                 preparedSt.setString(2, serializeData(user));
                 preparedSt.executeUpdate();
