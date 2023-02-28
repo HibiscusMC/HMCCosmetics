@@ -9,6 +9,7 @@ import com.owen1212055.particlehelper.api.particle.types.BlockDataParticle;
 import com.owen1212055.particlehelper.api.particle.types.DestinationParticle;
 import com.owen1212055.particlehelper.api.particle.types.velocity.VelocityParticle;
 import com.owen1212055.particlehelper.api.particle.types.vibration.VibrationParticle;
+import com.owen1212055.particlehelper.api.type.ParticleType;
 import com.owen1212055.particlehelper.api.type.Particles;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
@@ -22,15 +23,16 @@ public class ActionParticle extends Action {
     }
 
     @Override
+    @SuppressWarnings("ConstantConditions")
     public void run(CosmeticUser user, @NotNull String raw) {
         String[] rawString = raw.split(" ");
-        var particleType = Particles.fromKey(NamespacedKey.minecraft(rawString[0].toLowerCase()));
+        ParticleType<?, ?> particleType = Particles.fromKey(NamespacedKey.minecraft(rawString[0].toLowerCase()));
         if (particleType == null) {
             MessagesUtil.sendDebugMessages("The particle " + rawString[0] + " does not exist!");
             return;
         }
 
-        // Should work?
+        // particleType.multi() should never be null, but particleType can be.
         boolean multi = particleType.multi() != null;
 
         var particle = multi ? particleType.multi() : particleType.single();
