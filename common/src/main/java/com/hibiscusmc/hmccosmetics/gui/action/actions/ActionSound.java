@@ -25,8 +25,8 @@ public class ActionSound extends Action {
         float pitch = 1;
 
         if (processedString.length > 2) {
-            volume = Float.valueOf(processedString[1]);
-            pitch = Float.valueOf(processedString[2]);
+            volume = Float.parseFloat(processedString[1]);
+            pitch = Float.parseFloat(processedString[2]);
         }
 
         MessagesUtil.sendDebugMessages("Attempting to play " + soundName, Level.WARNING);
