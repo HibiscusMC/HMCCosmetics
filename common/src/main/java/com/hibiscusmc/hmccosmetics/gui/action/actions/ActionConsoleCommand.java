@@ -15,5 +15,4 @@ public class ActionConsoleCommand extends Action {
     public void run(@NotNull CosmeticUser user, String raw) {
         HMCCosmeticsPlugin.getInstance().getServer().dispatchCommand(user.getPlayer(), raw);
     }
-
 }
