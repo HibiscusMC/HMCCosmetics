@@ -29,10 +29,9 @@ public class ActionParticle extends Action {
             MessagesUtil.sendDebugMessages("The particle " + rawString[0] + " does not exist!");
             return;
         }
-        boolean multi = false;
-        if (particleType.multi() != null) {
-            multi = true; // Should work?
-        }
+
+        // Should work?
+        boolean multi = particleType.multi() != null;
 
         var particle = multi ? particleType.multi() : particleType.single();
         if (particle instanceof DestinationParticle || particle instanceof BlockDataParticle
@@ -40,6 +39,7 @@ public class ActionParticle extends Action {
             MessagesUtil.sendDebugMessages("The particle " + rawString[0] + " is not supported by this action!");
             return;
         }
+
         particle = ServerUtils.addParticleValues(particle, rawString);
         Location location = user.getPlayer().getLocation();
         for (Player player : PacketManager.getViewers(location)) {

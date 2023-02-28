@@ -22,10 +22,12 @@ public class ActionMenu extends Action {
             raw = raw.replaceAll("-o", "");
             ignorePermission = true;
         }
+
         if (!Menus.hasMenu(raw)) {
             HMCCosmeticsPlugin.getInstance().getLogger().info("Invalid Action Menu -> " + raw);
             return;
         }
+
         Menu menu = Menus.getMenu(raw);
         HMCCosmeticsPlugin.getInstance().getLogger().info(raw + " | " + ignorePermission);
         menu.openMenu(user, ignorePermission);
