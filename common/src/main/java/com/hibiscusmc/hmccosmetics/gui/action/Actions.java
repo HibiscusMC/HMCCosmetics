@@ -9,23 +9,24 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class Actions {
 
     private static final HashMap<String, Action> actions = new HashMap<>();
 
     // [ID]
-    private static ActionMessage ACTION_MESSAGE = new ActionMessage();
-    private static ActionMenu ACTION_MENU = new ActionMenu();
-    private static ActionPlayerCommand ACTION_CONSOLE_COMMAND = new ActionPlayerCommand();
-    private static ActionConsoleCommand ACTION_PLAYER_COMMAND = new ActionConsoleCommand();
-    private static ActionCloseMenu ACTION_EXIT_MENU = new ActionCloseMenu();
-    private static ActionSound ACTION_SOUND = new ActionSound();
-    private static ActionEquip ACTION_EQUIP = new ActionEquip();
-    private static ActionUnequip ACTION_UNEQUIP = new ActionUnequip();
-    private static ActionParticle ACTION_PARTICLE = new ActionParticle();
-    private static ActionCosmeticShow ACTION_SHOW = new ActionCosmeticShow();
-    private static ActionCosmeticHide ACTION_HIDE = new ActionCosmeticHide();
-    private static ActionCosmeticToggle ACTION_TOGGLE = new ActionCosmeticToggle();
+    private static final ActionMessage ACTION_MESSAGE = new ActionMessage();
+    private static final ActionMenu ACTION_MENU = new ActionMenu();
+    private static final ActionPlayerCommand ACTION_CONSOLE_COMMAND = new ActionPlayerCommand();
+    private static final ActionConsoleCommand ACTION_PLAYER_COMMAND = new ActionConsoleCommand();
+    private static final ActionCloseMenu ACTION_EXIT_MENU = new ActionCloseMenu();
+    private static final ActionSound ACTION_SOUND = new ActionSound();
+    private static final ActionEquip ACTION_EQUIP = new ActionEquip();
+    private static final ActionUnequip ACTION_UNEQUIP = new ActionUnequip();
+    private static final ActionParticle ACTION_PARTICLE = new ActionParticle();
+    private static final ActionCosmeticShow ACTION_SHOW = new ActionCosmeticShow();
+    private static final ActionCosmeticHide ACTION_HIDE = new ActionCosmeticHide();
+    private static final ActionCosmeticToggle ACTION_TOGGLE = new ActionCosmeticToggle();
 
 
     public static Action getAction(@NotNull String id) {
