@@ -19,7 +19,6 @@ public class CosmeticBalloonType extends Cosmetic {
 
     private final String modelName;
     private List<String> dyableParts;
-    //private HashMap<Animations, String> animationBalloons;
 
     public CosmeticBalloonType(String id, ConfigurationNode config) {
         super(id, config);
@@ -27,17 +26,9 @@ public class CosmeticBalloonType extends Cosmetic {
         String modelId = config.node("model").getString();
 
         try {
-            if (!config.node("dyable-parts").virtual()) dyableParts = config.node("dyable-parts").getList(String.class);
-
-            /*
-            if (!config.node("animations").virtual()) {
-                for (ConfigurationNode animationNode : config.node("animations").childrenMap().values()) {
-                    if (EnumUtils.isValidEnum(Animations.class, animationNode.key().toString().toUpperCase())) continue;
-                    animationBalloons.put(Animations.valueOf(animationNode.key().toString().toUpperCase()), animationNode.getString());
-                }
+            if (!config.node("dyable-parts").virtual()) {
+                dyableParts = config.node("dyable-parts").getList(String.class);
             }
-             */
-
         } catch (SerializationException e) {
             // Seriously?
             throw new RuntimeException(e);
@@ -89,10 +80,4 @@ public class CosmeticBalloonType extends Cosmetic {
         if (dyableParts.isEmpty()) return true;
         return dyableParts.contains(name);
     }
-
-    /*
-    public String getAnimation(Animations animation) {
-        return animationBalloons.get(animation);
-    }
-     */
 }
