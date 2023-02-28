@@ -12,12 +12,10 @@ import org.spongepowered.configurate.ConfigurationNode;
 public class CosmeticBackpackType extends Cosmetic {
 
     private final String modelName;
-    private ConfigurationNode config;
 
     public CosmeticBackpackType(String id, ConfigurationNode config) {
         super(id, config);
 
-        this.config = config;
         modelName = config.node("model").getString();
     }
 

@@ -33,6 +33,4 @@ public class CosmeticArmorType extends Cosmetic {
     public EquipmentSlot getEquipSlot() {
         return this.equipSlot;
     }
-
-
 }
