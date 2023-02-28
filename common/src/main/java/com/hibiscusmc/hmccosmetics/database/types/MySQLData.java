@@ -2,18 +2,15 @@ package com.hibiscusmc.hmccosmetics.database.types;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.DatabaseSettings;
-import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
-import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
-import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import org.bukkit.Bukkit;
-import org.bukkit.Color;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.*;
-import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
 
-public class MySQLData extends Data {
+public class MySQLData extends SQLData {
 
     // Connection Information
     private String host;
@@ -22,6 +19,7 @@ public class MySQLData extends Data {
     private String password;
     private int port;
 
+    @Nullable
     private Connection connection;
 
     @Override
@@ -35,11 +33,12 @@ public class MySQLData extends Data {
         HMCCosmeticsPlugin plugin = HMCCosmeticsPlugin.getInstance();
         try {
             openConnection();
+            if (connection == null) throw new NullPointerException("Connection is null");
             connection.prepareStatement("CREATE TABLE IF NOT EXISTS `COSMETICDATABASE` " +
                     "(UUID varchar(36) PRIMARY KEY, " +
                     "COSMETICS MEDIUMTEXT " +
                     ");").execute();
-        } catch (SQLException e) {
+        } catch (SQLException | NullPointerException e) {
             plugin.getLogger().severe("");
             plugin.getLogger().severe("");
             plugin.getLogger().severe("MySQL DATABASE CAN NOT BE REACHED.");
@@ -52,104 +51,58 @@ public class MySQLData extends Data {
             throw new RuntimeException(e);
         }
     }
-    @Override
-    public void save(CosmeticUser user) {
-        Runnable run = () -> {
-            try {
-                PreparedStatement preparedSt = preparedStatement("REPLACE INTO COSMETICDATABASE(UUID,COSMETICS) VALUES(?,?);");
-                preparedSt.setString(1, user.getUniqueId().toString());
-                preparedSt.setString(2, serializeData(user));
-                preparedSt.executeUpdate();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-        };
-        if (!HMCCosmeticsPlugin.isDisable()) {
-            Bukkit.getScheduler().runTaskAsynchronously(HMCCosmeticsPlugin.getInstance(), run);
-        } else {
-            run.run();
-        }
-    }
 
     @Override
-    public CosmeticUser get(UUID uniqueId) {
-        CosmeticUser user = new CosmeticUser(uniqueId);
-
-        Bukkit.getScheduler().runTaskAsynchronously(HMCCosmeticsPlugin.getInstance(), () -> {
-            try {
-                PreparedStatement preparedStatement = preparedStatement("SELECT * FROM COSMETICDATABASE WHERE UUID = ?;");
-                preparedStatement.setString(1, uniqueId.toString());
-                ResultSet rs = preparedStatement.executeQuery();
-                if (rs.next()) {
-                    String rawData = rs.getString("COSMETICS");
-                    Map<CosmeticSlot, Map<Cosmetic, Color>> cosmetics = deserializeData(user, rawData);
-                    for (Map<Cosmetic, Color> cosmeticColors : cosmetics.values()) {
-                        for (Cosmetic cosmetic : cosmeticColors.keySet()) {
-                            Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> {
-                                // This can not be async.
-                                user.addPlayerCosmetic(cosmetic, cosmeticColors.get(cosmetic));
-                            });
-                        }
-                    }
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        });
-        return user;
-    }
-
-    @Override
-    public void clear(UUID unqiueId) {
+    public void clear(UUID uniqueId) {
         Bukkit.getScheduler().runTaskAsynchronously(HMCCosmeticsPlugin.getInstance(), () -> {
             try {
                 PreparedStatement preparedSt = preparedStatement("DELETE FROM COSMETICDATABASE WHERE UUID=?;");
-                preparedSt.setString(1, unqiueId.toString());
+                preparedSt.setString(1, uniqueId.toString());
                 preparedSt.executeUpdate();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         });
-        // TODO
     }
 
     private void openConnection() throws SQLException {
-        if (connection != null && !connection.isClosed()) {
-            return;
+        // Bukkit.getScheduler().runTaskAsynchronously(HMCCosmeticsPlugin.getInstance(), () -> {
+        // ...
+        // });
+        // connection = DriverManager.getConnection("jdbc:mysql://" + DatabaseSettings.getHost() + ":" + DatabaseSettings.getPort() + "/" + DatabaseSettings.getDatabase(), setupProperties());
+
+        // Connection isn't null AND Connection isn't closed :: return
+        try {
+            if (isConnectionOpen()) {
+                return;
+            } else if (connection != null) close(); // Close connection if still active
+        } catch (RuntimeException e) {
+            e.printStackTrace(); // If isConnectionOpen() throws error
         }
-        //Bukkit.getScheduler().runTaskAsynchronously(HMCCosmeticsPlugin.getInstance(), () -> {
 
-            //close Connection if still active
-            if (connection != null) {
-                close();
-            }
-
-            //connect to database host
-            try {
-                Class.forName("com.mysql.jdbc.Driver");
-
-                connection = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database, setupProperties());
-
-            } catch (SQLException e) {
-                System.out.println(e.getMessage());
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-
-        //});
-        //connection = DriverManager.getConnection("jdbc:mysql://" + DatabaseSettings.getHost() + ":" + DatabaseSettings.getPort() + "/" + DatabaseSettings.getDatabase(), setupProperties());
+        // Connect to database host
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            connection = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database, setupProperties());
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void close() {
         Bukkit.getScheduler().runTaskAsynchronously(HMCCosmeticsPlugin.getInstance(), () -> {
             try {
+                if (connection == null) throw new NullPointerException("Connection is null");
                 connection.close();
-            } catch (SQLException e) {
+            } catch (SQLException | NullPointerException e) {
                 System.out.println(e.getMessage());
             }
         });
     }
 
+    @NotNull
     private Properties setupProperties() {
         Properties props = new Properties();
         props.put("user", user);
@@ -158,7 +111,7 @@ public class MySQLData extends Data {
         return props;
     }
 
-    private boolean isConnectionOpen() {
+    private boolean isConnectionOpen() throws RuntimeException {
         try {
             return connection != null && !connection.isClosed();
         } catch (SQLException e) {
@@ -166,16 +119,21 @@ public class MySQLData extends Data {
         }
     }
 
+    @Override
     public PreparedStatement preparedStatement(String query) {
         PreparedStatement ps = null;
+
         if (!isConnectionOpen()) {
             HMCCosmeticsPlugin.getInstance().getLogger().info("Connection is not open");
         }
+
         try {
+            if (connection == null) throw new NullPointerException("Connection is null");
             ps = connection.prepareStatement(query);
-        } catch (SQLException e) {
+        } catch (SQLException | NullPointerException e) {
             e.printStackTrace();
         }
+
         return ps;
     }
 }

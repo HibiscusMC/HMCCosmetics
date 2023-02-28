@@ -17,27 +17,20 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class Data {
+public abstract class Data {
 
-    public void setup() {
-        // Override
-    }
+    public abstract void setup();
 
-    public void save(CosmeticUser user) {
-        // Override
-    }
+    public abstract void save(CosmeticUser user);
 
     @Nullable
-    public CosmeticUser get(UUID uniqueId) {
-        // Override
-        return null;
-    }
+    public abstract CosmeticUser get(UUID uniqueId);
 
-    public void clear(UUID uniqueId) {
-        // Override
-    }
+    public abstract void clear(UUID uniqueId);
+
     // BACKPACK=colorfulbackpack&RRGGBB,HELMET=niftyhat,BALLOON=colorfulballoon,CHESTPLATE=niftychestplate
-    public String serializeData(@NotNull CosmeticUser user) {
+    @NotNull
+    public final String serializeData(@NotNull CosmeticUser user) {
         String data = "";
         if (user.getHidden()) {
             if (shouldHiddenSave(user.getHiddenReason())) {
@@ -57,7 +50,8 @@ public class Data {
         return data;
     }
 
-    public Map<CosmeticSlot, Map<Cosmetic, Color>> deserializeData(CosmeticUser user, @NotNull String raw) {
+    @NotNull
+    public final Map<CosmeticSlot, Map<Cosmetic, Color>> deserializeData(CosmeticUser user, @NotNull String raw) {
         Map<CosmeticSlot, Map<Cosmetic, Color>> cosmetics = new HashMap<>();
         boolean checkPermission = Settings.getForcePermissionJoin();
 
