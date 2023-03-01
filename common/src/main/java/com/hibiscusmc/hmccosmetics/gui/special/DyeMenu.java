@@ -8,7 +8,6 @@ import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.hooks.Hooks;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
-import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.misc.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -57,7 +56,7 @@ public class DyeMenu {
         gui.open(player);
     }
 
-    private static void addCosmetic(CosmeticUser user, Cosmetic cosmetic, Color color) {
+    private static void addCosmetic(@NotNull CosmeticUser user, Cosmetic cosmetic, Color color) {
         Player player = user.getPlayer();
         user.addPlayerCosmetic(cosmetic, color);
         player.setItemOnCursor(new ItemStack(Material.AIR));
