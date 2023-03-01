@@ -32,7 +32,7 @@ public class TypeEmpty extends Type {
         try {
             // This gets the actions with the item. We can add more, such as with the Cosmetic type, an equip and unequip action set.
             // We add that to a List of Strings, before running those actions through the server. This is not the area where we deal
-            // with actions, mearly what should be done for each item.
+            // with actions, merely what should be done for each item.
             if (!actionConfig.node("any").virtual()) actionStrings.addAll(actionConfig.node("any").getList(String.class));
 
             if (clickType != null) {
