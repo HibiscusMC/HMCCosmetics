@@ -3,7 +3,6 @@ package com.hibiscusmc.hmccosmetics.gui.type.types;
 import com.hibiscusmc.hmccosmetics.gui.action.Actions;
 import com.hibiscusmc.hmccosmetics.gui.type.Type;
 import com.hibiscusmc.hmccosmetics.hooks.Hooks;
-import com.hibiscusmc.hmccosmetics.hooks.placeholders.HMCPlaceholderExpansion;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.event.inventory.ClickType;
