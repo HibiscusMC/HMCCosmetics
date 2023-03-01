@@ -18,7 +18,6 @@ import java.util.List;
 public class TypeEmpty extends Type {
 
     // This can be used as an example for making your own types.
-
     public TypeEmpty() {
         super("empty");
         // This is an empty type, meaning, when a menu item has a type of "empty" it will run the code in the method run.
