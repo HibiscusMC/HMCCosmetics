@@ -101,7 +101,7 @@ public class PlayerGameListener implements Listener {
             return;
         }
 
-        if (user.hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
+        if (user.hasCosmeticInSlot(CosmeticSlot.BACKPACK) && user.getUserBackpackManager() != null) {
             user.getUserBackpackManager().hideBackpack();
 
             user.getUserBackpackManager().getArmorStand().teleport(event.getTo());
