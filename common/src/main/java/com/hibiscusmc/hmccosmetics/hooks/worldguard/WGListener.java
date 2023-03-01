@@ -37,6 +37,7 @@ public class WGListener implements Listener {
                 return;
             }
             if (protectedRegion.getFlags().containsKey(WGHook.getCosmeticWardrobeFlag())) {
+                if (!protectedRegion.getFlags().get(WGHook.getCosmeticWardrobeFlag()).toString().equalsIgnoreCase("ALLOW")) return;
                 user.enterWardrobe();
             }
         }
