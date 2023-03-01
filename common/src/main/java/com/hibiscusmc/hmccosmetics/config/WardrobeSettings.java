@@ -182,7 +182,7 @@ public class WardrobeSettings {
 
     public static boolean inDistanceOfStatic(final Location location) {
         if (wardrobeLocation == null) return false;
-        if (staticRadius == -1) return false;
+        if (staticRadius == -1) return true;
         if (!wardrobeLocation.getWorld().equals(location.getWorld())) return false;
         return wardrobeLocation.distanceSquared(location) <= staticRadius * staticRadius;
     }
