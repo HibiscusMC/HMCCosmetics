@@ -151,6 +151,10 @@ public class CosmeticUser {
         return playerCosmetics.containsKey(slot);
     }
 
+    public Set<CosmeticSlot> getSlotsWithCosmetics() {
+        return Set.copyOf(playerCosmetics.keySet());
+    }
+
     public void updateCosmetic(CosmeticSlot slot) {
         if (getCosmetic(slot) == null) {
             return;

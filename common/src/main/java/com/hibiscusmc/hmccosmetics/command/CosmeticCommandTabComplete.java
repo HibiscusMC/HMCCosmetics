@@ -59,6 +59,7 @@ public class CosmeticCommandTabComplete implements TabCompleter {
                     for (Cosmetic cosmetic : user.getCosmetic()) {
                         completions.add(cosmetic.getSlot().toString().toUpperCase());
                     }
+                    completions.add("ALL");
                 }
                 case "menu" -> {
                     for (Menu menu : Menus.getMenu()) {

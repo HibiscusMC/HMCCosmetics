@@ -28,6 +28,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+import java.util.Set;
+
 public class CosmeticCommand implements CommandExecutor {
 
     // cosmetics apply cosmetics playerName
@@ -148,18 +151,10 @@ public class CosmeticCommand implements CommandExecutor {
                     return true;
                 }
 
-                CosmeticSlot cosmeticSlot;
-
                 if (sender instanceof Player) player = ((Player) sender).getPlayer();
                 if (sender.hasPermission("hmccosmetics.cmd.unapply.other")) {
                     if (args.length >= 3) player = Bukkit.getPlayer(args[2]);
                 }
-
-                if (!EnumUtils.isValidEnum(CosmeticSlot.class, args[1].toUpperCase())) {
-                    if (!silent) MessagesUtil.sendMessage(sender, "invalid-slot");
-                    return true;
-                }
-                cosmeticSlot = CosmeticSlot.valueOf(args[1].toUpperCase());
 
                 if (player == null) {
                     if (!silent) MessagesUtil.sendMessage(sender, "invalid-player");
@@ -168,20 +163,34 @@ public class CosmeticCommand implements CommandExecutor {
 
                 CosmeticUser user = CosmeticUsers.getUser(player);
 
-                if (user.getCosmetic(cosmeticSlot) == null) {
-                    if (!silent) MessagesUtil.sendMessage(sender, "no-cosmetic-slot");
-                    return true;
+                Set<CosmeticSlot> cosmeticSlots;
+
+                if (args[1].equalsIgnoreCase("all")) {
+                    cosmeticSlots = user.getSlotsWithCosmetics();
+                } else {
+                    if (!EnumUtils.isValidEnum(CosmeticSlot.class, args[1].toUpperCase())) {
+                        if (!silent) MessagesUtil.sendMessage(sender, "invalid-slot");
+                        return true;
+                    }
+                    cosmeticSlots = Set.of(CosmeticSlot.valueOf(args[1].toUpperCase()));
                 }
 
-                TagResolver placeholders =
-                        TagResolver.resolver(Placeholder.parsed("cosmetic", user.getCosmetic(cosmeticSlot).getId()),
-                                TagResolver.resolver(Placeholder.parsed("player", player.getName())),
-                                TagResolver.resolver(Placeholder.parsed("cosmeticslot", cosmeticSlot.name())));
+                for (CosmeticSlot cosmeticSlot : cosmeticSlots) {
+                    if (user.getCosmetic(cosmeticSlot) == null) {
+                        if (!silent) MessagesUtil.sendMessage(sender, "no-cosmetic-slot");
+                        continue;
+                    }
 
-                if (!silent) MessagesUtil.sendMessage(player, "unequip-cosmetic", placeholders);
+                    TagResolver placeholders =
+                            TagResolver.resolver(Placeholder.parsed("cosmetic", user.getCosmetic(cosmeticSlot).getId()),
+                                    TagResolver.resolver(Placeholder.parsed("player", player.getName())),
+                                    TagResolver.resolver(Placeholder.parsed("cosmeticslot", cosmeticSlot.name())));
 
-                user.removeCosmeticSlot(cosmeticSlot);
-                user.updateCosmetic(cosmeticSlot);
+                    if (!silent) MessagesUtil.sendMessage(player, "unequip-cosmetic", placeholders);
+
+                    user.removeCosmeticSlot(cosmeticSlot);
+                    user.updateCosmetic(cosmeticSlot);
+                }
                 return true;
             }
             case ("wardrobe") -> {
