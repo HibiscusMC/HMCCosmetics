@@ -40,6 +40,11 @@ dye-menu:
   title: "§f"
   input-slot: 19
   output-slot: 25
+hook-settings:
+  itemsadder:
+    # This causes the plugin to reload itself after any ItemsAdder change. This keeps the plugin fully up to date with IA, but
+    # could cause console spam as HMCCosmetics has to reload itself as well.
+    reload-on-change: false
 wardrobe:
   # spawn static wardrobe if in this radius of wardrobe-location
   static-radius: 10

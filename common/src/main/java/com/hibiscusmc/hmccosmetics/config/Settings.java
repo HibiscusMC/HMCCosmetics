@@ -32,6 +32,9 @@ public class Settings {
     private static final String UNAPPLY_DEATH_PATH = "unapply-on-death";
     private static final String FORCE_PERMISSION_JOIN_PATH = "force-permission-join";
     private static final String EMOTE_DISTANCE_PATH = "emote-distance";
+    private static final String HOOK_SETTING_PATH = "hook-settings";
+    private static final String HOOK_ITEMADDER_PATH = "itemsadder";
+    private static final String HOOK_RELOAD_CHANGE_PATH = "reload-on-change";
 
     private static String defaultMenu;
     private static String dyeMenuName;
@@ -46,6 +49,7 @@ public class Settings {
     private static boolean debugMode;
     private static boolean unapplyOnDeath;
     private static boolean forcePermissionJoin;
+    private static boolean itemsAdderChangeReload;
     private static int lookDownPitch;
     private static int viewDistance;
     private static int tickPeriod;
@@ -91,6 +95,10 @@ public class Settings {
         dyeMenuName = dyeMenuSettings.node(DYE_MENU_NAME).getString("Dye Menu");
         dyeMenuInputSlot = dyeMenuSettings.node(DYE_MENU_INPUT_SLOT).getInt(19);
         dyeMenuOutputSlot = dyeMenuSettings.node(DYE_MENU_OUTPUT_SLOT).getInt(25);
+
+        ConfigurationNode hookSettings = source.node(HOOK_SETTING_PATH);
+        ConfigurationNode itemsAdderSettings = hookSettings.node(HOOK_ITEMADDER_PATH);
+        itemsAdderChangeReload = itemsAdderSettings.node(HOOK_RELOAD_CHANGE_PATH).getBoolean(false);
     }
 
     private static Vector loadVector(final ConfigurationNode config) {
@@ -189,6 +197,9 @@ public class Settings {
 
     public static boolean isDebugEnabled() {
         return debugMode;
+    }
+    public static boolean getItemsAdderReloadChange() {
+        return itemsAdderChangeReload;
     }
 
     public static int getTickPeriod() {
