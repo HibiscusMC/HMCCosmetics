@@ -17,6 +17,7 @@ public class ActionCosmeticToggle extends Action {
             user.showCosmetics();
             return;
         }
+
         user.hideCosmetics(CosmeticUser.HiddenReason.ACTION);
     }
 }
