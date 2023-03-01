@@ -32,6 +32,7 @@ public class WGListener implements Listener {
         }
         for (ProtectedRegion protectedRegion : set.getRegions()) {
             if (protectedRegion.getFlags().containsKey(WGHook.getCosmeticEnableFlag())) {
+                if (protectedRegion.getFlags().get(WGHook.getCosmeticEnableFlag()).toString().equalsIgnoreCase("ALLOW")) return;
                 user.hideCosmetics(CosmeticUser.HiddenReason.WORLDGUARD);
                 return;
             }
