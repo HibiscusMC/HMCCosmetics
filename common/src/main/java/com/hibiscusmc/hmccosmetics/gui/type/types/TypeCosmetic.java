@@ -149,6 +149,7 @@ public class TypeCosmetic extends Type {
 
     @Contract("_, _ -> param2")
     @NotNull
+    @SuppressWarnings("Duplicates")
     private ItemMeta processLoreLines(CosmeticUser user, @NotNull ItemMeta itemMeta) {
         List<String> processedLore = new ArrayList<>();
 

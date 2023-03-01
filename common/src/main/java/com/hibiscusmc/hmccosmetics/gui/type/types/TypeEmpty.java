@@ -52,6 +52,7 @@ public class TypeEmpty extends Type {
     }
 
     @Override
+    @SuppressWarnings("Duplicates")
     public ItemMeta setLore(CosmeticUser user, ConfigurationNode config, @NotNull ItemMeta itemMeta) {
         List<String> processedLore = new ArrayList<>();
 
