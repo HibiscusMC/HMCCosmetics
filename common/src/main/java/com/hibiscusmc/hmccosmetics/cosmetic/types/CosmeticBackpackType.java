@@ -3,7 +3,6 @@ package com.hibiscusmc.hmccosmetics.cosmetic.types;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.manager.UserBackpackManager;
-import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -30,7 +29,7 @@ public class CosmeticBackpackType extends Cosmetic {
 
         Location loc = player.getLocation().clone().add(0, 2, 0);
 
-        if (user.isInWardrobe() || !user.isBackupSpawned()) return;
+        if (user.isInWardrobe() || !user.isBackpackSpawned()) return;
         if (loc.getWorld() != user.getUserBackpackManager().getArmorStand().getWorld()) {
             user.getUserBackpackManager().getArmorStand().teleport(loc);
         }

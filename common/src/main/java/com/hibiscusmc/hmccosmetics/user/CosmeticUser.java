@@ -301,7 +301,7 @@ public class CosmeticUser {
         userBackpackManager = null;
     }
 
-    public boolean isBackupSpawned() {
+    public boolean isBackpackSpawned() {
         if (this.userBackpackManager == null) return false;
         return true;
     }

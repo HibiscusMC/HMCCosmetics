@@ -173,7 +173,7 @@ public class PlayerGameListener implements Listener {
         if (!user.hasCosmeticInSlot(CosmeticSlot.BACKPACK)) return;
         Pose pose = event.getPose();
         if (pose.equals(Pose.STANDING)) {
-            if (!user.isBackupSpawned()) {
+            if (!user.isBackpackSpawned()) {
                 user.spawnBackpack((CosmeticBackpackType) user.getCosmetic(CosmeticSlot.BACKPACK));
             }
             return;
