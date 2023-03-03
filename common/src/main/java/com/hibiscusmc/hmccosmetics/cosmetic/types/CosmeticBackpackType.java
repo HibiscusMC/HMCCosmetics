@@ -2,6 +2,8 @@ package com.hibiscusmc.hmccosmetics.cosmetic.types;
 
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
+import com.hibiscusmc.hmccosmetics.user.manager.UserBackpackManager;
+import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -12,11 +14,13 @@ import org.spongepowered.configurate.ConfigurationNode;
 public class CosmeticBackpackType extends Cosmetic {
 
     private final String modelName;
+    private UserBackpackManager.BackpackType backpackType;
 
     public CosmeticBackpackType(String id, ConfigurationNode config) {
         super(id, config);
 
         modelName = config.node("model").getString();
+        backpackType = UserBackpackManager.BackpackType.valueOf(config.node("type").getString("NORMAL").toUpperCase());
     }
 
     @Override
@@ -33,7 +37,13 @@ public class CosmeticBackpackType extends Cosmetic {
 
         user.getUserBackpackManager().getArmorStand().teleport(loc);
 
-        PacketManager.sendRidingPacket(player.getEntityId(), user.getUserBackpackManager().getFirstArmorStandId(), loc);
+        if (user.getUserBackpackManager().getBackpackType().equals(UserBackpackManager.BackpackType.FIRST_PERSON)) {
+            user.getUserBackpackManager().teleportEffectEntity(loc);
+            PacketManager.sendRidingPacket(player.getEntityId(), user.getUserBackpackManager().getAreaEffectEntityId(), loc);
+            PacketManager.sendRidingPacket(user.getUserBackpackManager().getAreaEffectEntityId(), user.getUserBackpackManager().getFirstArmorStandId(), loc);
+        } else {
+            PacketManager.sendRidingPacket(player.getEntityId(), user.getUserBackpackManager().getFirstArmorStandId(), loc);
+        }
 
         user.getUserBackpackManager().getArmorStand().setRotation(loc.getYaw(), loc.getPitch());
         user.getUserBackpackManager().showBackpack();
@@ -41,5 +51,9 @@ public class CosmeticBackpackType extends Cosmetic {
 
     public String getModelName() {
         return modelName;
+    }
+
+    public UserBackpackManager.BackpackType getBackpackType() {
+        return backpackType;
     }
 }
