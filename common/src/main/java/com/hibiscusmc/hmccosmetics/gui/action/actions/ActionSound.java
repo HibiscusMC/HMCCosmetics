@@ -29,7 +29,7 @@ public class ActionSound extends Action {
             pitch = Float.parseFloat(processedString[2]);
         }
 
-        MessagesUtil.sendDebugMessages("Attempting to play " + soundName, Level.WARNING);
+        MessagesUtil.sendDebugMessages("Attempting to play " + soundName, Level.INFO);
 
         player.playSound(player.getLocation(), soundName, volume, pitch);
     }
