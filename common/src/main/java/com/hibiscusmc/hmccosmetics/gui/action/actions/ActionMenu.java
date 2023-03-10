@@ -5,6 +5,9 @@ import com.hibiscusmc.hmccosmetics.gui.Menu;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
 import com.hibiscusmc.hmccosmetics.gui.action.Action;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
+import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
+
+import java.util.logging.Level;
 
 public class ActionMenu extends Action {
 
@@ -24,12 +27,12 @@ public class ActionMenu extends Action {
         }
 
         if (!Menus.hasMenu(raw)) {
-            HMCCosmeticsPlugin.getInstance().getLogger().info("Invalid Action Menu -> " + raw);
+            MessagesUtil.sendDebugMessages("Invalid Action Menu -> " + raw, Level.WARNING);
             return;
         }
 
         Menu menu = Menus.getMenu(raw);
-        HMCCosmeticsPlugin.getInstance().getLogger().info(raw + " | " + ignorePermission);
+        MessagesUtil.sendDebugMessages(raw + " | " + ignorePermission);
         menu.openMenu(user, ignorePermission);
     }
 }
