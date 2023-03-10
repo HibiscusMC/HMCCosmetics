@@ -95,7 +95,7 @@ public class CosmeticCommand implements CommandExecutor {
                     return true;
                 }
                 Cosmetic cosmetic;
-                Color color = Color.WHITE;
+                Color color = null;
 
                 if (sender instanceof Player) player = ((Player) sender).getPlayer();
                 if (sender.hasPermission("hmccosmetics.cmd.apply.other")) {
