@@ -35,6 +35,7 @@ public class Settings {
     private static final String HOOK_SETTING_PATH = "hook-settings";
     private static final String HOOK_ITEMADDER_PATH = "itemsadder";
     private static final String HOOK_RELOAD_CHANGE_PATH = "reload-on-change";
+    private static final String COSMETIC_EMOTE_CHECK_PATH = "emote-block-check";
 
     private static String defaultMenu;
     private static String dyeMenuName;
@@ -50,6 +51,7 @@ public class Settings {
     private static boolean unapplyOnDeath;
     private static boolean forcePermissionJoin;
     private static boolean itemsAdderChangeReload;
+    private static boolean cosmeticEmoteBlockCheck;
     private static int lookDownPitch;
     private static int viewDistance;
     private static int tickPeriod;
@@ -81,6 +83,7 @@ public class Settings {
         unapplyOnDeath = cosmeticSettings.node(UNAPPLY_DEATH_PATH).getBoolean(false);
         forcePermissionJoin = cosmeticSettings.node(FORCE_PERMISSION_JOIN_PATH).getBoolean(false);
         emoteDistance = cosmeticSettings.node(EMOTE_DISTANCE_PATH).getDouble(-3);
+        cosmeticEmoteBlockCheck = cosmeticSettings.node(COSMETIC_EMOTE_CHECK_PATH).getBoolean(true);
 
         tickPeriod = cosmeticSettings.node(TICK_PERIOD_PATH).getInt(-1);
         lookDownPitch = cosmeticSettings.node(LOOK_DOWN_PITCH_PATH).getInt();
@@ -219,6 +222,11 @@ public class Settings {
     public static double getEmoteDistance() {
         return emoteDistance;
     }
+
+    public static boolean getCosmeticEmoteBlockCheck() {
+        return cosmeticEmoteBlockCheck;
+    }
+
     public static void setDebugMode(boolean newSetting) {
         debugMode = newSetting;
 

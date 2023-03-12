@@ -57,7 +57,7 @@ public class UserEmoteModel extends PlayerModel {
         double DISTANCE = Settings.getEmoteDistance();
 
         Location thirdPersonLocation = newLocation.add(newLocation.getDirection().normalize().multiply(DISTANCE));
-        if (thirdPersonLocation.getBlock().getType() != Material.AIR) {
+        if (Settings.getCosmeticEmoteBlockCheck() && thirdPersonLocation.getBlock().getType().isOccluding()) {
             stopAnimation();
             MessagesUtil.sendMessage(player, "emote-blocked");
             return;

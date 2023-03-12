@@ -24,6 +24,7 @@ cosmetic-settings:
   force-permission-join: true # Checks a player permission if they can have a cosmetic when they join the server.
 
   emote-distance: -3 # This shows how far away the camera should be while a player is doing an emote. Negative is behind player.
+  emote-block-check: true # If the server should check if the block is open (prevents players viewing through blocks)
 
   # view distance in blocks that other players will see the backpack cosmetic
   # setting this to lower than the server player view distance should fix the
