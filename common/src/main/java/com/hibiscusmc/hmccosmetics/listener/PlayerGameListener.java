@@ -51,6 +51,7 @@ public class PlayerGameListener implements Listener {
         registerMenuChangeListener();
         registerPlayerEquipmentListener();
         registerPlayerArmListener();
+        registerEntityUseListener();
 
         //registerLookMovement();
         //registerMoveListener();
@@ -402,6 +403,21 @@ public class PlayerGameListener implements Listener {
                 if (menu == null) return;
                 menu.openMenu(user);
                 event.setCancelled(true);
+            }
+        });
+    }
+
+    private void registerEntityUseListener() {
+        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(HMCCosmeticsPlugin.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Client.USE_ENTITY) {
+            @Override
+            public void onPacketReceiving(PacketEvent event) {
+                if (!(event.getPlayer() instanceof Player)) return;
+                Player player = event.getPlayer();
+                CosmeticUser user = CosmeticUsers.getUser(player);
+                if (user == null) return;
+                if (user.getUserEmoteManager().isPlayingEmote() || user.isInWardrobe()) {
+                    event.setCancelled(true);
+                }
             }
         });
     }
