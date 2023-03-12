@@ -3,12 +3,15 @@ package com.hibiscusmc.hmccosmetics.cosmetic.types;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.manager.UserBackpackManager;
+import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.ConfigurationNode;
+
+import java.util.logging.Level;
 
 public class CosmeticBackpackType extends Cosmetic {
 
@@ -30,6 +33,11 @@ public class CosmeticBackpackType extends Cosmetic {
         Location loc = player.getLocation().clone().add(0, 2, 0);
 
         if (user.isInWardrobe() || !user.isBackpackSpawned()) return;
+        if (!user.getUserBackpackManager().getArmorStand().isValid()) {
+            MessagesUtil.sendDebugMessages("Invalid Backpack detected! Respawning backpack, report this on the discord if this happens often!", Level.WARNING);
+            user.respawnBackpack();
+            return;
+        }
         if (loc.getWorld() != user.getUserBackpackManager().getArmorStand().getWorld()) {
             user.getUserBackpackManager().getArmorStand().teleport(loc);
         }
