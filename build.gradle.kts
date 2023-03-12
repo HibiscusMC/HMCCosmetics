@@ -62,7 +62,7 @@ allprojects {
     }
 
     dependencies {
-
+        compileOnly(fileTree("${project.rootDir}/lib") { include("*.jar") })
         compileOnly("com.mojang:authlib:1.5.25")
         compileOnly("org.spigotmc:spigot-api:1.17.1-R0.1-SNAPSHOT")
         compileOnly("org.jetbrains:annotations:23.0.0")
@@ -77,7 +77,6 @@ allprojects {
         compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.1.0-SNAPSHOT")
         compileOnly("it.unimi.dsi:fastutil:8.5.11")
         compileOnly("com.github.LeonMangler:SuperVanish:6.2.6-4")
-
     }
 }
 
