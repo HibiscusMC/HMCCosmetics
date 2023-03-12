@@ -2,6 +2,7 @@ package com.hibiscusmc.hmccosmetics.config;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
+import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.util.Vector;
 import org.spongepowered.configurate.ConfigurationNode;
@@ -36,6 +37,10 @@ public class Settings {
     private static final String HOOK_ITEMADDER_PATH = "itemsadder";
     private static final String HOOK_RELOAD_CHANGE_PATH = "reload-on-change";
     private static final String COSMETIC_EMOTE_CHECK_PATH = "emote-block-check";
+    private static final String COSMETIC_ADD_ENCHANTS_HELMET_PATH = "helmet-add-enchantments";
+    private static final String COSMETIC_ADD_ENCHANTS_CHESTPLATE_PATH = "chest-add-enchantments";
+    private static final String COSMETIC_ADD_ENCHANTS_LEGGINGS_PATH = "leggings-add-enchantments";
+    private static final String COSMETIC_ADD_ENCHANTS_BOOTS_PATH = "boots-add-enchantments";
 
     private static String defaultMenu;
     private static String dyeMenuName;
@@ -52,6 +57,10 @@ public class Settings {
     private static boolean forcePermissionJoin;
     private static boolean itemsAdderChangeReload;
     private static boolean cosmeticEmoteBlockCheck;
+    private static boolean addHelmetEnchants;
+    private static boolean addChestplateEnchants;
+    private static boolean addLeggingEnchants;
+    private static boolean addBootsEnchants;
     private static int lookDownPitch;
     private static int viewDistance;
     private static int tickPeriod;
@@ -84,6 +93,10 @@ public class Settings {
         forcePermissionJoin = cosmeticSettings.node(FORCE_PERMISSION_JOIN_PATH).getBoolean(false);
         emoteDistance = cosmeticSettings.node(EMOTE_DISTANCE_PATH).getDouble(-3);
         cosmeticEmoteBlockCheck = cosmeticSettings.node(COSMETIC_EMOTE_CHECK_PATH).getBoolean(true);
+        addHelmetEnchants = cosmeticSettings.node(COSMETIC_ADD_ENCHANTS_HELMET_PATH).getBoolean(false);
+        addChestplateEnchants = cosmeticSettings.node(COSMETIC_ADD_ENCHANTS_CHESTPLATE_PATH).getBoolean(false);
+        addLeggingEnchants = cosmeticSettings.node(COSMETIC_ADD_ENCHANTS_LEGGINGS_PATH).getBoolean(false);
+        addBootsEnchants = cosmeticSettings.node(COSMETIC_ADD_ENCHANTS_BOOTS_PATH).getBoolean(false);
 
         tickPeriod = cosmeticSettings.node(TICK_PERIOD_PATH).getInt(-1);
         lookDownPitch = cosmeticSettings.node(LOOK_DOWN_PITCH_PATH).getInt();
@@ -225,6 +238,26 @@ public class Settings {
 
     public static boolean getCosmeticEmoteBlockCheck() {
         return cosmeticEmoteBlockCheck;
+    }
+
+    public static boolean getShouldAddEnchants(EquipmentSlot slot) {
+        switch (slot) {
+            case HEAD -> {
+                return addHelmetEnchants;
+            }
+            case CHEST -> {
+                return addChestplateEnchants;
+            }
+            case LEGS -> {
+                return addLeggingEnchants;
+            }
+            case FEET -> {
+                return addBootsEnchants;
+            }
+            default -> {
+                return false;
+            }
+        }
     }
 
     public static void setDebugMode(boolean newSetting) {

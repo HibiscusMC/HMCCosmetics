@@ -26,6 +26,11 @@ cosmetic-settings:
   emote-distance: -3 # This shows how far away the camera should be while a player is doing an emote. Negative is behind player.
   emote-block-check: true # If the server should check if the block is open (prevents players viewing through blocks)
 
+  helmet-add-enchantments: false # If the plugin should keep enchants on helmets. This is useful as some enchantments are client side only.
+  chest-add-enchantments: false # If the plugin should keep enchants on chestplate. This is useful as some enchantments are client side only.
+  leggings-add-enchantments: false # If the plugin should keep enchants on leggings. This is useful as some enchantments are client side only.
+  boots-add-enchantments: false # If the plugin should keep enchants on boots. This is useful as some enchantments are client side only.
+
   # view distance in blocks that other players will see the backpack cosmetic
   # setting this to lower than the server player view distance should fix the
   # bug where players see random backpacks. Put -1 to ignore and send packets to everyone.
