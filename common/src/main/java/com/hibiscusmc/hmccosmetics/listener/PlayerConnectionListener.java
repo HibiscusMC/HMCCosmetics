@@ -5,6 +5,7 @@ import com.hibiscusmc.hmccosmetics.config.DatabaseSettings;
 import com.hibiscusmc.hmccosmetics.database.Database;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
+import com.hibiscusmc.hmccosmetics.user.manager.UserEmoteManager;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -60,7 +61,7 @@ public class PlayerConnectionListener implements Listener {
         }
         if (user.isInWardrobe()) user.leaveWardrobe();
         if (user.getUserEmoteManager().isPlayingEmote()) {
-            user.getUserEmoteManager().stopEmote();
+            user.getUserEmoteManager().stopEmote(UserEmoteManager.StopEmoteReason.CONNECTION);
             event.getPlayer().setInvisible(false);
         }
         Database.save(user);

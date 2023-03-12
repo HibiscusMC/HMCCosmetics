@@ -20,6 +20,7 @@ import com.hibiscusmc.hmccosmetics.gui.Menu;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
+import com.hibiscusmc.hmccosmetics.user.manager.UserEmoteManager;
 import com.hibiscusmc.hmccosmetics.util.InventoryUtils;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import org.bukkit.Bukkit;
@@ -83,7 +84,7 @@ public class PlayerGameListener implements Listener {
 
         if (user == null) return;
         if (event.isSneaking()) {
-            user.getUserEmoteManager().stopEmote();
+            user.getUserEmoteManager().stopEmote(UserEmoteManager.StopEmoteReason.SNEAK);
         }
 
         if (!event.isSneaking()) return;
@@ -151,6 +152,26 @@ public class PlayerGameListener implements Listener {
         if (!entity.getPersistentDataContainer().has(new NamespacedKey(HMCCosmeticsPlugin.getInstance(), "cosmeticMob"), PersistentDataType.SHORT))
             return;
         event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onPlayerDamaged(EntityDamageEvent event) {
+        if (event.isCancelled()) return;
+        if (!(event.getEntity() instanceof Player)) return;
+        Player player = ((Player) event.getEntity()).getPlayer();
+        CosmeticUser user = CosmeticUsers.getUser(player);
+        if (user == null) return;
+        if (user.getUserEmoteManager().isPlayingEmote()) {
+            if (Settings.isEmoteInvincible()) {
+                event.setCancelled(true);
+            }
+            if (Settings.isEmoteDamageLeave()) {
+                user.getUserEmoteManager().stopEmote(UserEmoteManager.StopEmoteReason.DAMAGE);
+            }
+        }
+        if (user.isInWardrobe()) {
+            user.leaveWardrobe();
+        }
     }
 
     @EventHandler
