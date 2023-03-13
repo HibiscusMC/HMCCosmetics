@@ -78,7 +78,7 @@ public class CosmeticUser {
     }
 
     public Collection<Cosmetic> getCosmetics() {
-        return Collections.unmodifiableCollection(playerCosmetics.values());
+        return playerCosmetics.values();
     }
 
     public void addPlayerCosmetic(Cosmetic cosmetic) {
