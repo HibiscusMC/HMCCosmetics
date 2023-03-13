@@ -1,5 +1,6 @@
 package com.hibiscusmc.hmccosmetics.user;
 
+import com.google.common.collect.ImmutableCollection;
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.api.*;
 import com.hibiscusmc.hmccosmetics.config.Settings;
@@ -84,6 +85,10 @@ public class CosmeticUser {
 
     public Collection<Cosmetic> getCosmetics() {
         return playerCosmetics.values();
+    }
+
+    public ImmutableCollection<Cosmetic> getPlayerCosmetics() {
+        return (ImmutableCollection<Cosmetic>) playerCosmetics.values();
     }
 
     public void addPlayerCosmetic(Cosmetic cosmetic) {
