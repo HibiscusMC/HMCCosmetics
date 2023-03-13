@@ -56,7 +56,7 @@ public class CosmeticCommandTabComplete implements TabCompleter {
                     completions.addAll(applyCommandComplete(user, args));
                 }
                 case "unapply" -> {
-                    for (Cosmetic cosmetic : user.getCosmetic()) {
+                    for (Cosmetic cosmetic : user.getCosmetics()) {
                         completions.add(cosmetic.getSlot().toString().toUpperCase());
                     }
                     completions.add("ALL");

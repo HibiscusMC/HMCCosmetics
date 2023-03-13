@@ -77,8 +77,8 @@ public class CosmeticUser {
         return playerCosmetics.get(slot);
     }
 
-    public Collection<Cosmetic> getCosmetic() {
-        return playerCosmetics.values();
+    public Collection<Cosmetic> getCosmetics() {
+        return Collections.unmodifiableCollection(playerCosmetics.values());
     }
 
     public void addPlayerCosmetic(Cosmetic cosmetic) {
@@ -358,7 +358,7 @@ public class CosmeticUser {
     public List<CosmeticSlot> getDyeableSlots() {
         ArrayList<CosmeticSlot> dyableSlots = new ArrayList();
 
-        for (Cosmetic cosmetic : getCosmetic()) {
+        for (Cosmetic cosmetic : getCosmetics()) {
             if (cosmetic.isDyable()) dyableSlots.add(cosmetic.getSlot());
         }
 
