@@ -77,6 +77,11 @@ public class CosmeticUser {
         return playerCosmetics.get(slot);
     }
 
+    @Deprecated
+    public Collection<Cosmetic> getCosmetic() {
+        return playerCosmetics.values();
+    }
+
     public Collection<Cosmetic> getCosmetics() {
         return playerCosmetics.values();
     }
