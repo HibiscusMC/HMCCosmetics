@@ -20,9 +20,9 @@ public class PlayerCosmeticEquipEvent extends CosmeticUserEvent implements Cance
     }
 
     /**
-     * Gets the cosmetic being equipped in this event.
+     * Gets the {@link Cosmetic} being equipped in this event.
      *
-     * @return The {@link Cosmetic} which is being equipped in this event.
+     * @return The {@link Cosmetic} which is being equipped in this event
      */
     @NotNull
     public Cosmetic getCosmetic() {
@@ -30,9 +30,9 @@ public class PlayerCosmeticEquipEvent extends CosmeticUserEvent implements Cance
     }
 
     /**
-     * Sets the cosmetic that the player will equip
+     * Sets the {@link Cosmetic} that the player will equip
      *
-     * @param cosmetic The cosmetic that the player will equip
+     * @param cosmetic The {@link Cosmetic} that the player will equip
      */
     public void setCosmetic(@NotNull Cosmetic cosmetic) {
         this.cosmetic = cosmetic;
