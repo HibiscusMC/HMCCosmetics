@@ -28,7 +28,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
 import java.util.Set;
 
 public class CosmeticCommand implements CommandExecutor {
@@ -333,7 +332,7 @@ public class CosmeticCommand implements CommandExecutor {
                 if (user.hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
                     player.sendMessage("Backpack Location -> " + user.getUserBackpackManager().getArmorStand().getLocation());
                 }
-                player.sendMessage("Cosmetics -> " + user.getCosmetic());
+                player.sendMessage("Cosmetics -> " + user.getCosmetics());
                 player.sendMessage("EntityId -> " + player.getEntityId());
                 return true;
             }
