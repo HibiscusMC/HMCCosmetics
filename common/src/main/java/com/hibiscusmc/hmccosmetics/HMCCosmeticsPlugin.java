@@ -18,6 +18,9 @@ import com.hibiscusmc.hmccosmetics.hooks.worldguard.WGListener;
 import com.hibiscusmc.hmccosmetics.listener.PlayerConnectionListener;
 import com.hibiscusmc.hmccosmetics.listener.PlayerGameListener;
 import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
+import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
+import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
+import com.hibiscusmc.hmccosmetics.user.manager.UserEmoteManager;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.TranslationUtil;
 import com.jeff_media.updatechecker.UpdateCheckSource;
@@ -135,11 +138,16 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        // Plugin shutdown logic
         disable = true;
         for (Player player : Bukkit.getOnlinePlayers()) {
-            Database.save(player);
+            CosmeticUser user = CosmeticUsers.getUser(player);
+            if (user == null) continue;
+            if (user.getUserEmoteManager().isPlayingEmote()) {
+                player.setInvisible(false);
+            }
+            Database.save(user);
         }
-        // Plugin shutdown logic
     }
 
     public static HMCCosmeticsPlugin getInstance() {
