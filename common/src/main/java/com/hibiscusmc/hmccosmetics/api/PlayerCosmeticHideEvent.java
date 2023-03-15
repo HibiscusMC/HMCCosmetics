@@ -34,10 +34,10 @@ public class PlayerCosmeticHideEvent extends CosmeticUserEvent implements Cancel
     }
 
     /**
-     * Sets the cancellation state of this event.
+     * Sets the cancellation state of this event
      *
      * <p>
-     * Canceling this event will prevent the player from hiding cosmetics.
+     * Canceling this event will prevent the player from hiding cosmetics
      * </p>
      *
      * @param cancel true if you wish to cancel this event
