@@ -2,7 +2,6 @@ package com.hibiscusmc.hmccosmetics.api;
 
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import org.bukkit.event.Cancellable;
-import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
