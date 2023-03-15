@@ -5,7 +5,7 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Called when the plugin is enabled
+ * Called when the plugin is set up and/or reloaded
  */
 public class HMCCosmeticSetupEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
