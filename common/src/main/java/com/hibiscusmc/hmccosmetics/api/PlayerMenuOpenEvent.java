@@ -6,6 +6,9 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Called when a menu is opened by a player
+ */
 public class PlayerMenuOpenEvent extends CosmeticUserEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private boolean cancel = false;
@@ -17,7 +20,7 @@ public class PlayerMenuOpenEvent extends CosmeticUserEvent implements Cancellabl
     }
 
     /**
-     * Gets the {@link Menu} that the player is opening
+     * Gets the {@link Menu} that the player opened
      *
      * @return The {@link Menu} which is being opened by the player
      */
