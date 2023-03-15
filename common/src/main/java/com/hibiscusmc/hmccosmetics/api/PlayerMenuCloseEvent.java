@@ -9,24 +9,12 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Called when a menu is closed by a player
  */
-public class PlayerMenuCloseEvent extends CosmeticUserEvent implements Cancellable {
+public class PlayerMenuCloseEvent extends PlayerMenuEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private boolean cancel = false;
-    private final Menu menu;
 
     public PlayerMenuCloseEvent(@NotNull CosmeticUser who, @NotNull Menu menu) {
-        super(who);
-        this.menu = menu;
-    }
-
-    /**
-     * Gets the {@link Menu} that the player closed
-     *
-     * @return The {@link Menu} which is being closed by the player
-     */
-    @NotNull
-    public Menu getMenu() {
-        return menu;
+        super(who, menu);
     }
 
     @Override

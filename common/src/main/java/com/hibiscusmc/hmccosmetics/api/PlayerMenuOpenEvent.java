@@ -9,24 +9,12 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Called when a menu is opened by a player
  */
-public class PlayerMenuOpenEvent extends CosmeticUserEvent implements Cancellable {
+public class PlayerMenuOpenEvent extends PlayerMenuEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private boolean cancel = false;
-    private final Menu menu;
 
     public PlayerMenuOpenEvent(@NotNull CosmeticUser who, @NotNull Menu menu) {
-        super(who);
-        this.menu = menu;
-    }
-
-    /**
-     * Gets the {@link Menu} that the player opened
-     *
-     * @return The {@link Menu} which is being opened by the player
-     */
-    @NotNull
-    public Menu getMenu() {
-        return menu;
+        super(who, menu);
     }
 
     @Override
