@@ -1,4 +1,4 @@
-#### Select the option(s) that best describes this PR
+#### Select the option(s) that best describes this PR:
 - [ ] Major breaking change
 - [ ] Minor change
 - [ ] Bug fix
