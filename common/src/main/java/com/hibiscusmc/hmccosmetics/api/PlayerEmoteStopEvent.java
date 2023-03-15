@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Called when a player stops playing an emote
  */
-public class PlayerEmoteStopEvent extends CosmeticUserEvent implements Cancellable {
+public class PlayerEmoteStopEvent extends PlayerCosmeticEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private boolean cancel = false;
     private final UserEmoteManager.StopEmoteReason reason;

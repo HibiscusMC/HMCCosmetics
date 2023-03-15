@@ -7,10 +7,10 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Represents a cosmetic user related event
  */
-public abstract class CosmeticUserEvent extends Event {
+public abstract class PlayerCosmeticEvent extends Event {
     protected CosmeticUser user;
 
-    public CosmeticUserEvent(@NotNull final CosmeticUser who) {
+    public PlayerCosmeticEvent(@NotNull final CosmeticUser who) {
         user = who;
     }
 

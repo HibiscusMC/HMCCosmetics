@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Called when a player enters their wardrobe
  */
-public class PlayerWardrobeEnterEvent extends CosmeticUserEvent implements Cancellable {
+public class PlayerWardrobeEnterEvent extends PlayerCosmeticEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private boolean cancel = false;
 

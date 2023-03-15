@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Called when cosmetics are shown from a player
  */
-public class PlayerCosmeticShowEvent extends CosmeticUserEvent implements Cancellable {
+public class PlayerCosmeticShowEvent extends PlayerCosmeticEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private boolean cancel = false;
 

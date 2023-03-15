@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Called when a player starts playing an emote
  */
-public class PlayerEmoteStartEvent extends CosmeticUserEvent implements Cancellable {
+public class PlayerEmoteStartEvent extends PlayerCosmeticEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private boolean cancel = false;
     private final String animationId;

@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Called when cosmetics are hidden from a player
  */
-public class PlayerCosmeticHideEvent extends CosmeticUserEvent implements Cancellable {
+public class PlayerCosmeticHideEvent extends PlayerCosmeticEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private boolean cancel = false;
     private final CosmeticUser.HiddenReason reason;

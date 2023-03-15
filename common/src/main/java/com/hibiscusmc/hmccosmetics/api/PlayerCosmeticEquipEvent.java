@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Called when a player equips a cosmetic
  */
-public class PlayerCosmeticEquipEvent extends CosmeticUserEvent implements Cancellable {
+public class PlayerCosmeticEquipEvent extends PlayerCosmeticEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private boolean cancel = false;
     private Cosmetic cosmetic;
