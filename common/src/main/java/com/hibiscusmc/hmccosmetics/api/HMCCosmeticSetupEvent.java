@@ -4,12 +4,10 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Called when the plugin is enabled
+ */
 public class HMCCosmeticSetupEvent extends Event {
-
-    public HMCCosmeticSetupEvent() {
-        // Empty
-    }
-
     private static final HandlerList handlers = new HandlerList();
 
     @Override
@@ -18,6 +16,7 @@ public class HMCCosmeticSetupEvent extends Event {
         return handlers;
     }
 
+    @NotNull
     public static HandlerList getHandlerList() {
         return handlers;
     }
