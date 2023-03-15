@@ -1,6 +1,5 @@
 package com.hibiscusmc.hmccosmetics.user.manager;
 
-import com.hibiscusmc.hmccosmetics.api.PlayerCosmeticRemoveEvent;
 import com.hibiscusmc.hmccosmetics.api.PlayerEmoteStartEvent;
 import com.hibiscusmc.hmccosmetics.api.PlayerEmoteStopEvent;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticEmoteType;
