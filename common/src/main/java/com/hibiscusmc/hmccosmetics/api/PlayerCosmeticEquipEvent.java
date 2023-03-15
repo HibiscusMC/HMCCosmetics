@@ -20,7 +20,7 @@ public class PlayerCosmeticEquipEvent extends CosmeticUserEvent implements Cance
     }
 
     /**
-     * Gets the {@link Cosmetic} being equipped in this event.
+     * Gets the {@link Cosmetic} being equipped in this event
      *
      * @return The {@link Cosmetic} which is being equipped in this event
      */
@@ -44,10 +44,10 @@ public class PlayerCosmeticEquipEvent extends CosmeticUserEvent implements Cance
     }
 
     /**
-     * Sets the cancellation state of this event.
+     * Sets the cancellation state of this event
      *
      * <p>
-     * Canceling this event will prevent the player from equipping the cosmetic.
+     * Canceling this event will prevent the player from equipping the cosmetic
      * </p>
      *
      * @param cancel true if you wish to cancel this event
