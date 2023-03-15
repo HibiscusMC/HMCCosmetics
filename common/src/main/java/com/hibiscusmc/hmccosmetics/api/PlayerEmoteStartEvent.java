@@ -2,33 +2,51 @@ package com.hibiscusmc.hmccosmetics.api;
 
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import org.bukkit.event.Cancellable;
-import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-public class PlayerEmoteStartEvent extends Event implements Cancellable {
+/**
+ * Called when a player starts playing an emote
+ */
+public class PlayerEmoteStartEvent extends CosmeticUserEvent implements Cancellable {
+    private static final HandlerList handlers = new HandlerList();
+    private boolean cancel = false;
+    private final String animationId;
 
-    private final CosmeticUser user;
-    private String animationId; // Animation id can be invalid!
-    private boolean isCancelled;
-
-    public PlayerEmoteStartEvent(CosmeticUser user, String animationId) {
-        this.user = user;
+    public PlayerEmoteStartEvent(@NotNull CosmeticUser who, @NotNull String animationId) {
+        super(who);
         this.animationId = animationId;
-        this.isCancelled = false;
+    }
+
+    /**
+     * Gets the animation id of the emote the player started playing
+     * @implNote The returned string of this method may be an invalid animation id. Make sure to validate it before use
+     *
+     * @return The animation id of the emote which the player started playing
+     */
+    @NotNull
+    public String getAnimationId() {
+        return animationId;
     }
 
     @Override
     public boolean isCancelled() {
-        return isCancelled;
+        return cancel;
     }
 
+    /**
+     * Sets the cancellation state of this event
+     *
+     * <p>
+     * Canceling this event will prevent the player from playing the emote
+     * </p>
+     *
+     * @param cancel true if you wish to cancel this event
+     */
     @Override
     public void setCancelled(boolean cancel) {
-        isCancelled = cancel;
+        this.cancel = cancel;
     }
-
-    private static final HandlerList handlers = new HandlerList();
 
     @Override
     @NotNull
@@ -36,15 +54,8 @@ public class PlayerEmoteStartEvent extends Event implements Cancellable {
         return handlers;
     }
 
+    @NotNull
     public static HandlerList getHandlerList() {
         return handlers;
-    }
-
-    public CosmeticUser getUser() {
-        return user;
-    }
-
-    public String getAnimationId() {
-        return animationId;
     }
 }
