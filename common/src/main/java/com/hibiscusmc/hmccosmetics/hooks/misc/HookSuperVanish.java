@@ -7,13 +7,14 @@ import de.myzelyam.api.vanish.PlayerHideEvent;
 import de.myzelyam.api.vanish.PlayerShowEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 
-public class HookSuperVanish extends Hook implements Listener {
-
-    // NOTE: Supervanish and Premium Vanish both use the same api
-
+/**
+ * A hook that integrates the plugin {@link de.myzelyam.api.vanish.VanishAPI Supervanish}
+ *
+ * @implSpec Supervanish and Premium Vanish both use the same api
+ */
+public class HookSuperVanish extends Hook {
     public HookSuperVanish() {
         super("SuperVanish");
     }
