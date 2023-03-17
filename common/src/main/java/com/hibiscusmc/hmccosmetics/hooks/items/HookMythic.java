@@ -2,17 +2,18 @@ package com.hibiscusmc.hmccosmetics.hooks.items;
 
 import com.hibiscusmc.hmccosmetics.hooks.Hook;
 import io.lumine.mythic.bukkit.MythicBukkit;
-import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
-public class HookMythic extends Hook implements Listener {
+@SuppressWarnings("SpellCheckingInspection")
+public class HookMythic extends Hook {
     public HookMythic() {
         super("mythicmobs");
         setEnabledItemHook(true);
     }
 
     @Override
-    public ItemStack getItem(String itemId) {
+    public ItemStack getItem(@NotNull String itemId) {
         return MythicBukkit.inst().getItemManager().getItemStack(itemId);
     }
 }
