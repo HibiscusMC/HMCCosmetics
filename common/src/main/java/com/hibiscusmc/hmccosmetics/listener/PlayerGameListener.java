@@ -26,6 +26,7 @@ import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -195,6 +196,14 @@ public class PlayerGameListener implements Listener {
         if (!user.hasCosmeticInSlot(CosmeticSlot.BACKPACK)) return;
         Pose pose = event.getPose();
         if (pose.equals(Pose.STANDING)) {
+            // #84, Riptides mess with backpacks
+            ItemStack currentItem = player.getInventory().getItemInMainHand();
+            if (currentItem == null) return;
+            if (!currentItem.hasItemMeta()) return;
+            if (currentItem.containsEnchantment(Enchantment.RIPTIDE)) {
+                return;
+            }
+
             if (!user.isBackpackSpawned()) {
                 user.spawnBackpack((CosmeticBackpackType) user.getCosmetic(CosmeticSlot.BACKPACK));
             }
@@ -292,6 +301,14 @@ public class PlayerGameListener implements Listener {
             user.updateCosmetic(CosmeticSlot.MAINHAND);
             user.updateCosmetic(CosmeticSlot.OFFHAND);
         }, 2);
+
+        // #84, Riptides mess with backpacks
+        ItemStack currentItem = event.getPlayer().getInventory().getItem(event.getNewSlot());
+        if (currentItem == null) return;
+        if (!currentItem.hasItemMeta()) return;
+        if (user.hasCosmeticInSlot(CosmeticSlot.BACKPACK) && currentItem.containsEnchantment(Enchantment.RIPTIDE)) {
+            user.despawnBackpack();
+        }
     }
 
     @EventHandler
