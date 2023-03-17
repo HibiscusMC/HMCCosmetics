@@ -200,7 +200,7 @@ public class PlayerGameListener implements Listener {
             }
             return;
         }
-        if (pose.equals(Pose.SLEEPING) || pose.equals(Pose.SWIMMING) || pose.equals(Pose.FALL_FLYING)) {
+        if (pose.equals(Pose.SLEEPING) || pose.equals(Pose.SWIMMING) || pose.equals(Pose.FALL_FLYING) || pose.equals(Pose.SPIN_ATTACK)) {
             user.despawnBackpack();
         }
     }
