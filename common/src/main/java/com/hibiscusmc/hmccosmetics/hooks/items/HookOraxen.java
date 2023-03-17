@@ -7,7 +7,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * A hook that integrates the plugin {@link io.th0rgal.oraxen.OraxenPlugin OraxenPlugin} to provide cosmetic items
+ * A hook that integrates the plugin {@link io.th0rgal.oraxen.OraxenPlugin OraxenPlugin} to provide custom items
  */
 @SuppressWarnings("SpellCheckingInspection")
 public class HookOraxen extends Hook {

@@ -6,7 +6,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * A hook that integrates the plugin {@link io.lumine.mythic.bukkit.MythicBukkit MythicBukkit} to provide cosmetic items
+ * A hook that integrates the plugin {@link io.lumine.mythic.bukkit.MythicBukkit MythicBukkit} to provide custom items
  */
 @SuppressWarnings("SpellCheckingInspection")
 public class HookMythic extends Hook {

@@ -7,7 +7,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * A hook that integrates the plugin {@link com.mineinabyss.looty.LootyPlugin Looty} to provide items
+ * A hook that integrates the plugin {@link com.mineinabyss.looty.LootyPlugin Looty} to provide custom items
  */
 @SuppressWarnings("SpellCheckingInspection")
 public class HookLooty extends Hook {
