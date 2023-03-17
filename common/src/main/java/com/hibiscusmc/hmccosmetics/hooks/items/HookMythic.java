@@ -15,7 +15,6 @@ public class HookMythic extends Hook {
         setEnabledItemHook(true);
     }
 
-
     /**
      * Gets a cosmetic {@link ItemStack} that is associated with the provided id from the plugin {@link io.lumine.mythic.bukkit.MythicBukkit MythicBukkit}
      */
