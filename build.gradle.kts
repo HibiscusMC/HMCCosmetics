@@ -86,6 +86,7 @@ dependencies {
     implementation(project(path = ":v1_18_R2", configuration = "reobf"))
     implementation(project(path = ":v1_19_R1", configuration = "reobf"))
     implementation(project(path = ":v1_19_R2", configuration = "reobf"))
+    implementation(project(path = ":v1_19_R3", configuration = "reobf"))
 
     //compileOnly("com.github.Fisher2911:FisherLib:master-SNAPSHOT")
     implementation("net.kyori:adventure-api:4.11.0")
@@ -124,6 +125,7 @@ tasks {
         dependsOn(":v1_18_R2:reobfJar")
         dependsOn(":v1_19_R1:reobfJar")
         dependsOn(":v1_19_R2:reobfJar")
+        dependsOn(":v1_19_R3:reobfJar")
         mergeServiceFiles()
 
         relocate("dev.triumphteam.gui", "com.hisbiscusmc.hmccosmetics.gui")
