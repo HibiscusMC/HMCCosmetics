@@ -9,9 +9,18 @@ import com.sk89q.worldguard.protection.flags.registry.FlagRegistry;
 
 import java.util.logging.Level;
 
+/**
+ * A hook that integrates the plugin {@link com.sk89q.worldguard.WorldGuard WorldGuard}
+ */
 public class WGHook {
-
+    /**
+     * @implNote Please use {@link #getCosmeticEnableFlag()} instead
+     */
     public static StateFlag COSMETIC_ENABLE_FLAG;
+
+    /**
+     * @implNote Please use {@link #getCosmeticWardrobeFlag()} instead
+     */
     public static StateFlag COSMETIC_WARDROBE_FLAG;
 
     public WGHook() {
@@ -35,10 +44,18 @@ public class WGHook {
         }
     }
 
+    /**
+     * Gets the cosmetic enable {@link StateFlag}
+     * @return The cosmetic enable {@link StateFlag}
+     */
     public static StateFlag getCosmeticEnableFlag() {
         return COSMETIC_ENABLE_FLAG;
     }
 
+    /**
+     * Gets the cosmetic wardrobe {@link StateFlag}
+     * @return The cosmetic wardrobe {@link StateFlag}
+     */
     public static StateFlag getCosmeticWardrobeFlag() {
         return COSMETIC_WARDROBE_FLAG;
     }
