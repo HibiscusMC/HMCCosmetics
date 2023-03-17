@@ -14,8 +14,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Contains {@link com.sk89q.worldguard.WorldGuard WorldGuard} related event listeners
+ */
 public class WGListener implements Listener {
-
     @EventHandler
     public void onPlayerMove(@NotNull PlayerMoveEvent event) {
         CosmeticUser user = CosmeticUsers.getUser(event.getPlayer());
