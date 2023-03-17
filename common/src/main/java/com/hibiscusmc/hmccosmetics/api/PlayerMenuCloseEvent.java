@@ -1,14 +1,19 @@
 package com.hibiscusmc.hmccosmetics.api;
 
-import org.bukkit.event.Event;
+import com.hibiscusmc.hmccosmetics.gui.Menu;
+import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Called when the plugin is set up and/or reloaded
+ * Called when a menu is closed by a player
  */
-public class HMCCosmeticSetupEvent extends Event {
+public class PlayerMenuCloseEvent extends PlayerMenuEvent {
     private static final HandlerList handlers = new HandlerList();
+
+    public PlayerMenuCloseEvent(@NotNull CosmeticUser who, @NotNull Menu menu) {
+        super(who, menu);
+    }
 
     @Override
     @NotNull

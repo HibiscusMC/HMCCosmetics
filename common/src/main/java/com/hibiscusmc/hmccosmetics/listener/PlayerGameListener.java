@@ -347,7 +347,7 @@ public class PlayerGameListener implements Listener {
 
                 HashMap<Integer, ItemStack> items = new HashMap<>();
 
-                for (Cosmetic cosmetic : user.getCosmetic()) {
+                for (Cosmetic cosmetic : user.getCosmetics()) {
                     if ((cosmetic instanceof CosmeticArmorType cosmeticArmorType)) {
                         items.put(InventoryUtils.getPacketArmorSlot(cosmeticArmorType.getEquipSlot()), user.getUserCosmeticItem(cosmeticArmorType));
                     }

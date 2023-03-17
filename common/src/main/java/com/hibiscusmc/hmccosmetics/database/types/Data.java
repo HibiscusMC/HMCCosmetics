@@ -37,7 +37,7 @@ public abstract class Data {
                 data = "HIDDEN=" + user.getHiddenReason();
             }
         }
-        for (Cosmetic cosmetic : user.getCosmetic()) {
+        for (Cosmetic cosmetic : user.getCosmetics()) {
             Color color = user.getCosmeticColor(cosmetic.getSlot());
             String input = cosmetic.getSlot() + "=" + cosmetic.getId();
             if (color != null) input = input + "&" + color.asRGB();

@@ -1,5 +1,7 @@
 package com.hibiscusmc.hmccosmetics.user;
 
+import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.api.*;
 import com.hibiscusmc.hmccosmetics.config.Settings;
@@ -77,8 +79,13 @@ public class CosmeticUser {
         return playerCosmetics.get(slot);
     }
 
+    @Deprecated
     public Collection<Cosmetic> getCosmetic() {
         return playerCosmetics.values();
+    }
+
+    public ImmutableCollection<Cosmetic> getCosmetics() {
+        return ImmutableList.copyOf(playerCosmetics.values());
     }
 
     public void addPlayerCosmetic(Cosmetic cosmetic) {
@@ -358,7 +365,7 @@ public class CosmeticUser {
     public List<CosmeticSlot> getDyeableSlots() {
         ArrayList<CosmeticSlot> dyableSlots = new ArrayList();
 
-        for (Cosmetic cosmetic : getCosmetic()) {
+        for (Cosmetic cosmetic : getCosmetics()) {
             if (cosmetic.isDyable()) dyableSlots.add(cosmetic.getSlot());
         }
 
