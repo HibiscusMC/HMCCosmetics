@@ -12,12 +12,15 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * A hook that integrates the plugin {@link me.clip.placeholderapi.PlaceholderAPIPlugin PlaceholderAPIPlugin}
+ */
 public class HMCPlaceholderExpansion extends PlaceholderExpansion {
-
     private static boolean papiEnabled = false;
 
     public HMCPlaceholderExpansion() {
@@ -73,7 +76,7 @@ public class HMCPlaceholderExpansion extends PlaceholderExpansion {
                     if (placeholderArgs.size() == 2) return user.getCosmetic(slot).getId();
                     switch (placeholderArgs.get(2).toLowerCase()) {
                         case "material" -> {
-                            return getMaterial(user.getCosmetic(slot));
+                            return getMaterialName(user.getCosmetic(slot));
                         }
                         case "custommodeldata" -> {
                             return getModelData(user.getCosmetic(slot));
@@ -135,33 +138,76 @@ public class HMCPlaceholderExpansion extends PlaceholderExpansion {
         return null;
     }
 
+    /**
+     * Gets the name of the cosmetic item {@link org.bukkit.Material Material}
+     * @param cosmetic The cosmetic to get its {@link org.bukkit.Material Material}s name
+     * @return The name of the cosmetic item {@link org.bukkit.Material Material}
+     * @deprecated As of release 2.2.5+, use {@link #getMaterialName(Cosmetic)} instead
+     */
+    @Deprecated
+    @Nullable
     public String getMaterial(@NotNull Cosmetic cosmetic) {
         ItemStack item = cosmetic.getItem();
         if (item == null) return null;
-        return cosmetic.getItem().getType().toString();
+        return item.getType().toString();
     }
 
+    /**
+     * Gets the name of the cosmetic item {@link org.bukkit.Material Material}
+     * @param cosmetic The cosmetic to get its {@link org.bukkit.Material Material}s name
+     * @return The name of the cosmetic item {@link org.bukkit.Material Material}
+     * @since 2.2.5
+     */
+    @Nullable
+    public String getMaterialName(@NotNull Cosmetic cosmetic) {
+        ItemStack item = cosmetic.getItem();
+        if (item == null) return null;
+        return item.getType().toString();
+    }
+
+    /**
+     * Gets the cosmetic items custom model data
+     * @param cosmetic The cosmetic to get its custom model data
+     * @return The cosmetic items custom model data
+     */
+    @Nullable
     public String getModelData(@NotNull Cosmetic cosmetic) {
         ItemStack item = cosmetic.getItem();
         if (item == null) return null;
         if (!item.hasItemMeta()) return null;
         ItemMeta itemMeta = item.getItemMeta();
+        if (itemMeta == null) return null;
         return String.valueOf(itemMeta.getCustomModelData());
     }
 
+    /**
+     * Gets the cosmetic items display name
+     * @param cosmetic The cosmetic to get its items display name
+     * @return The cosmetic items display name
+     */
+    @Nullable
     public String getItemName(@NotNull Cosmetic cosmetic) {
         ItemStack item = cosmetic.getItem();
         if (item == null) return null;
         if (!item.hasItemMeta()) return null;
         ItemMeta itemMeta = item.getItemMeta();
+        if (itemMeta == null) return null;
         return itemMeta.getDisplayName();
     }
 
+    /**
+     * Gets the cosmetic items lore
+     * @param cosmetic The cosmetic to get its items lore
+     * @return The cosmetic items lore
+     */
+    @Nullable
     public String getItemLore(@NotNull Cosmetic cosmetic) {
         ItemStack item = cosmetic.getItem();
         if (item == null) return null;
         if (item.hasItemMeta()) {
-            return String.valueOf(item.getItemMeta().getLore());
+            ItemMeta itemMeta = item.getItemMeta();
+            if (itemMeta == null) return null;
+            return String.valueOf(itemMeta.getLore());
         }
         return null;
     }

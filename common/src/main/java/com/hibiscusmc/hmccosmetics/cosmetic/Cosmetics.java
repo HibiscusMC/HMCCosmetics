@@ -8,6 +8,7 @@ import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import org.apache.commons.lang3.EnumUtils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.CommentedConfigurationNode;
 import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.ConfigurationNode;
@@ -33,6 +34,7 @@ public class Cosmetics {
         COSMETICS.remove(cosmetic);
     }
 
+    @Nullable
     public static Cosmetic getCosmetic(String id) {
         return COSMETICS.get(id);
     }

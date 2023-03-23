@@ -67,13 +67,13 @@ public class Hooks {
         if (!isItemHook(split[0])) return null;
         Hook hook = getHook(split[0]);
         if (!hook.hasEnabledItemHook()) return null;
-        if (!hook.getActive()) return null;
+        if (!hook.isActive()) return null;
         return hook.getItem(split[1]);
     }
 
     public static boolean isActiveHook(String id) {
         Hook hook = getHook(id);
         if (hook == null) return false;
-        return hook.getActive();
+        return hook.isActive();
     }
 }
