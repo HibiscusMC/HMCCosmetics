@@ -45,6 +45,11 @@ public class CosmeticBalloonType extends Cosmetic {
         if (player == null || userBalloonManager == null) return;
         if (user.isInWardrobe()) return;
 
+        if (!userBalloonManager.getModelEntity().isValid()) {
+            user.respawnBalloon();
+            return;
+        }
+
         Location newLocation = player.getLocation();
         Location currentLocation = user.getBalloonManager().getLocation();
         newLocation = newLocation.clone().add(Settings.getBalloonOffset());
