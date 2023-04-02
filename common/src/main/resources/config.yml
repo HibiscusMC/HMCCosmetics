@@ -75,6 +75,8 @@ wardrobe:
     color: BLUE
   transition:
     enabled: true
+    # If you use ItemsAdder, set this to "<black>%img_title%
+    # If you use Oraxen, set this to "<black><glyph:title>"
     text: "<black>"
     delay: 40
     title-fade-in: 1000 # milliseconds
