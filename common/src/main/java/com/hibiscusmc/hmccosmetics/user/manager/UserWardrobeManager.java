@@ -156,7 +156,7 @@ public class UserWardrobeManager {
         List<Player> outsideViewers = PacketManager.getViewers(viewingLocation);
         outsideViewers.remove(player);
 
-        MessagesUtil.sendMessage(player, "closed-wardrobe");
+        if (player != null) MessagesUtil.sendMessage(player, "closed-wardrobe");
 
         Runnable run = () -> {
             this.active = false;

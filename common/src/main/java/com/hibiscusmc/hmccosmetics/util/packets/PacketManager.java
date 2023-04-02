@@ -135,7 +135,8 @@ public class PacketManager extends BasePacket {
         packet.getModifier().writeDefaults();
         packet.getIntegers().write(0, entityId);
         WrappedDataWatcher wrapper = new WrappedDataWatcher();
-        if (!NMSHandlers.getVersion().contains("v1_19_R2")) {
+
+        if (NMSHandlers.getVersion().contains("v1_17_R1") || NMSHandlers.getVersion().contains("v1_18_R2") || NMSHandlers.getVersion().contains("v1_19_R1")) {
             wrapper.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(0, WrappedDataWatcher.Registry.get(Byte.class)), (byte) 0x20);
             packet.getWatchableCollectionModifier().write(0, wrapper.getWatchableObjects());
         } else {
@@ -305,19 +306,17 @@ public class PacketManager extends BasePacket {
         WrappedGameProfile wrappedGameProfile = new WrappedGameProfile(uuid, name);
         WrappedSignedProperty skinData = PlayerUtils.getSkin(skinnedPlayer);
         if (skinData != null) wrappedGameProfile.getProperties().put("textures", skinData);
-        if (!NMSHandlers.getVersion().contains("v1_19_R2")) {
-            info.setData(List.of(new PlayerInfoData(wrappedGameProfile, 0, EnumWrappers.NativeGameMode.CREATIVE, WrappedChatComponent.fromText(name))));
-        } else {
+        if (NMSHandlers.getVersion().contains("v1_17_R1") || NMSHandlers.getVersion().contains("v1_18_R2") || NMSHandlers.getVersion().contains("v1_19_R1") || NMSHandlers.getVersion().contains("v1_19_R3")) {
             info.getHandle().getPlayerInfoDataLists().write(1, Collections.singletonList(new PlayerInfoData(
                     wrappedGameProfile,
                     0,
                     EnumWrappers.NativeGameMode.CREATIVE,
                     WrappedChatComponent.fromText(name)
             )));
+        } else {
+            info.setData(List.of(new PlayerInfoData(wrappedGameProfile, 0, EnumWrappers.NativeGameMode.CREATIVE, WrappedChatComponent.fromText(name))));
         }
         for (final Player p : sendTo) sendPacket(p, info.getHandle());
-        return;
-
     }
 
     /**
@@ -364,7 +363,7 @@ public class PacketManager extends BasePacket {
             final UUID uuid,
             final List<Player> sendTo
     ) {
-        if (!NMSHandlers.getVersion().contains("v1_19_R2")) {
+        if (NMSHandlers.getVersion().contains("v1_17_R1") || NMSHandlers.getVersion().contains("v1_18_R2") || NMSHandlers.getVersion().contains("v1_19_R1")) {
             WrapperPlayServerPlayerInfo info = new WrapperPlayServerPlayerInfo();
             info.setAction(EnumWrappers.PlayerInfoAction.REMOVE_PLAYER);
 
@@ -377,6 +376,7 @@ public class PacketManager extends BasePacket {
             for (final Player p : sendTo) sendPacket(p, info.getHandle());
             return;
         }
+
         PacketContainer packet = new PacketContainer(PacketType.Play.Server.PLAYER_INFO_REMOVE);
         packet.getUUIDLists().write(0, List.of(uuid));
         for (final Player p : sendTo) sendPacket(p, packet);
