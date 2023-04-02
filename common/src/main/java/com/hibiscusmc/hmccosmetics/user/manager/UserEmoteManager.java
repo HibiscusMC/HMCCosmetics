@@ -60,6 +60,7 @@ public class UserEmoteManager {
     public enum StopEmoteReason {
         SNEAK,
         DAMAGE,
-        CONNECTION
+        CONNECTION,
+        TELEPORT
     }
 }

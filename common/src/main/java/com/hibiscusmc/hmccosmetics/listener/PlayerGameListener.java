@@ -123,6 +123,9 @@ public class PlayerGameListener implements Listener {
                 user.spawnBalloon(cosmeticBalloonType);
             }, 2);
         }
+        if (user.getUserEmoteManager().isPlayingEmote()) {
+            user.getUserEmoteManager().stopEmote(UserEmoteManager.StopEmoteReason.TELEPORT);
+        }
     }
 
     @EventHandler
