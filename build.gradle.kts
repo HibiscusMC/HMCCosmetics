@@ -59,6 +59,9 @@ allprojects {
 
         // PlayerAnimator
         maven("https://mvn.lumine.io/repository/maven/")
+
+        // md-5 Repo
+        maven("https://repo.md-5.net/content/groups/public/")
     }
 
     dependencies {
