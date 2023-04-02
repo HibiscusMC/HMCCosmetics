@@ -11,11 +11,10 @@ public class HookPlaceholderAPI extends Hook {
     }
 
     /**
-     * @throws RuntimeException If PlaceholderAPI fails to register
+     * Registers HMCCosmetics Placeholder Expansion
      */
     @Override
-    public void load() throws RuntimeException {
-        if (!new HMCPlaceholderExpansion().register())
-            throw new RuntimeException("Failed to register PlaceholderExpansion");
+    public void load() {
+        new HMCPlaceholderExpansion().register();
     }
 }
