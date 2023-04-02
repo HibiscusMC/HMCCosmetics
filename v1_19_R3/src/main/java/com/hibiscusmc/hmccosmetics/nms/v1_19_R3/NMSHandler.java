@@ -6,8 +6,8 @@ import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticArmorType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBackpackType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticMainhandType;
-import com.hibiscusmc.hmccosmetics.user.manager.UserBalloonManager;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
+import com.hibiscusmc.hmccosmetics.user.manager.UserBalloonManager;
 import com.hibiscusmc.hmccosmetics.util.InventoryUtils;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.PlayerUtils;
@@ -58,9 +58,7 @@ public class NMSHandler implements com.hibiscusmc.hmccosmetics.nms.NMSHandler {
 
     private net.minecraft.world.entity.Entity getNMSEntity(int entityId) {
         for (ServerLevel world : ((CraftServer) Bukkit.getServer()).getHandle().getServer().getAllLevels()) {
-            net.minecraft.world.entity.Entity entity = world.getEntity(entityId);
-            if (entity == null) return null;
-            return entity;
+            return world.getEntity(entityId);
         }
         return null;
     }
@@ -131,7 +129,7 @@ public class NMSHandler implements com.hibiscusmc.hmccosmetics.nms.NMSHandler {
         EquipmentSlot nmsSlot = null;
         net.minecraft.world.item.ItemStack nmsItem = null;
 
-        if (!(user.getCosmetic(cosmeticSlot) instanceof CosmeticArmorType)) {
+        if (!(user.getCosmetic(cosmeticSlot) instanceof CosmeticArmorType cosmeticArmor)) {
 
             if (user.getCosmetic(cosmeticSlot) instanceof CosmeticMainhandType) {
                 CosmeticMainhandType cosmeticMainhandType = (CosmeticMainhandType) user.getCosmetic(CosmeticSlot.MAINHAND);
@@ -152,7 +150,6 @@ public class NMSHandler implements com.hibiscusmc.hmccosmetics.nms.NMSHandler {
             for (Player p : sendTo) sendPacket(p, packet);
             return;
         }
-        CosmeticArmorType cosmeticArmor = (CosmeticArmorType) user.getCosmetic(cosmeticSlot);
 
         // Converting EquipmentSlot and ItemStack to NMS ones.
         nmsSlot = CraftEquipmentSlot.getNMS(cosmeticArmor.getEquipSlot());
