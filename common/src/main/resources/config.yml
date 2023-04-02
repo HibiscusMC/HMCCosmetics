@@ -53,6 +53,10 @@ hook-settings:
     # This causes the plugin to reload itself after any ItemsAdder change. This keeps the plugin fully up to date with IA, but
     # could cause console spam as HMCCosmetics has to reload itself as well.
     reload-on-change: false
+  worldguard:
+    # Checks worldguard regions for HMCC flags. If set to false, flags will not work properly.
+    # Requires restart to apply changes.
+    player_move_check: true
 wardrobe:
   # spawn static wardrobe if in this radius of wardrobe-location
   static-radius: 10

@@ -35,6 +35,8 @@ public class Settings {
     private static final String HOOK_SETTING_PATH = "hook-settings";
     private static final String HOOK_ITEMADDER_PATH = "itemsadder";
     private static final String HOOK_RELOAD_CHANGE_PATH = "reload-on-change";
+    private static final String HOOK_WORLDGUARD_PATH = "worldguard";
+    private static final String HOOK_WG_MOVE_CHECK_PATH = "player_move_check";
     private static final String COSMETIC_EMOTE_CHECK_PATH = "emote-block-check";
     private static final String COSMETIC_EMOTE_DAMAGE_PATH = "emote-damage-leave";
     private static final String COSMETIC_EMOTE_INVINCIBLE_PATH = "emote-invincible";
@@ -57,6 +59,7 @@ public class Settings {
     private static boolean unapplyOnDeath;
     private static boolean forcePermissionJoin;
     private static boolean itemsAdderChangeReload;
+    private static boolean worldGuardMoveCheck;
     private static boolean cosmeticEmoteBlockCheck;
     private static boolean addHelmetEnchants;
     private static boolean addChestplateEnchants;
@@ -120,6 +123,9 @@ public class Settings {
         ConfigurationNode hookSettings = source.node(HOOK_SETTING_PATH);
         ConfigurationNode itemsAdderSettings = hookSettings.node(HOOK_ITEMADDER_PATH);
         itemsAdderChangeReload = itemsAdderSettings.node(HOOK_RELOAD_CHANGE_PATH).getBoolean(false);
+
+        ConfigurationNode worldGuardSettings = hookSettings.node(HOOK_WORLDGUARD_PATH);
+        worldGuardMoveCheck = worldGuardSettings.node(HOOK_WG_MOVE_CHECK_PATH).getBoolean(true);
     }
 
     private static Vector loadVector(final ConfigurationNode config) {
@@ -251,6 +257,10 @@ public class Settings {
 
     public static boolean isEmoteInvincible() {
         return emoteInvincible;
+    }
+
+    public static boolean isWorldGuardMoveCheckEnabled() {
+        return worldGuardMoveCheck;
     }
 
     public static boolean getShouldAddEnchants(EquipmentSlot slot) {
