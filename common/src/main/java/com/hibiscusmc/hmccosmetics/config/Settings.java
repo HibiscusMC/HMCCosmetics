@@ -2,9 +2,12 @@ package com.hibiscusmc.hmccosmetics.config;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
+import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.util.Vector;
 import org.spongepowered.configurate.ConfigurationNode;
+
+import java.util.logging.Level;
 
 public class Settings {
 
@@ -36,7 +39,8 @@ public class Settings {
     private static final String HOOK_ITEMADDER_PATH = "itemsadder";
     private static final String HOOK_RELOAD_CHANGE_PATH = "reload-on-change";
     private static final String HOOK_WORLDGUARD_PATH = "worldguard";
-    private static final String HOOK_WG_MOVE_CHECK_PATH = "player_move_check";
+    private static final String HOOK_WG_MOVE_CHECK_PATH = "player-move-check";
+    private static final String HOOK_WG_MOVE_CHECK_PATH_LEGACY = "player_move_check";
     private static final String COSMETIC_EMOTE_CHECK_PATH = "emote-block-check";
     private static final String COSMETIC_EMOTE_DAMAGE_PATH = "emote-damage-leave";
     private static final String COSMETIC_EMOTE_INVINCIBLE_PATH = "emote-invincible";
@@ -126,6 +130,11 @@ public class Settings {
 
         ConfigurationNode worldGuardSettings = hookSettings.node(HOOK_WORLDGUARD_PATH);
         worldGuardMoveCheck = worldGuardSettings.node(HOOK_WG_MOVE_CHECK_PATH).getBoolean(true);
+        // I messed up in release 2.2.6 and forgot to change player_move_check to player-move-check.
+        if (!worldGuardSettings.node(HOOK_WG_MOVE_CHECK_PATH_LEGACY).virtual()) {
+            MessagesUtil.sendDebugMessages("There is a deprecated way of using WG hook setting. Change player_move_check to player-move-check in your configuration to prevent issues in the future. ", Level.WARNING);
+            worldGuardMoveCheck = worldGuardSettings.node(HOOK_WG_MOVE_CHECK_PATH_LEGACY).getBoolean(true);
+        }
     }
 
     private static Vector loadVector(final ConfigurationNode config) {

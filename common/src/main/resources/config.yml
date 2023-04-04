@@ -56,7 +56,7 @@ hook-settings:
   worldguard:
     # Checks worldguard regions for HMCC flags. If set to false, flags will not work properly.
     # Requires restart to apply changes.
-    player_move_check: true
+    player-move-check: true
 wardrobe:
   # spawn static wardrobe if in this radius of wardrobe-location
   static-radius: 10
