@@ -17,7 +17,6 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: ${{ matrix.Java }}
-          cache: 'gradle'
       - name: Change wrapper permissions
         run: chmod +x ./gradlew
       - name: Validate Gradle wrapper
