@@ -58,6 +58,7 @@ public class PlayerConnectionListener implements Listener {
                     }
                 }
             }
+            return;
         }
         if (user.isInWardrobe()) user.leaveWardrobe();
         if (user.getUserEmoteManager().isPlayingEmote()) {
