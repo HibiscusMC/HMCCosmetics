@@ -15,7 +15,7 @@ jobs:
       - name: Set up JDK ${{ matrix.Java }}
         uses: actions/setup-java@v3
         with:
-          distribution: 'orcale'
+          distribution: 'oracle'
           java-version: ${{ matrix.Java }}
           cache: 'gradle'
       - name: Change wrapper permissions
