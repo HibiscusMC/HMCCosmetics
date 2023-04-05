@@ -8,14 +8,15 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest, macos-latest, windows-latest ]
-    name: Java 17 on ${{ matrix.os }} sample
+        java: [ '17', '18' ]
+    name: Java ${{ matrix.Java }} on ${{ matrix.os }} sample
     steps:
       - uses: actions/checkout@v3
-      - name: Set up JDK 17
+      - name: Set up JDK ${{ matrix.Java }}
         uses: actions/setup-java@v3
         with:
-          distribution: 'temurin'
-          java-version: '17'
+          distribution: 'orcale'
+          java-version: ${{ matrix.Java }}
           cache: 'gradle'
       - name: Change wrapper permissions
         run: chmod +x ./gradlew
