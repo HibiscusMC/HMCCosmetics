@@ -1,7 +1,7 @@
 # Contributing
 
 If you wish to contribute to the HMCCosmetics codebase, feel free to fork the repository and [submit a pull request](https://github.com/HibiscusMC/HMCCosmetics/compare).
-> **Note** Contributions to the HMCCosmetics codebase should remain consistent with current coding style. You should avoid messy or confusing code. Remember to keep your code clean, documented and understandable.
+> **Note** Contributions to the HMCCosmetics codebase should remain consistent with current code style. Remember to keep your code clean, documented and understandable, and to avoid messy or confusing code.
 
 ## Setup
 
