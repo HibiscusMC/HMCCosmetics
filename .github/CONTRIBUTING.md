@@ -9,6 +9,5 @@ To get ready to work on the codebase, please do the following:
 
 1. Fork & clone the repository, and make sure you're on the **remapped** branch. (*This is the default branch*)
 2. Code your heart out!
-3. Run `./gradlew build` to ensure your project sucessfully builds. 
-> **Note** This may take a while
+3. Run `./gradlew build` to ensure your project successfully builds. (*This may take a while*)
 4. Finally, [submit a pull request](https://github.com/HibiscusMC/HMCCosmetics/compare)!
