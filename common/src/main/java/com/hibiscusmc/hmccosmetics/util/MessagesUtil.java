@@ -23,8 +23,7 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.logging.Level;
 
-public class MessagesUtil {
-
+public final class MessagesUtil {
     private static String prefix;
     private static final HashMap<String, String> messages = new HashMap<>();
 
