@@ -21,11 +21,12 @@ import org.spongepowered.configurate.ConfigurationNode;
 
 import java.time.Duration;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 
 public final class MessagesUtil {
     private static String prefix;
-    private static final HashMap<String, String> messages = new HashMap<>();
+    private static final @NotNull Map<@NotNull String, @Nullable String> messages = new HashMap<>();
 
     public static void setup(@NotNull ConfigurationNode config) {
         prefix = config.node("prefix").getString("");
