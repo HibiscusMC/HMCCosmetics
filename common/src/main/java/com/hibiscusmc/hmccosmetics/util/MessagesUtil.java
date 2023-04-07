@@ -29,10 +29,14 @@ public final class MessagesUtil {
 
     public static void setup(@NotNull ConfigurationNode config) {
         prefix = config.node("prefix").getString("");
+
         for (ConfigurationNode node : config.childrenMap().values()) {
-            if (node.virtual()) continue;
-            if (node.empty()) continue;
-            messages.put(node.key().toString(), node.getString());
+            if (node.virtual() || node.empty()) continue;
+
+            Object key = node.key();
+            if (key == null) continue;
+
+            messages.put(key.toString(), node.getString());
         }
      }
 
