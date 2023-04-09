@@ -6,8 +6,10 @@ import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
+import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.TranslationUtil;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import org.apache.commons.lang3.EnumUtils;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -116,13 +118,29 @@ public class HMCPlaceholderExpansion extends PlaceholderExpansion {
                     return null;
                 }
                 if (placeholderArgs.get(1) != null) {
-                    Cosmetic cosmetic = Cosmetics.getCosmetic(placeholderArgs.get(1));
-                    if (cosmetic == null) {
-                        Cosmetic secondAttemptCosmetic = Cosmetics.getCosmetic(placeholderArgs.get(1) + "_" + placeholderArgs.get(2));
-                        if (secondAttemptCosmetic == null) {
-                            return "INVALID_COSMETIC";
+                    String args1 = placeholderArgs.get(1);
+
+                    if (EnumUtils.isValidEnum(CosmeticSlot.class, args1.toUpperCase())) {
+                        if (user.getCosmetic(CosmeticSlot.valueOf(args1.toUpperCase())) != null) {
+                            return "true";
                         } else {
-                            cosmetic = secondAttemptCosmetic;
+                            return "false";
+                        }
+                    }
+
+                    MessagesUtil.sendDebugMessages(args1);
+
+                    Cosmetic cosmetic = Cosmetics.getCosmetic(args1);
+                    if (cosmetic == null) {
+                        if (placeholderArgs.size() == 3) {
+                            Cosmetic secondAttemptCosmetic = Cosmetics.getCosmetic(placeholderArgs.get(1) + "_" + placeholderArgs.get(2));
+                            if (secondAttemptCosmetic == null) {
+                                return "INVALID_COSMETIC";
+                            } else {
+                                cosmetic = secondAttemptCosmetic;
+                            }
+                        } else {
+                            return "INVALID_COSMETIC";
                         }
                     }
                     if (user.getCosmetic(cosmetic.getSlot()) == null) return "false";
