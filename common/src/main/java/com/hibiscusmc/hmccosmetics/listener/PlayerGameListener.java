@@ -201,10 +201,12 @@ public class PlayerGameListener implements Listener {
         if (pose.equals(Pose.STANDING)) {
             // #84, Riptides mess with backpacks
             ItemStack currentItem = player.getInventory().getItemInMainHand();
-            if (currentItem == null) return;
-            if (!currentItem.hasItemMeta()) return;
-            if (currentItem.containsEnchantment(Enchantment.RIPTIDE)) {
-                return;
+            if (currentItem != null) {
+                if (currentItem.hasItemMeta()) {
+                    if (currentItem.containsEnchantment(Enchantment.RIPTIDE)) {
+                        return;
+                    }
+                }
             }
 
             if (!user.isBackpackSpawned()) {
