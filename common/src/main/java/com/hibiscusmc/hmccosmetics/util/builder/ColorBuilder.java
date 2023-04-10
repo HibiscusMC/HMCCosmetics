@@ -9,16 +9,42 @@ import org.bukkit.inventory.meta.PotionMeta;
 import org.jetbrains.annotations.NotNull;
 
 public class ColorBuilder {
+    /**
+     * Checks if a provided material has a {@link PotionMeta} or {@link LeatherArmorMeta} item meta
+     * @param material The provided material
+     * @return true if the provided material has a {@link PotionMeta} or {@link LeatherArmorMeta} item meta, false otherwise
+     * @since 2.2.6+
+     */
+    public static boolean isColorable(final Material material) {
+        return isColorable(new ItemStack(material));
+    }
 
+    /**
+     * Checks if a provided item stack has a {@link PotionMeta} or {@link LeatherArmorMeta} item meta
+     * @param itemStack The provided item stack
+     * @return true if the provided item stack has a {@link PotionMeta} or {@link LeatherArmorMeta} item meta, false otherwise
+     * @since 2.2.6+
+     */
+    public static boolean isColorable(final @NotNull ItemStack itemStack) {
+        final ItemMeta itemMeta = itemStack.getItemMeta();
+        return itemMeta instanceof LeatherArmorMeta || itemMeta instanceof PotionMeta;
+    }
+
+    /**
+     * @deprecated Use {@link #isColorable(Material)} instead
+     */
+    @Deprecated
     public static boolean canBeColored(final Material material) {
         return canBeColored(new ItemStack(material));
     }
 
+    /**
+     * @deprecated Use {@link #isColorable(ItemStack)} instead
+     */
+    @Deprecated
     public static boolean canBeColored(final @NotNull ItemStack itemStack) {
         final ItemMeta itemMeta = itemStack.getItemMeta();
-
-        return (itemMeta instanceof LeatherArmorMeta ||
-                itemMeta instanceof PotionMeta);
+        return itemMeta instanceof LeatherArmorMeta || itemMeta instanceof PotionMeta;
     }
 
     /**
@@ -30,7 +56,7 @@ public class ColorBuilder {
      * @see PotionMeta
      * @see LeatherArmorMeta
      */
-    public static ItemMeta color(ItemMeta itemMeta, final Color color) {
+    public static @NotNull ItemMeta color(@NotNull ItemMeta itemMeta, @NotNull Color color) {
         if (itemMeta instanceof final PotionMeta meta) {
             meta.setColor(color);
             return itemMeta;
@@ -43,5 +69,4 @@ public class ColorBuilder {
 
         return itemMeta;
     }
-
 }

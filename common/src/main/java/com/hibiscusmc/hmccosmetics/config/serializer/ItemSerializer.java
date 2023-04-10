@@ -134,7 +134,7 @@ public class ItemSerializer implements TypeSerializer<ItemStack> {
         }
 
         if (!colorNode.virtual()) {
-            if (ColorBuilder.canBeColored(item.getType())) {
+            if (ColorBuilder.isColorable(item.getType())) {
                 if (!redNode.virtual()) {
                     itemMeta = ColorBuilder.color(itemMeta, Color.fromRGB(redNode.getInt(0), greenNode.getInt(0), blueNode.getInt(0)));
                 } else {
