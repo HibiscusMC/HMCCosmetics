@@ -21,18 +21,17 @@ public class ColorBuilder {
                 itemMeta instanceof PotionMeta);
     }
 
-    /**
-     * @param color armor color
-     * @return this
-     */
-
     public static ItemMeta color(ItemMeta itemMeta, final Color color) {
         if (itemMeta instanceof final PotionMeta meta) {
             meta.setColor(color);
+            return itemMeta;
         }
+
         if (itemMeta instanceof final LeatherArmorMeta meta) {
             meta.setColor(color);
+            return itemMeta;
         }
+
         return itemMeta;
     }
 
