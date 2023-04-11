@@ -10,19 +10,19 @@ import java.util.function.Predicate;
 
 public class Utils {
     @SafeVarargs
-    public static <T> T replaceIf(final @Nullable T original, final T replacement, final @Nullable T... checks) {
+    public static <T> T replaceIf(@Nullable T original, T replacement, @Nullable T... checks) {
         for (final T check : checks) {
             if (original == check) return replacement;
         }
         return original;
     }
 
-    public static <T> T replaceIf(final @Nullable T original, final T replacement, final @NotNull Predicate<T> predicate) {
+    public static <T> T replaceIf(@Nullable T original, T replacement, @NotNull Predicate<T> predicate) {
         if (predicate.test(original)) return replacement;
         return original;
     }
 
-    public static <T> T replaceIfNull(final @Nullable T original, final @NotNull T replacement) {
+    public static <T> T replaceIfNull(@Nullable T original, @NotNull T replacement) {
         return original == null ? replacement : original;
     }
 
@@ -34,8 +34,7 @@ public class Utils {
      * @return original if not null, otherwise replacement
      */
 
-    public static <T> T replaceIfNull(final @Nullable T original, final T replacement,
-                                      final @NotNull Consumer<T> consumer) {
+    public static <T> T replaceIfNull(@Nullable T original, T replacement, @NotNull Consumer<T> consumer) {
         if (original == null) {
             consumer.accept(replacement);
             return replacement;
@@ -50,7 +49,7 @@ public class Utils {
      * @param <T> type
      */
 
-    public static <T> void doIfNotNull(final @Nullable T t, final @NotNull Consumer<T> consumer) {
+    public static <T> void doIfNotNull(@Nullable T t, @NotNull Consumer<T> consumer) {
         if (t == null) {
             return;
         }
@@ -64,8 +63,7 @@ public class Utils {
      * @return
      */
 
-    public static <T> Optional<T> returnIfNotNull(final @Nullable T t,
-                                                  final @NotNull Function<T, T> function) {
+    public static <T> Optional<T> returnIfNotNull(@Nullable T t, @NotNull Function<T, T> function) {
         if (t == null) {
             return Optional.empty();
         }
@@ -79,8 +77,8 @@ public class Utils {
      * @return enumAsString as an enum, or default enum if it could not be parsed
      */
 
-    public static <E extends Enum<E>> E stringToEnum(final @NotNull String enumAsString,
-                                                     final @NotNull Class<E> enumClass,
+    public static <E extends Enum<E>> E stringToEnum(@NotNull String enumAsString,
+                                                     @NotNull Class<E> enumClass,
                                                      E defaultEnum) {
         return stringToEnum(enumAsString, enumClass, defaultEnum, e -> {
         });
@@ -94,10 +92,10 @@ public class Utils {
      * @return enumAsString as an enum, or default enum if it could not be parsed
      */
 
-    public static <E extends Enum<E>> E stringToEnum(final @NotNull String enumAsString,
-                                                     @NotNull final Class<E> enumClass,
-                                                     final E defaultEnum,
-                                                     final @NotNull Consumer<E> consumer) {
+    public static <E extends Enum<E>> E stringToEnum(@NotNull String enumAsString,
+                                                     @NotNull Class<E> enumClass,
+                                                     E defaultEnum,
+                                                     @NotNull Consumer<E> consumer) {
         try {
             final E value = Enum.valueOf(enumClass, enumAsString);
             consumer.accept(value);
