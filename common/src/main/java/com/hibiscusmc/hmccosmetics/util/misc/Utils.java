@@ -75,8 +75,11 @@ public class Utils {
     public static <E extends Enum<E>> E stringToEnum(@NotNull String enumAsString,
                                                      @NotNull Class<E> enumClass,
                                                      E defaultEnum) {
-        return stringToEnum(enumAsString, enumClass, defaultEnum, e -> {
-        });
+        try {
+            return Enum.valueOf(enumClass, enumAsString);
+        } catch (IllegalArgumentException exception) {
+            return defaultEnum;
+        }
     }
 
     /**
