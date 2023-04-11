@@ -98,7 +98,7 @@ public class Utils {
             final E value = Enum.valueOf(enumClass, enumAsString);
             consumer.accept(value);
             return value;
-        } catch (final IllegalArgumentException exception) {
+        } catch (IllegalArgumentException exception) {
             consumer.accept(defaultEnum);
             return defaultEnum;
         }
