@@ -7,11 +7,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Provides useful String operations
  */
-public class StringUtils {
-    /**
-     * @param parsed message to be parsed
-     * @return MiniMessage parsed string
-     */
+public final class StringUtils {
     public static @NotNull Component parse(@NotNull String parsed) {
         return Adventure.MINI_MESSAGE.deserialize(parsed);
     }
