@@ -62,9 +62,7 @@ public class Utils {
      */
 
     public static <T> Optional<T> returnIfNotNull(@Nullable T t, @NotNull Function<T, T> function) {
-        if (t == null) {
-            return Optional.empty();
-        }
+        if (t == null) return Optional.empty();
         return Optional.of(function.apply(t));
     }
 
