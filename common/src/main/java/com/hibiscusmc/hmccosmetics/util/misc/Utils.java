@@ -9,18 +9,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class Utils {
-
-    /**
-     * @param original Object to be checked if null
-     * @param replacement Object returned if original is null
-     * @return original if not null, otherwise replacement
-     */
-
-    public static <T> T replaceIfNull(final @Nullable T original, final @NotNull T replacement) {
-        return replaceIfNull(original, replacement, t -> {
-        });
-    }
-
     @SafeVarargs
     public static <T> T replaceIf(final @Nullable T original, final T replacement, final @Nullable T... checks) {
         for (final T check : checks) {
@@ -33,6 +21,12 @@ public class Utils {
         if (predicate.test(original)) return replacement;
         return original;
     }
+
+    public static <T> T replaceIfNull(final @Nullable T original, final @NotNull T replacement) {
+        return replaceIfNull(original, replacement, t -> {
+        });
+    }
+
 
     /**
      * @param original Object to be checked if null
