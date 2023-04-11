@@ -4,7 +4,6 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
 public class Placeholder {
-
     public static final String PREFIX = "%prefix%";
     public static final String TYPE = "%type%";
     public static final String ITEM = "%item%";
