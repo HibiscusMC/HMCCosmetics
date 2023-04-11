@@ -23,8 +23,7 @@ public class Utils {
     }
 
     public static <T> T replaceIfNull(final @Nullable T original, final @NotNull T replacement) {
-        return replaceIfNull(original, replacement, t -> {
-        });
+        return original == null ? replacement : original;
     }
 
 
