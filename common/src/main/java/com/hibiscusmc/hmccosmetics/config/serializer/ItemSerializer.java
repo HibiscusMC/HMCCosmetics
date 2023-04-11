@@ -84,7 +84,7 @@ public class ItemSerializer implements TypeSerializer<ItemStack> {
         ItemMeta itemMeta = item.getItemMeta();
         if (itemMeta == null) return item;
         if (!nameNode.virtual())
-            itemMeta.setDisplayName(StringUtils.parseStringToString(Utils.replaceIfNull(nameNode.getString(), "")));
+            itemMeta.setDisplayName(StringUtils.parseToString(Utils.replaceIfNull(nameNode.getString(), "")));
         if (!unbreakableNode.virtual()) itemMeta.setUnbreakable(unbreakableNode.getBoolean());
         if (!glowingNode.virtual()) {
             itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
@@ -92,7 +92,7 @@ public class ItemSerializer implements TypeSerializer<ItemStack> {
         }
         if (!loreNode.virtual()) itemMeta.setLore(Utils.replaceIfNull(loreNode.getList(String.class),
                         new ArrayList<String>()).
-                stream().map(StringUtils::parseStringToString).collect(Collectors.toList()));
+                stream().map(StringUtils::parseToString).collect(Collectors.toList()));
         if (!modelDataNode.virtual()) itemMeta.setCustomModelData(modelDataNode.getInt());
 
         if (!nbtNode.virtual()) {

@@ -121,10 +121,10 @@ public class TypeCosmetic extends Type {
                 if (!itemConfig.node("locked-lore").virtual()) {
                     lockedLore = Utils.replaceIfNull(itemConfig.node("locked-lore").getList(String.class),
                                     new ArrayList<String>()).
-                            stream().map(StringUtils::parseStringToString).collect(Collectors.toList());
+                            stream().map(StringUtils::parseToString).collect(Collectors.toList());
                 }
                 if (!itemConfig.node("locked-name").virtual()) {
-                    lockedName = StringUtils.parseStringToString(Utils.replaceIfNull(itemConfig.node("locked-name").getString(), ""));
+                    lockedName = StringUtils.parseToString(Utils.replaceIfNull(itemConfig.node("locked-name").getString(), ""));
                 }
 
                 if (Hooks.isActiveHook("PlaceHolderAPI")) {
