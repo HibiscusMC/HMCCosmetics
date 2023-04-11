@@ -50,9 +50,7 @@ public class Utils {
      */
 
     public static <T> void doIfNotNull(@Nullable T t, @NotNull Consumer<T> consumer) {
-        if (t == null) {
-            return;
-        }
+        if (t == null) return;
         consumer.accept(t);
     }
 
