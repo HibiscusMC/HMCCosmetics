@@ -9,8 +9,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jetbrains.annotations.NotNull;
 
 public class Keys {
-
-    static HMCCosmeticsPlugin plugin = HMCCosmeticsPlugin.getInstance();
+    private static final HMCCosmeticsPlugin plugin = HMCCosmeticsPlugin.getInstance();
     public static final NamespacedKey ITEM_KEY = new NamespacedKey(plugin, "cosmetic");
     public static final NamespacedKey TOKEN_KEY = new NamespacedKey(plugin, "token-key");
 
