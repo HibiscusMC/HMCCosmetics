@@ -247,8 +247,8 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
             File[] emotesFiles = emoteFolder.listFiles();
             for (File emoteFile : emotesFiles) {
                 if (!emoteFile.getName().contains("bbmodel")) continue;
-                String animationName = emoteFile.getName().replaceAll(".bbmodel", "");
-                PlayerAnimator.api.getAnimationManager().importAnimations(FilenameUtils.removeExtension(emoteFile.getName()), emoteFile);
+                String animationName = FilenameUtils.removeExtension(emoteFile.getName());
+                PlayerAnimator.api.getAnimationManager().importAnimations(animationName, emoteFile);
                 MessagesUtil.sendDebugMessages("Added '" + animationName + "' to Player Animator ");
             }
 
