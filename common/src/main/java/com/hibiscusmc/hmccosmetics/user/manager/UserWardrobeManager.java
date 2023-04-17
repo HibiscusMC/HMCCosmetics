@@ -168,13 +168,20 @@ public class UserWardrobeManager {
 
             // Player
             PacketManager.sendCameraPacket(player.getEntityId(), viewer);
-            PacketManager.gamemodeChangePacket(player, ServerUtils.convertGamemode(this.originalGamemode)); // Success
 
             // Armorstand
             PacketManager.sendEntityDestroyPacket(ARMORSTAND_ID, viewer); // Sucess
 
             //PacketManager.sendEntityDestroyPacket(player.getEntityId(), viewer); // Success
-            player.setGameMode(this.originalGamemode);
+            if (WardrobeSettings.isForceExitGamemode()) {
+                MessagesUtil.sendDebugMessages("Force Exit Gamemode " + WardrobeSettings.getExitGamemode());
+                player.setGameMode(WardrobeSettings.getExitGamemode());
+                PacketManager.gamemodeChangePacket(player, ServerUtils.convertGamemode(WardrobeSettings.getExitGamemode())); // Success
+            } else {
+                MessagesUtil.sendDebugMessages("Original Gamemode " + this.originalGamemode);
+                player.setGameMode(this.originalGamemode);
+                PacketManager.gamemodeChangePacket(player, ServerUtils.convertGamemode(this.originalGamemode)); // Success
+            }
             user.showPlayer();
 
             if (user.hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
