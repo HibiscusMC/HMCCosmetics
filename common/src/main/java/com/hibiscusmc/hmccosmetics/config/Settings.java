@@ -48,6 +48,7 @@ public class Settings {
     private static final String COSMETIC_ADD_ENCHANTS_CHESTPLATE_PATH = "chest-add-enchantments";
     private static final String COSMETIC_ADD_ENCHANTS_LEGGINGS_PATH = "leggings-add-enchantments";
     private static final String COSMETIC_ADD_ENCHANTS_BOOTS_PATH = "boots-add-enchantments";
+    private static final String COSMETIC_DESTROY_LOOSE_COSMETIC_PATH = "destroy-loose-cosmetics";
 
     private static String defaultMenu;
     private static String dyeMenuName;
@@ -71,6 +72,7 @@ public class Settings {
     private static boolean addBootsEnchants;
     private static boolean emoteDamageLeave;
     private static boolean emoteInvincible;
+    private static boolean destroyLooseCosmetics;
     private static int lookDownPitch;
     private static int viewDistance;
     private static int tickPeriod;
@@ -105,6 +107,7 @@ public class Settings {
         cosmeticEmoteBlockCheck = cosmeticSettings.node(COSMETIC_EMOTE_CHECK_PATH).getBoolean(true);
         emoteDamageLeave = cosmeticSettings.node(COSMETIC_EMOTE_DAMAGE_PATH).getBoolean(false);
         emoteInvincible = cosmeticSettings.node(COSMETIC_EMOTE_INVINCIBLE_PATH).getBoolean(false);
+        destroyLooseCosmetics = cosmeticSettings.node(COSMETIC_DESTROY_LOOSE_COSMETIC_PATH).getBoolean(false);
         addHelmetEnchants = cosmeticSettings.node(COSMETIC_ADD_ENCHANTS_HELMET_PATH).getBoolean(false);
         addChestplateEnchants = cosmeticSettings.node(COSMETIC_ADD_ENCHANTS_CHESTPLATE_PATH).getBoolean(false);
         addLeggingEnchants = cosmeticSettings.node(COSMETIC_ADD_ENCHANTS_LEGGINGS_PATH).getBoolean(false);
@@ -270,6 +273,10 @@ public class Settings {
 
     public static boolean isWorldGuardMoveCheckEnabled() {
         return worldGuardMoveCheck;
+    }
+
+    public static boolean isDestroyLooseCosmetics() {
+        return destroyLooseCosmetics;
     }
 
     public static boolean getShouldAddEnchants(EquipmentSlot slot) {

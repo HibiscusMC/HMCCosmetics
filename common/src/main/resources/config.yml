@@ -33,6 +33,10 @@ cosmetic-settings:
   leggings-add-enchantments: false # If the plugin should keep enchants on leggings. This is useful as some enchantments are client side only.
   boots-add-enchantments: false # If the plugin should keep enchants on boots. This is useful as some enchantments are client side only.
 
+  # This attempts to destroy cosmetics that get loose in the wild, such as through a player entering creative mode.
+  # Most servers who don't use creative mode and have properly set up the plugin should have no need for this and can leave it disabled.
+  destroy-loose-cosmetics: false
+
   # view distance in blocks that other players will see the backpack cosmetic
   # setting this to lower than the server player view distance should fix the
   # bug where players see random backpacks. Put -1 to ignore and send packets to everyone.

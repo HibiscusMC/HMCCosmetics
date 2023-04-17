@@ -34,7 +34,6 @@ import org.bukkit.entity.Pose;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
-import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.EquipmentSlot;
@@ -62,12 +61,20 @@ public class PlayerGameListener implements Listener {
 
     @EventHandler
     public void onPlayerClick(@NotNull InventoryClickEvent event) {
-        if (event.getClick() != ClickType.SHIFT_LEFT && event.getClick() != ClickType.SHIFT_RIGHT) return;
+        // || !event.getClickedInventory().getType().equals(InventoryType.PLAYER)
+        if (event.getClick().isShiftClick()) return;
+        MessagesUtil.sendDebugMessages("inventoryclickevent");
         //if (event.getSlotType() != InventoryType.SlotType.ARMOR) return;
         CosmeticUser user = CosmeticUsers.getUser(event.getWhoClicked().getUniqueId());
         if (user == null) return;
         ItemStack item = event.getCurrentItem();
         if (item == null) return;
+
+        if (Settings.isDestroyLooseCosmetics() && InventoryUtils.isCosmeticItem(event.getCurrentItem())) {
+            MessagesUtil.sendDebugMessages("remvoe item");
+            event.getWhoClicked().getInventory().removeItem(event.getCurrentItem());
+        }
+
         EquipmentSlot slot = getArmorSlot(item.getType());
         if (slot == null) return;
         CosmeticSlot cosmeticSlot = InventoryUtils.BukkitCosmeticSlot(slot);

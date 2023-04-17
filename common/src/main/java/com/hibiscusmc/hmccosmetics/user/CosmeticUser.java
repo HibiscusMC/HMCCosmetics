@@ -18,13 +18,11 @@ import com.hibiscusmc.hmccosmetics.util.InventoryUtils;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.PlayerUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
-import org.bukkit.Bukkit;
-import org.bukkit.Color;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.*;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.*;
@@ -212,6 +210,8 @@ public class CosmeticUser {
                     mapMeta.setColor(color);
                 }
             }
+            itemMeta.getPersistentDataContainer().set(InventoryUtils.getKey(), PersistentDataType.STRING, "true");
+
             item.setItemMeta(itemMeta);
         }
         return item;

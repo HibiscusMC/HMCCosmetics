@@ -1,8 +1,12 @@
 package com.hibiscusmc.hmccosmetics.util;
 
 import com.comphenix.protocol.wrappers.EnumWrappers;
+import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
+import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -136,5 +140,15 @@ public class InventoryUtils {
                 return null;
             }
         }
+    }
+
+    public static boolean isCosmeticItem(ItemStack itemStack) {
+        itemStack = itemStack.clone();
+        if (!itemStack.hasItemMeta()) return false;
+        return itemStack.getItemMeta().getPersistentDataContainer().has(getKey(), PersistentDataType.STRING);
+    }
+
+    public static NamespacedKey getKey() {
+        return new NamespacedKey(HMCCosmeticsPlugin.getInstance(), "cosmetic");
     }
 }
