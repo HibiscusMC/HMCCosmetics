@@ -252,9 +252,11 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
                 MessagesUtil.sendDebugMessages("Added '" + animationName + "' to Player Animator ");
             }
 
+            /*
             for (Map.Entry<String, AnimationPack> packEntry : PlayerAnimator.api.getAnimationManager().getRegistry().entrySet()) {
-                //Set<String> animationNames = packEntry.getValue().getAnimations().keySet().stream().map(animation -> packEntry.getKey().replace(":", ".") + "." + animation).collect(Collectors.toSet());
+                Set<String> animationNames = packEntry.getValue().getAnimations().keySet().stream().map(animation -> packEntry.getKey().replace(":", ".") + "." + animation).collect(Collectors.toSet());
             }
+             */
         }
 
         getInstance().getLogger().info("Successfully Enabled HMCCosmetics");
