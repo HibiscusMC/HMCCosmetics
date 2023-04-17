@@ -109,8 +109,8 @@ public class UserWardrobeManager {
             }
 
             if (user.hasCosmeticInSlot(CosmeticSlot.BALLOON)) {
-                PacketManager.sendLeashPacket(user.getBalloonManager().getPufferfishBalloonId(), -1, viewer);
-                PacketManager.sendLeashPacket(user.getBalloonManager().getPufferfishBalloonId(), NPC_ID, viewer); // This needs a possible fix
+                user.getBalloonManager().sendRemoveLeashPacket(viewer);
+                user.getBalloonManager().sendLeashPacket(NPC_ID);
                 //PacketManager.sendLeashPacket(VIEWER.getBalloonEntity().getModelId(), NPC_ID, viewer);
 
                 PacketManager.sendTeleportPacket(user.getBalloonManager().getPufferfishBalloonId(), npcLocation.clone().add(Settings.getBalloonOffset()), false, viewer);
@@ -162,7 +162,7 @@ public class UserWardrobeManager {
             this.active = false;
 
             // NPC
-            if (user.hasCosmeticInSlot(CosmeticSlot.BALLOON)) PacketManager.sendLeashPacket(user.getBalloonManager().getModelId(), -1, viewer);
+            if (user.hasCosmeticInSlot(CosmeticSlot.BALLOON)) user.getBalloonManager().sendRemoveLeashPacket();
             PacketManager.sendEntityDestroyPacket(NPC_ID, viewer); // Success
             PacketManager.sendRemovePlayerPacket(player, WARDROBE_UUID, viewer); // Success
 
@@ -254,9 +254,9 @@ public class UserWardrobeManager {
                 if (user.hasCosmeticInSlot(CosmeticSlot.BALLOON)) {
                     PacketManager.sendTeleportPacket(user.getBalloonManager().getPufferfishBalloonId(), WardrobeSettings.getWardrobeLocation().add(Settings.getBalloonOffset()), false, viewer);
                     user.getBalloonManager().getModelEntity().teleport(WardrobeSettings.getWardrobeLocation().add(Settings.getBalloonOffset()));
-                    PacketManager.sendLeashPacket(user.getBalloonManager().getPufferfishBalloonId(), -1, outsideViewers);
+                    user.getBalloonManager().sendRemoveLeashPacket(outsideViewers);
                     PacketManager.sendEntityDestroyPacket(user.getBalloonManager().getModelId(), outsideViewers);
-                    PacketManager.sendLeashPacket(user.getBalloonManager().getPufferfishBalloonId(), NPC_ID, viewer); // Pufferfish goes away for some reason?
+                    user.getBalloonManager().sendLeashPacket(NPC_ID);
                 }
 
                 if (WardrobeSettings.isEquipPumpkin()) {

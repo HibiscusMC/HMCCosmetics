@@ -115,7 +115,7 @@ public class NMSHandler implements com.hibiscusmc.hmccosmetics.nms.NMSHandler {
 
         PacketManager.sendEntitySpawnPacket(newLoc, userBalloonManager1.getPufferfishBalloonId(), EntityType.PUFFERFISH, userBalloonManager1.getPufferfishBalloonUniqueId(), sentTo);
         PacketManager.sendInvisibilityPacket(userBalloonManager1.getPufferfishBalloonId(), sentTo);
-        PacketManager.sendLeashPacket(userBalloonManager1.getPufferfishBalloonId(), player.getEntityId(), sentTo);
+        userBalloonManager1.sendLeashPacket(player.getEntityId());
 
         return userBalloonManager1;
     }

@@ -322,8 +322,6 @@ public class CosmeticUser {
 
         List<Player> viewer = PlayerUtils.getNearbyPlayers(player);
         viewer.add(player);
-
-        PacketManager.sendLeashPacket(getBalloonManager().getPufferfishBalloonId(), player.getEntityId(), viewer);
     }
 
     public void despawnBalloon() {
@@ -408,8 +406,7 @@ public class CosmeticUser {
         hiddenReason = reason;
         if (hasCosmeticInSlot(CosmeticSlot.BALLOON)) {
             getBalloonManager().removePlayerFromModel(getPlayer());
-            List<Player> viewer = PlayerUtils.getNearbyPlayers(getPlayer());
-            PacketManager.sendLeashPacket(getBalloonManager().getPufferfishBalloonId(), -1, viewer);
+            getBalloonManager().sendRemoveLeashPacket();
         }
         if (hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
             userBackpackManager.clearItems();

@@ -6,6 +6,8 @@ import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
 import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
+import com.hibiscusmc.hmccosmetics.util.PlayerUtils;
+import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
 import com.ticxo.modelengine.api.ModelEngineAPI;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
@@ -17,12 +19,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 
 public class UserBalloonManager {
 
     private BalloonType balloonType;
+    private CosmeticBalloonType cosmeticBalloonType;
     private final int balloonID;
     private final UUID uniqueID;
     private final ArmorStand modelEntity;
@@ -44,6 +48,7 @@ public class UserBalloonManager {
                 balloonType = BalloonType.NONE;
             }
         }
+        this.cosmeticBalloonType = cosmeticBalloonType;
         MessagesUtil.sendDebugMessages("balloontype is " + balloonType);
 
         if (balloonType == BalloonType.MODELENGINE) {
@@ -85,6 +90,7 @@ public class UserBalloonManager {
         }
 
         modelEntity.remove();
+        cosmeticBalloonType = null;
     }
 
     public void addPlayerToModel(final CosmeticUser user, final CosmeticBalloonType cosmeticBalloonType) {
@@ -154,6 +160,19 @@ public class UserBalloonManager {
 
     public void setVelocity(Vector vector) {
         this.getModelEntity().setVelocity(vector);
+    }
+
+    public void sendRemoveLeashPacket(List<Player> viewer) {
+        PacketManager.sendLeashPacket(getPufferfishBalloonId(), -1, viewer);
+    }
+
+    public void sendRemoveLeashPacket() {
+        PacketManager.sendLeashPacket(getPufferfishBalloonId(), -1, getLocation());
+    }
+
+    public void sendLeashPacket(int entityId) {
+        if (cosmeticBalloonType == null) return;
+        if (cosmeticBalloonType.isShowLead()) PacketManager.sendLeashPacket(getPufferfishBalloonId(), entityId, getLocation());
     }
 
     public enum BalloonType {

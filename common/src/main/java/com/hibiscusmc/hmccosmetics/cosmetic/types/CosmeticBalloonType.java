@@ -19,11 +19,14 @@ public class CosmeticBalloonType extends Cosmetic {
 
     private final String modelName;
     private List<String> dyableParts;
+    private boolean showLead;
 
     public CosmeticBalloonType(String id, ConfigurationNode config) {
         super(id, config);
 
         String modelId = config.node("model").getString();
+
+        showLead = config.node("show-lead").getBoolean(true);
 
         try {
             if (!config.node("dyable-parts").virtual()) {
@@ -68,7 +71,7 @@ public class CosmeticBalloonType extends Cosmetic {
         userBalloonManager.setLocation(newLocation);
 
         PacketManager.sendTeleportPacket(userBalloonManager.getPufferfishBalloonId(), newLocation, false, viewer);
-        if (!user.getHidden()) PacketManager.sendLeashPacket(userBalloonManager.getPufferfishBalloonId(), player.getEntityId(), viewer);
+        if (!user.getHidden() && showLead) PacketManager.sendLeashPacket(userBalloonManager.getPufferfishBalloonId(), player.getEntityId(), viewer);
     }
 
     public String getModelName() {
@@ -84,5 +87,9 @@ public class CosmeticBalloonType extends Cosmetic {
         if (dyableParts == null) return true;
         if (dyableParts.isEmpty()) return true;
         return dyableParts.contains(name);
+    }
+
+    public boolean isShowLead() {
+        return showLead;
     }
 }
