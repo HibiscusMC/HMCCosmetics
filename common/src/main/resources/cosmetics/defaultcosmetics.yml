@@ -111,3 +111,22 @@ explorer_backpack:
     model-data: 3
     name: "<white>Explorer's Backpack"
     amount: 1
+garbage_truck_balloon:
+  slot: BALLOON
+  permission: "hmccosmetics.garbage_truck_balloon"
+  model: garbage_truck_balloon
+  item:
+    material: PAPER
+    model-data: 14
+    name: "<green>Garbage Truck Balloon"
+    amount: 1
+earth_day_grabber:
+  slot: OFFHAND
+  dyeable: true
+  permission: "hmccosmetics.earth_day_grabber"
+  model: earth_day_grabber
+  item:
+    material: LEATHER_HORSE_ARMOR
+    model-data: 4
+    name: "<green>Earth Day Grabber"
+    amount: 1

@@ -168,3 +168,25 @@ items:
         - "<gray>Allowed: <#6D9DC5>%HMCCosmetics_unlocked_explorer_backpack%" 
     type: cosmetic
     cosmetic: explorer_backpack
+  garbage_truck_balloon:
+    slots:
+      - 16
+    item:
+      material: hmccosmetics:garbage_truck_balloon
+      lore:
+        - ""
+        - "<gray>Enabled: <#6D9DC5>%HMCCosmetics_equipped_garbage_truck_balloon%"
+        - "<gray>Allowed: <#6D9DC5>%HMCCosmetics_unlocked_garbage_truck_balloon%" 
+    type: cosmetic
+    cosmetic: garbage_truck_balloon
+  earth_day_grabber:
+    slots:
+      - 17
+    item:
+      material: hmccosmetics:earth_day_grabber
+      lore:
+        - ""
+        - "<gray>Enabled: <#6D9DC5>%HMCCosmetics_equipped_earth_day_grabber%"
+        - "<gray>Allowed: <#6D9DC5>%HMCCosmetics_unlocked_earth_day_grabber%" 
+    type: cosmetic
+    cosmetic: earth_day_grabber
