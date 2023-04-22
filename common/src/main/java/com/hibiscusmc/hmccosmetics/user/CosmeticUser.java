@@ -264,6 +264,7 @@ public class CosmeticUser {
         if (event.isCancelled()) {
             return;
         }
+        MessagesUtil.sendDebugMessages("Leaving Wardrobe");
         if (!getWardrobeManager().getWardrobeStatus().equals(UserWardrobeManager.WardrobeStatus.RUNNING)) return;
 
         getWardrobeManager().setWardrobeStatus(UserWardrobeManager.WardrobeStatus.STOPPING);
@@ -280,6 +281,9 @@ public class CosmeticUser {
                 userWardrobeManager.end();
                 userWardrobeManager = null;
             }, WardrobeSettings.getTransitionDelay());
+        } else {
+            userWardrobeManager.end();
+            userWardrobeManager = null;
         }
     }
 
