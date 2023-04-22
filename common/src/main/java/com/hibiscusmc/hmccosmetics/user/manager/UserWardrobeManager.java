@@ -226,11 +226,11 @@ public class UserWardrobeManager {
             public void run() {
                 Player player = user.getPlayer();
                 if (!active || player == null) {
-                    MessagesUtil.sendDebugMessages("Active is false");
+                    MessagesUtil.sendDebugMessages("WardrobeEnd[user=" + user.getUniqueId() + ",reason=Active is false]");
                     this.cancel();
                     return;
                 }
-                MessagesUtil.sendDebugMessages("Update ");
+                MessagesUtil.sendDebugMessages("WardrobeUpdate[user= " + user.getUniqueId() + ",status=" + getWardrobeStatus() + "]");
                 List<Player> viewer = Collections.singletonList(player);
                 List<Player> outsideViewers = PacketManager.getViewers(viewingLocation);
                 outsideViewers.remove(player);
