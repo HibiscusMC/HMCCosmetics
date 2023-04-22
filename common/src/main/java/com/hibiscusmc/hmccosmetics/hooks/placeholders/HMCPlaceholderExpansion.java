@@ -62,8 +62,9 @@ public class HMCPlaceholderExpansion extends PlaceholderExpansion {
                 }
                 if (placeholderArgs.get(1) != null) {
                     Cosmetic cosmetic = Cosmetics.getCosmetic(placeholderArgs.get(1));
+                    if (cosmetic == null) return "INVALID_COSMETIC";
                     Cosmetic currentCosmetic = user.getCosmetic(cosmetic.getSlot());
-                    if (cosmetic == null || currentCosmetic == null) return "false";
+                    if (currentCosmetic == null) return "false";
                     if (currentCosmetic.getId() == cosmetic.getId()) return "true";
                     return "false";
                 }
