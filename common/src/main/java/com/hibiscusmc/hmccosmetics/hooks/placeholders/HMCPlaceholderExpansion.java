@@ -48,6 +48,11 @@ public class HMCPlaceholderExpansion extends PlaceholderExpansion {
     }
 
     @Override
+    public boolean persist() {
+        return true;
+    }
+
+    @Override
     public String onRequest(@NotNull OfflinePlayer player, @NotNull String params) {
         if (!player.isOnline()) return null;
         CosmeticUser user = CosmeticUsers.getUser(player.getPlayer());
