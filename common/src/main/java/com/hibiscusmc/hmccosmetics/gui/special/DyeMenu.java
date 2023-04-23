@@ -48,6 +48,7 @@ public class DyeMenu {
                 if (color == null) return;
 
                 addCosmetic(user, cosmetic, color);
+                event.setCancelled(true);
             } else event.setCancelled(true);
         });
 
