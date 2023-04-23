@@ -306,19 +306,22 @@ public class PacketManager extends BasePacket {
         WrappedGameProfile wrappedGameProfile = new WrappedGameProfile(uuid, name);
         WrappedSignedProperty skinData = PlayerUtils.getSkin(skinnedPlayer);
         if (skinData != null) wrappedGameProfile.getProperties().put("textures", skinData);
-        // There was a temp solution to 1.19.2, but was eventually fixed somewhere. All versions can just use the following,
-        //if (NMSHandlers.getVersion().contains("v1_17_R1") || NMSHandlers.getVersion().contains("v1_18_R2") || NMSHandlers.getVersion().contains("v1_19_R1") || NMSHandlers.getVersion().contains("v1_19_R3")) {
-        info.getHandle().getPlayerInfoDataLists().write(1, Collections.singletonList(new PlayerInfoData(
-                wrappedGameProfile,
-                0,
-                EnumWrappers.NativeGameMode.CREATIVE,
-                WrappedChatComponent.fromText(name)
-        )));
-            /*
+        // For sor some reason 1.19.2 handles it on the 0 field index, every other verison handles it on the 1
+        if (NMSHandlers.getVersion().contains("v1_19_R1")) {
+            info.getHandle().getPlayerInfoDataLists().write(0, Collections.singletonList(new PlayerInfoData(
+                    wrappedGameProfile,
+                    0,
+                    EnumWrappers.NativeGameMode.CREATIVE,
+                    WrappedChatComponent.fromText(name)
+            )));
         } else {
-            info.setData(List.of(new PlayerInfoData(wrappedGameProfile, 0, EnumWrappers.NativeGameMode.CREATIVE, WrappedChatComponent.fromText(name))));
+            info.getHandle().getPlayerInfoDataLists().write(1, Collections.singletonList(new PlayerInfoData(
+                    wrappedGameProfile,
+                    0,
+                    EnumWrappers.NativeGameMode.CREATIVE,
+                    WrappedChatComponent.fromText(name)
+            )));
         }
-             */
         for (final Player p : sendTo) sendPacket(p, info.getHandle());
     }
 
