@@ -143,6 +143,7 @@ public class InventoryUtils {
     }
 
     public static boolean isCosmeticItem(ItemStack itemStack) {
+        if (itemStack == null) return false;
         itemStack = itemStack.clone();
         if (!itemStack.hasItemMeta()) return false;
         return itemStack.getItemMeta().getPersistentDataContainer().has(getCosmeticKey(), PersistentDataType.STRING);

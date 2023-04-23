@@ -335,6 +335,20 @@ public class PlayerGameListener implements Listener {
         }
     }
 
+    @EventHandler
+    public void onPlayerGamemodeSwitch(PlayerGameModeChangeEvent event) {
+        CosmeticUser user = CosmeticUsers.getUser(event.getPlayer());
+        if (user == null) return;
+
+        if (Settings.isDestroyLooseCosmetics()) {
+            ItemStack[] equippedArmor = event.getPlayer().getInventory().getArmorContents();
+            if (equippedArmor.length == 0) return;
+            for (ItemStack armor : equippedArmor) {
+                if (InventoryUtils.isCosmeticItem(armor)) armor.setAmount(0);
+            }
+        }
+    }
+
     private void registerInventoryClickListener() {
         ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(HMCCosmeticsPlugin.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Client.WINDOW_CLICK) {
             @Override
