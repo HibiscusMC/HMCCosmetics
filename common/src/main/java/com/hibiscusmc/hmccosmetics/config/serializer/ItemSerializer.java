@@ -143,9 +143,6 @@ public class ItemSerializer implements TypeSerializer<ItemStack> {
             }
         }
 
-        NamespacedKey key = new NamespacedKey(HMCCosmeticsPlugin.getInstance(), source.key().toString());
-        itemMeta.getPersistentDataContainer().set(key, PersistentDataType.STRING, source.key().toString());
-
         item.setItemMeta(itemMeta);
         return item;
     }
