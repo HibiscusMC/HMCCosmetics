@@ -145,10 +145,14 @@ public class InventoryUtils {
     public static boolean isCosmeticItem(ItemStack itemStack) {
         itemStack = itemStack.clone();
         if (!itemStack.hasItemMeta()) return false;
-        return itemStack.getItemMeta().getPersistentDataContainer().has(getKey(), PersistentDataType.STRING);
+        return itemStack.getItemMeta().getPersistentDataContainer().has(getCosmeticKey(), PersistentDataType.STRING);
     }
 
-    public static NamespacedKey getKey() {
+    public static NamespacedKey getCosmeticKey() {
         return new NamespacedKey(HMCCosmeticsPlugin.getInstance(), "cosmetic");
+    }
+
+    public static NamespacedKey getOwnerKey() {
+        return new NamespacedKey(HMCCosmeticsPlugin.getInstance(), "owner");
     }
 }
