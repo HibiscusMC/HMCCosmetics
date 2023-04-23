@@ -52,7 +52,7 @@ public class CosmeticUser {
     private void tick() {
         // Occasionally updates the entity cosmetics
         Runnable run = () -> {
-            MessagesUtil.sendDebugMessages("tick " + uniqueId, Level.INFO);
+            MessagesUtil.sendDebugMessages("Tick[" + uniqueId + "]", Level.INFO);
             updateCosmetic();
         };
 
@@ -105,11 +105,11 @@ public class CosmeticUser {
 
         playerCosmetics.put(cosmetic.getSlot(), cosmetic);
         if (color != null) colors.put(cosmetic.getSlot(), color);
-        MessagesUtil.sendDebugMessages("addPlayerCosmetic " + cosmetic.getId());
+        MessagesUtil.sendDebugMessages("addPlayerCosmetic[id=" + cosmetic.getId() + "]");
         if (cosmetic.getSlot() == CosmeticSlot.BACKPACK) {
             CosmeticBackpackType backpackType = (CosmeticBackpackType) cosmetic;
             spawnBackpack(backpackType);
-            MessagesUtil.sendDebugMessages("addPlayerCosmetic spawnBackpack " + cosmetic.getId());
+            MessagesUtil.sendDebugMessages("addPlayerCosmetic[spawnBackpack,id=" + cosmetic.getId() + "]");
         }
         if (cosmetic.getSlot() == CosmeticSlot.BALLOON) {
             CosmeticBalloonType balloonType = (CosmeticBalloonType) cosmetic;
