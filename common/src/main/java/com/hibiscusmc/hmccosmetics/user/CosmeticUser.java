@@ -210,7 +210,7 @@ public class CosmeticUser {
                     mapMeta.setColor(color);
                 }
             }
-            itemMeta.getPersistentDataContainer().set(InventoryUtils.getCosmeticKey(), PersistentDataType.STRING, "true");
+            itemMeta.getPersistentDataContainer().set(InventoryUtils.getCosmeticKey(), PersistentDataType.STRING, cosmetic.getId());
             itemMeta.getPersistentDataContainer().set(InventoryUtils.getOwnerKey(), PersistentDataType.STRING, getPlayer().getUniqueId().toString());
 
             item.setItemMeta(itemMeta);
