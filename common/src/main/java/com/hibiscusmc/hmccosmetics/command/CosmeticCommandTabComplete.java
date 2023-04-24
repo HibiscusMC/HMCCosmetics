@@ -7,6 +7,7 @@ import com.hibiscusmc.hmccosmetics.gui.Menu;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
+import com.ticxo.playeranimator.api.PlayerAnimator;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -23,9 +24,9 @@ import java.util.List;
 public class CosmeticCommandTabComplete implements TabCompleter {
     @Nullable
     @Override
-    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String @NotNull [] args) {
         List<String> completions = new ArrayList<>();
-        List<String> finalCompletitons = new ArrayList<>();
+        List<String> finalCompletions = new ArrayList<>();
 
         if (args.length == 1) {
             if (hasPermission(sender, "hmccosmetics.cmd.apply")) completions.add("apply");
@@ -39,8 +40,10 @@ public class CosmeticCommandTabComplete implements TabCompleter {
             if (hasPermission(sender, "hmccosmetics.cmd.hide")) completions.add("hide");
             if (hasPermission(sender, "hmccosmetics.cmd.show")) completions.add("show");
             if (hasPermission(sender, "hmccosmetics.cmd.debug")) completions.add("debug");
+            if (hasPermission(sender, "hmccosmetics.cmd.emote")) completions.add("emote");
+            if (hasPermission(sender, "hmccosmetics.cmd.playemote")) completions.add("playemote");
 
-            StringUtil.copyPartialMatches(args[0], completions, finalCompletitons);
+            StringUtil.copyPartialMatches(args[0], completions, finalCompletions);
         }
 
         if (!(sender instanceof Player)) return completions;
@@ -53,16 +56,17 @@ public class CosmeticCommandTabComplete implements TabCompleter {
                     completions.addAll(applyCommandComplete(user, args));
                 }
                 case "unapply" -> {
-                    for (Cosmetic cosmetic : user.getCosmetic()) {
+                    for (Cosmetic cosmetic : user.getCosmetics()) {
                         completions.add(cosmetic.getSlot().toString().toUpperCase());
                     }
+                    completions.add("ALL");
                 }
                 case "menu" -> {
                     for (Menu menu : Menus.getMenu()) {
                         if (menu.canOpen(user.getPlayer())) completions.add(menu.getId());
                     }
                 }
-                case "dataclear", "wardrobe", "hide", "show" -> {
+                case "dataclear", "wardrobe", "hide", "show", "emote" -> {
                     for (Player player : Bukkit.getOnlinePlayers()) {
                         completions.add(player.getName());
                     }
@@ -77,8 +81,11 @@ public class CosmeticCommandTabComplete implements TabCompleter {
                     completions.add("viewerlocation");
                     completions.add("leavelocation");
                 }
+                case "playemote" -> {
+                    completions.addAll(PlayerAnimator.api.getAnimationManager().getRegistry().keySet());
+                }
             }
-            StringUtil.copyPartialMatches(args[1], completions, finalCompletitons);
+            StringUtil.copyPartialMatches(args[1], completions, finalCompletions);
         }
         if (args.length == 3) {
             String subcommand = args[0].toLowerCase();
@@ -86,21 +93,31 @@ public class CosmeticCommandTabComplete implements TabCompleter {
                 case "dye" -> {
                     completions.add("#FFFFFF");
                 }
-                case "menu", "apply", "unapply" -> {
+                case "menu", "apply", "unapply", "playemote" -> {
                     for (Player player : Bukkit.getOnlinePlayers()) {
                         completions.add(player.getName());
                     }
                 }
-
             }
-            StringUtil.copyPartialMatches(args[2], completions, finalCompletitons);
+            StringUtil.copyPartialMatches(args[2], completions, finalCompletions);
         }
 
-        Collections.sort(finalCompletitons);
-        return finalCompletitons;
+        if (args.length == 4) {
+            String subcommand = args[0].toLowerCase();
+            switch (subcommand) {
+                case "apply" -> {
+                    completions.add("#FFFFFF");
+                }
+            }
+            StringUtil.copyPartialMatches(args[3], completions, finalCompletions);
+        }
+
+        Collections.sort(finalCompletions);
+        return finalCompletions;
     }
 
-    private static List<String> applyCommandComplete(CosmeticUser user, String[] args) {
+    @NotNull
+    private static List<String> applyCommandComplete(CosmeticUser user, String @NotNull [] args) {
         List<String> completitions = new ArrayList<>();
 
         if (args.length == 2) {
@@ -119,7 +136,7 @@ public class CosmeticCommandTabComplete implements TabCompleter {
         return completitions;
     }
 
-    private boolean hasPermission(CommandSender sender, String permission) {
+    private boolean hasPermission(@NotNull CommandSender sender, String permission) {
         if (sender.isOp()) return true;
         if (sender.hasPermission(permission)) return true;
         return false;

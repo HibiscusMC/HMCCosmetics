@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 public class BasePacket {
 
     public static void sendPacket(Player player, PacketContainer packet) {
+        if (player == null) return;
         ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
     }
 }

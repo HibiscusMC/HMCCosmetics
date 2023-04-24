@@ -5,13 +5,14 @@ import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 
 import java.util.logging.Level;
 
-public class Cosmetic {
+public abstract class Cosmetic {
 
     private String id;
     private String permission;
@@ -19,8 +20,9 @@ public class Cosmetic {
     private CosmeticSlot slot;
     private boolean dyable;
 
-    protected Cosmetic(String id, ConfigurationNode config) {
+    protected Cosmetic(String id, @NotNull ConfigurationNode config) {
         this.id = id;
+
         if (!config.node("permission").virtual()) {
             this.permission = config.node("permission").getString();
         } else {
@@ -30,20 +32,20 @@ public class Cosmetic {
         if (!config.node("item").virtual()) this.item = generateItemStack(config.node("item"));
 
         MessagesUtil.sendDebugMessages("Slot: " + config.node("slot").getString());
-        setSlot(CosmeticSlot.valueOf(config.node("slot").getString()));
 
+        setSlot(CosmeticSlot.valueOf(config.node("slot").getString()));
         setDyable(config.node("dyeable").getBoolean(false));
 
         MessagesUtil.sendDebugMessages("Dyeable " + dyable);
-
         Cosmetics.addCosmetic(this);
     }
 
     public String getId() {
         return this.id;
     }
-    public String getPermission() {
-        return this.permission;
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public CosmeticSlot getSlot() {
@@ -53,17 +55,17 @@ public class Cosmetic {
     public void setSlot(CosmeticSlot slot) {
         this.slot = slot;
     }
+
+    public String getPermission() {
+        return this.permission;
+    }
+
     public void setPermission(String permission) {
         this.permission = permission;
     }
 
     public boolean requiresPermission() {
-        if (permission == null) return false;
-        return true;
-    }
-
-    public void setId(String id) {
-        this.id = id;
+        return permission != null;
     }
 
     public void setDyable(boolean dyable) {
@@ -74,10 +76,7 @@ public class Cosmetic {
         return this.dyable;
     }
 
-
-    public void update(CosmeticUser user) {
-        // Override
-    }
+    public abstract void update(CosmeticUser user);
 
     @Nullable
     public ItemStack getItem() {

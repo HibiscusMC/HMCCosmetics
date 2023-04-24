@@ -1,10 +1,13 @@
-package com.hibiscusmc.hmccosmetics.entities;
+package com.hibiscusmc.hmccosmetics.user.manager;
 
+import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
 import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
+import com.hibiscusmc.hmccosmetics.util.PlayerUtils;
+import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
 import com.ticxo.modelengine.api.ModelEngineAPI;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
@@ -14,26 +17,29 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 
-public class BalloonEntity {
+public class UserBalloonManager {
 
     private BalloonType balloonType;
+    private CosmeticBalloonType cosmeticBalloonType;
     private final int balloonID;
     private final UUID uniqueID;
     private final ArmorStand modelEntity;
 
-    public BalloonEntity(Location location) {
+    public UserBalloonManager(@NotNull Location location) {
         this.uniqueID = UUID.randomUUID();
         this.balloonID = NMSHandlers.getHandler().getNextEntityId();
         this.modelEntity = NMSHandlers.getHandler().getMEGEntity(location.add(Settings.getBalloonOffset()));
     }
 
-    public void spawnModel(CosmeticBalloonType cosmeticBalloonType, Color color) {
+    public void spawnModel(@NotNull CosmeticBalloonType cosmeticBalloonType, Color color) {
         // redo this
-        if (cosmeticBalloonType.getModelName() != null) {
+        if (cosmeticBalloonType.getModelName() != null && HMCCosmeticsPlugin.hasModelEngine()) {
             balloonType = BalloonType.MODELENGINE;
         } else {
             if (cosmeticBalloonType.getItem() != null) {
@@ -42,6 +48,7 @@ public class BalloonEntity {
                 balloonType = BalloonType.NONE;
             }
         }
+        this.cosmeticBalloonType = cosmeticBalloonType;
         MessagesUtil.sendDebugMessages("balloontype is " + balloonType);
 
         if (balloonType == BalloonType.MODELENGINE) {
@@ -83,6 +90,7 @@ public class BalloonEntity {
         }
 
         modelEntity.remove();
+        cosmeticBalloonType = null;
     }
 
     public void addPlayerToModel(final CosmeticUser user, final CosmeticBalloonType cosmeticBalloonType) {
@@ -152,6 +160,19 @@ public class BalloonEntity {
 
     public void setVelocity(Vector vector) {
         this.getModelEntity().setVelocity(vector);
+    }
+
+    public void sendRemoveLeashPacket(List<Player> viewer) {
+        PacketManager.sendLeashPacket(getPufferfishBalloonId(), -1, viewer);
+    }
+
+    public void sendRemoveLeashPacket() {
+        PacketManager.sendLeashPacket(getPufferfishBalloonId(), -1, getLocation());
+    }
+
+    public void sendLeashPacket(int entityId) {
+        if (cosmeticBalloonType == null) return;
+        if (cosmeticBalloonType.isShowLead()) PacketManager.sendLeashPacket(getPufferfishBalloonId(), entityId, getLocation());
     }
 
     public enum BalloonType {

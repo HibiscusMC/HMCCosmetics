@@ -8,7 +8,7 @@ import java.util.logging.Level;
 
 public class NMSHandlers {
 
-    private static final String[] SUPPORTED_VERSION = new String[]{"v1_17_R1", "v1_18_R2", "v1_19_R1", "v1_19_R2"};
+    private static final String[] SUPPORTED_VERSION = new String[]{"v1_17_R1", "v1_18_R2", "v1_19_R1", "v1_19_R2", "v1_19_R3"};
     private static NMSHandler handler;
     private static String version;
 
@@ -34,10 +34,9 @@ public class NMSHandlers {
             if (!selectedVersion.contains(packageVersion)) {
                 continue;
             }
-            MessagesUtil.sendDebugMessages(packageVersion + " has been detected.", Level.SEVERE);
+            MessagesUtil.sendDebugMessages(packageVersion + " has been detected.", Level.INFO);
             version = packageVersion;
             try {
-                //Class.forName("org.bukkit.craftbukkit." + version + ".block.CraftBlock").getName();
                 handler = (NMSHandler) Class.forName("com.hibiscusmc.hmccosmetics.nms." + packageVersion + ".NMSHandler").getConstructor().newInstance();
                 return;
             } catch (ClassNotFoundException | InvocationTargetException | InstantiationException |

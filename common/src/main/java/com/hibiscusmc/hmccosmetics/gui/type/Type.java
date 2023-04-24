@@ -5,9 +5,9 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.spongepowered.configurate.ConfigurationNode;
 
-public class Type {
+public abstract class Type {
 
-    private String id;
+    private final String id;
 
     public Type(String id) {
         this.id = id;
@@ -21,12 +21,8 @@ public class Type {
     public void run(CosmeticUser user, ConfigurationNode config) {
         run(user, config, null);
     }
-    public void run(CosmeticUser user, ConfigurationNode config, ClickType clickType) {
-        // Override
-    }
 
-    public ItemMeta setLore(CosmeticUser user, ConfigurationNode config, ItemMeta itemMeta) {
-        //TODO: Finish this
-        return null; // Override
-    }
+    public abstract void run(CosmeticUser user, ConfigurationNode config, ClickType clickType);
+
+    public abstract ItemMeta setLore(CosmeticUser user, ConfigurationNode config, ItemMeta itemMeta);
 }

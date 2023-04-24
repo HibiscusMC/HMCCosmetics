@@ -1,8 +1,14 @@
 package com.hibiscusmc.hmccosmetics.util;
 
 import com.comphenix.protocol.wrappers.EnumWrappers;
+import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
+import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class InventoryUtils {
@@ -58,6 +64,8 @@ public class InventoryUtils {
         };
     }
 
+    @Contract(pure = true)
+    @Nullable
     public static CosmeticSlot BukkitCosmeticSlot(int slot) {
         switch (slot) {
             case 36 -> {
@@ -81,6 +89,8 @@ public class InventoryUtils {
         }
     }
 
+    @Contract(pure = true)
+    @Nullable
     public static CosmeticSlot NMSCosmeticSlot(int slot) {
         switch (slot) {
             case 5 -> {
@@ -104,7 +114,9 @@ public class InventoryUtils {
         }
     }
 
-    public static EquipmentSlot getEquipmentSlot(CosmeticSlot slot) {
+    @Contract(pure = true)
+    @Nullable
+    public static EquipmentSlot getEquipmentSlot(@NotNull CosmeticSlot slot) {
         switch (slot) {
             case HELMET -> {
                 return EquipmentSlot.HEAD;
@@ -128,5 +140,20 @@ public class InventoryUtils {
                 return null;
             }
         }
+    }
+
+    public static boolean isCosmeticItem(ItemStack itemStack) {
+        if (itemStack == null) return false;
+        itemStack = itemStack.clone();
+        if (!itemStack.hasItemMeta()) return false;
+        return itemStack.getItemMeta().getPersistentDataContainer().has(getCosmeticKey(), PersistentDataType.STRING);
+    }
+
+    public static NamespacedKey getCosmeticKey() {
+        return new NamespacedKey(HMCCosmeticsPlugin.getInstance(), "cosmetic");
+    }
+
+    public static NamespacedKey getOwnerKey() {
+        return new NamespacedKey(HMCCosmeticsPlugin.getInstance(), "owner");
     }
 }

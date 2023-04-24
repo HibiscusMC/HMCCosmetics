@@ -6,6 +6,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.PotionMeta;
+import org.jetbrains.annotations.NotNull;
 
 public class ColorBuilder {
 
@@ -13,7 +14,7 @@ public class ColorBuilder {
         return canBeColored(new ItemStack(material));
     }
 
-    public static boolean canBeColored(final ItemStack itemStack) {
+    public static boolean canBeColored(final @NotNull ItemStack itemStack) {
         final ItemMeta itemMeta = itemStack.getItemMeta();
 
         return (itemMeta instanceof LeatherArmorMeta ||

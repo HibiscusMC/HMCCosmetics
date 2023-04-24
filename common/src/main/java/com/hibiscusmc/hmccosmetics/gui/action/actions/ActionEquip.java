@@ -14,9 +14,8 @@ public class ActionEquip extends Action {
     @Override
     public void run(CosmeticUser user, String raw) {
         Cosmetic cosmetic = Cosmetics.getCosmetic(raw);
-        if (cosmetic == null) {
-            return;
-        }
+        if (cosmetic == null) return;
+
         user.addPlayerCosmetic(cosmetic);
     }
 }

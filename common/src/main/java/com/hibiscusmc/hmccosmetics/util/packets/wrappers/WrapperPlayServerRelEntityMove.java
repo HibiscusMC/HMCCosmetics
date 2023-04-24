@@ -5,6 +5,7 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
+import org.jetbrains.annotations.NotNull;
 
 public class WrapperPlayServerRelEntityMove extends AbstractPacket {
     public static final PacketType TYPE =
@@ -55,7 +56,7 @@ public class WrapperPlayServerRelEntityMove extends AbstractPacket {
      * @param event - the packet event.
      * @return The spawned entity.
      */
-    public Entity getEntity(PacketEvent event) {
+    public Entity getEntity(@NotNull PacketEvent event) {
         return getEntity(event.getPlayer().getWorld());
     }
 

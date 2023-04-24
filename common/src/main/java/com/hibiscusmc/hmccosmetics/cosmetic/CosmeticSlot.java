@@ -8,5 +8,6 @@ public enum CosmeticSlot {
     MAINHAND,
     OFFHAND,
     BACKPACK,
-    BALLOON
+    BALLOON,
+    EMOTE
 }

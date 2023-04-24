@@ -6,6 +6,7 @@ import com.comphenix.protocol.events.PacketEvent;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
@@ -58,7 +59,7 @@ public class WrapperPlayServerNamedEntitySpawn extends AbstractPacket {
      * @param event - the packet event.
      * @return The spawned entity.
      */
-    public Entity getEntity(PacketEvent event) {
+    public Entity getEntity(@NotNull PacketEvent event) {
         return getEntity(event.getPlayer().getWorld());
     }
 
@@ -96,7 +97,7 @@ public class WrapperPlayServerNamedEntitySpawn extends AbstractPacket {
      *
      * @param position - the new position.
      */
-    public void setPosition(Vector position) {
+    public void setPosition(@NotNull Vector position) {
         setX(position.getX());
         setY(position.getY());
         setZ(position.getZ());

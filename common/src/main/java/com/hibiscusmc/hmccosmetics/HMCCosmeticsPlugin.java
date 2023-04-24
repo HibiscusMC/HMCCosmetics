@@ -12,17 +12,23 @@ import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
 import com.hibiscusmc.hmccosmetics.database.Database;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
-import com.hibiscusmc.hmccosmetics.hooks.PAPIHook;
-import com.hibiscusmc.hmccosmetics.hooks.items.ItemHooks;
+import com.hibiscusmc.hmccosmetics.hooks.Hooks;
 import com.hibiscusmc.hmccosmetics.hooks.worldguard.WGHook;
 import com.hibiscusmc.hmccosmetics.hooks.worldguard.WGListener;
 import com.hibiscusmc.hmccosmetics.listener.PlayerConnectionListener;
 import com.hibiscusmc.hmccosmetics.listener.PlayerGameListener;
 import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
+import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
+import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
+import com.hibiscusmc.hmccosmetics.user.manager.UserEmoteManager;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.TranslationUtil;
 import com.jeff_media.updatechecker.UpdateCheckSource;
 import com.jeff_media.updatechecker.UpdateChecker;
+import com.ticxo.playeranimator.PlayerAnimatorImpl;
+import com.ticxo.playeranimator.api.PlayerAnimator;
+import com.ticxo.playeranimator.api.animation.pack.AnimationPack;
+import org.apache.commons.io.FilenameUtils;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -38,6 +44,7 @@ import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.Map;
 
 public final class HMCCosmeticsPlugin extends JavaPlugin {
 
@@ -45,6 +52,9 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
     private static boolean disable = false;
     private static YamlConfigurationLoader configLoader;
     private static final int pluginId = 13873;
+    private static boolean hasModelEngine = false;
+    private static boolean onLatestVersion = true;
+    private static String latestVersion = "";
 
     @Override
     public void onEnable() {
@@ -61,11 +71,24 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
         }
 
         // Update Checker
-        new UpdateChecker(this, UpdateCheckSource.POLYMART, "1879")
-                .setDownloadLink("https://polymart.org/resource/1879")
+        UpdateChecker checker = new UpdateChecker(this, UpdateCheckSource.POLYMART, "1879")
+                .onSuccess((commandSenders, latestVersion) -> {
+                    this.latestVersion = (String) latestVersion;
+                    if (!this.latestVersion.equalsIgnoreCase(getDescription().getVersion())) {
+                        getLogger().info("+++++++++++++++++++++++++++++++++++");
+                        getLogger().info("There is a new update for HMCCosmetics!");
+                        getLogger().info("Please download it as soon as possible for possible fixes and new features.");
+                        getLogger().info("Current Version " + getDescription().getVersion() + " | Latest Version " + latestVersion);
+                        getLogger().info("Spigot: https://www.spigotmc.org/resources/100107/");
+                        getLogger().info("Polymart: https://polymart.org/resource/1879");
+                        getLogger().info("+++++++++++++++++++++++++++++++++++");
+                    }
+                })
+                .setNotifyRequesters(false)
+                .setNotifyOpsOnJoin(false)
                 .checkEveryXHours(24)
                 .checkNow();
-
+        onLatestVersion = checker.isUsingLatestVersion();
         // File setup
         if (!getDataFolder().exists()) {
             saveDefaultConfig();
@@ -74,6 +97,12 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
             saveResource("cosmetics/defaultcosmetics.yml", false);
             saveResource("menus/defaultmenu.yml", false);
         }
+        // Emote folder setup
+        File emoteFile = new File(getDataFolder().getPath() + "/emotes");
+        if (!emoteFile.exists()) emoteFile.mkdir();
+
+        // Player Animator
+        PlayerAnimatorImpl.initialize(this);
 
         setup();
 
@@ -88,11 +117,13 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
         // Database
         new Database();
 
-        // PAPI
-        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-            new PAPIHook().register();
+        // ModelEngine
+        if (Bukkit.getPluginManager().getPlugin("ModelEngine") != null) {
+            hasModelEngine = true;
         }
-        if (Bukkit.getPluginManager().getPlugin("WorldGuard") != null) {
+
+        // WorldGuard
+        if (Bukkit.getPluginManager().getPlugin("WorldGuard") != null && Settings.isWorldGuardMoveCheckEnabled()) {
             getServer().getPluginManager().registerEvents(new WGListener(), this);
         }
     }
@@ -107,11 +138,16 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        // Plugin shutdown logic
         disable = true;
         for (Player player : Bukkit.getOnlinePlayers()) {
-            Database.save(player);
+            CosmeticUser user = CosmeticUsers.getUser(player);
+            if (user == null) continue;
+            if (user.getUserEmoteManager().isPlayingEmote()) {
+                player.setInvisible(false);
+            }
+            Database.save(user);
         }
-        // Plugin shutdown logic
     }
 
     public static HMCCosmeticsPlugin getInstance() {
@@ -173,8 +209,8 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
             throw new RuntimeException(e);
         }
 
-        // ItemHooks
-        ItemHooks.setup();
+        // Misc Hooks setup (like items)
+        Hooks.setup();
 
         // Cosmetics setup
         Cosmetics.setup();
@@ -205,6 +241,24 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
             }
         }
 
+        File emoteFolder = new File(getInstance().getDataFolder().getPath() + "/emotes/");
+        if (emoteFolder.exists()) {
+            PlayerAnimator.api.getAnimationManager().clearRegistry();
+            File[] emotesFiles = emoteFolder.listFiles();
+            for (File emoteFile : emotesFiles) {
+                if (!emoteFile.getName().contains("bbmodel")) continue;
+                String animationName = FilenameUtils.removeExtension(emoteFile.getName());
+                PlayerAnimator.api.getAnimationManager().importAnimations(animationName, emoteFile);
+                MessagesUtil.sendDebugMessages("Added '" + animationName + "' to Player Animator ");
+            }
+
+            /*
+            for (Map.Entry<String, AnimationPack> packEntry : PlayerAnimator.api.getAnimationManager().getRegistry().entrySet()) {
+                Set<String> animationNames = packEntry.getValue().getAnimations().keySet().stream().map(animation -> packEntry.getKey().replace(":", ".") + "." + animation).collect(Collectors.toSet());
+            }
+             */
+        }
+
         getInstance().getLogger().info("Successfully Enabled HMCCosmetics");
         getInstance().getLogger().info(Cosmetics.values().size() + " Cosmetics Successfully Setup");
         getInstance().getLogger().info(Menus.getMenuNames().size() + " Menus Successfully Setup");
@@ -228,5 +282,15 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
         } catch (ConfigurateException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static boolean hasModelEngine() {
+        return hasModelEngine;
+    }
+    public static boolean isOnLatestVersion() {
+        return onLatestVersion;
+    }
+    public static String getLatestVersion() {
+        return latestVersion;
     }
 }

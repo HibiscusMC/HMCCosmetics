@@ -6,7 +6,7 @@ import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticArmorType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBackpackType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticMainhandType;
-import com.hibiscusmc.hmccosmetics.entities.BalloonEntity;
+import com.hibiscusmc.hmccosmetics.user.manager.UserBalloonManager;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.InventoryUtils;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
@@ -64,9 +64,15 @@ public class NMSHandler implements com.hibiscusmc.hmccosmetics.nms.NMSHandler {
     }
 
     @Override
-    public org.bukkit.entity.Entity getInvisibleArmorstand(Location loc) {
-        InvisibleArmorstand invisibleArmorstand = new InvisibleArmorstand(loc);
-        return invisibleArmorstand.getBukkitEntity();
+    public org.bukkit.entity.Entity getHMCArmorStand(Location loc) {
+        HMCArmorStand hmcArmorStand = new HMCArmorStand(loc);
+        return hmcArmorStand.getBukkitEntity();
+    }
+
+    @Override
+    public org.bukkit.entity.Entity spawnHMCParticleCloud(Location location) {
+        HMCParticleCloud hmcParticleCloud = new HMCParticleCloud(location);
+        return hmcParticleCloud.getBukkitEntity();
     }
 
     @Override
@@ -76,7 +82,7 @@ public class NMSHandler implements com.hibiscusmc.hmccosmetics.nms.NMSHandler {
 
     @Override
     public org.bukkit.entity.Entity spawnBackpack(CosmeticUser user, CosmeticBackpackType cosmeticBackpackType) {
-        InvisibleArmorstand invisibleArmorstand = new InvisibleArmorstand(user.getPlayer().getLocation());
+        HMCArmorStand invisibleArmorstand = new HMCArmorStand(user.getPlayer().getLocation());
 
         ItemStack item = user.getUserCosmeticItem(cosmeticBackpackType);
 
@@ -94,22 +100,22 @@ public class NMSHandler implements com.hibiscusmc.hmccosmetics.nms.NMSHandler {
 
 
     @Override
-    public BalloonEntity spawnBalloon(CosmeticUser user, CosmeticBalloonType cosmeticBalloonType) {
+    public UserBalloonManager spawnBalloon(CosmeticUser user, CosmeticBalloonType cosmeticBalloonType) {
         Player player = user.getPlayer();
         Location newLoc = player.getLocation().clone().add(Settings.getBalloonOffset());
 
-        BalloonEntity balloonEntity1 = new BalloonEntity(user.getPlayer().getLocation());
+        UserBalloonManager userBalloonManager1 = new UserBalloonManager(user.getPlayer().getLocation());
         List<Player> sentTo = PlayerUtils.getNearbyPlayers(player.getLocation());
-        balloonEntity1.getModelEntity().teleport(user.getPlayer().getLocation().add(Settings.getBalloonOffset()));
+        userBalloonManager1.getModelEntity().teleport(user.getPlayer().getLocation().add(Settings.getBalloonOffset()));
 
-        balloonEntity1.spawnModel(cosmeticBalloonType, user.getCosmeticColor(cosmeticBalloonType.getSlot()));
-        balloonEntity1.addPlayerToModel(user, cosmeticBalloonType, user.getCosmeticColor(cosmeticBalloonType.getSlot()));
+        userBalloonManager1.spawnModel(cosmeticBalloonType, user.getCosmeticColor(cosmeticBalloonType.getSlot()));
+        userBalloonManager1.addPlayerToModel(user, cosmeticBalloonType, user.getCosmeticColor(cosmeticBalloonType.getSlot()));
 
-        PacketManager.sendEntitySpawnPacket(newLoc, balloonEntity1.getPufferfishBalloonId(), EntityType.PUFFERFISH, balloonEntity1.getPufferfishBalloonUniqueId(), sentTo);
-        PacketManager.sendInvisibilityPacket(balloonEntity1.getPufferfishBalloonId(), sentTo);
-        PacketManager.sendLeashPacket(balloonEntity1.getPufferfishBalloonId(), player.getEntityId(), sentTo);
+        PacketManager.sendEntitySpawnPacket(newLoc, userBalloonManager1.getPufferfishBalloonId(), EntityType.PUFFERFISH, userBalloonManager1.getPufferfishBalloonUniqueId(), sentTo);
+        PacketManager.sendInvisibilityPacket(userBalloonManager1.getPufferfishBalloonId(), sentTo);
+        userBalloonManager1.sendLeashPacket(player.getEntityId());
 
-        return balloonEntity1;
+        return userBalloonManager1;
     }
 
     @Override

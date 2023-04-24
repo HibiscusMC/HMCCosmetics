@@ -5,6 +5,7 @@ import com.hibiscusmc.hmccosmetics.config.DatabaseSettings;
 import com.hibiscusmc.hmccosmetics.database.Database;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
+import com.hibiscusmc.hmccosmetics.user.manager.UserEmoteManager;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -13,11 +14,24 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.jetbrains.annotations.NotNull;
 
 public class PlayerConnectionListener implements Listener {
 
     @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
+    public void onPlayerJoin(@NotNull PlayerJoinEvent event) {
+        if (event.getPlayer().isOp() || event.getPlayer().hasPermission("hmccosmetics.notifyupdate")) {
+            if (!HMCCosmeticsPlugin.getLatestVersion().equalsIgnoreCase(HMCCosmeticsPlugin.getInstance().getDescription().getVersion()) && HMCCosmeticsPlugin.getLatestVersion() != null)
+                MessagesUtil.sendMessageNoKey(
+                        event.getPlayer(),
+                        "<br>" +
+                                "<GRAY>There is a new version of <light_purple><Bold>HMCCosmetics<reset><gray> available!<br>" +
+                                "<GRAY>Current version: <red>" + HMCCosmeticsPlugin.getInstance().getDescription().getVersion() + " <GRAY>| Latest version: <light_purple>" + HMCCosmeticsPlugin.getLatestVersion() + "<br>" +
+                                "<GRAY>Download it on <gold><click:OPEN_URL:'https://www.spigotmc.org/resources/100107/'>Spigot<reset> <gray>or <gold><click:OPEN_URL:'https://polymart.org/resource/1879'>Polymart<reset><gray>!" +
+                                "<br>"
+                );
+        }
+
         Runnable run = () -> {
             CosmeticUser user = Database.get(event.getPlayer().getUniqueId());
             CosmeticUsers.addUser(user);
@@ -34,7 +48,7 @@ public class PlayerConnectionListener implements Listener {
     }
 
     @EventHandler
-    public void onPlayerQuit(PlayerQuitEvent event) {
+    public void onPlayerQuit(@NotNull PlayerQuitEvent event) {
         CosmeticUser user = CosmeticUsers.getUser(event.getPlayer());
         if (user == null) { // Remove any passengers if a user failed to initialize. Bugs can cause this to happen
             if (!event.getPlayer().getPassengers().isEmpty()) {
@@ -44,8 +58,13 @@ public class PlayerConnectionListener implements Listener {
                     }
                 }
             }
+            return;
         }
         if (user.isInWardrobe()) user.leaveWardrobe();
+        if (user.getUserEmoteManager().isPlayingEmote()) {
+            user.getUserEmoteManager().stopEmote(UserEmoteManager.StopEmoteReason.CONNECTION);
+            event.getPlayer().setInvisible(false);
+        }
         Database.save(user);
         user.destroy();
         CosmeticUsers.removeUser(user.getUniqueId());

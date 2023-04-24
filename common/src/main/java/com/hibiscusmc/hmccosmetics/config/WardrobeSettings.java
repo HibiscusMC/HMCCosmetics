@@ -6,6 +6,7 @@ import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.misc.Utils;
 import net.kyori.adventure.bossbar.BossBar;
 import org.apache.commons.lang3.EnumUtils;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
@@ -29,6 +30,9 @@ public class WardrobeSettings {
     private static final String LEAVE_LOCATION_PATH = "leave-location";
     private static final String EQUIP_PUMPKIN_WARDROBE = "equip-pumpkin";
     private static final String RETURN_LAST_LOCATION = "return-last-location";
+    private static final String GAMEMODE_OPTIONS_PATH = "gamemode-options";
+    private static final String FORCE_EXIT_GAMEMODE_PATH = "exit-gamemode-enabled";
+    private static final String EXIT_GAMEMODE_PATH = "exit-gamemode";
     private static final String BOSSBAR_PATH = "bossbar";
     private static final String BOSSBAR_ENABLE_PATH = "enabled";
     private static final String BOSSBAR_TEXT_PATH = "text";
@@ -57,6 +61,8 @@ public class WardrobeSettings {
     private static boolean equipPumpkin;
     private static boolean returnLastLocation;
     private static boolean enabledBossbar;
+    private static boolean forceExitGamemode;
+    private static GameMode exitGamemode;
     private static Location wardrobeLocation;
     private static Location viewerLocation;
     private static Location leaveLocation;
@@ -84,6 +90,10 @@ public class WardrobeSettings {
         applyCosmeticsOnClose = source.node(APPLY_COSMETICS_ON_CLOSE).getBoolean();
         equipPumpkin = source.node(EQUIP_PUMPKIN_WARDROBE).getBoolean();
         returnLastLocation = source.node(RETURN_LAST_LOCATION).getBoolean(false);
+
+        ConfigurationNode gamemodeNode = source.node(GAMEMODE_OPTIONS_PATH);
+        forceExitGamemode = gamemodeNode.node(FORCE_EXIT_GAMEMODE_PATH).getBoolean(false);
+        exitGamemode = GameMode.valueOf(gamemodeNode.node(EXIT_GAMEMODE_PATH).getString("SURVIVAL"));
 
         ConfigurationNode bossBarNode = source.node(BOSSBAR_PATH);
         enabledBossbar = bossBarNode.node(BOSSBAR_ENABLE_PATH).getBoolean(false);
@@ -182,7 +192,7 @@ public class WardrobeSettings {
 
     public static boolean inDistanceOfStatic(final Location location) {
         if (wardrobeLocation == null) return false;
-        if (staticRadius == -1) return false;
+        if (staticRadius == -1) return true;
         if (!wardrobeLocation.getWorld().equals(location.getWorld())) return false;
         return wardrobeLocation.distanceSquared(location) <= staticRadius * staticRadius;
     }
@@ -225,6 +235,14 @@ public class WardrobeSettings {
     }
     public static int getTransitionFadeOut() {
         return transitionFadeOut;
+    }
+
+    public static boolean isForceExitGamemode() {
+        return forceExitGamemode;
+    }
+
+    public static GameMode getExitGamemode() {
+        return exitGamemode;
     }
 
     public static void setWardrobeLocation(Location newLocation) {

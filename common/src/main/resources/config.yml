@@ -21,6 +21,21 @@ cosmetic-settings:
   # Ticking periods is something that ensures new players near a player get the packets to actually apply to the user.
 
   unapply-on-death: false # If when a player dies, their cosmetics should be unapplied. If this is true, use hmccosmetics.unapplydeath.bypass to bypass
+  force-permission-join: true # Checks a player permission if they can have a cosmetic when they join the server.
+
+  emote-distance: -3 # This shows how far away the camera should be while a player is doing an emote. Negative is behind player.
+  emote-block-check: true # If the server should check if the block is open where the camera is placed (prevents players viewing through blocks)
+  emote-damage-leave: true # If the player should leave the emote when they take damage
+  emote-invincible: false # If the player should not take damage while doing an emote
+
+  helmet-add-enchantments: false # If the plugin should keep enchants on helmets. This is useful as some enchantments are client side only.
+  chest-add-enchantments: false # If the plugin should keep enchants on chestplate. This is useful as some enchantments are client side only.
+  leggings-add-enchantments: false # If the plugin should keep enchants on leggings. This is useful as some enchantments are client side only.
+  boots-add-enchantments: false # If the plugin should keep enchants on boots. This is useful as some enchantments are client side only.
+
+  # This attempts to destroy cosmetics that get loose in the wild, such as through a player entering creative mode.
+  # Most servers who don't use creative mode and have properly set up the plugin should have no need for this and can leave it disabled.
+  destroy-loose-cosmetics: false
 
   # view distance in blocks that other players will see the backpack cosmetic
   # setting this to lower than the server player view distance should fix the
@@ -32,7 +47,20 @@ cosmetic-settings:
     y: 3
     z: 0.5
 dye-menu:
+  # If you use ItemsAdder, set this to "§f:offset_-8::dye_menu:"
+  # If you use Oraxen, set this to "<glyph:neg_shift_8><glyph:dye_menu>"
   title: "§f"
+  input-slot: 19
+  output-slot: 25
+hook-settings:
+  itemsadder:
+    # This causes the plugin to reload itself after any ItemsAdder change. This keeps the plugin fully up to date with IA, but
+    # could cause console spam as HMCCosmetics has to reload itself as well.
+    reload-on-change: false
+  worldguard:
+    # Checks worldguard regions for HMCC flags. If set to false, flags will not work properly.
+    # Requires restart to apply changes.
+    player-move-check: true
 wardrobe:
   # spawn static wardrobe if in this radius of wardrobe-location
   static-radius: 10
@@ -42,6 +70,11 @@ wardrobe:
   equip-pumpkin: false
   # Rather than having a set exit location, this will send the player back to where they entered the wardrobe. Not recommended for WG regions
   return-last-location: false
+
+  gamemode-options:
+    exit-gamemode-enabled: false # Setting this to false will set the gamemode the player came in as. True sets to exit-gamemode gamemode
+    exit-gamemode: "SURVIVAL" # Only activates if force-exit-gamemode is true, find gamemodes here: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/GameMode.html
+
   # Bossbar that shows when a player is in a wardrobe.
   bossbar:
     enabled: false
@@ -51,6 +84,8 @@ wardrobe:
     color: BLUE
   transition:
     enabled: true
+    # If you use ItemsAdder, set this to "<black>%img_title%
+    # If you use Oraxen, set this to "<black><glyph:title>"
     text: "<black>"
     delay: 40
     title-fade-in: 1000 # milliseconds

@@ -26,11 +26,12 @@ public class WrapperPlayServerPlayerInfo extends AbstractPacket {
     }
 
     public void setAction(PlayerInfoAction value) {
-        if (!NMSHandlers.getVersion().contains("v1_19_R2")) {
+        if (NMSHandlers.getVersion().contains("v1_17_R1") || NMSHandlers.getVersion().contains("v1_18_R2") || NMSHandlers.getVersion().contains("v1_19_R1")) {
             handle.getPlayerInfoAction().write(0, value);
-        } else {
-            handle.getPlayerInfoActions().write(0, Set.of(value));
+            return;
         }
+        // New way of handling it 1.19.3+
+        handle.getPlayerInfoActions().write(0, Set.of(value));
     }
 
     public List<PlayerInfoData> getData() {

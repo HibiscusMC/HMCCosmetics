@@ -4,6 +4,7 @@ import com.hibiscusmc.hmccosmetics.gui.action.Action;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.logging.Level;
 
@@ -15,7 +16,7 @@ public class ActionSound extends Action {
     }
 
     @Override
-    public void run(CosmeticUser user, String raw) {
+    public void run(@NotNull CosmeticUser user, @NotNull String raw) {
         Player player = user.getPlayer();
         String[] processedString = raw.split(" ");
 
@@ -24,11 +25,11 @@ public class ActionSound extends Action {
         float pitch = 1;
 
         if (processedString.length > 2) {
-            volume = Float.valueOf(processedString[1]);
-            pitch = Float.valueOf(processedString[2]);
+            volume = Float.parseFloat(processedString[1]);
+            pitch = Float.parseFloat(processedString[2]);
         }
 
-        MessagesUtil.sendDebugMessages("Attempting to play " + soundName, Level.WARNING);
+        MessagesUtil.sendDebugMessages("Attempting to play " + soundName, Level.INFO);
 
         player.playSound(player.getLocation(), soundName, volume, pitch);
     }

@@ -12,11 +12,14 @@ import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.jetbrains.annotations.NotNull;
 
+/**
+ * Contains {@link com.sk89q.worldguard.WorldGuard WorldGuard} related event listeners
+ */
 public class WGListener implements Listener {
-
     @EventHandler
-    public void onPlayerMove(PlayerMoveEvent event) {
+    public void onPlayerMove(@NotNull PlayerMoveEvent event) {
         CosmeticUser user = CosmeticUsers.getUser(event.getPlayer());
         if (user == null) return;
         Location location = event.getPlayer().getLocation();
@@ -24,16 +27,19 @@ public class WGListener implements Listener {
         RegionContainer region = WorldGuard.getInstance().getPlatform().getRegionContainer();
         RegionQuery query = region.createQuery();
         ApplicableRegionSet set = query.getApplicableRegions(loc);
-        // TODO: Add more cosmetics
-        if (set.getRegions().size() == 0) {
-            user.showCosmetics();
+        if (user.getHidden()) {
+            if (user.getHiddenReason() == CosmeticUser.HiddenReason.WORLDGUARD && set.getRegions().size() == 0) {
+                user.showCosmetics();
+            }
         }
         for (ProtectedRegion protectedRegion : set.getRegions()) {
             if (protectedRegion.getFlags().containsKey(WGHook.getCosmeticEnableFlag())) {
+                if (protectedRegion.getFlags().get(WGHook.getCosmeticEnableFlag()).toString().equalsIgnoreCase("ALLOW")) return;
                 user.hideCosmetics(CosmeticUser.HiddenReason.WORLDGUARD);
                 return;
             }
             if (protectedRegion.getFlags().containsKey(WGHook.getCosmeticWardrobeFlag())) {
+                if (!protectedRegion.getFlags().get(WGHook.getCosmeticWardrobeFlag()).toString().equalsIgnoreCase("ALLOW")) return;
                 user.enterWardrobe();
             }
         }

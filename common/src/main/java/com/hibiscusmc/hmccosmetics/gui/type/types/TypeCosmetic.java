@@ -7,16 +7,19 @@ import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticArmorType;
 import com.hibiscusmc.hmccosmetics.gui.action.Actions;
 import com.hibiscusmc.hmccosmetics.gui.special.DyeMenu;
 import com.hibiscusmc.hmccosmetics.gui.type.Type;
-import com.hibiscusmc.hmccosmetics.hooks.PAPIHook;
+import com.hibiscusmc.hmccosmetics.hooks.Hooks;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.misc.StringUtils;
 import com.hibiscusmc.hmccosmetics.util.misc.Utils;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 
@@ -31,17 +34,18 @@ public class TypeCosmetic extends Type {
     }
 
     @Override
-    public void run(CosmeticUser user, ConfigurationNode config, ClickType clickType) {
+    public void run(CosmeticUser user, @NotNull ConfigurationNode config, ClickType clickType) {
         if (config.node("cosmetic").virtual()) return;
         String cosmeticName = config.node("cosmetic").getString();
         Cosmetic cosmetic = Cosmetics.getCosmetic(cosmeticName);
+        Player player = user.getPlayer();
         if (cosmetic == null) {
-            MessagesUtil.sendMessage(user.getPlayer(), "invalid-cosmetic");
+            MessagesUtil.sendMessage(player, "invalid-cosmetic");
             return;
         }
 
         if (!user.canEquipCosmetic(cosmetic)) {
-            MessagesUtil.sendMessage(user.getPlayer(), "no-cosmetic-permission");
+            MessagesUtil.sendMessage(player, "no-cosmetic-permission");
             return;
         }
 
@@ -92,7 +96,7 @@ public class TypeCosmetic extends Type {
     }
 
     @Override
-    public ItemMeta setLore(CosmeticUser user, ConfigurationNode config, ItemMeta itemMeta) {
+    public ItemMeta setLore(CosmeticUser user, @NotNull ConfigurationNode config, ItemMeta itemMeta) {
         List<String> processedLore = new ArrayList<>();
 
         if (config.node("cosmetic").virtual()) return processLoreLines(user, itemMeta);;
@@ -107,23 +111,31 @@ public class TypeCosmetic extends Type {
         } else {
             ConfigurationNode itemConfig = config.node("item");
             if (itemConfig.virtual()) return itemMeta;
-            if (itemConfig.node("locked-name").virtual() && itemConfig.node("locked-name").virtual()) {
+            if (itemConfig.node("locked-name").virtual() && itemConfig.node("locked-lore").virtual()) {
                 return processLoreLines(user, itemMeta);
             }
             try {
-                itemMeta.getLore().clear();
+                List<String> lockedLore = itemMeta.getLore();
+                String lockedName = itemMeta.getDisplayName();
 
-                List<String> lockedLore = Utils.replaceIfNull(itemConfig.node("locked-lore").getList(String.class),
-                                new ArrayList<String>()).
-                        stream().map(StringUtils::parseStringToString).collect(Collectors.toList());
+                if (!itemConfig.node("locked-lore").virtual()) {
+                    lockedLore = Utils.replaceIfNull(itemConfig.node("locked-lore").getList(String.class),
+                                    new ArrayList<String>()).
+                            stream().map(StringUtils::parseStringToString).collect(Collectors.toList());
+                }
+                if (!itemConfig.node("locked-name").virtual()) {
+                    lockedName = StringUtils.parseStringToString(Utils.replaceIfNull(itemConfig.node("locked-name").getString(), ""));
+                }
 
-                if (PAPIHook.isPAPIEnabled()) {
-                    String lockedName = StringUtils.parseStringToString(Utils.replaceIfNull(itemConfig.node("locked-name").getString(), ""));
-                    itemMeta.setDisplayName(PlaceholderAPI.setPlaceholders(user.getPlayer(), lockedName));
-                    if (itemMeta.hasLore()) {
-                        for (String loreLine : lockedLore) {
-                            processedLore.add(PlaceholderAPI.setPlaceholders(user.getPlayer(), loreLine));
-                        }
+                if (Hooks.isActiveHook("PlaceHolderAPI")) {
+                    lockedName = PlaceholderAPI.setPlaceholders(user.getPlayer(), lockedName);
+                }
+                itemMeta.setDisplayName(lockedName);
+                if (itemMeta.hasLore()) {
+                    itemMeta.getLore().clear();
+                    for (String loreLine : lockedLore) {
+                        if (Hooks.isActiveHook("PlaceHolderAPI")) loreLine = PlaceholderAPI.setPlaceholders(user.getPlayer(), loreLine);
+                        processedLore.add(loreLine);
                     }
                 }
             } catch (Exception e) {
@@ -135,14 +147,17 @@ public class TypeCosmetic extends Type {
         return itemMeta;
     }
 
-    private ItemMeta processLoreLines(CosmeticUser user, ItemMeta itemMeta) {
+    @Contract("_, _ -> param2")
+    @NotNull
+    @SuppressWarnings("Duplicates")
+    private ItemMeta processLoreLines(CosmeticUser user, @NotNull ItemMeta itemMeta) {
         List<String> processedLore = new ArrayList<>();
 
-        if (PAPIHook.isPAPIEnabled()) {
-            if (itemMeta.hasLore()) {
-                for (String loreLine : itemMeta.getLore()) {
-                    processedLore.add(PlaceholderAPI.setPlaceholders(user.getPlayer(), loreLine));
-                }
+        if (itemMeta.hasLore()) {
+            for (String loreLine : itemMeta.getLore()) {
+                if (Hooks.isActiveHook("PlaceholderAPI"))
+                    loreLine = PlaceholderAPI.setPlaceholders(user.getPlayer(), loreLine);
+                processedLore.add(loreLine);
             }
         }
 

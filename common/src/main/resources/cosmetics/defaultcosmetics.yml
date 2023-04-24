@@ -87,9 +87,46 @@ boots:
 kite:
   slot: BALLOON
   permission: "hmccosmetics.kite"
-  model: kite
+  model: kite # This is the ModelEngine model it will use. If you do not have ModelEngine installed, it will default to the item.
   item:
     material: PAPER
     model-data: 7
     name: "<blue>Kite"
+    amount: 1
+handstand:
+  slot: EMOTE
+  animation: handstand
+meditate:
+  slot: EMOTE
+  animation: meditate
+thinking:
+  slot: EMOTE
+  animation: thinking
+explorer_backpack:
+  slot: BACKPACK
+  permission: "hmccosmetics.explorer_backpack"
+  dyeable: true
+  item:
+    material: LEATHER_HORSE_ARMOR
+    model-data: 3
+    name: "<white>Explorer's Backpack"
+    amount: 1
+garbage_truck_balloon:
+  slot: BALLOON
+  permission: "hmccosmetics.garbage_truck_balloon"
+  model: garbage_truck_balloon
+  item:
+    material: PAPER
+    model-data: 14
+    name: "<green>Garbage Truck Balloon"
+    amount: 1
+earth_day_grabber:
+  slot: OFFHAND
+  dyeable: true
+  permission: "hmccosmetics.earth_day_grabber"
+  model: earth_day_grabber
+  item:
+    material: LEATHER_HORSE_ARMOR
+    model-data: 4
+    name: "<green>Earth Day Grabber"
     amount: 1

@@ -1,12 +1,13 @@
 package com.hibiscusmc.hmccosmetics.gui.action;
 
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
+import org.jetbrains.annotations.NotNull;
 
-public class Action {
+public abstract class Action {
 
-    private String id;
+    private final String id;
 
-    public Action(String id) {
+    public Action(@NotNull String id) {
         this.id = id.toUpperCase();
         Actions.addAction(this);
     }
@@ -15,7 +16,5 @@ public class Action {
         return this.id;
     }
 
-    public void run(CosmeticUser user, String raw) {
-        // Override
-    }
+    public abstract void run(CosmeticUser user, String raw);
 }

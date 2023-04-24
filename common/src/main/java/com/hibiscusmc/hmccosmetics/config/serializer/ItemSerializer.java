@@ -1,10 +1,13 @@
 package com.hibiscusmc.hmccosmetics.config.serializer;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
-import com.hibiscusmc.hmccosmetics.hooks.items.ItemHooks;
+import com.hibiscusmc.hmccosmetics.hooks.Hooks;
+import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
+import com.hibiscusmc.hmccosmetics.util.ServerUtils;
 import com.hibiscusmc.hmccosmetics.util.builder.ColorBuilder;
 import com.hibiscusmc.hmccosmetics.util.misc.StringUtils;
 import com.hibiscusmc.hmccosmetics.util.misc.Utils;
+import org.apache.commons.lang3.EnumUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -71,7 +74,7 @@ public class ItemSerializer implements TypeSerializer<ItemStack> {
 
         String material = materialNode.getString();
 
-        ItemStack item = ItemHooks.getItem(material);
+        ItemStack item = Hooks.getItem(material);
         if (item == null) {
             HMCCosmeticsPlugin.getInstance().getLogger().severe("Invalid Material -> " + material);
             return new ItemStack(Material.AIR);
@@ -80,15 +83,16 @@ public class ItemSerializer implements TypeSerializer<ItemStack> {
 
         ItemMeta itemMeta = item.getItemMeta();
         if (itemMeta == null) return item;
-        if (!nameNode.virtual()) itemMeta.setDisplayName(StringUtils.parseStringToString(Utils.replaceIfNull(nameNode.getString(), "")));
+        if (!nameNode.virtual())
+            itemMeta.setDisplayName(StringUtils.parseStringToString(Utils.replaceIfNull(nameNode.getString(), "")));
         if (!unbreakableNode.virtual()) itemMeta.setUnbreakable(unbreakableNode.getBoolean());
         if (!glowingNode.virtual()) {
             itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
             itemMeta.addEnchant(Enchantment.LUCK, 1, true);
         }
         if (!loreNode.virtual()) itemMeta.setLore(Utils.replaceIfNull(loreNode.getList(String.class),
-                            new ArrayList<String>()).
-                    stream().map(StringUtils::parseStringToString).collect(Collectors.toList()));
+                        new ArrayList<String>()).
+                stream().map(StringUtils::parseStringToString).collect(Collectors.toList()));
         if (!modelDataNode.virtual()) itemMeta.setCustomModelData(modelDataNode.getInt());
 
         if (!nbtNode.virtual()) {
@@ -104,11 +108,16 @@ public class ItemSerializer implements TypeSerializer<ItemStack> {
             }
         }
 
-        if (!itemFlagsNode.virtual()) {
-            for (ConfigurationNode flagNode : itemFlagsNode.childrenMap().values()) {
-                if (ItemFlag.valueOf(flagNode.key().toString()) == null) continue;
-                itemMeta.addItemFlags(ItemFlag.valueOf(flagNode.key().toString()));
+        try {
+            if (!itemFlagsNode.virtual()) {
+                for (String itemFlag : itemFlagsNode.getList(String.class)) {
+                    if (!EnumUtils.isValidEnum(ItemFlag.class, itemFlag)) continue;
+                    MessagesUtil.sendDebugMessages("Added " + itemFlag + " to the item!");
+                    itemMeta.addItemFlags(ItemFlag.valueOf(itemFlag));
+                }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         if (item.getType() == Material.PLAYER_HEAD) {
@@ -126,17 +135,17 @@ public class ItemSerializer implements TypeSerializer<ItemStack> {
 
         if (!colorNode.virtual()) {
             if (ColorBuilder.canBeColored(item.getType())) {
-                itemMeta = ColorBuilder.color(itemMeta, Color.fromRGB(redNode.getInt(0), greenNode.getInt(0), blueNode.getInt(0)));
+                if (!redNode.virtual()) {
+                    itemMeta = ColorBuilder.color(itemMeta, Color.fromRGB(redNode.getInt(0), greenNode.getInt(0), blueNode.getInt(0)));
+                } else {
+                    itemMeta = ColorBuilder.color(itemMeta, ServerUtils.hex2Rgb(colorNode.getString("#FFFFFF")));
+                }
             }
         }
-
-        NamespacedKey key = new NamespacedKey(HMCCosmeticsPlugin.getInstance(), source.key().toString());
-        itemMeta.getPersistentDataContainer().set(key, PersistentDataType.STRING, source.key().toString());
 
         item.setItemMeta(itemMeta);
         return item;
     }
-
     @Override
     public void serialize(final Type type, @Nullable final ItemStack obj, final ConfigurationNode node) throws SerializationException {
 

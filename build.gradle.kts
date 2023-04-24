@@ -2,14 +2,13 @@ import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
 
 plugins {
     id("java")
-    id("maven-publish")
     id("com.github.johnrengelman.shadow") version "7.1.2"
     id("xyz.jpenilla.run-paper") version "2.0.0"
     id("net.minecrell.plugin-yml.bukkit") version "0.5.2"
 }
 
 group = "com.hibiscusmc"
-version = "2.1.0"
+version = "2.2.8"
 
 allprojects {
     apply(plugin = "java")
@@ -57,21 +56,30 @@ allprojects {
 
         // ParticleHelper
         maven("https://repo.bytecode.space/repository/maven-public/")
+
+        // PlayerAnimator
+        maven("https://mvn.lumine.io/repository/maven/")
+
+        // md-5 Repo
+        maven("https://repo.md-5.net/content/groups/public/")
     }
 
     dependencies {
-
+        compileOnly(fileTree("${project.rootDir}/lib") { include("*.jar") })
         compileOnly("com.mojang:authlib:1.5.25")
-        compileOnly("org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT")
+        compileOnly("org.spigotmc:spigot-api:1.17.1-R0.1-SNAPSHOT")
         compileOnly("org.jetbrains:annotations:23.0.0")
         compileOnly("com.comphenix.protocol:ProtocolLib:5.0.0-SNAPSHOT")
         compileOnly("me.clip:placeholderapi:2.11.1")
         compileOnly("com.ticxo.modelengine:api:R3.0.1")
         compileOnly("com.github.oraxen:oraxen:-SNAPSHOT")
         compileOnly("com.github.LoneDev6:API-ItemsAdder:3.2.5")
+        compileOnly("com.mineinabyss:idofront:0.12.111")
+        compileOnly("com.mineinabyss:geary-papermc-core:0.19.113")
+        compileOnly("com.mineinabyss:looty:0.8.67")
         compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.1.0-SNAPSHOT")
         compileOnly("it.unimi.dsi:fastutil:8.5.11")
-
+        compileOnly("com.github.LeonMangler:SuperVanish:6.2.6-4")
     }
 }
 
@@ -81,16 +89,18 @@ dependencies {
     implementation(project(path = ":v1_18_R2", configuration = "reobf"))
     implementation(project(path = ":v1_19_R1", configuration = "reobf"))
     implementation(project(path = ":v1_19_R2", configuration = "reobf"))
+    implementation(project(path = ":v1_19_R3", configuration = "reobf"))
 
     //compileOnly("com.github.Fisher2911:FisherLib:master-SNAPSHOT")
     implementation("net.kyori:adventure-api:4.11.0")
-    implementation ("net.kyori:adventure-text-minimessage:4.11.0")
+    implementation("net.kyori:adventure-text-minimessage:4.11.0")
     implementation("net.kyori:adventure-platform-bukkit:4.1.2")
     implementation("dev.triumphteam:triumph-gui:3.1.3")
     implementation("org.spongepowered:configurate-yaml:4.1.2")
     implementation("org.bstats:bstats-bukkit:3.0.0")
     implementation("com.jeff_media:SpigotUpdateChecker:3.0.0")
     implementation("com.owen1212055:particlehelper:1.0.0-SNAPSHOT")
+    implementation("com.ticxo.playeranimator:PlayerAnimator:R1.2.5")
 }
 
 tasks {
@@ -110,7 +120,7 @@ tasks {
     }
 
     runServer {
-        minecraftVersion("1.19.2")
+        minecraftVersion("1.19.4")
     }
 
     shadowJar {
@@ -118,6 +128,7 @@ tasks {
         dependsOn(":v1_18_R2:reobfJar")
         dependsOn(":v1_19_R1:reobfJar")
         dependsOn(":v1_19_R2:reobfJar")
+        dependsOn(":v1_19_R3:reobfJar")
         mergeServiceFiles()
 
         relocate("dev.triumphteam.gui", "com.hisbiscusmc.hmccosmetics.gui")
@@ -128,7 +139,8 @@ tasks {
         relocate("com.zaxxer.hikaricp", "com.hisbiscusmc.hmccosmetics.hikaricp")
         relocate("com.j256.ormlite", "com.hisbiscusmc.hmccosmetics.ormlite")
         relocate("com.jeff_media.updatechecker", "com.hisbiscusmc.hmccosmetics.updatechecker")
-        relocate("com.woen1212055.particlehelper", "com.hisbiscusmc.hmccosmetics.particlehelper")
+        relocate("com.owen1212055.particlehelper", "com.hisbiscusmc.hmccosmetics.particlehelper")
+        relocate("com.ticxo.playeranimator", "com.hisbiscusmc.hmccosmetics.playeranimator")
         archiveFileName.set("HMCCosmeticsRemapped-${project.version}.jar")
 
         dependencies {
@@ -153,10 +165,10 @@ tasks {
 bukkit {
     load = BukkitPluginDescription.PluginLoadOrder.POSTWORLD
     main = "com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin"
-    apiVersion = "1.16"
+    apiVersion = "1.17"
     authors = listOf("LoJoSho")
-    depend = listOf("ProtocolLib", "PlaceholderAPI")
-    softDepend = listOf("ModelEngine", "Oraxen", "ItemsAdder", "HMCColor", "WorldGuard", "MythicMobs")
+    depend = listOf("ProtocolLib")
+    softDepend = listOf("ModelEngine", "Oraxen", "ItemsAdder", "Looty", "HMCColor", "WorldGuard", "MythicMobs", "PlaceholderAPI", "SuperVanish", "PremiumVanish")
     version = "${project.version}"
 
     commands {
@@ -182,6 +194,21 @@ bukkit {
         }
         register("hmccosmetics.cmd.menu") {
             default = BukkitPluginDescription.Permission.Default.TRUE
+        }
+        register("hmccosmetics.emote.shiftrun") {
+            default = BukkitPluginDescription.Permission.Default.TRUE
+        }
+        register("hmccosmetics.cmd.emote") {
+            default = BukkitPluginDescription.Permission.Default.TRUE
+        }
+        register("hmccosmetics.cmd.playemote") {
+            default = BukkitPluginDescription.Permission.Default.OP
+        }
+        register("hmccosmetics.cmd.playemote.other") {
+            default = BukkitPluginDescription.Permission.Default.OP
+        }
+        register("hmccosmetics.cmd.emote.other") {
+            default = BukkitPluginDescription.Permission.Default.OP
         }
         register("hmccosmetics.cmd.setlocation") {
             default = BukkitPluginDescription.Permission.Default.OP
@@ -228,17 +255,4 @@ bukkit {
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(17
     ))
-}
-
-
-publishing {
-    publications {
-        create<MavenPublication>("maven") {
-            groupId = "${project.group}"
-            artifactId = "${project.name}"
-            version = "${project.version}"
-
-            from(components["java"])
-        }
-    }
 }

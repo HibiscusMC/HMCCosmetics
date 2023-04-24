@@ -1,29 +1,28 @@
 package com.hibiscusmc.hmccosmetics.user;
 
+import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.api.*;
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
-import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticArmorType;
-import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBackpackType;
-import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
-import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticMainhandType;
-import com.hibiscusmc.hmccosmetics.entities.BalloonEntity;
+import com.hibiscusmc.hmccosmetics.cosmetic.types.*;
+import com.hibiscusmc.hmccosmetics.user.manager.UserBackpackManager;
+import com.hibiscusmc.hmccosmetics.user.manager.UserBalloonManager;
 import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
+import com.hibiscusmc.hmccosmetics.user.manager.UserEmoteManager;
+import com.hibiscusmc.hmccosmetics.user.manager.UserWardrobeManager;
 import com.hibiscusmc.hmccosmetics.util.InventoryUtils;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.PlayerUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
-import org.bukkit.Bukkit;
-import org.bukkit.Color;
-import org.bukkit.Material;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Entity;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.*;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.*;
@@ -34,29 +33,26 @@ public class CosmeticUser {
     private UUID uniqueId;
     private int taskId;
     private HashMap<CosmeticSlot, Cosmetic> playerCosmetics = new HashMap<>();
-    private Wardrobe wardrobe;
-    private ArmorStand invisibleArmorstand;
-    private BalloonEntity balloonEntity;
+    private UserWardrobeManager userWardrobeManager;
+    private UserBalloonManager userBalloonManager;
+    private UserBackpackManager userBackpackManager;
+    private UserEmoteManager userEmoteManager;
 
     // Cosmetic Settings/Toggles
-    private boolean hideBackpack;
     private boolean hideCosmetics;
     private HiddenReason hiddenReason;
     private HashMap<CosmeticSlot, Color> colors = new HashMap<>();
 
-    public CosmeticUser() {
-        // Empty
-    }
-
     public CosmeticUser(UUID uuid) {
         this.uniqueId = uuid;
+        userEmoteManager = new UserEmoteManager(this);
         tick();
     }
 
     private void tick() {
         // Occasionally updates the entity cosmetics
         Runnable run = () -> {
-            MessagesUtil.sendDebugMessages("tick " + uniqueId, Level.INFO);
+            MessagesUtil.sendDebugMessages("Tick[" + uniqueId + "]", Level.INFO);
             updateCosmetic();
         };
 
@@ -81,19 +77,13 @@ public class CosmeticUser {
         return playerCosmetics.get(slot);
     }
 
+    @Deprecated
     public Collection<Cosmetic> getCosmetic() {
         return playerCosmetics.values();
     }
 
-    public int getArmorstandId() {
-        return invisibleArmorstand.getEntityId();
-    }
-
-    public Entity getBackpackEntity() {
-        return this.invisibleArmorstand;
-    }
-    public BalloonEntity getBalloonEntity() {
-        return this.balloonEntity;
+    public ImmutableCollection<Cosmetic> getCosmetics() {
+        return ImmutableList.copyOf(playerCosmetics.values());
     }
 
     public void addPlayerCosmetic(Cosmetic cosmetic) {
@@ -115,23 +105,16 @@ public class CosmeticUser {
 
         playerCosmetics.put(cosmetic.getSlot(), cosmetic);
         if (color != null) colors.put(cosmetic.getSlot(), color);
-        MessagesUtil.sendDebugMessages("addPlayerCosmetic " + cosmetic.getId());
+        MessagesUtil.sendDebugMessages("addPlayerCosmetic[id=" + cosmetic.getId() + "]");
         if (cosmetic.getSlot() == CosmeticSlot.BACKPACK) {
             CosmeticBackpackType backpackType = (CosmeticBackpackType) cosmetic;
             spawnBackpack(backpackType);
-            MessagesUtil.sendDebugMessages("addPlayerCosmetic spawnBackpack " + cosmetic.getId());
+            MessagesUtil.sendDebugMessages("addPlayerCosmetic[spawnBackpack,id=" + cosmetic.getId() + "]");
         }
         if (cosmetic.getSlot() == CosmeticSlot.BALLOON) {
             CosmeticBalloonType balloonType = (CosmeticBalloonType) cosmetic;
             spawnBalloon(balloonType);
         }
-    }
-    public void toggleCosmetic(Cosmetic cosmetic) {
-        if (hasCosmeticInSlot(cosmetic.getSlot())) {
-            removeCosmeticSlot(cosmetic.getSlot());
-            return;
-        }
-        addPlayerCosmetic(cosmetic);
     }
 
     public void removeCosmetics() {
@@ -156,6 +139,9 @@ public class CosmeticUser {
         if (slot == CosmeticSlot.BALLOON) {
             despawnBalloon();
         }
+        if (slot == CosmeticSlot.EMOTE) {
+
+        }
         colors.remove(slot);
         playerCosmetics.remove(slot);
         removeArmor(slot);
@@ -168,6 +154,10 @@ public class CosmeticUser {
 
     public boolean hasCosmeticInSlot(CosmeticSlot slot) {
         return playerCosmetics.containsKey(slot);
+    }
+
+    public Set<CosmeticSlot> getSlotsWithCosmetics() {
+        return Set.copyOf(playerCosmetics.keySet());
     }
 
     public void updateCosmetic(CosmeticSlot slot) {
@@ -191,6 +181,7 @@ public class CosmeticUser {
     public ItemStack getUserCosmeticItem(Cosmetic cosmetic) {
         ItemStack item = null;
         if (hideCosmetics) {
+            if (cosmetic instanceof CosmeticBackpackType || cosmetic instanceof CosmeticBalloonType) return new ItemStack(Material.AIR);
             return getPlayer().getInventory().getItem(InventoryUtils.getEquipmentSlot(cosmetic.getSlot()));
         }
         if (cosmetic instanceof CosmeticArmorType || cosmetic instanceof CosmeticMainhandType || cosmetic instanceof CosmeticBackpackType) {
@@ -219,13 +210,40 @@ public class CosmeticUser {
                     mapMeta.setColor(color);
                 }
             }
+            itemMeta.getPersistentDataContainer().set(InventoryUtils.getCosmeticKey(), PersistentDataType.STRING, cosmetic.getId());
+            itemMeta.getPersistentDataContainer().set(InventoryUtils.getOwnerKey(), PersistentDataType.STRING, getPlayer().getUniqueId().toString());
+
             item.setItemMeta(itemMeta);
         }
         return item;
     }
 
+    public UserBackpackManager getUserBackpackManager() {
+        return userBackpackManager;
+    }
+
+    public UserBalloonManager getBalloonManager() {
+        return this.userBalloonManager;
+    }
+
+    public UserWardrobeManager getWardrobeManager() {
+        return userWardrobeManager;
+    }
+
+    public UserEmoteManager getUserEmoteManager() {
+        return userEmoteManager;
+    }
+
     public void enterWardrobe() {
-        if (!WardrobeSettings.inDistanceOfStatic(getPlayer().getLocation())) {
+        enterWardrobe(false);
+    }
+
+    public void enterWardrobe(boolean ignoreDistance) {
+        enterWardrobe(ignoreDistance, WardrobeSettings.getLeaveLocation(), WardrobeSettings.getViewerLocation(), WardrobeSettings.getWardrobeLocation());
+    }
+
+    public void enterWardrobe(boolean ignoreDistance, Location exitLocation, Location viewingLocation, Location npcLocation) {
+        if (!WardrobeSettings.inDistanceOfStatic(getPlayer().getLocation()) && !ignoreDistance) {
             MessagesUtil.sendMessage(getPlayer(), "not-near-wardrobe");
             return;
         }
@@ -235,14 +253,10 @@ public class CosmeticUser {
             return;
         }
 
-        if (wardrobe == null) {
-            wardrobe = new Wardrobe(this);
-            wardrobe.start();
+        if (userWardrobeManager == null) {
+            userWardrobeManager = new UserWardrobeManager(this, exitLocation, viewingLocation, npcLocation);
+            userWardrobeManager.start();
         }
-    }
-
-    public Wardrobe getWardrobe() {
-        return wardrobe;
     }
 
     public void leaveWardrobe() {
@@ -251,9 +265,10 @@ public class CosmeticUser {
         if (event.isCancelled()) {
             return;
         }
-        if (!getWardrobe().getWardrobeStatus().equals(Wardrobe.WardrobeStatus.RUNNING)) return;
+        MessagesUtil.sendDebugMessages("Leaving Wardrobe");
+        if (!getWardrobeManager().getWardrobeStatus().equals(UserWardrobeManager.WardrobeStatus.RUNNING)) return;
 
-        getWardrobe().setWardrobeStatus(Wardrobe.WardrobeStatus.STOPPING);
+        getWardrobeManager().setWardrobeStatus(UserWardrobeManager.WardrobeStatus.STOPPING);
 
         if (WardrobeSettings.isEnabledTransition()) {
             MessagesUtil.sendTitle(
@@ -264,16 +279,17 @@ public class CosmeticUser {
                     WardrobeSettings.getTransitionFadeOut()
             );
             Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
-                wardrobe.end();
-                wardrobe = null;
+                userWardrobeManager.end();
+                userWardrobeManager = null;
             }, WardrobeSettings.getTransitionDelay());
         } else {
-
+            userWardrobeManager.end();
+            userWardrobeManager = null;
         }
     }
 
     public boolean isInWardrobe() {
-        if (wardrobe == null) return false;
+        if (userWardrobeManager == null) return false;
         return true;
     }
 
@@ -286,45 +302,41 @@ public class CosmeticUser {
     }
 
     public void spawnBackpack(CosmeticBackpackType cosmeticBackpackType) {
-        MessagesUtil.sendDebugMessages("spawnBackpack Bukkit - Start");
-        Player player = Bukkit.getPlayer(getUniqueId());
+        if (this.userBackpackManager != null) return;
+        this.userBackpackManager = new UserBackpackManager(this, cosmeticBackpackType.getBackpackType());
+        userBackpackManager.spawnBackpack(cosmeticBackpackType);
+    }
 
-        if (this.invisibleArmorstand != null) return;
+    public void despawnBackpack() {
+        if (userBackpackManager == null) return;
+        userBackpackManager.despawnBackpack();
+        userBackpackManager = null;
+    }
 
-        this.invisibleArmorstand = (ArmorStand) NMSHandlers.getHandler().spawnBackpack(this, cosmeticBackpackType);
-
-        MessagesUtil.sendDebugMessages("spawnBackpack Bukkit - Finish");
+    public boolean isBackpackSpawned() {
+        if (this.userBackpackManager == null) return false;
+        return true;
     }
 
     public void spawnBalloon(CosmeticBalloonType cosmeticBalloonType) {
         Player player = Bukkit.getPlayer(getUniqueId());
 
-        if (this.balloonEntity != null) return;
+        if (this.userBalloonManager != null) return;
 
-        this.balloonEntity = NMSHandlers.getHandler().spawnBalloon(this, cosmeticBalloonType);
+        this.userBalloonManager = NMSHandlers.getHandler().spawnBalloon(this, cosmeticBalloonType);
 
         List<Player> viewer = PlayerUtils.getNearbyPlayers(player);
         viewer.add(player);
-
-        PacketManager.sendLeashPacket(getBalloonEntity().getPufferfishBalloonId(), player.getEntityId(), viewer);
     }
 
     public void despawnBalloon() {
-        if (this.balloonEntity == null) return;
+        if (this.userBalloonManager == null) return;
         List<Player> sentTo = PlayerUtils.getNearbyPlayers(getPlayer().getLocation());
 
-        PacketManager.sendEntityDestroyPacket(balloonEntity.getPufferfishBalloonId(), sentTo);
+        PacketManager.sendEntityDestroyPacket(userBalloonManager.getPufferfishBalloonId(), sentTo);
 
-        this.balloonEntity.remove();
-        this.balloonEntity = null;
-    }
-
-    public void despawnBackpack() {
-        Player player = Bukkit.getPlayer(getUniqueId());
-        if (invisibleArmorstand == null) return;
-        invisibleArmorstand.setHealth(0);
-        invisibleArmorstand.remove();
-        this.invisibleArmorstand = null;
+        this.userBalloonManager.remove();
+        this.userBalloonManager = null;
     }
 
     public void respawnBackpack() {
@@ -356,7 +368,7 @@ public class CosmeticUser {
     public List<CosmeticSlot> getDyeableSlots() {
         ArrayList<CosmeticSlot> dyableSlots = new ArrayList();
 
-        for (Cosmetic cosmetic : getCosmetic()) {
+        for (Cosmetic cosmetic : getCosmetics()) {
             if (cosmetic.isDyable()) dyableSlots.add(cosmetic.getSlot());
         }
 
@@ -387,24 +399,6 @@ public class CosmeticUser {
         }
     }
 
-    public void hideBackpack() {
-        if (hideBackpack == true) return;
-        if (hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
-            invisibleArmorstand.getEquipment().clear();
-            hideBackpack = true;
-        }
-    }
-
-    public void showBackpack() {
-        if (hideBackpack == false) return;
-        if (hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
-            CosmeticBackpackType cosmeticBackpackType = (CosmeticBackpackType) getCosmetic(CosmeticSlot.BACKPACK);
-            ItemStack item = getUserCosmeticItem(cosmeticBackpackType);
-            invisibleArmorstand.getEquipment().setHelmet(item);
-            hideBackpack = false;
-        }
-    }
-
     public void hideCosmetics(HiddenReason reason) {
         if (hideCosmetics == true) return;
         PlayerCosmeticHideEvent event = new PlayerCosmeticHideEvent(this, reason);
@@ -416,12 +410,11 @@ public class CosmeticUser {
         hideCosmetics = true;
         hiddenReason = reason;
         if (hasCosmeticInSlot(CosmeticSlot.BALLOON)) {
-            getBalloonEntity().removePlayerFromModel(getPlayer());
-            List<Player> viewer = PlayerUtils.getNearbyPlayers(getPlayer());
-            PacketManager.sendLeashPacket(getBalloonEntity().getPufferfishBalloonId(), -1, viewer);
+            getBalloonManager().removePlayerFromModel(getPlayer());
+            getBalloonManager().sendRemoveLeashPacket();
         }
         if (hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
-            invisibleArmorstand.getEquipment().clear();
+            userBackpackManager.clearItems();
         }
         updateCosmetic();
         MessagesUtil.sendDebugMessages("HideCosmetics");
@@ -440,14 +433,14 @@ public class CosmeticUser {
         hiddenReason = HiddenReason.NONE;
         if (hasCosmeticInSlot(CosmeticSlot.BALLOON)) {
             CosmeticBalloonType balloonType = (CosmeticBalloonType) getCosmetic(CosmeticSlot.BALLOON);
-            getBalloonEntity().addPlayerToModel(this, balloonType);
+            getBalloonManager().addPlayerToModel(this, balloonType);
             List<Player> viewer = PlayerUtils.getNearbyPlayers(getPlayer());
-            PacketManager.sendLeashPacket(getBalloonEntity().getPufferfishBalloonId(), getPlayer().getEntityId(), viewer);
+            PacketManager.sendLeashPacket(getBalloonManager().getPufferfishBalloonId(), getPlayer().getEntityId(), viewer);
         }
         if (hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
             CosmeticBackpackType cosmeticBackpackType = (CosmeticBackpackType) getCosmetic(CosmeticSlot.BACKPACK);
             ItemStack item = getUserCosmeticItem(cosmeticBackpackType);
-            invisibleArmorstand.getEquipment().setHelmet(item);
+            userBackpackManager.setItem(item);
         }
         updateCosmetic();
         MessagesUtil.sendDebugMessages("ShowCosmetics");
@@ -464,6 +457,10 @@ public class CosmeticUser {
     public enum HiddenReason {
         NONE,
         WORLDGUARD,
-        PLUGIN
+        PLUGIN,
+        POTION,
+        ACTION,
+        COMMAND,
+        EMOTE
     }
 }

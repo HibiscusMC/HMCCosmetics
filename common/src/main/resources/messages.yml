@@ -17,6 +17,9 @@ unequip-cosmetic: "%prefix% <gradient:#6D9DC5:#45CDE9>You have unequipped <cosme
 hide-cosmetic: "%prefix% <gradient:#6D9DC5:#45CDE9>Hidden cosmetics"
 show-cosmetic: "%prefix% <gradient:#6D9DC5:#45CDE9>Revealed cosmetics!"
 
+emote-blocked: "%prefix% <red>You can not use your emote here!"
+emote-none: "%prefix% <red>You have no emote equipped!"
+
 invalid-slot: "%prefix% <red>Invalid cosmetic slot!"
 invalid-player: "%prefix% <red>Invalid Player!"
 invalid-menu: "%prefix% <red>Invalid Menu!"
