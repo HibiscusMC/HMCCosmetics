@@ -1,8 +1,12 @@
 name: Feature Request
-description: Create a feature request to help us keep track of all features you want to be added
+description: Request a new feature for HMCCosmetics
 labels: [enhancement]
 assignees: ["LoJoSho"]
 body:
+  - type: markdown
+    attributes:
+      value: |
+        If you are here to ask a question, use our [Discord server](https://discord.gg/pcm8kWrdNt) instead!
   - type: markdown
     attributes:
       value: |
