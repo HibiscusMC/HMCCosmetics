@@ -2,11 +2,11 @@ name: Bug Report
 description: Report an issue with HMCCosmetics
 labels: [bug]
 assignees: ["LoJoSho"]
-- type: markdown
+body:
+  - type: markdown
     attributes:
       value: |
         Thank you for filing an bug report! If you are here to ask a question, use our [Discord server](https://discord.gg/pcm8kWrdNt) instead!
-body:
   - type: input
     id: release_version
     attributes:
