@@ -6,7 +6,7 @@ body:
   - type: markdown
     attributes:
       value: |
-      Please check that the feature you are requesting does not already exist *and/or* hasn't already been requested by someone else.
+        Please check that the feature you are requesting does not already exist *and/or* hasn't already been requested by someone else.
   - type: textarea
     id: description
     attributes:
