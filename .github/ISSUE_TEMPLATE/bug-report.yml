@@ -15,8 +15,6 @@ body:
       description: |
         Insert the version of HMCCosmetics you are using (e.g. `v2.2.8`). Before continuing make sure you have the latest version of HMCCosmetics as
         your issue may have already been resolved.
-      validations:
-        required: true
   - type: input
     id: server_version
     attributes:
@@ -24,15 +22,11 @@ body:
       placeholder: fork-x-x.x.x
       description: |
         Insert the version of your minecraft server in the format `fork-build-version` (e.g. `PAPER-521-1.19.4`, `PURPUR-1838-1.19.2`)
-      validations:
-        required: true
   - type: textarea
     id: description
     attributes:
       label: Issue description
       description: Describe the issue in as much detail as possible (Include any error logs in a code block below)
-      validations:
-        required: true
   - type: textarea
     id: reproduce
     attributes:
@@ -65,5 +59,3 @@ body:
         - Any other relevant version information such as depenedencies
       description: |
         List any necessary or relevant versions here.
-      validations:
-        required: false
