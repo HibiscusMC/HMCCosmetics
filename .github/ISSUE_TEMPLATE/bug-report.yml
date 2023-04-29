@@ -55,7 +55,7 @@ body:
     attributes:
       label: Other Versions
       placeholder: |
-        - ModelEngine R3.0.1 (`\version`)
+        - ModelEngine R3.0.1 (`/version ModelEngine`)
         - Any other relevant version information such as depenedencies
       description: |
         List any necessary or relevant versions here.
