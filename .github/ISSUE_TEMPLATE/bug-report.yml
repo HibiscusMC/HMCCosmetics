@@ -1,62 +1,69 @@
 name: Bug Report
-description: Create a bug report to help us keep track of all bugs that have to be fixed
-title: "[BUG] <name for bug>"
+description: Report an issue with HMCCosmetics
 labels: [bug]
-
-body:
-  - type: checkboxes
-    id: i-have-checked
+assignees: ["LoJoSho"]
+- type: markdown
     attributes:
-      label: I have checked...
-      options:
-        - label: "I am using the latest version of HMCCosmetics"
-          required: true
-        - label: "I am using the latest version of any dependencies"
-          required: true
-        - label: "I have checked if any similar bug reports exist"
-          required: true
+      value: |
+        Thank you for filing an bug report! If you are here to ask a question, use our [Discord server](https://discord.gg/pcm8kWrdNt) instead!
+body:
+  - type: input
+    id: release_version
+    attributes:
+      label: Plugin Version
+      placeholder: vx.x.x
+      description: |
+        Insert the version of HMCCosmetics you are using (e.g. `v2.2.8`). Before continuing make sure you have the latest version of HMCCosmetics as
+        your issue may have already been resolved.
+      validations:
+        required: true
+  - type: input
+    id: server_version
+    attributes:
+      label: Server Version
+      placeholder: fork-x-x.x.x
+      description: |
+        Insert the version of your minecraft server in the format `fork-build-version` (e.g. `PAPER-521-1.19.4`, `PURPUR-1838-1.19.2`)
+      validations:
+        required: true
   - type: textarea
     id: description
     attributes:
-      label: Description
-      description: A full description of the bug
-    validations:
-      required: true
+      label: Issue description
+      description: Describe the issue in as much detail as possible (Include any error logs in a code block below)
+      validations:
+        required: true
   - type: textarea
     id: reproduce
     attributes:
       label: Steps to reproduce
       description: Explain how to reproduce this issue step-by-step, in as much detail as possible.
+      placeholder: |
+        Steps to reproduce:
+        1. Do thing
+        2. Observe behavior
+        3. Post any error logs below
     validations:
       required: true
-  - type: textarea
-    id: hmcc-version
+  - type: dropdown
+    id: priority
     attributes:
-      label: Plugin Version
-      description: Run `version HMCCosmetics` in your console and paste the output
-    validations:
-      required: true
-  - type: textarea
-    id: meg-version
-    attributes:
-      label: ModelEngine Version
-      description: "Run `version ModelEngine` in your console and paste the output. Optional if not using balloons."
-    validations:
-      required: false
-  - type: textarea
-    id: server-version
-    attributes:
-      label: Server Version
-      description: "Run `version` in your console and paste the output."
-    validations:
-      required: true
-  - type: "dropdown"
-    id: "type"
-    attributes:
-      label: "How breaking is the bug?"
+      label: Issue priority
+      description: Please be realistic. If you need to elaborate on your reasoning, please use the issue description field above.
       options:
-        - "Breaking Bug - Plugin unusable"
-        - "Non-breaking Bug - Plugin still usable, but certain features unavailable"
-        - "Minor Bug - Plugin completely functional, but features have non-working aspects"
+        - Low (slightly annoying)
+        - Medium (should be fixed somewhat soon)
+        - High (immediate attention needed)
     validations:
       required: true
+  - type: textarea
+    id: versions
+    attributes:
+      label: Other Versions
+      placeholder: |
+        - ModelEngine R3.0.1 (`\version`)
+        - Any other relevant version information such as depenedencies
+      description: |
+        List any necessary or relevant versions here.
+      validations:
+        required: false
