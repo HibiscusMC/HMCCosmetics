@@ -3,9 +3,9 @@ description: Create a feature request to help us keep track of all features you 
 labels: [enhancement]
 assignees: ["LoJoSho"]
 body:
-- type: markdown
-  attributes:
-    value: |
+  - type: markdown
+    attributes:
+      value: |
       Please check that the feature you are requesting does not already exist *and/or* hasn't already been requested by someone else.
   - type: textarea
     id: description
