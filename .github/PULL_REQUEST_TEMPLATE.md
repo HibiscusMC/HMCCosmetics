@@ -1,11 +1,14 @@
 #### Select the option(s) that best describes this PR:
 - [ ] Major breaking change
 - [ ] Minor change
-- [ ] Bug fix
 - [ ] Feature implementation
-- [ ] Documentation
-- [ ] Cleaning
-- [ ] Refactoring
+- [ ] Bug fix
+- [ ] Chore (Changes that don't fix or add new features *and don't* modify source files)
+- [ ] Refactoring (Changes that dont't fix or add new features *but do* modify source files)
+- [ ] Documentation (Changes to README files and/or JavaDocs)
+- [ ] Style (Changes that don't affect the meaning of the code)
+- [ ] Performance
+- [ ] Other (Please specify below)
 
 #### Please describe the changes this PR makes and why it should be merged:
 

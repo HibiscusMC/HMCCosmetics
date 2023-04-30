@@ -34,8 +34,8 @@ allprojects {
         //Hikari
         maven("https://mvnrepository.com/artifact/com.zaxxer/HikariCP")
 
-        // Citizens
-        maven("https://repo.citizensnpcs.co")
+        // Citizens & Denizen
+        maven("https://maven.citizensnpcs.co/repo")
 
         // Worldguard
         maven("https://maven.enginehub.org/repo/")
@@ -168,7 +168,7 @@ bukkit {
     apiVersion = "1.17"
     authors = listOf("LoJoSho")
     depend = listOf("ProtocolLib")
-    softDepend = listOf("ModelEngine", "Oraxen", "ItemsAdder", "Looty", "HMCColor", "WorldGuard", "MythicMobs", "PlaceholderAPI", "SuperVanish", "PremiumVanish", "LibsDisguises")
+    softDepend = listOf("ModelEngine", "Oraxen", "ItemsAdder", "Looty", "HMCColor", "WorldGuard", "MythicMobs", "PlaceholderAPI", "SuperVanish", "PremiumVanish", "LibsDisguises", "Denizen")
     version = "${project.version}"
 
     commands {
