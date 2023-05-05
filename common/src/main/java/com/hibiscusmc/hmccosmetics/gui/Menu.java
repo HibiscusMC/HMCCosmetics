@@ -156,7 +156,6 @@ public class Menu {
                     for (int guiSlot : slots) {
                         gui.updateItem(guiSlot, updateItem(user, originalItem.clone(), finalType, config, guiSlot));
                     }
-                    gui.update();
                     MessagesUtil.sendDebugMessages("Updated slot " + slot);
                 });
 
