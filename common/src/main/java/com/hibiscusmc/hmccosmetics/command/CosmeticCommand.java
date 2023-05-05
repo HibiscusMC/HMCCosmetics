@@ -429,7 +429,7 @@ public class CosmeticCommand implements CommandExecutor {
                 }
 
                 if (args.length >= 2) {
-                    if (!PlayerAnimator.api.getAnimationManager().getRegistry().keySet().contains(args[1])) {
+                    if (!HMCCosmeticsPlugin.getEmoteMap().containsKey(args[1])) {
                         MessagesUtil.sendDebugMessages("Did not contain " + args[1]);
                         if (!silent) MessagesUtil.sendMessage(sender, "emote-invalid");
                         return true;
@@ -444,7 +444,7 @@ public class CosmeticCommand implements CommandExecutor {
                     return true;
                 }
                 CosmeticUser user = CosmeticUsers.getUser(player);
-                user.getUserEmoteManager().playEmote(args[1]);
+                user.getUserEmoteManager().playEmote(HMCCosmeticsPlugin.getEmoteMap().get(args[1]));
                 return true;
             }
         }
