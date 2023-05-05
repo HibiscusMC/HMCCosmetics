@@ -144,10 +144,8 @@ public class Menu {
             }
 
             for (int slot : slots) {
-                ItemStack originalItem = item.clone();
-                item = updateItem(user, item, type, config, slot);
-
-                GuiItem guiItem = ItemBuilder.from(item).asGuiItem();
+                ItemStack originalItem = updateItem(user, item, type, config, slot).clone();
+                GuiItem guiItem = ItemBuilder.from(originalItem).asGuiItem();
 
                 Type finalType = type;
                 guiItem.setAction(event -> {
