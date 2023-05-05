@@ -157,7 +157,7 @@ public class CosmeticUser {
     }
 
     public boolean hasCosmeticInSlot(Cosmetic cosmetic) {
-        if (getCosmetic(cosmetic.getSlot()) == null) return true;
+        if (getCosmetic(cosmetic.getSlot()) == null) return false;
         if (cosmetic.getId() == getCosmetic(cosmetic.getSlot()).getId()) {
             return true;
         }

@@ -118,14 +118,12 @@ public class Menu {
 
             List<Integer> slots = getSlots(slotString);
 
-
             if (slots == null) {
                 MessagesUtil.sendDebugMessages("Slot is null for " + config.key().toString());
                 continue;
             }
 
             ItemStack item;
-
             try {
                 item = ItemSerializer.INSTANCE.deserialize(ItemStack.class, config.node("item"));
                 //item = config.node("item").get(ItemStack.class);
@@ -145,24 +143,28 @@ public class Menu {
                 if (Types.isType(typeId)) type = Types.getType(typeId);
             }
 
-            ItemStack originalItem = item.clone();
-            item = updateLore(user, item, type, config);
+            for (int slot : slots) {
+                ItemStack originalItem = item.clone();
+                item = updateItem(user, item, type, config, slot);
 
-            GuiItem guiItem = ItemBuilder.from(item).asGuiItem();
+                GuiItem guiItem = ItemBuilder.from(item).asGuiItem();
 
-            Type finalType = type;
-            guiItem.setAction(event -> {
-                final ClickType clickType = event.getClick();
-                if (finalType != null) finalType.run(user, config, clickType);
+                Type finalType = type;
+                guiItem.setAction(event -> {
+                    MessagesUtil.sendDebugMessages("Selected slot " + slot);
+                    final ClickType clickType = event.getClick();
+                    if (finalType != null) finalType.run(user, config, clickType);
 
-                for (int i : slots) {
-                    gui.updateItem(i, updateLore(user, originalItem.clone(), finalType, config));
-                    MessagesUtil.sendDebugMessages("Updated slot " + i);
-                }
-            });
+                    for (int guiSlot : slots) {
+                        gui.updateItem(guiSlot, updateItem(user, originalItem.clone(), finalType, config, guiSlot));
+                    }
+                    gui.update();
+                    MessagesUtil.sendDebugMessages("Updated slot " + slot);
+                });
 
-            MessagesUtil.sendDebugMessages("Added " + slots + " as " + guiItem + " in the menu");
-            gui.setItem(slots, guiItem);
+                MessagesUtil.sendDebugMessages("Added " + slots + " as " + guiItem + " in the menu");
+                gui.setItem(slot, guiItem);
+            }
         }
         return gui;
     }
@@ -195,9 +197,9 @@ public class Menu {
 
     @Contract("_, _, _, _ -> param2")
     @NotNull
-    private ItemStack updateLore(CosmeticUser user, @NotNull ItemStack itemStack, Type type, ConfigurationNode config) {
+    private ItemStack updateItem(CosmeticUser user, @NotNull ItemStack itemStack, Type type, ConfigurationNode config, int slot) {
         if (itemStack.hasItemMeta()) {
-            itemStack.setItemMeta(type.setLore(user, config, itemStack.getItemMeta()));
+            itemStack = type.setItem(user, config, itemStack);
         }
         return itemStack;
     }
