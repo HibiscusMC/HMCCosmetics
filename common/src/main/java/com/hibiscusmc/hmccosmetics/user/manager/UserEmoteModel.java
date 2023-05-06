@@ -57,6 +57,11 @@ public class UserEmoteModel extends PlayerModel {
         double DISTANCE = Settings.getEmoteDistance();
 
         Location thirdPersonLocation = newLocation.add(newLocation.getDirection().normalize().multiply(DISTANCE));
+        if (DISTANCE > 0) {
+            MessagesUtil.sendDebugMessages("Yaw " + (int) thirdPersonLocation.getYaw());
+            MessagesUtil.sendDebugMessages("New Yaw " + ServerUtils.getNextYaw((int) thirdPersonLocation.getYaw(), 180));
+            thirdPersonLocation.setYaw(ServerUtils.getNextYaw((int) thirdPersonLocation.getYaw(), 180));
+        }
         if (Settings.getCosmeticEmoteBlockCheck() && thirdPersonLocation.getBlock().getType().isOccluding()) {
             stopAnimation();
             MessagesUtil.sendMessage(player, "emote-blocked");
@@ -70,7 +75,7 @@ public class UserEmoteModel extends PlayerModel {
 
         PacketManager.sendEntitySpawnPacket(thirdPersonLocation, armorStandId, EntityType.ARMOR_STAND, UUID.randomUUID(), viewer);
         PacketManager.sendInvisibilityPacket(armorStandId, viewer);
-        PacketManager.sendLookPacket(armorStandId, player.getLocation(), viewer);
+        PacketManager.sendLookPacket(armorStandId, thirdPersonLocation, viewer);
 
         PacketManager.gamemodeChangePacket(player, 3);
         PacketManager.sendCameraPacket(armorStandId, viewer);
