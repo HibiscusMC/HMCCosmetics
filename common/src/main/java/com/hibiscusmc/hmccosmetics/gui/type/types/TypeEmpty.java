@@ -54,7 +54,7 @@ public class TypeEmpty extends Type {
 
     @Override
     @SuppressWarnings("Duplicates")
-    public ItemStack setItem(CosmeticUser user, ConfigurationNode config, @NotNull ItemStack itemStack) {
+    public ItemStack setItem(CosmeticUser user, ConfigurationNode config, @NotNull ItemStack itemStack, int slot) {
         List<String> processedLore = new ArrayList<>();
         ItemMeta itemMeta = itemStack.getItemMeta();
 

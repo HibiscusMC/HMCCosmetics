@@ -196,7 +196,7 @@ public class Menu {
     @NotNull
     private ItemStack updateItem(CosmeticUser user, @NotNull ItemStack itemStack, Type type, ConfigurationNode config, int slot) {
         if (itemStack.hasItemMeta()) {
-            itemStack = type.setItem(user, config, itemStack);
+            itemStack = type.setItem(user, config, itemStack, slot);
         }
         return itemStack;
     }

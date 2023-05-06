@@ -25,5 +25,5 @@ public abstract class Type {
 
     public abstract void run(CosmeticUser user, ConfigurationNode config, ClickType clickType);
 
-    public abstract ItemStack setItem(CosmeticUser user, ConfigurationNode config, ItemStack itemStack);
+    public abstract ItemStack setItem(CosmeticUser user, ConfigurationNode config, ItemStack itemStack, int slot);
 }

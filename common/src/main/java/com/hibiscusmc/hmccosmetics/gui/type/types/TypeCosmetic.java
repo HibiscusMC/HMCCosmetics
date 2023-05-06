@@ -99,7 +99,7 @@ public class TypeCosmetic extends Type {
     }
 
     @Override
-    public ItemStack setItem(CosmeticUser user, @NotNull ConfigurationNode config, ItemStack itemStack) {
+    public ItemStack setItem(CosmeticUser user, @NotNull ConfigurationNode config, ItemStack itemStack, int slot) {
         ItemMeta itemMeta = itemStack.getItemMeta();
 
         if (config.node("cosmetic").virtual()) {
