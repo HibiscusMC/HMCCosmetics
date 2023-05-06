@@ -17,6 +17,7 @@ public abstract class Cosmetic {
     private String id;
     private String permission;
     private ItemStack item;
+    private String material;
     private CosmeticSlot slot;
     private boolean dyable;
 
@@ -29,7 +30,10 @@ public abstract class Cosmetic {
             this.permission = null;
         }
 
-        if (!config.node("item").virtual()) this.item = generateItemStack(config.node("item"));
+        if (!config.node("item").virtual()) {
+            this.material = config.node("item", "material").getString();
+            this.item = generateItemStack(config.node("item"));
+        }
 
         MessagesUtil.sendDebugMessages("Slot: " + config.node("slot").getString());
 
@@ -74,6 +78,10 @@ public abstract class Cosmetic {
 
     public boolean isDyable() {
         return this.dyable;
+    }
+
+    public String getMaterial() {
+        return material;
     }
 
     public abstract void update(CosmeticUser user);
