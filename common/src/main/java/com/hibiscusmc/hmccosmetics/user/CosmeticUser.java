@@ -181,7 +181,7 @@ public class CosmeticUser {
     }
 
     public void updateCosmetic() {
-        for (Cosmetic cosmetic : playerCosmetics.values()) {
+        for (Cosmetic cosmetic : getCosmetics()) {
             updateCosmetic(cosmetic.getSlot());
         }
     }
