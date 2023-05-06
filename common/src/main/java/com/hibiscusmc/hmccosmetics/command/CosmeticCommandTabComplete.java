@@ -1,9 +1,9 @@
 package com.hibiscusmc.hmccosmetics.command;
 
-import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
+import com.hibiscusmc.hmccosmetics.emotes.EmoteManager;
 import com.hibiscusmc.hmccosmetics.gui.Menu;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
@@ -81,9 +81,7 @@ public class CosmeticCommandTabComplete implements TabCompleter {
                     completions.add("viewerlocation");
                     completions.add("leavelocation");
                 }
-                case "playemote" -> {
-                    completions.addAll(HMCCosmeticsPlugin.getEmoteMap().keySet());
-                }
+                case "playemote" -> completions.addAll(EmoteManager.getAllNames());
             }
             StringUtil.copyPartialMatches(args[1], completions, finalCompletions);
         }

@@ -11,6 +11,7 @@ import com.hibiscusmc.hmccosmetics.config.serializer.LocationSerializer;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
 import com.hibiscusmc.hmccosmetics.database.Database;
+import com.hibiscusmc.hmccosmetics.emotes.EmoteManager;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
 import com.hibiscusmc.hmccosmetics.hooks.Hooks;
 import com.hibiscusmc.hmccosmetics.hooks.worldguard.WGHook;
@@ -25,9 +26,6 @@ import com.hibiscusmc.hmccosmetics.util.TranslationUtil;
 import com.jeff_media.updatechecker.UpdateCheckSource;
 import com.jeff_media.updatechecker.UpdateChecker;
 import com.ticxo.playeranimator.PlayerAnimatorImpl;
-import com.ticxo.playeranimator.api.PlayerAnimator;
-import com.ticxo.playeranimator.api.animation.pack.AnimationPack;
-import org.apache.commons.io.FilenameUtils;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -43,9 +41,6 @@ import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 public final class HMCCosmeticsPlugin extends JavaPlugin {
 
@@ -56,7 +51,6 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
     private static boolean hasModelEngine = false;
     private static boolean onLatestVersion = true;
     private static String latestVersion = "";
-    private static final Map<String, String> emoteMap = new HashMap<>();
 
     @Override
     public void onEnable() {
@@ -243,7 +237,7 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
             }
         }
 
-        loadEmotes();
+        EmoteManager.loadEmotes();
 
         getInstance().getLogger().info("Successfully Enabled HMCCosmetics");
         getInstance().getLogger().info(Cosmetics.values().size() + " Cosmetics Successfully Setup");
@@ -278,32 +272,5 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
     }
     public static String getLatestVersion() {
         return latestVersion;
-    }
-
-    private static void loadEmotes() {
-        File emoteDir = new File(getInstance().getDataFolder().getPath() + "/emotes/");
-        if (!emoteDir.exists()) return;
-
-        File[] emoteFiles = emoteDir.listFiles();
-        if (emoteFiles == null || emoteFiles.length == 0) return;
-
-        emoteFiles = Arrays.stream(emoteFiles).filter(file -> file.getPath().endsWith(".bbmodel")).distinct().toArray(File[]::new);
-        if (emoteFiles.length == 0) return;
-
-        for (File animationFile : emoteFiles) {
-            String animationKey = FilenameUtils.removeExtension(animationFile.getName());
-            PlayerAnimator.api.getAnimationManager().importAnimations(animationKey, animationFile);
-        }
-
-        for (Map.Entry<String, AnimationPack> packEntry : PlayerAnimator.api.getAnimationManager().getRegistry().entrySet()) {
-            packEntry.getValue().getAnimations().keySet().forEach(animation -> {
-                String key = packEntry.getKey().replace(":", ".") + "." + animation;
-                emoteMap.put(animation, key);
-            });
-        }
-    }
-
-    public static Map<String, String> getEmoteMap() {
-        return emoteMap;
     }
 }
