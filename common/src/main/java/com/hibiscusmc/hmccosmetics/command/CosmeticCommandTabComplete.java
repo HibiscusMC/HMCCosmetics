@@ -3,11 +3,11 @@ package com.hibiscusmc.hmccosmetics.command;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
+import com.hibiscusmc.hmccosmetics.emotes.EmoteManager;
 import com.hibiscusmc.hmccosmetics.gui.Menu;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
-import com.ticxo.playeranimator.api.PlayerAnimator;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -81,9 +81,7 @@ public class CosmeticCommandTabComplete implements TabCompleter {
                     completions.add("viewerlocation");
                     completions.add("leavelocation");
                 }
-                case "playemote" -> {
-                    completions.addAll(PlayerAnimator.api.getAnimationManager().getRegistry().keySet());
-                }
+                case "playemote" -> completions.addAll(EmoteManager.getAllNames());
             }
             StringUtil.copyPartialMatches(args[1], completions, finalCompletions);
         }
