@@ -52,7 +52,7 @@ public class CosmeticUser {
     private void tick() {
         // Occasionally updates the entity cosmetics
         Runnable run = () -> {
-            MessagesUtil.sendDebugMessages("Tick[" + uniqueId + "]", Level.INFO);
+            MessagesUtil.sendDebugMessages("Tick[uuid=" + uniqueId + "]", Level.INFO);
             updateCosmetic();
         };
 
