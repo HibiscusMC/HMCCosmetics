@@ -19,7 +19,7 @@ public abstract class SQLData extends Data {
     public CosmeticUser get(UUID uniqueId) {
         CosmeticUser user = new CosmeticUser(uniqueId);
 
-        Bukkit.getScheduler().runTaskAsynchronously(HMCCosmeticsPlugin.getInstance(), () -> {
+        Bukkit.getScheduler().runTaskAsynchronously(HMCCosmeticsPlugin.get(), () -> {
             try {
                 PreparedStatement preparedStatement = preparedStatement("SELECT * FROM COSMETICDATABASE WHERE UUID = ?;");
                 preparedStatement.setString(1, uniqueId.toString());
@@ -29,7 +29,7 @@ public abstract class SQLData extends Data {
                     Map<CosmeticSlot, Map<Cosmetic, Color>> cosmetics = deserializeData(user, rawData);
                     for (Map<Cosmetic, Color> cosmeticColors : cosmetics.values()) {
                         for (Cosmetic cosmetic : cosmeticColors.keySet()) {
-                            Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> {
+                            Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.get(), () -> {
                                 // This can not be async.
                                 user.addPlayerCosmetic(cosmetic, cosmeticColors.get(cosmetic));
                             });
@@ -58,7 +58,7 @@ public abstract class SQLData extends Data {
             }
         };
         if (!HMCCosmeticsPlugin.isDisable()) {
-            Bukkit.getScheduler().runTaskAsynchronously(HMCCosmeticsPlugin.getInstance(), run);
+            Bukkit.getScheduler().runTaskAsynchronously(HMCCosmeticsPlugin.get(), run);
         } else {
             run.run();
         }

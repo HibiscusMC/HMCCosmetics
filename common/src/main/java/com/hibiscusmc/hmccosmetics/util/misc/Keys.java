@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class Keys {
 
-    static HMCCosmeticsPlugin plugin = HMCCosmeticsPlugin.getInstance();
+    static HMCCosmeticsPlugin plugin = HMCCosmeticsPlugin.get();
     public static final NamespacedKey ITEM_KEY = new NamespacedKey(plugin, "cosmetic");
     public static final NamespacedKey TOKEN_KEY = new NamespacedKey(plugin, "token-key");
 

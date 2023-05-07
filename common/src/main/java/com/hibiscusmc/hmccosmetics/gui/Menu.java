@@ -83,7 +83,7 @@ public class Menu {
 
         PlayerMenuOpenEvent event = new PlayerMenuOpenEvent(user, this);
 
-        Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> {
+        Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.get(), () -> {
             Bukkit.getPluginManager().callEvent(event);
         });
 
@@ -91,7 +91,7 @@ public class Menu {
             return;
         }
 
-        Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> {
+        Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.get(), () -> {
             finalGui.open(player);
         });
 

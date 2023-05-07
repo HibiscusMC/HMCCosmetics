@@ -13,6 +13,6 @@ public class ActionConsoleCommand extends Action {
 
     @Override
     public void run(@NotNull CosmeticUser user, String raw) {
-        HMCCosmeticsPlugin.getInstance().getServer().dispatchCommand(user.getPlayer(), raw);
+        HMCCosmeticsPlugin.get().getServer().dispatchCommand(user.getPlayer(), raw);
     }
 }

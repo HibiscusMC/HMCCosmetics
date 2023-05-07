@@ -146,15 +146,20 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
         }
     }
 
+    public static HMCCosmeticsPlugin get() {
+        return instance;
+    }
+
+    @Deprecated
     public static HMCCosmeticsPlugin getInstance() {
         return instance;
     }
 
     public static void setup() {
-        getInstance().reloadConfig();
+        get().reloadConfig();
 
         // Configuration setup
-        final File file = Path.of(getInstance().getDataFolder().getPath(), "config.yml").toFile();
+        final File file = Path.of(get().getDataFolder().getPath(), "config.yml").toFile();
         final YamlConfigurationLoader loader = YamlConfigurationLoader.
                 builder().
                 path(file.toPath()).
@@ -175,7 +180,7 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
         }
 
         // Messages setup
-        final File messagesFile = Path.of(getInstance().getDataFolder().getPath(), "messages.yml").toFile();
+        final File messagesFile = Path.of(get().getDataFolder().getPath(), "messages.yml").toFile();
         final YamlConfigurationLoader messagesLoader = YamlConfigurationLoader.
                 builder().
                 path(messagesFile.toPath()).
@@ -193,7 +198,7 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
         }
 
         // Translation setup
-        final File translationFile = Path.of(getInstance().getDataFolder().getPath(), "translations.yml").toFile();
+        final File translationFile = Path.of(get().getDataFolder().getPath(), "translations.yml").toFile();
         final YamlConfigurationLoader translationLoader = YamlConfigurationLoader.
                 builder().
                 path(translationFile.toPath())
@@ -232,17 +237,17 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
          */
         for (Cosmetic cosmetic : Cosmetics.values()) {
             if (cosmetic.getPermission() != null) {
-                if (getInstance().getServer().getPluginManager().getPermission(cosmetic.getPermission()) != null) continue;
-                getInstance().getServer().getPluginManager().addPermission(new Permission(cosmetic.getPermission()));
+                if (get().getServer().getPluginManager().getPermission(cosmetic.getPermission()) != null) continue;
+                get().getServer().getPluginManager().addPermission(new Permission(cosmetic.getPermission()));
             }
         }
 
         EmoteManager.loadEmotes();
 
-        getInstance().getLogger().info("Successfully Enabled HMCCosmetics");
-        getInstance().getLogger().info(Cosmetics.values().size() + " Cosmetics Successfully Setup");
-        getInstance().getLogger().info(Menus.getMenuNames().size() + " Menus Successfully Setup");
-        getInstance().getLogger().info("Data storage is set to " + DatabaseSettings.getDatabaseType());
+        get().getLogger().info("Successfully Enabled HMCCosmetics");
+        get().getLogger().info(Cosmetics.values().size() + " Cosmetics Successfully Setup");
+        get().getLogger().info(Menus.getMenuNames().size() + " Menus Successfully Setup");
+        get().getLogger().info("Data storage is set to " + DatabaseSettings.getDatabaseType());
 
         Bukkit.getPluginManager().callEvent(new HMCCosmeticSetupEvent());
     }
@@ -258,7 +263,7 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
     public static void saveConfig(ConfigurationNode node) {
         try {
             HMCCosmeticsPlugin.getConfigLoader().save(node);
-            HMCCosmeticsPlugin.getInstance().getLogger().info("Set new location " + node.path());
+            HMCCosmeticsPlugin.get().getLogger().info("Set new location " + node.path());
         } catch (ConfigurateException e) {
             throw new RuntimeException(e);
         }

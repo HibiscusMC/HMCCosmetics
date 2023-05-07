@@ -76,7 +76,7 @@ public class ItemSerializer implements TypeSerializer<ItemStack> {
 
         ItemStack item = Hooks.getItem(material);
         if (item == null) {
-            HMCCosmeticsPlugin.getInstance().getLogger().severe("Invalid Material -> " + material);
+            HMCCosmeticsPlugin.get().getLogger().severe("Invalid Material -> " + material);
             return new ItemStack(Material.AIR);
         }
         item.setAmount(amountNode.getInt(1));

@@ -80,7 +80,7 @@ public class PlayerGameListener implements Listener {
         CosmeticSlot cosmeticSlot = InventoryUtils.BukkitCosmeticSlot(slot);
         if (cosmeticSlot == null) return;
         if (!user.hasCosmeticInSlot(cosmeticSlot)) return;
-        Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
+        Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.get(), () -> {
             user.updateCosmetic(cosmeticSlot);
         }, 1);
         MessagesUtil.sendDebugMessages("Event fired, updated cosmetic " + cosmeticSlot);
@@ -116,7 +116,7 @@ public class PlayerGameListener implements Listener {
 
             user.getUserBackpackManager().getArmorStand().teleport(event.getTo());
 
-            Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
+            Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.get(), () -> {
                 user.updateCosmetic();
             }, 2);
         }
@@ -126,7 +126,7 @@ public class PlayerGameListener implements Listener {
         if (user.hasCosmeticInSlot(CosmeticSlot.BALLOON)) {
             final CosmeticBalloonType cosmeticBalloonType = (CosmeticBalloonType) user.getCosmetic(CosmeticSlot.BALLOON);
             user.despawnBalloon();
-            Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
+            Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.get(), () -> {
                 user.spawnBalloon(cosmeticBalloonType);
             }, 2);
         }
@@ -148,7 +148,7 @@ public class PlayerGameListener implements Listener {
         if (user.hasCosmeticInSlot(CosmeticSlot.BALLOON)) {
             user.despawnBalloon();
 
-            Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
+            Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.get(), () -> {
                 user.spawnBalloon((CosmeticBalloonType) user.getCosmetic(CosmeticSlot.BALLOON));
                 user.updateCosmetic();
             }, 4);
@@ -160,7 +160,7 @@ public class PlayerGameListener implements Listener {
         if (event.isCancelled()) return;
         Entity entity = event.getEntity();
         if (event.getEntity().getEntityId() == event.getDamager().getEntityId()) event.setCancelled(true);
-        if (!entity.getPersistentDataContainer().has(new NamespacedKey(HMCCosmeticsPlugin.getInstance(), "cosmeticMob"), PersistentDataType.SHORT))
+        if (!entity.getPersistentDataContainer().has(new NamespacedKey(HMCCosmeticsPlugin.get(), "cosmeticMob"), PersistentDataType.SHORT))
             return;
         event.setCancelled(true);
     }
@@ -254,7 +254,7 @@ public class PlayerGameListener implements Listener {
             return;
         }
 
-        Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
+        Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.get(), () -> {
             MessagesUtil.sendDebugMessages("PlayerItemDamageEvent UpdateCosmetic " + cosmeticSlot);
             user.updateCosmetic(cosmeticSlot);
         }, 2);
@@ -271,7 +271,7 @@ public class PlayerGameListener implements Listener {
             event.setCancelled(true);
             return;
         }
-        Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
+        Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.get(), () -> {
             user.updateCosmetic(CosmeticSlot.OFFHAND);
         }, 2);
     }
@@ -309,7 +309,7 @@ public class PlayerGameListener implements Listener {
 
         event.getPlayer().getInventory().setItem(event.getPreviousSlot(), event.getPlayer().getInventory().getItem(event.getPreviousSlot()));
         //NMSHandlers.getHandler().slotUpdate(event.getPlayer(), event.getPreviousSlot());
-        Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
+        Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.get(), () -> {
             user.updateCosmetic(CosmeticSlot.MAINHAND);
             user.updateCosmetic(CosmeticSlot.OFFHAND);
         }, 2);
@@ -350,7 +350,7 @@ public class PlayerGameListener implements Listener {
     }
 
     private void registerInventoryClickListener() {
-        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(HMCCosmeticsPlugin.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Client.WINDOW_CLICK) {
+        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(HMCCosmeticsPlugin.get(), ListenerPriority.NORMAL, PacketType.Play.Client.WINDOW_CLICK) {
             @Override
             public void onPacketReceiving(PacketEvent event) {
                 Player player = event.getPlayer();
@@ -368,14 +368,14 @@ public class PlayerGameListener implements Listener {
                 CosmeticSlot cosmeticSlot = InventoryUtils.NMSCosmeticSlot(slotClicked);
                 if (cosmeticSlot == null) return;
                 if (!user.hasCosmeticInSlot(cosmeticSlot)) return;
-                Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> user.updateCosmetic(cosmeticSlot), 1);
+                Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.get(), () -> user.updateCosmetic(cosmeticSlot), 1);
                 MessagesUtil.sendDebugMessages("Packet fired, updated cosmetic " + cosmeticSlot);
             }
         });
     }
 
     private void registerMenuChangeListener() {
-        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(HMCCosmeticsPlugin.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Server.WINDOW_ITEMS) {
+        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(HMCCosmeticsPlugin.get(), ListenerPriority.NORMAL, PacketType.Play.Server.WINDOW_ITEMS) {
             @Override
             public void onPacketSending(PacketEvent event) {
                 MessagesUtil.sendDebugMessages("Menu Initial ");
@@ -426,7 +426,7 @@ public class PlayerGameListener implements Listener {
     }
 
     private void registerPlayerEquipmentListener() {
-        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(HMCCosmeticsPlugin.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Server.ENTITY_EQUIPMENT) {
+        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(HMCCosmeticsPlugin.get(), ListenerPriority.NORMAL, PacketType.Play.Server.ENTITY_EQUIPMENT) {
             @Override
             public void onPacketSending(PacketEvent event) {
                 Player player = event.getPlayer(); // Player that's sent
@@ -453,7 +453,7 @@ public class PlayerGameListener implements Listener {
     }
 
     private void registerPlayerArmListener() {
-        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(HMCCosmeticsPlugin.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Client.ARM_ANIMATION) {
+        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(HMCCosmeticsPlugin.get(), ListenerPriority.NORMAL, PacketType.Play.Client.ARM_ANIMATION) {
             @Override
             public void onPacketReceiving(PacketEvent event) {
                 if (!(event.getPlayer() instanceof Player)) return;
@@ -474,7 +474,7 @@ public class PlayerGameListener implements Listener {
     }
 
     private void registerEntityUseListener() {
-        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(HMCCosmeticsPlugin.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Client.USE_ENTITY) {
+        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(HMCCosmeticsPlugin.get(), ListenerPriority.NORMAL, PacketType.Play.Client.USE_ENTITY) {
             @Override
             public void onPacketReceiving(PacketEvent event) {
                 if (!(event.getPlayer() instanceof Player)) return;
@@ -489,7 +489,7 @@ public class PlayerGameListener implements Listener {
     }
 
     private void registerLookMovement() {
-        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(HMCCosmeticsPlugin.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Client.LOOK) {
+        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(HMCCosmeticsPlugin.get(), ListenerPriority.NORMAL, PacketType.Play.Client.LOOK) {
             @Override
             public void onPacketReceiving(PacketEvent event) {
                 // TODO: Finish
@@ -502,7 +502,7 @@ public class PlayerGameListener implements Listener {
     }
 
     private void registerMoveListener() {
-        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(HMCCosmeticsPlugin.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Client.POSITION) {
+        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(HMCCosmeticsPlugin.get(), ListenerPriority.NORMAL, PacketType.Play.Client.POSITION) {
             @Override
             public void onPacketReceiving(PacketEvent event) {
                 // TODO: Finish
@@ -515,7 +515,7 @@ public class PlayerGameListener implements Listener {
     }
 
     private void registerTeleportMovement() {
-        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(HMCCosmeticsPlugin.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Client.TELEPORT_ACCEPT) {
+        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(HMCCosmeticsPlugin.get(), ListenerPriority.NORMAL, PacketType.Play.Client.TELEPORT_ACCEPT) {
             @Override
             public void onPacketReceiving(PacketEvent event) {
                 // TODO: Finish

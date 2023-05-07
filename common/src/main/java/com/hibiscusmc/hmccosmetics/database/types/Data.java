@@ -64,7 +64,7 @@ public abstract class Data {
             MessagesUtil.sendDebugMessages("First split (suppose slot) " + splitData[0]);
             if (splitData[0].equalsIgnoreCase("HIDDEN")) {
                 if (EnumUtils.isValidEnum(CosmeticUser.HiddenReason.class, splitData[1])) {
-                    Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> {
+                    Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.get(), () -> {
                         user.hideCosmetics(CosmeticUser.HiddenReason.valueOf(splitData[1]));
                     });
                 }

@@ -150,10 +150,10 @@ public class InventoryUtils {
     }
 
     public static NamespacedKey getCosmeticKey() {
-        return new NamespacedKey(HMCCosmeticsPlugin.getInstance(), "cosmetic");
+        return new NamespacedKey(HMCCosmeticsPlugin.get(), "cosmetic");
     }
 
     public static NamespacedKey getOwnerKey() {
-        return new NamespacedKey(HMCCosmeticsPlugin.getInstance(), "owner");
+        return new NamespacedKey(HMCCosmeticsPlugin.get(), "owner");
     }
 }

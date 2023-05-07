@@ -59,7 +59,7 @@ public class Menus {
     public static void setup() {
         MENUS.clear();
 
-        File cosmeticFolder = new File(HMCCosmeticsPlugin.getInstance().getDataFolder() + "/menus");
+        File cosmeticFolder = new File(HMCCosmeticsPlugin.get().getDataFolder() + "/menus");
         if (!cosmeticFolder.exists()) cosmeticFolder.mkdir();
 
         File[] directoryListing = cosmeticFolder.listFiles();

@@ -92,7 +92,7 @@ public class UserWardrobeManager {
             PacketManager.sendFakePlayerInfoPacket(player, NPC_ID, WARDROBE_UUID, npcName, viewer);
 
             // NPC 2
-            Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
+            Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.get(), () -> {
                 PacketManager.sendFakePlayerSpawnPacket(npcLocation, WARDROBE_UUID, NPC_ID, viewer);
                 MessagesUtil.sendDebugMessages("Spawned Fake Player on " + npcLocation);
                 NMSHandlers.getHandler().hideNPCName(player, npcName);
@@ -122,7 +122,7 @@ public class UserWardrobeManager {
                 Component message = MessagesUtil.processStringNoKey(WardrobeSettings.getBossbarText());
 
                 bossBar = BossBar.bossBar(message, progress, WardrobeSettings.getBossbarColor(), WardrobeSettings.getBossbarOverlay());
-                Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.getInstance()).player(player);
+                Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.get()).player(player);
 
                 target.showBossBar(bossBar);
             }
@@ -141,7 +141,7 @@ public class UserWardrobeManager {
                     WardrobeSettings.getTransitionStay(),
                     WardrobeSettings.getTransitionFadeOut()
             );
-            Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), run, WardrobeSettings.getTransitionDelay());
+            Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.get(), run, WardrobeSettings.getTransitionDelay());
         } else {
             run.run();
         }
@@ -201,7 +201,7 @@ public class UserWardrobeManager {
             }
 
             if (WardrobeSettings.getEnabledBossbar()) {
-                Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.getInstance()).player(player);
+                Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.get()).player(player);
 
                 target.hideBossBar(bossBar);
             }
@@ -272,7 +272,7 @@ public class UserWardrobeManager {
             }
         };
 
-        runnable.runTaskTimer(HMCCosmeticsPlugin.getInstance(), 0, 2);
+        runnable.runTaskTimer(HMCCosmeticsPlugin.get(), 0, 2);
     }
 
     public int getCameraId() {

@@ -29,7 +29,7 @@ public class EmoteManager {
         emotes.clear();
 
         // Get the emote directory and check if it exists
-        File emoteDir = new File(HMCCosmeticsPlugin.getInstance().getDataFolder().getPath() + "/emotes/");
+        File emoteDir = new File(HMCCosmeticsPlugin.get().getDataFolder().getPath() + "/emotes/");
         if (!emoteDir.exists()) return;
 
         // Get all the files inside the directory and check if it isn't 0

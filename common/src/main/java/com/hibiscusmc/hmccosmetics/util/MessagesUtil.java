@@ -4,7 +4,6 @@ import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
 import com.hibiscusmc.hmccosmetics.hooks.Hooks;
-import com.hibiscusmc.hmccosmetics.hooks.placeholders.HMCPlaceholderExpansion;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.misc.Adventure;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -43,7 +42,7 @@ public class MessagesUtil {
 
     public static void sendMessage(Player player, String key) {
         Component finalMessage = processString(player, key);
-        Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.getInstance()).player(player);
+        Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.get()).player(player);
 
         target.sendMessage(finalMessage);
     }
@@ -51,28 +50,28 @@ public class MessagesUtil {
     public static void sendMessage(CommandSender sender, String key) {
         Component finalMessage = processString(null, key);
         if (finalMessage == null) return;
-        Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.getInstance()).sender(sender);
+        Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.get()).sender(sender);
 
         target.sendMessage(finalMessage);
     }
 
     public static void sendMessage(Player player, String key, TagResolver placeholder) {
         Component finalMessage = processString(player, key, placeholder);
-        Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.getInstance()).player(player);
+        Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.get()).player(player);
 
         target.sendMessage(finalMessage);
     }
 
     public static void sendMessageNoKey(Player player, String message) {
         Component finalMessage = processStringNoKey(player, message);
-        Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.getInstance()).player(player);
+        Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.get()).player(player);
 
         target.sendMessage(finalMessage);
     }
 
     public static void sendActionBar(Player player, String key) {
         Component finalMessage = processString(player, key);
-        Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.getInstance()).player(player);
+        Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.get()).player(player);
 
         target.sendActionBar(finalMessage);
     }
@@ -82,7 +81,7 @@ public class MessagesUtil {
     }
 
     public static void sendTitle(Player player, String message, int fadein, int stay, int fadeout) {
-        Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.getInstance()).player(player);
+        Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.get()).player(player);
 
         Title.Times times = Title.Times.times(Duration.ofMillis(WardrobeSettings.getTransitionFadeIn()), Duration.ofMillis(3000), Duration.ofMillis(1000));
         Title title = Title.title(processStringNoKey(player, message), Component.empty(), times);
@@ -139,6 +138,6 @@ public class MessagesUtil {
 
     public static void sendDebugMessages(String message, Level level) {
         if (!Settings.isDebugEnabled() && level == Level.INFO) return;
-        HMCCosmeticsPlugin.getInstance().getLogger().log(level, message);
+        HMCCosmeticsPlugin.get().getLogger().log(level, message);
     }
 }

@@ -17,7 +17,7 @@ import java.util.UUID;
 @Deprecated
 public class InternalData extends Data {
 
-    NamespacedKey key = new NamespacedKey(HMCCosmeticsPlugin.getInstance(), "cosmetics");
+    NamespacedKey key = new NamespacedKey(HMCCosmeticsPlugin.get(), "cosmetics");
 
     @Override
     public void setup() {
@@ -42,7 +42,7 @@ public class InternalData extends Data {
         Map<CosmeticSlot, Map<Cosmetic, Color>> a = deserializeData(user, rawData);
         for (Map<Cosmetic, Color> cosmeticColors : a.values()) {
             for (Cosmetic cosmetic : cosmeticColors.keySet()) {
-                Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> {
+                Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.get(), () -> {
                     // This can not be async.
                     user.addPlayerCosmetic(cosmetic, cosmeticColors.get(cosmetic));
                 });

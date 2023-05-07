@@ -16,7 +16,7 @@ public class SQLiteData extends SQLData {
 
     @Override
     public void setup() {
-        File dataFolder = new File(HMCCosmeticsPlugin.getInstance().getDataFolder(), "database.db");
+        File dataFolder = new File(HMCCosmeticsPlugin.get().getDataFolder(), "database.db");
         boolean exists = dataFolder.exists();
 
         if (!exists) {
@@ -44,7 +44,7 @@ public class SQLiteData extends SQLData {
     @Override
     @SuppressWarnings("resource")
     public void clear(UUID uniqueId) {
-        Bukkit.getScheduler().runTaskAsynchronously(HMCCosmeticsPlugin.getInstance(), () -> {
+        Bukkit.getScheduler().runTaskAsynchronously(HMCCosmeticsPlugin.get(), () -> {
             try {
                 PreparedStatement preparedSt = preparedStatement("DELETE FROM COSMETICDATABASE WHERE UUID=?;");
                 preparedSt.setString(1, uniqueId.toString());
@@ -64,7 +64,7 @@ public class SQLiteData extends SQLData {
         if (connection != null && !connection.isClosed()) return;
 
         // Close Connection if still active
-        File dataFolder = new File(HMCCosmeticsPlugin.getInstance().getDataFolder(), "database.db");
+        File dataFolder = new File(HMCCosmeticsPlugin.get().getDataFolder(), "database.db");
 
         // Connect to database host
         try {
@@ -81,7 +81,7 @@ public class SQLiteData extends SQLData {
     public PreparedStatement preparedStatement(String query) {
         PreparedStatement ps = null;
         if (!isConnectionOpen()) {
-            HMCCosmeticsPlugin.getInstance().getLogger().info("Connection is not open");
+            HMCCosmeticsPlugin.get().getLogger().info("Connection is not open");
         }
 
         try {

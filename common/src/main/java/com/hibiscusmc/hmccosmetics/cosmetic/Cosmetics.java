@@ -62,7 +62,7 @@ public class Cosmetics {
     public static void setup() {
         COSMETICS.clear();
 
-        File cosmeticFolder = new File(HMCCosmeticsPlugin.getInstance().getDataFolder() + "/cosmetics");
+        File cosmeticFolder = new File(HMCCosmeticsPlugin.get().getDataFolder() + "/cosmetics");
         if (!cosmeticFolder.exists()) cosmeticFolder.mkdir();
 
         File[] directoryListing = cosmeticFolder.listFiles();

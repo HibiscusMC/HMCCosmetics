@@ -58,7 +58,7 @@ public class CosmeticUser {
 
         int tickPeriod = Settings.getTickPeriod();
         if (tickPeriod > 0) {
-            BukkitTask task = Bukkit.getScheduler().runTaskTimer(HMCCosmeticsPlugin.getInstance(), run, 0, tickPeriod);
+            BukkitTask task = Bukkit.getScheduler().runTaskTimer(HMCCosmeticsPlugin.get(), run, 0, tickPeriod);
             taskId = task.getTaskId();
         }
     }
@@ -286,7 +286,7 @@ public class CosmeticUser {
                     WardrobeSettings.getTransitionStay(),
                     WardrobeSettings.getTransitionFadeOut()
             );
-            Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
+            Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.get(), () -> {
                 userWardrobeManager.end();
                 userWardrobeManager = null;
             }, WardrobeSettings.getTransitionDelay());
@@ -393,8 +393,8 @@ public class CosmeticUser {
         Player player = getPlayer();
         if (player == null) return;
         for (final Player p : Bukkit.getOnlinePlayers()) {
-            p.hidePlayer(HMCCosmeticsPlugin.getInstance(), player);
-            player.hidePlayer(HMCCosmeticsPlugin.getInstance(), p);
+            p.hidePlayer(HMCCosmeticsPlugin.get(), player);
+            player.hidePlayer(HMCCosmeticsPlugin.get(), p);
         }
     }
 
@@ -402,8 +402,8 @@ public class CosmeticUser {
         Player player = getPlayer();
         if (player == null) return;
         for (final Player p : Bukkit.getOnlinePlayers()) {
-            p.showPlayer(HMCCosmeticsPlugin.getInstance(), player);
-            player.showPlayer(HMCCosmeticsPlugin.getInstance(), p);
+            p.showPlayer(HMCCosmeticsPlugin.get(), player);
+            player.showPlayer(HMCCosmeticsPlugin.get(), p);
         }
     }
 

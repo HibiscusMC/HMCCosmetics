@@ -44,7 +44,7 @@ public class HMCPlaceholderExpansion extends PlaceholderExpansion {
     @Override
     @NotNull
     public String getVersion() {
-        return HMCCosmeticsPlugin.getInstance().getDescription().getVersion();
+        return HMCCosmeticsPlugin.get().getDescription().getVersion();
     }
 
     @Override

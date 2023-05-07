@@ -43,10 +43,10 @@ public class Hooks {
     public static void setup() {
         for (Hook hook : hooks.values()) {
             if (Bukkit.getPluginManager().getPlugin(hook.getId()) != null) {
-                HMCCosmeticsPlugin.getInstance().getServer().getPluginManager().registerEvents(hook, HMCCosmeticsPlugin.getInstance());
+                HMCCosmeticsPlugin.get().getServer().getPluginManager().registerEvents(hook, HMCCosmeticsPlugin.get());
                 hook.setActive(true);
                 hook.load();
-                HMCCosmeticsPlugin.getInstance().getLogger().info("Successfully hooked into " + hook.getId());
+                HMCCosmeticsPlugin.get().getLogger().info("Successfully hooked into " + hook.getId());
             }
         }
     }

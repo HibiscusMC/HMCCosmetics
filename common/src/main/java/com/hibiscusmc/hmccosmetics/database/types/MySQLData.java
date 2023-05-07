@@ -30,7 +30,7 @@ public class MySQLData extends SQLData {
         password = DatabaseSettings.getPassword();
         port = DatabaseSettings.getPort();
 
-        HMCCosmeticsPlugin plugin = HMCCosmeticsPlugin.getInstance();
+        HMCCosmeticsPlugin plugin = HMCCosmeticsPlugin.get();
         try {
             openConnection();
             if (connection == null) throw new NullPointerException("Connection is null");
@@ -54,7 +54,7 @@ public class MySQLData extends SQLData {
 
     @Override
     public void clear(UUID uniqueId) {
-        Bukkit.getScheduler().runTaskAsynchronously(HMCCosmeticsPlugin.getInstance(), () -> {
+        Bukkit.getScheduler().runTaskAsynchronously(HMCCosmeticsPlugin.get(), () -> {
             try {
                 PreparedStatement preparedSt = preparedStatement("DELETE FROM COSMETICDATABASE WHERE UUID=?;");
                 preparedSt.setString(1, uniqueId.toString());
@@ -92,7 +92,7 @@ public class MySQLData extends SQLData {
     }
 
     public void close() {
-        Bukkit.getScheduler().runTaskAsynchronously(HMCCosmeticsPlugin.getInstance(), () -> {
+        Bukkit.getScheduler().runTaskAsynchronously(HMCCosmeticsPlugin.get(), () -> {
             try {
                 if (connection == null) throw new NullPointerException("Connection is null");
                 connection.close();
@@ -124,7 +124,7 @@ public class MySQLData extends SQLData {
         PreparedStatement ps = null;
 
         if (!isConnectionOpen()) {
-            HMCCosmeticsPlugin.getInstance().getLogger().info("Connection is not open");
+            HMCCosmeticsPlugin.get().getLogger().info("Connection is not open");
         }
 
         try {

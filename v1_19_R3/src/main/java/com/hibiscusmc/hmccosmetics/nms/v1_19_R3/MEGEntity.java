@@ -23,7 +23,7 @@ public class MEGEntity extends ArmorStand {
                 setMarker(true);
 
                 persist = false;
-                getBukkitEntity().getPersistentDataContainer().set(new NamespacedKey(HMCCosmeticsPlugin.getInstance(), "cosmeticMob"), PersistentDataType.SHORT, Short.valueOf("1"));
+                getBukkitEntity().getPersistentDataContainer().set(new NamespacedKey(HMCCosmeticsPlugin.get(), "cosmeticMob"), PersistentDataType.SHORT, Short.valueOf("1"));
 
                 ((CraftWorld) loc.getWorld()).getHandle().addFreshEntity(this);
         }

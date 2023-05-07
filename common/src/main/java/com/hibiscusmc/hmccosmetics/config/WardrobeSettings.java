@@ -248,7 +248,7 @@ public class WardrobeSettings {
     public static void setWardrobeLocation(Location newLocation) {
         wardrobeLocation = newLocation;
 
-        HMCCosmeticsPlugin plugin = HMCCosmeticsPlugin.getInstance();
+        HMCCosmeticsPlugin plugin = HMCCosmeticsPlugin.get();
 
         plugin.getConfig().set("wardrobe.wardrobe-location." + "world", newLocation.getWorld().getName());
         plugin.getConfig().set("wardrobe.wardrobe-location." + "x", newLocation.getX());
@@ -266,13 +266,13 @@ public class WardrobeSettings {
         source.node(PITCH).set(loc.getPitch());
          */
 
-        HMCCosmeticsPlugin.getInstance().saveConfig();
+        HMCCosmeticsPlugin.get().saveConfig();
     }
 
     public static void setViewerLocation(Location newLocation) {
         viewerLocation = newLocation;
 
-        HMCCosmeticsPlugin plugin = HMCCosmeticsPlugin.getInstance();
+        HMCCosmeticsPlugin plugin = HMCCosmeticsPlugin.get();
 
         plugin.getConfig().set("wardrobe.viewer-location." + "world", newLocation.getWorld().getName());
         plugin.getConfig().set("wardrobe.viewer-location." + "x", newLocation.getX());
@@ -281,13 +281,13 @@ public class WardrobeSettings {
         plugin.getConfig().set("wardrobe.viewer-location." + "yaw", newLocation.getYaw());
         plugin.getConfig().set("wardrobe.viewer-location." + "pitch", newLocation.getPitch());
 
-        HMCCosmeticsPlugin.getInstance().saveConfig();
+        HMCCosmeticsPlugin.get().saveConfig();
     }
 
     public static void setLeaveLocation(Location newLocation) {
         leaveLocation = newLocation;
 
-        HMCCosmeticsPlugin plugin = HMCCosmeticsPlugin.getInstance();
+        HMCCosmeticsPlugin plugin = HMCCosmeticsPlugin.get();
 
         plugin.getConfig().set("wardrobe.leave-location." + "world", newLocation.getWorld().getName());
         plugin.getConfig().set("wardrobe.leave-location." + "x", newLocation.getX());
@@ -296,6 +296,6 @@ public class WardrobeSettings {
         plugin.getConfig().set("wardrobe.leave-location." + "yaw", newLocation.getYaw());
         plugin.getConfig().set("wardrobe.leave-location." + "pitch", newLocation.getPitch());
 
-        HMCCosmeticsPlugin.getInstance().saveConfig();
+        HMCCosmeticsPlugin.get().saveConfig();
     }
 }

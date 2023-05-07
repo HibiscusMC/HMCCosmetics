@@ -27,7 +27,7 @@ public class NMSHandlers {
 
     public static void setup() {
         if (handler != null) return;
-        final String packageName = HMCCosmeticsPlugin.getInstance().getServer().getClass().getPackage().getName();
+        final String packageName = HMCCosmeticsPlugin.get().getServer().getClass().getPackage().getName();
         String packageVersion = packageName.substring(packageName.lastIndexOf('.') + 1);
 
         for (String selectedVersion : SUPPORTED_VERSION) {

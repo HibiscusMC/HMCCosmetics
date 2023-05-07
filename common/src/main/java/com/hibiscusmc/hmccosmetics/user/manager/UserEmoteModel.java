@@ -11,7 +11,6 @@ import com.ticxo.playeranimator.api.model.player.PlayerModel;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -99,7 +98,7 @@ public class UserEmoteModel extends PlayerModel {
     public void stopAnimation() {
         emotePlaying = null;
         despawn();
-        Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> {
+        Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.get(), () -> {
             Player player = user.getPlayer();
             if (player == null) return;
 

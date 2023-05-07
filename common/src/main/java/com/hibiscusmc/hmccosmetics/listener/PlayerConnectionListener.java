@@ -21,12 +21,12 @@ public class PlayerConnectionListener implements Listener {
     @EventHandler
     public void onPlayerJoin(@NotNull PlayerJoinEvent event) {
         if (event.getPlayer().isOp() || event.getPlayer().hasPermission("hmccosmetics.notifyupdate")) {
-            if (!HMCCosmeticsPlugin.getLatestVersion().equalsIgnoreCase(HMCCosmeticsPlugin.getInstance().getDescription().getVersion()) && HMCCosmeticsPlugin.getLatestVersion() != null)
+            if (!HMCCosmeticsPlugin.getLatestVersion().equalsIgnoreCase(HMCCosmeticsPlugin.get().getDescription().getVersion()) && HMCCosmeticsPlugin.getLatestVersion() != null)
                 MessagesUtil.sendMessageNoKey(
                         event.getPlayer(),
                         "<br>" +
                                 "<GRAY>There is a new version of <light_purple><Bold>HMCCosmetics<reset><gray> available!<br>" +
-                                "<GRAY>Current version: <red>" + HMCCosmeticsPlugin.getInstance().getDescription().getVersion() + " <GRAY>| Latest version: <light_purple>" + HMCCosmeticsPlugin.getLatestVersion() + "<br>" +
+                                "<GRAY>Current version: <red>" + HMCCosmeticsPlugin.get().getDescription().getVersion() + " <GRAY>| Latest version: <light_purple>" + HMCCosmeticsPlugin.getLatestVersion() + "<br>" +
                                 "<GRAY>Download it on <gold><click:OPEN_URL:'https://www.spigotmc.org/resources/100107/'>Spigot<reset> <gray>or <gold><click:OPEN_URL:'https://polymart.org/resource/1879'>Polymart<reset><gray>!" +
                                 "<br>"
                 );
@@ -36,12 +36,12 @@ public class PlayerConnectionListener implements Listener {
             CosmeticUser user = Database.get(event.getPlayer().getUniqueId());
             CosmeticUsers.addUser(user);
             MessagesUtil.sendDebugMessages("Run User Join");
-            Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> user.updateCosmetic(), 4);
+            Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.get(), () -> user.updateCosmetic(), 4);
         };
 
         if (DatabaseSettings.isEnabledDelay()) {
             MessagesUtil.sendDebugMessages("Delay Enabled with " + DatabaseSettings.getDelayLength() + " ticks");
-            Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), run, DatabaseSettings.getDelayLength());
+            Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.get(), run, DatabaseSettings.getDelayLength());
         } else {
             run.run();
         }

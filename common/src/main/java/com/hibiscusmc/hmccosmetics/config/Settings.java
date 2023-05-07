@@ -85,7 +85,7 @@ public class Settings {
         defaultMenu = source.node(DEFAULT_MENU).getString();
         configVersion = source.node(CONFIG_VERSION).getInt(0);
         if (configVersion == 0) {
-            HMCCosmeticsPlugin plugin = HMCCosmeticsPlugin.getInstance();
+            HMCCosmeticsPlugin plugin = HMCCosmeticsPlugin.get();
             plugin.getLogger().severe("");
             plugin.getLogger().severe("");
             plugin.getLogger().severe("Improper Configuration Found (Config Version Does Not Exist!)");
@@ -208,7 +208,7 @@ public class Settings {
     }
 
     public static Vector getBalloonOffset() {
-        if (balloonOffset == null) HMCCosmeticsPlugin.getInstance().getLogger().info("Shits null");
+        if (balloonOffset == null) HMCCosmeticsPlugin.get().getLogger().info("Shits null");
         return balloonOffset;
     }
 
@@ -302,7 +302,7 @@ public class Settings {
     public static void setDebugMode(boolean newSetting) {
         debugMode = newSetting;
 
-        HMCCosmeticsPlugin plugin = HMCCosmeticsPlugin.getInstance();
+        HMCCosmeticsPlugin plugin = HMCCosmeticsPlugin.get();
 
         plugin.getConfig().set("debug-mode", newSetting);
 

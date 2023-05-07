@@ -61,7 +61,7 @@ public class DyeMenu {
         Player player = user.getPlayer();
         user.addPlayerCosmetic(cosmetic, color);
         player.setItemOnCursor(new ItemStack(Material.AIR));
-        Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
+        Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.get(), () -> {
             player.closeInventory();
             user.updateCosmetic(cosmetic.getSlot());
         }, 2);
