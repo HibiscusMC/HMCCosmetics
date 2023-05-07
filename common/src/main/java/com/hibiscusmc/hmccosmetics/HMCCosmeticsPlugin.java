@@ -42,6 +42,7 @@ import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 import java.io.File;
 import java.nio.file.Path;
 
+@SuppressWarnings("SpellCheckingInspection")
 public final class HMCCosmeticsPlugin extends JavaPlugin {
 
     private static HMCCosmeticsPlugin instance;
