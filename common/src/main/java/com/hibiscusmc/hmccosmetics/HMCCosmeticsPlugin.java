@@ -44,7 +44,6 @@ import java.nio.file.Path;
 
 @SuppressWarnings("SpellCheckingInspection")
 public final class HMCCosmeticsPlugin extends JavaPlugin {
-
     private static HMCCosmeticsPlugin instance;
     private static boolean disable = false;
     private static YamlConfigurationLoader configLoader;
