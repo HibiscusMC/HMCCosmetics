@@ -16,12 +16,12 @@ public class WGHook {
     /**
      * @implNote Please use {@link #getCosmeticEnableFlag()} instead
      */
-    public static StateFlag COSMETIC_ENABLE_FLAG;
+    private static StateFlag COSMETIC_ENABLE_FLAG;
 
     /**
      * @implNote Please use {@link #getCosmeticWardrobeFlag()} instead
      */
-    public static StateFlag COSMETIC_WARDROBE_FLAG;
+    private static StateFlag COSMETIC_WARDROBE_FLAG;
 
     public WGHook() {
         FlagRegistry registry = WorldGuard.getInstance().getFlagRegistry();
