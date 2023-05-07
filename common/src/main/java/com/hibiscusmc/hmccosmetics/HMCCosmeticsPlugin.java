@@ -53,6 +53,14 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
     private static String latestVersion = "";
 
     @Override
+    public void onLoad() {
+        // WorldGuard
+        if (Bukkit.getPluginManager().getPlugin("WorldGuard") != null) {
+            new WGHook();
+        }
+    }
+
+    @Override
     public void onEnable() {
         // Plugin startup logic
         instance = this;
@@ -125,14 +133,6 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
     }
 
     @Override
-    public void onLoad() {
-        // WorldGuard
-        if (Bukkit.getPluginManager().getPlugin("WorldGuard") != null) {
-            new WGHook();
-        }
-    }
-
-    @Override
     public void onDisable() {
         // Plugin shutdown logic
         disable = true;
@@ -153,6 +153,11 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
     @Deprecated
     public static HMCCosmeticsPlugin getInstance() {
         return instance;
+    }
+
+    @Deprecated
+    public static boolean isDisable() {
+        return disable;
     }
 
     public static void setup() {
@@ -250,10 +255,6 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
         get().getLogger().info("Data storage is set to " + DatabaseSettings.getDatabaseType());
 
         Bukkit.getPluginManager().callEvent(new HMCCosmeticSetupEvent());
-    }
-
-    public static boolean isDisable() {
-        return disable;
     }
 
     public static YamlConfigurationLoader getConfigLoader() {
