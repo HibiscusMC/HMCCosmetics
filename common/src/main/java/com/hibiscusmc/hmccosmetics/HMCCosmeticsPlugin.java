@@ -226,22 +226,6 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
         // Menus setup
         Menus.setup();
 
-        // For reloads
-        /*
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            CosmeticUser user = CosmeticUsers.getUser(player.getUniqueId());
-            if (user == null) continue;
-            for (Cosmetic cosmetic : user.getCosmetic()) {
-                Color color = user.getCosmeticColor(cosmetic.getSlot());
-                Cosmetic newCosmetic = Cosmetics.getCosmetic(cosmetic.getId());
-                user.removeCosmeticSlot(cosmetic);
-
-                if (newCosmetic == null) continue;
-                user.addPlayerCosmetic(newCosmetic, color);
-            }
-            user.updateCosmetic();
-        }
-         */
         for (Cosmetic cosmetic : Cosmetics.values()) {
             if (cosmetic.getPermission() != null) {
                 if (get().getServer().getPluginManager().getPermission(cosmetic.getPermission()) != null) continue;
