@@ -9,7 +9,6 @@ import org.jetbrains.annotations.NotNull;
 /**
  * A hook that integrates the plugin {@link com.denizenscript.denizen.Denizen Denizen} to provide custom items
  */
-@SuppressWarnings("SpellCheckingInspection")
 public class HookDenizen extends Hook {
     public HookDenizen() {
         super("denizen");
