@@ -47,7 +47,6 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
     private static HMCCosmeticsPlugin instance;
     private static boolean disable = false;
     private static YamlConfigurationLoader configLoader;
-    private static final int pluginId = 13873;
     private static boolean hasModelEngine = false;
     private static boolean onLatestVersion = true;
     private static String latestVersion = "";
@@ -66,9 +65,6 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        // bstats https://bstats.org/plugin/bukkit/HMCCosmetics/13873
-        Metrics metrics = new Metrics(this, pluginId);
-
         // NMS version check
         if (!NMSHandlers.getHandler().getSupported()) {
             getLogger().severe("This version is not supported! Consider switching versions?");
@@ -132,6 +128,13 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
         if (Bukkit.getPluginManager().getPlugin("WorldGuard") != null && Settings.isWorldGuardMoveCheckEnabled()) {
             getServer().getPluginManager().registerEvents(new WGListener(), this);
         }
+
+        postEnable();
+    }
+
+    private void postEnable() {
+        // Loads from https://bstats.org/plugin/bukkit/HMCCosmetics/13873
+        new Metrics(this, 13873);
     }
 
     @Override
