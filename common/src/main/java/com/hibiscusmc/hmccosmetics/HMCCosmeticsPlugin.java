@@ -52,6 +52,10 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
     private static boolean onLatestVersion = true;
     private static String latestVersion = "";
 
+    public HMCCosmeticsPlugin() {
+        instance = this;
+    }
+
     @Override
     public void onLoad() {
         // WorldGuard
@@ -62,8 +66,6 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        // Plugin startup logic
-        instance = this;
         // bstats https://bstats.org/plugin/bukkit/HMCCosmetics/13873
         Metrics metrics = new Metrics(this, pluginId);
 
