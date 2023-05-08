@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "com.hibiscusmc"
-version = "2.2.8"
+version = "2.3.0"
 
 allprojects {
     apply(plugin = "java")
@@ -34,8 +34,8 @@ allprojects {
         //Hikari
         maven("https://mvnrepository.com/artifact/com.zaxxer/HikariCP")
 
-        // Citizens
-        maven("https://repo.citizensnpcs.co")
+        // Citizens & Denizen
+        maven("https://maven.citizensnpcs.co/repo")
 
         // Worldguard
         maven("https://maven.enginehub.org/repo/")
@@ -100,7 +100,8 @@ dependencies {
     implementation("org.bstats:bstats-bukkit:3.0.0")
     implementation("com.jeff_media:SpigotUpdateChecker:3.0.0")
     implementation("com.owen1212055:particlehelper:1.0.0-SNAPSHOT")
-    implementation("com.ticxo.playeranimator:PlayerAnimator:R1.2.5")
+    implementation("com.ticxo:PlayerAnimator:R1.2.6")
+    //implementation("com.ticxo.playeranimator:PlayerAnimator:R1.2.5")
 }
 
 tasks {
@@ -168,7 +169,7 @@ bukkit {
     apiVersion = "1.17"
     authors = listOf("LoJoSho")
     depend = listOf("ProtocolLib")
-    softDepend = listOf("ModelEngine", "Oraxen", "ItemsAdder", "Looty", "HMCColor", "WorldGuard", "MythicMobs", "PlaceholderAPI", "SuperVanish", "PremiumVanish")
+    softDepend = listOf("ModelEngine", "Oraxen", "ItemsAdder", "Looty", "HMCColor", "WorldGuard", "MythicMobs", "PlaceholderAPI", "SuperVanish", "PremiumVanish", "LibsDisguises", "Denizen")
     version = "${project.version}"
 
     commands {

@@ -2,10 +2,7 @@ package com.hibiscusmc.hmccosmetics.hooks;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.hooks.items.*;
-import com.hibiscusmc.hmccosmetics.hooks.misc.HookCMI;
-import com.hibiscusmc.hmccosmetics.hooks.misc.HookHMCColor;
-import com.hibiscusmc.hmccosmetics.hooks.misc.HookPremiumVanish;
-import com.hibiscusmc.hmccosmetics.hooks.misc.HookSuperVanish;
+import com.hibiscusmc.hmccosmetics.hooks.misc.*;
 import com.hibiscusmc.hmccosmetics.hooks.placeholders.HookPlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -22,12 +19,14 @@ public class Hooks {
     private static HookItemAdder ITEMADDER_HOOK = new HookItemAdder();
     private static HookLooty LOOTY_HOOK = new HookLooty();
     private static HookMythic MYTHIC_HOOK = new HookMythic();
+    private static HookDenizen DENIZEN_HOOK = new HookDenizen();
     private static HookHMCCosmetics HMCCOSMETIC_HOOK = new HookHMCCosmetics();
     private static HookPlaceholderAPI PAPI_HOOK = new HookPlaceholderAPI();
     private static HookPremiumVanish PREMIUM_VANISH_HOOK = new HookPremiumVanish();
     private static HookSuperVanish SUPER_VANISH_HOOK = new HookSuperVanish();
     private static HookHMCColor HMC_COLOR_HOOK = new HookHMCColor();
     private static HookCMI CMI_HOOK = new HookCMI();
+    private static HookLibsDisguises LIBS_DISGUISES_HOOK = new HookLibsDisguises();
 
     public static Hook getHook(@NotNull String id) {
         return hooks.get(id.toLowerCase());

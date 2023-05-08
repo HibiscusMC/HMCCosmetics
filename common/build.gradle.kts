@@ -18,7 +18,11 @@ dependencies {
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.1.0-SNAPSHOT")
     compileOnly("it.unimi.dsi:fastutil:8.5.11")
     compileOnly("io.lumine:Mythic-Dist:5.2.1")
+    compileOnly("com.denizenscript:denizen:1.2.7-SNAPSHOT")
     compileOnly("com.github.LeonMangler:SuperVanish:6.2.6-4")
+    compileOnlyApi("LibsDisguises:LibsDisguises:10.0.21") {
+        exclude("org.spigotmc", "spigot")
+    }
 
     //compileOnly("com.github.Fisher2911:FisherLib:master-SNAPSHOT")
     implementation("net.kyori:adventure-api:4.12.0")
@@ -29,7 +33,8 @@ dependencies {
     implementation("org.bstats:bstats-bukkit:3.0.0")
     implementation("com.jeff_media:SpigotUpdateChecker:3.0.0")
     implementation("com.owen1212055:particlehelper:1.0.0-SNAPSHOT")
-    implementation("com.ticxo.playeranimator:PlayerAnimator:R1.2.5")
+    implementation("com.ticxo:PlayerAnimator:R1.2.6")
+    //implementation("com.ticxo.playeranimator:PlayerAnimator:R1.2.5")
 }
 
 java {

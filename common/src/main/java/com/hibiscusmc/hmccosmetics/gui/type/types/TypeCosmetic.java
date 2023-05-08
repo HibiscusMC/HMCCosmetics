@@ -1,6 +1,7 @@
 package com.hibiscusmc.hmccosmetics.gui.type.types;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
+import com.hibiscusmc.hmccosmetics.config.serializer.ItemSerializer;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticArmorType;
@@ -17,12 +18,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 
+import java.lang.invoke.TypeDescriptor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -96,55 +99,51 @@ public class TypeCosmetic extends Type {
     }
 
     @Override
-    public ItemMeta setLore(CosmeticUser user, @NotNull ConfigurationNode config, ItemMeta itemMeta) {
-        List<String> processedLore = new ArrayList<>();
+    public ItemStack setItem(CosmeticUser user, @NotNull ConfigurationNode config, ItemStack itemStack, int slot) {
+        ItemMeta itemMeta = itemStack.getItemMeta();
 
-        if (config.node("cosmetic").virtual()) return processLoreLines(user, itemMeta);;
+        if (config.node("cosmetic").virtual()) {
+            itemStack.setItemMeta(processLoreLines(user, itemMeta));
+            return itemStack;
+        };
         String cosmeticName = config.node("cosmetic").getString();
         Cosmetic cosmetic = Cosmetics.getCosmetic(cosmeticName);
         if (cosmetic == null) {
-            return processLoreLines(user, itemMeta);
+            itemStack.setItemMeta(processLoreLines(user, itemMeta));
+            return itemStack;
         }
 
-        if (user.canEquipCosmetic(cosmetic)) {
-            return processLoreLines(user, itemMeta);
-        } else {
-            ConfigurationNode itemConfig = config.node("item");
-            if (itemConfig.virtual()) return itemMeta;
-            if (itemConfig.node("locked-name").virtual() && itemConfig.node("locked-lore").virtual()) {
-                return processLoreLines(user, itemMeta);
+        if (user.hasCosmeticInSlot(cosmetic) && !config.node("equipped-item").virtual()) {
+            ConfigurationNode equippedItem = config.node("equipped-item");
+            try {
+                if (equippedItem.node("material").virtual()) equippedItem.node("material").set(config.node("item", "material").getString());
+            } catch (SerializationException e) {
+                // Nothing >:)
             }
             try {
-                List<String> lockedLore = itemMeta.getLore();
-                String lockedName = itemMeta.getDisplayName();
-
-                if (!itemConfig.node("locked-lore").virtual()) {
-                    lockedLore = Utils.replaceIfNull(itemConfig.node("locked-lore").getList(String.class),
-                                    new ArrayList<String>()).
-                            stream().map(StringUtils::parseStringToString).collect(Collectors.toList());
-                }
-                if (!itemConfig.node("locked-name").virtual()) {
-                    lockedName = StringUtils.parseStringToString(Utils.replaceIfNull(itemConfig.node("locked-name").getString(), ""));
-                }
-
-                if (Hooks.isActiveHook("PlaceHolderAPI")) {
-                    lockedName = PlaceholderAPI.setPlaceholders(user.getPlayer(), lockedName);
-                }
-                itemMeta.setDisplayName(lockedName);
-                if (itemMeta.hasLore()) {
-                    itemMeta.getLore().clear();
-                    for (String loreLine : lockedLore) {
-                        if (Hooks.isActiveHook("PlaceHolderAPI")) loreLine = PlaceholderAPI.setPlaceholders(user.getPlayer(), loreLine);
-                        processedLore.add(loreLine);
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+                itemStack = ItemSerializer.INSTANCE.deserialize(ItemStack.class, equippedItem);
+            } catch (SerializationException e) {
+                throw new RuntimeException(e);
             }
+            return itemStack;
         }
 
-        itemMeta.setLore(processedLore);
-        return itemMeta;
+        if (!user.canEquipCosmetic(cosmetic) && !config.node("locked-item").virtual()) {
+            ConfigurationNode lockedItem = config.node("locked-item");
+            try {
+                if (lockedItem.node("material").virtual()) lockedItem.node("material").set(config.node("item", "material").getString());
+            } catch (SerializationException e) {
+                // Nothing >:)
+            }
+            try {
+                itemStack = ItemSerializer.INSTANCE.deserialize(ItemStack.class, lockedItem);
+                //item = config.node("item").get(ItemStack.class);
+            } catch (SerializationException e) {
+                throw new RuntimeException(e);
+            }
+            return itemStack;
+        }
+        return itemStack;
     }
 
     @Contract("_, _ -> param2")

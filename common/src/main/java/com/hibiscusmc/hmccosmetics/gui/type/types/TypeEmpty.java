@@ -6,6 +6,7 @@ import com.hibiscusmc.hmccosmetics.hooks.Hooks;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.event.inventory.ClickType;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.ConfigurationNode;
@@ -53,8 +54,9 @@ public class TypeEmpty extends Type {
 
     @Override
     @SuppressWarnings("Duplicates")
-    public ItemMeta setLore(CosmeticUser user, ConfigurationNode config, @NotNull ItemMeta itemMeta) {
+    public ItemStack setItem(CosmeticUser user, ConfigurationNode config, @NotNull ItemStack itemStack, int slot) {
         List<String> processedLore = new ArrayList<>();
+        ItemMeta itemMeta = itemStack.getItemMeta();
 
         if (itemMeta.hasLore()) {
             for (String loreLine : itemMeta.getLore()) {
@@ -63,8 +65,8 @@ public class TypeEmpty extends Type {
                 processedLore.add(loreLine);
             }
         }
-
-        return itemMeta;
+        itemStack.setItemMeta(itemMeta);
+        return itemStack;
     }
 
     // That's it! Now, add it as a static in another one of your classes (such as your main class) and you are good to go.

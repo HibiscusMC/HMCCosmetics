@@ -73,7 +73,7 @@ wardrobe:
 
   gamemode-options:
     exit-gamemode-enabled: false # Setting this to false will set the gamemode the player came in as. True sets to exit-gamemode gamemode
-    exit-gamemode: "SURVIVAL" # Only activates if force-exit-gamemode is true, find gamemodes here: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/GameMode.html
+    exit-gamemode: "SURVIVAL" # Only activates if exit-gamemode-enabled is true, find gamemodes here: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/GameMode.html
 
   # Bossbar that shows when a player is in a wardrobe.
   bossbar:

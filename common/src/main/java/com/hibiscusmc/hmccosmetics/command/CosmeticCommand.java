@@ -8,6 +8,7 @@ import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticEmoteType;
 import com.hibiscusmc.hmccosmetics.database.Database;
+import com.hibiscusmc.hmccosmetics.emotes.EmoteManager;
 import com.hibiscusmc.hmccosmetics.gui.Menu;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
 import com.hibiscusmc.hmccosmetics.gui.special.DyeMenu;
@@ -15,7 +16,6 @@ import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.ServerUtils;
-import com.ticxo.playeranimator.api.PlayerAnimator;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.apache.commons.lang3.EnumUtils;
@@ -428,12 +428,10 @@ public class CosmeticCommand implements CommandExecutor {
                     return true;
                 }
 
-                if (args.length >= 2) {
-                    if (!PlayerAnimator.api.getAnimationManager().getRegistry().keySet().contains(args[1])) {
-                        MessagesUtil.sendDebugMessages("Did not contain " + args[1]);
-                        if (!silent) MessagesUtil.sendMessage(sender, "emote-invalid");
-                        return true;
-                    }
+                if (!EmoteManager.has(args[1])) {
+                    MessagesUtil.sendDebugMessages("Did not contain " + args[1]);
+                    if (!silent) MessagesUtil.sendMessage(sender, "emote-invalid");
+                    return true;
                 }
 
                 if (sender.hasPermission("hmccosmetics.cmd.playemote.other")) {
@@ -444,7 +442,7 @@ public class CosmeticCommand implements CommandExecutor {
                     return true;
                 }
                 CosmeticUser user = CosmeticUsers.getUser(player);
-                user.getUserEmoteManager().playEmote(args[1]);
+                user.getUserEmoteManager().playEmote(EmoteManager.get(args[1]));
                 return true;
             }
         }

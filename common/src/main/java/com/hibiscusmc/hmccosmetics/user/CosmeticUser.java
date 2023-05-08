@@ -52,7 +52,7 @@ public class CosmeticUser {
     private void tick() {
         // Occasionally updates the entity cosmetics
         Runnable run = () -> {
-            MessagesUtil.sendDebugMessages("Tick[" + uniqueId + "]", Level.INFO);
+            MessagesUtil.sendDebugMessages("Tick[uuid=" + uniqueId + "]", Level.INFO);
             updateCosmetic();
         };
 
@@ -154,6 +154,14 @@ public class CosmeticUser {
 
     public boolean hasCosmeticInSlot(CosmeticSlot slot) {
         return playerCosmetics.containsKey(slot);
+    }
+
+    public boolean hasCosmeticInSlot(Cosmetic cosmetic) {
+        if (getCosmetic(cosmetic.getSlot()) == null) return false;
+        if (cosmetic.getId() == getCosmetic(cosmetic.getSlot()).getId()) {
+            return true;
+        }
+        return false;
     }
 
     public Set<CosmeticSlot> getSlotsWithCosmetics() {

@@ -124,7 +124,6 @@ earth_day_grabber:
   slot: OFFHAND
   dyeable: true
   permission: "hmccosmetics.earth_day_grabber"
-  model: earth_day_grabber
   item:
     material: LEATHER_HORSE_ARMOR
     model-data: 4
