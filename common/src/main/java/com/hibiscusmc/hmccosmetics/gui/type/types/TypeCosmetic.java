@@ -92,7 +92,6 @@ public class TypeCosmetic extends Type {
         if (cosmetic instanceof CosmeticArmorType) {
             if (((CosmeticArmorType) cosmetic).getEquipSlot().equals(EquipmentSlot.OFF_HAND)) {
                 Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), run, 1);
-                return;
             }
         }
         run.run();
@@ -101,19 +100,19 @@ public class TypeCosmetic extends Type {
     @Override
     public ItemStack setItem(CosmeticUser user, @NotNull ConfigurationNode config, ItemStack itemStack, int slot) {
         ItemMeta itemMeta = itemStack.getItemMeta();
+        itemStack.setItemMeta(processLoreLines(user, itemMeta));
 
         if (config.node("cosmetic").virtual()) {
-            itemStack.setItemMeta(processLoreLines(user, itemMeta));
             return itemStack;
         };
         String cosmeticName = config.node("cosmetic").getString();
         Cosmetic cosmetic = Cosmetics.getCosmetic(cosmeticName);
         if (cosmetic == null) {
-            itemStack.setItemMeta(processLoreLines(user, itemMeta));
             return itemStack;
         }
 
         if (user.hasCosmeticInSlot(cosmetic) && !config.node("equipped-item").virtual()) {
+            MessagesUtil.sendDebugMessages("GUI Equipped Item");
             ConfigurationNode equippedItem = config.node("equipped-item");
             try {
                 if (equippedItem.node("material").virtual()) equippedItem.node("material").set(config.node("item", "material").getString());
@@ -125,10 +124,12 @@ public class TypeCosmetic extends Type {
             } catch (SerializationException e) {
                 throw new RuntimeException(e);
             }
+            itemStack.setItemMeta(processLoreLines(user, itemStack.getItemMeta()));
             return itemStack;
         }
 
         if (!user.canEquipCosmetic(cosmetic) && !config.node("locked-item").virtual()) {
+            MessagesUtil.sendDebugMessages("GUI Locked Item");
             ConfigurationNode lockedItem = config.node("locked-item");
             try {
                 if (lockedItem.node("material").virtual()) lockedItem.node("material").set(config.node("item", "material").getString());
@@ -137,10 +138,10 @@ public class TypeCosmetic extends Type {
             }
             try {
                 itemStack = ItemSerializer.INSTANCE.deserialize(ItemStack.class, lockedItem);
-                //item = config.node("item").get(ItemStack.class);
             } catch (SerializationException e) {
                 throw new RuntimeException(e);
             }
+            itemStack.setItemMeta(processLoreLines(user, itemStack.getItemMeta()));
             return itemStack;
         }
         return itemStack;

@@ -152,10 +152,12 @@ public class Menu {
                     MessagesUtil.sendDebugMessages("Selected slot " + slot);
                     final ClickType clickType = event.getClick();
                     if (finalType != null) finalType.run(user, config, clickType);
-
-                    for (int guiSlot : slots) {
-                        gui.updateItem(guiSlot, updateItem(user, originalItem.clone(), finalType, config, guiSlot));
-                    }
+                    // Need to delay the update by a tick so it will actually update with new values
+                    Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
+                        for (int guiSlot : slots) {
+                            gui.updateItem(guiSlot, updateItem(user, originalItem, finalType, config, guiSlot));
+                        }
+                    }, 1);
                     MessagesUtil.sendDebugMessages("Updated slot " + slot);
                 });
 
