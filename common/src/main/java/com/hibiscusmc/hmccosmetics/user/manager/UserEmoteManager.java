@@ -3,6 +3,7 @@ package com.hibiscusmc.hmccosmetics.user.manager;
 import com.hibiscusmc.hmccosmetics.api.PlayerEmoteStartEvent;
 import com.hibiscusmc.hmccosmetics.api.PlayerEmoteStopEvent;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticEmoteType;
+import com.hibiscusmc.hmccosmetics.emotes.EmoteManager;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import org.bukkit.Bukkit;
@@ -19,7 +20,7 @@ public class UserEmoteManager {
 
     public void playEmote(@NotNull CosmeticEmoteType cosmeticEmoteType) {
         MessagesUtil.sendDebugMessages("playEmote " + cosmeticEmoteType.getAnimationId());
-        playEmote(cosmeticEmoteType.getAnimationId());
+        playEmote(EmoteManager.get(cosmeticEmoteType.getAnimationId()));
     }
 
     public void playEmote(String animationId) {
