@@ -15,15 +15,15 @@ public class WardrobeLocation {
     }
 
     public Location getNpcLocation() {
-        return npcLocation;
+        return npcLocation.clone();
     }
 
     public Location getViewerLocation() {
-        return viewerLocation;
+        return viewerLocation.clone();
     }
 
     public Location getLeaveLocation() {
-        return leaveLocation;
+        return leaveLocation.clone();
     }
 
     public void setNPCLocation(Location wardrobeLocation) {

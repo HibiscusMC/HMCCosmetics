@@ -303,7 +303,7 @@ public class CosmeticCommand implements CommandExecutor {
                 }
 
                 if (args[1].equalsIgnoreCase("wardrobelocation")) {
-                    WardrobeSettings.setWardrobeLocation(player.getLocation());
+                    WardrobeSettings.setNPCLocation(player.getLocation());
                     if (!silent) MessagesUtil.sendMessage(player, "set-wardrobe-location");
                     return true;
                 }

@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.api.*;
 import com.hibiscusmc.hmccosmetics.config.Settings;
+import com.hibiscusmc.hmccosmetics.config.WardrobeLocation;
 import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
@@ -247,10 +248,10 @@ public class CosmeticUser {
     }
 
     public void enterWardrobe(boolean ignoreDistance) {
-        enterWardrobe(ignoreDistance, WardrobeSettings.getLeaveLocation(), WardrobeSettings.getViewerLocation(), WardrobeSettings.getWardrobeLocation());
+        enterWardrobe(ignoreDistance, WardrobeSettings.getLocation());
     }
 
-    public void enterWardrobe(boolean ignoreDistance, Location exitLocation, Location viewingLocation, Location npcLocation) {
+    public void enterWardrobe(boolean ignoreDistance, WardrobeLocation wardrobeLocation) {
         if (!WardrobeSettings.inDistanceOfStatic(getPlayer().getLocation()) && !ignoreDistance) {
             MessagesUtil.sendMessage(getPlayer(), "not-near-wardrobe");
             return;
@@ -262,7 +263,7 @@ public class CosmeticUser {
         }
 
         if (userWardrobeManager == null) {
-            userWardrobeManager = new UserWardrobeManager(this, exitLocation, viewingLocation, npcLocation);
+            userWardrobeManager = new UserWardrobeManager(this, wardrobeLocation);
             userWardrobeManager.start();
         }
     }

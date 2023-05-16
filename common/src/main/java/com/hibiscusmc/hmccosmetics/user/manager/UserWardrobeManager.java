@@ -2,6 +2,7 @@ package com.hibiscusmc.hmccosmetics.user.manager;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.Settings;
+import com.hibiscusmc.hmccosmetics.config.WardrobeLocation;
 import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
@@ -45,15 +46,15 @@ public class UserWardrobeManager {
     private boolean active;
     private WardrobeStatus wardrobeStatus;
 
-    public UserWardrobeManager(CosmeticUser user, Location exitLocation, Location viewingLocation, Location npcLocation) {
+    public UserWardrobeManager(CosmeticUser user, WardrobeLocation location) {
         NPC_ID = NMSHandlers.getHandler().getNextEntityId();
         ARMORSTAND_ID = NMSHandlers.getHandler().getNextEntityId();
         WARDROBE_UUID = UUID.randomUUID();
         this.user = user;
 
-        this.exitLocation = exitLocation;
-        this.viewingLocation = viewingLocation;
-        this.npcLocation = npcLocation;
+        this.exitLocation = location.getLeaveLocation();
+        this.viewingLocation = location.getViewerLocation();
+        this.npcLocation = location.getNpcLocation();
 
         wardrobeStatus = WardrobeStatus.SETUP;
     }
@@ -235,7 +236,7 @@ public class UserWardrobeManager {
                 List<Player> outsideViewers = PacketManager.getViewers(viewingLocation);
                 outsideViewers.remove(player);
 
-                Location location = WardrobeSettings.getWardrobeLocation().clone();
+                Location location = WardrobeSettings.getLocation().getNpcLocation();
                 int yaw = data.get();
                 location.setYaw(yaw);
 
@@ -259,8 +260,8 @@ public class UserWardrobeManager {
                 }
 
                 if (user.hasCosmeticInSlot(CosmeticSlot.BALLOON)) {
-                    PacketManager.sendTeleportPacket(user.getBalloonManager().getPufferfishBalloonId(), WardrobeSettings.getWardrobeLocation().add(Settings.getBalloonOffset()), false, viewer);
-                    user.getBalloonManager().getModelEntity().teleport(WardrobeSettings.getWardrobeLocation().add(Settings.getBalloonOffset()));
+                    PacketManager.sendTeleportPacket(user.getBalloonManager().getPufferfishBalloonId(), WardrobeSettings.getLocation().getNpcLocation().add(Settings.getBalloonOffset()), false, viewer);
+                    user.getBalloonManager().getModelEntity().teleport(WardrobeSettings.getLocation().getNpcLocation().add(Settings.getBalloonOffset()));
                     user.getBalloonManager().sendRemoveLeashPacket(outsideViewers);
                     PacketManager.sendEntityDestroyPacket(user.getBalloonManager().getModelId(), outsideViewers);
                     user.getBalloonManager().sendLeashPacket(NPC_ID);

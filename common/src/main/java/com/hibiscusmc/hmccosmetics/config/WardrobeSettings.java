@@ -172,16 +172,33 @@ public class WardrobeSettings {
         return returnLastLocation;
     }
 
+    /**
+     *
+     * @Deprecated use {@link #getLocation()}
+     */
+    @Deprecated (since = "2.3.2", forRemoval = true)
     public static Location getWardrobeLocation() {
         return wardrobeLocation.getNpcLocation().clone();
     }
-
+    /**
+     *
+     * @Deprecated use {@link #getLocation()}
+     */
+    @Deprecated (since = "2.3.2", forRemoval = true)
     public static Location getViewerLocation() {
         return wardrobeLocation.getViewerLocation().clone();
     }
-
+    /**
+     *
+     * @Deprecated use {@link #getLocation()}
+     */
+    @Deprecated (since = "2.3.2", forRemoval = true)
     public static Location getLeaveLocation() {
         return wardrobeLocation.getLeaveLocation().clone();
+    }
+
+    public static WardrobeLocation getLocation() {
+        return wardrobeLocation;
     }
 
     public static boolean inDistanceOfWardrobe(final Location wardrobeLocation, final Location playerLocation) {
@@ -248,7 +265,7 @@ public class WardrobeSettings {
     /**
      * Sets where the NPC will spawn in the wardrobe
      *
-     * @Deprecated use {{@link #setNPCLocation(Location)}}
+     * @Deprecated use {@link #setNPCLocation(Location)}
      * @param newLocation
      */
     @Deprecated (since = "2.3.2", forRemoval = true)
