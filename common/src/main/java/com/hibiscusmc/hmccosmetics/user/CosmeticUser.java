@@ -256,11 +256,12 @@ public class CosmeticUser {
             MessagesUtil.sendMessage(getPlayer(), "not-near-wardrobe");
             return;
         }
-        PlayerWardrobeEnterEvent event = new PlayerWardrobeEnterEvent(this);
+        PlayerWardrobeEnterEvent event = new PlayerWardrobeEnterEvent(this, wardrobeLocation);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             return;
         }
+        wardrobeLocation = event.getWardrobeLocation();
 
         if (userWardrobeManager == null) {
             userWardrobeManager = new UserWardrobeManager(this, wardrobeLocation);

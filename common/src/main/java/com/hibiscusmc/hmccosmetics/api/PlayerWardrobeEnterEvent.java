@@ -1,5 +1,6 @@
 package com.hibiscusmc.hmccosmetics.api;
 
+import com.hibiscusmc.hmccosmetics.config.WardrobeLocation;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
@@ -11,9 +12,11 @@ import org.jetbrains.annotations.NotNull;
 public class PlayerWardrobeEnterEvent extends PlayerCosmeticEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private boolean cancel = false;
+    private WardrobeLocation wardrobeLocation;
 
-    public PlayerWardrobeEnterEvent(@NotNull CosmeticUser who) {
+    public PlayerWardrobeEnterEvent(@NotNull CosmeticUser who, @NotNull WardrobeLocation wardrobeLocation) {
         super(who);
+        this.wardrobeLocation = wardrobeLocation;
     }
 
     @Override
@@ -44,5 +47,13 @@ public class PlayerWardrobeEnterEvent extends PlayerCosmeticEvent implements Can
     @NotNull
     public static HandlerList getHandlerList() {
         return handlers;
+    }
+
+    public void setWardrobeLocation(WardrobeLocation wardrobeLocation) {
+        this.wardrobeLocation = wardrobeLocation;
+    }
+
+    public WardrobeLocation getWardrobeLocation() {
+        return wardrobeLocation;
     }
 }
