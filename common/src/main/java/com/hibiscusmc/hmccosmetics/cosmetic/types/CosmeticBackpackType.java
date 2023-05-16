@@ -34,7 +34,7 @@ public class CosmeticBackpackType extends Cosmetic {
 
         if (user.isInWardrobe() || !user.isBackpackSpawned()) return;
         if (!user.getUserBackpackManager().getArmorStand().isValid()) {
-            MessagesUtil.sendDebugMessages("Invalid Backpack detected for " + user.getUniqueId() + "! Respawning backpack, report this on the discord if this happens often!", Level.WARNING);
+            MessagesUtil.sendDebugMessages("Invalid Backpack Entity[owner=" + user.getUniqueId() + ",player_location=" + loc + "]!", Level.WARNING);
             user.respawnBackpack();
             return;
         }
