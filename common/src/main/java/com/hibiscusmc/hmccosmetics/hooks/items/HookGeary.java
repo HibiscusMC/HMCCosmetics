@@ -1,6 +1,9 @@
 package com.hibiscusmc.hmccosmetics.hooks.items;
 
+import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.hooks.Hook;
+import com.mineinabyss.geary.addons.GearyPhase;
+import com.mineinabyss.geary.modules.GearyModuleKt;
 import com.mineinabyss.geary.papermc.tracking.items.ItemTrackingKt;
 import com.mineinabyss.geary.prefabs.PrefabKey;
 import org.bukkit.inventory.ItemStack;
@@ -11,9 +14,14 @@ import org.jetbrains.annotations.NotNull;
  */
 @SuppressWarnings("SpellCheckingInspection")
 public class HookGeary extends Hook {
+
     public HookGeary() {
         super("geary");
-        setEnabledItemHook(true);
+        GearyModuleKt.getGeary().getPipeline().intercept(GearyPhase.ENABLE, () -> {
+            setEnabledItemHook(true);
+            HMCCosmeticsPlugin.setup();
+            return null;
+        });
     }
 
     /**
