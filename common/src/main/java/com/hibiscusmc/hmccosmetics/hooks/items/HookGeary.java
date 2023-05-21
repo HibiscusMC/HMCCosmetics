@@ -6,6 +6,7 @@ import com.mineinabyss.geary.addons.GearyPhase;
 import com.mineinabyss.geary.modules.GearyModuleKt;
 import com.mineinabyss.geary.papermc.tracking.items.ItemTrackingKt;
 import com.mineinabyss.geary.prefabs.PrefabKey;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,11 +15,13 @@ import org.jetbrains.annotations.NotNull;
  */
 @SuppressWarnings("SpellCheckingInspection")
 public class HookGeary extends Hook {
+    private boolean enabled = false;
 
     public HookGeary() {
         super("geary");
+        setEnabledItemHook(true);
         GearyModuleKt.getGeary().getPipeline().intercept(GearyPhase.ENABLE, () -> {
-            setEnabledItemHook(true);
+            enabled = true;
             HMCCosmeticsPlugin.setup();
             return null;
         });
@@ -29,8 +32,10 @@ public class HookGeary extends Hook {
      */
     @Override
     public ItemStack getItem(@NotNull String itemId) {
-        PrefabKey prefabKey = PrefabKey.Companion.ofOrNull(itemId);
-        if (prefabKey == null) return null;
-        return ItemTrackingKt.getItemTracking().getProvider().serializePrefabToItemStack(prefabKey, null);
+        if (enabled) {
+            PrefabKey prefabKey = PrefabKey.Companion.ofOrNull(itemId);
+            if (prefabKey == null) return null;
+            return ItemTrackingKt.getItemTracking().getProvider().serializePrefabToItemStack(prefabKey, null);
+        } else return new ItemStack(Material.AIR);
     }
 }
