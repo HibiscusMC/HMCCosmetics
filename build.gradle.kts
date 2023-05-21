@@ -27,6 +27,7 @@ allprojects {
         // ProtocolLib repo
         maven("https://repo.dmulloy2.net/repository/public/") //ProtocolLib Repo, constantly down
         maven("https://repo.mineinabyss.com/releases/")
+        maven("https://repo.mineinabyss.com/snapshots/")
 
         // PlaceholderAPI
         maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
@@ -71,12 +72,10 @@ allprojects {
         compileOnly("org.jetbrains:annotations:23.0.0")
         compileOnly("com.comphenix.protocol:ProtocolLib:5.0.0")
         compileOnly("me.clip:placeholderapi:2.11.1")
-        compileOnly("com.ticxo.modelengine:api:R3.0.1")
+        compileOnly("com.ticxo:modelengine:R3.0.1")
         compileOnly("com.github.oraxen:oraxen:-SNAPSHOT")
         compileOnly("com.github.LoneDev6:API-ItemsAdder:3.2.5")
-        compileOnly("com.mineinabyss:idofront:0.12.111")
-        compileOnly("com.mineinabyss:geary-papermc-core:0.19.113")
-        compileOnly("com.mineinabyss:looty:0.8.67")
+        compileOnly("com.mineinabyss:geary-papermc:0.24-SNAPSHOT")
         compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.1.0-SNAPSHOT")
         compileOnly("it.unimi.dsi:fastutil:8.5.11")
         compileOnly("com.github.LeonMangler:SuperVanish:6.2.6-4")
@@ -169,7 +168,7 @@ bukkit {
     apiVersion = "1.17"
     authors = listOf("LoJoSho")
     depend = listOf("ProtocolLib")
-    softDepend = listOf("ModelEngine", "Oraxen", "ItemsAdder", "Looty", "HMCColor", "WorldGuard", "MythicMobs", "PlaceholderAPI", "SuperVanish", "PremiumVanish", "LibsDisguises", "Denizen")
+    softDepend = listOf("ModelEngine", "Oraxen", "ItemsAdder", "Geary", "HMCColor", "WorldGuard", "MythicMobs", "PlaceholderAPI", "SuperVanish", "PremiumVanish", "LibsDisguises", "Denizen")
     version = "${project.version}"
 
     commands {
