@@ -25,6 +25,7 @@ cosmetic-settings:
 
   emote-distance: -3 # This shows how far away the camera should be while a player is doing an emote. Negative is behind player.
   emote-block-check: true # If the server should check if the block is open where the camera is placed (prevents players viewing through blocks)
+  emote-air-check: true # Check if there is air under a player, if there is, don't play emote
   emote-damage-leave: true # If the player should leave the emote when they take damage
   emote-invincible: false # If the player should not take damage while doing an emote
 

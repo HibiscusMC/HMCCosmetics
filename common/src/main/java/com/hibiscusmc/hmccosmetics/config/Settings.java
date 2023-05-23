@@ -42,6 +42,7 @@ public class Settings {
     private static final String HOOK_WG_MOVE_CHECK_PATH = "player-move-check";
     private static final String HOOK_WG_MOVE_CHECK_PATH_LEGACY = "player_move_check";
     private static final String COSMETIC_EMOTE_CHECK_PATH = "emote-block-check";
+    private static final String COSMETIC_EMOTE_AIR_CHECK_PATH = "emote-air-check";
     private static final String COSMETIC_EMOTE_DAMAGE_PATH = "emote-damage-leave";
     private static final String COSMETIC_EMOTE_INVINCIBLE_PATH = "emote-invincible";
     private static final String COSMETIC_ADD_ENCHANTS_HELMET_PATH = "helmet-add-enchantments";
@@ -70,6 +71,7 @@ public class Settings {
     private static boolean addChestplateEnchants;
     private static boolean addLeggingEnchants;
     private static boolean addBootsEnchants;
+    private static boolean emoteAirCheck;
     private static boolean emoteDamageLeave;
     private static boolean emoteInvincible;
     private static boolean destroyLooseCosmetics;
@@ -105,6 +107,7 @@ public class Settings {
         forcePermissionJoin = cosmeticSettings.node(FORCE_PERMISSION_JOIN_PATH).getBoolean(false);
         emoteDistance = cosmeticSettings.node(EMOTE_DISTANCE_PATH).getDouble(-3);
         cosmeticEmoteBlockCheck = cosmeticSettings.node(COSMETIC_EMOTE_CHECK_PATH).getBoolean(true);
+        emoteAirCheck = cosmeticSettings.node(COSMETIC_EMOTE_AIR_CHECK_PATH).getBoolean(true);
         emoteDamageLeave = cosmeticSettings.node(COSMETIC_EMOTE_DAMAGE_PATH).getBoolean(false);
         emoteInvincible = cosmeticSettings.node(COSMETIC_EMOTE_INVINCIBLE_PATH).getBoolean(false);
         destroyLooseCosmetics = cosmeticSettings.node(COSMETIC_DESTROY_LOOSE_COSMETIC_PATH).getBoolean(false);
@@ -261,6 +264,10 @@ public class Settings {
 
     public static boolean getCosmeticEmoteBlockCheck() {
         return cosmeticEmoteBlockCheck;
+    }
+
+    public static boolean getEmoteAirCheck() {
+        return emoteAirCheck;
     }
 
     public static boolean isEmoteDamageLeave() {
