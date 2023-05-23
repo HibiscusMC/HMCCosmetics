@@ -134,7 +134,6 @@ public class WardrobeSettings {
 
                 String permission = null;
                 int distance = -1;
-                List<String> playerNames = null;
                 if (!wardrobesNode.node("permission").virtual()) permission = wardrobesNode.node("permission").getString();
                 if (!wardrobesNode.node("int").virtual()) distance = wardrobesNode.node("int").getInt();
 
