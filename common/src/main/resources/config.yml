@@ -71,6 +71,8 @@ wardrobe:
   equip-pumpkin: false
   # Rather than having a set exit location, this will send the player back to where they entered the wardrobe. Not recommended for WG regions
   return-last-location: false
+  # If players in wardrobes should be able to equip any cosmetic, regardless of permission (Cosmetics they do not have access to will be removed when they leave the wardrobe)
+  unchecked-wardrobe-cosmetics: false
 
   gamemode-options:
     exit-gamemode-enabled: false # Setting this to false will set the gamemode the player came in as. True sets to exit-gamemode gamemode

@@ -376,6 +376,7 @@ public class CosmeticUser {
 
     public boolean canEquipCosmetic(Cosmetic cosmetic) {
         if (!cosmetic.requiresPermission()) return true;
+        if (isInWardrobe() && WardrobeSettings.isTryCosmeticsInWardrobe()) return true;
         if (getPlayer().hasPermission(cosmetic.getPermission())) return true;
         return false;
     }

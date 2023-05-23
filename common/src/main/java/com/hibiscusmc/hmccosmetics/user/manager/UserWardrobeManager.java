@@ -215,9 +215,7 @@ public class UserWardrobeManager {
 
             // For Wardrobe Temp Cosmetics
             for (Cosmetic cosmetic : user.getCosmetics()) {
-                if (cosmetic.requiresPermission()) {
-                    if (!player.hasPermission(cosmetic.getPermission())) user.removeCosmeticSlot(cosmetic.getSlot());
-                }
+                if (!user.canEquipCosmetic(cosmetic)) user.removeCosmeticSlot(cosmetic.getSlot());
             }
 
             user.updateCosmetic();

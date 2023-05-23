@@ -32,6 +32,7 @@ public class WardrobeSettings {
     private static final String VIEWER_LOCATION_PATH = "viewer-location";
     private static final String LEAVE_LOCATION_PATH = "leave-location";
     private static final String EQUIP_PUMPKIN_WARDROBE = "equip-pumpkin";
+    private static final String TRY_COSMETICS_WARDROBE = "unchecked-wardrobe-cosmetics";
     private static final String RETURN_LAST_LOCATION = "return-last-location";
     private static final String GAMEMODE_OPTIONS_PATH = "gamemode-options";
     private static final String FORCE_EXIT_GAMEMODE_PATH = "exit-gamemode-enabled";
@@ -61,6 +62,7 @@ public class WardrobeSettings {
     private static int despawnDelay;
     private static float bossbarProgress;
     private static boolean applyCosmeticsOnClose;
+    private static boolean tryCosmeticsInWardrobe;
     private static boolean equipPumpkin;
     private static boolean returnLastLocation;
     private static boolean enabledBossbar;
@@ -91,6 +93,7 @@ public class WardrobeSettings {
         applyCosmeticsOnClose = source.node(APPLY_COSMETICS_ON_CLOSE).getBoolean();
         equipPumpkin = source.node(EQUIP_PUMPKIN_WARDROBE).getBoolean();
         returnLastLocation = source.node(RETURN_LAST_LOCATION).getBoolean(false);
+        tryCosmeticsInWardrobe = source.node(TRY_COSMETICS_WARDROBE).getBoolean(false);
 
         ConfigurationNode gamemodeNode = source.node(GAMEMODE_OPTIONS_PATH);
         forceExitGamemode = gamemodeNode.node(FORCE_EXIT_GAMEMODE_PATH).getBoolean(false);
@@ -265,6 +268,10 @@ public class WardrobeSettings {
 
     public static GameMode getExitGamemode() {
         return exitGamemode;
+    }
+
+    public static boolean isTryCosmeticsInWardrobe() {
+        return tryCosmeticsInWardrobe;
     }
 
     /**
