@@ -1,5 +1,7 @@
 package com.hibiscusmc.hmccosmetics.hooks.worldguard;
 
+import com.hibiscusmc.hmccosmetics.config.Wardrobe;
+import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
@@ -39,8 +41,9 @@ public class WGListener implements Listener {
                 return;
             }
             if (protectedRegion.getFlags().containsKey(WGHook.getCosmeticWardrobeFlag())) {
-                if (!protectedRegion.getFlags().get(WGHook.getCosmeticWardrobeFlag()).toString().equalsIgnoreCase("ALLOW")) return;
-                user.enterWardrobe();
+                if (!WardrobeSettings.getWardrobes().contains(protectedRegion.getFlags().get(WGHook.getCosmeticWardrobeFlag()).toString())) return;
+                Wardrobe wardrobe = WardrobeSettings.getWardrobe(protectedRegion.getFlags().get(WGHook.getCosmeticWardrobeFlag()).toString());
+                user.enterWardrobe(true, wardrobe);
             }
         }
     }

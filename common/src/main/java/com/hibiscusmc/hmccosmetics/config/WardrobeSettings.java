@@ -11,6 +11,9 @@ import org.bukkit.Location;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 
+import java.util.*;
+import java.util.logging.Level;
+
 public class WardrobeSettings {
 
     private static final String WARDROBE_PATH = "wardrobe";
@@ -25,7 +28,7 @@ public class WardrobeSettings {
     private static final String APPLY_COSMETICS_ON_CLOSE = "apply-cosmetics-on-close";
     private static final String OPEN_SOUND = "open-sound";
     private static final String CLOSE_SOUND = "close-sound";
-    private static final String STATIC_LOCATION_PATH = "wardrobe-location";
+    private static final String NPC_LOCATION_PATH = "npc-location";
     private static final String VIEWER_LOCATION_PATH = "viewer-location";
     private static final String LEAVE_LOCATION_PATH = "leave-location";
     private static final String EQUIP_PUMPKIN_WARDROBE = "equip-pumpkin";
@@ -63,7 +66,7 @@ public class WardrobeSettings {
     private static boolean enabledBossbar;
     private static boolean forceExitGamemode;
     private static GameMode exitGamemode;
-    private static WardrobeLocation wardrobeLocation;
+    private static HashMap<String, Wardrobe> wardrobes;
     private static String bossbarMessage;
     private static BossBar.Overlay bossbarOverlay;
     private static BossBar.Color bossbarColor;
@@ -117,17 +120,37 @@ public class WardrobeSettings {
         transitionStay = transitionNode.node(TRANSITION_STAY_PATH).getInt(2000);
         transitionFadeOut = transitionNode.node(TRANSITION_FADE_OUT_PATH).getInt(2000);
 
-        try {
-            Location npcLocation = LocationSerializer.INSTANCE.deserialize(Location.class, source.node(STATIC_LOCATION_PATH));
-            MessagesUtil.sendDebugMessages("Wardrobe Location: " + npcLocation);
-            Location viewerLocation = LocationSerializer.INSTANCE.deserialize(Location.class, source.node(VIEWER_LOCATION_PATH));
-            MessagesUtil.sendDebugMessages("Viewer Location: " + viewerLocation);
-            Location leaveLocation = Utils.replaceIfNull(LocationSerializer.INSTANCE.deserialize(Location.class, source.node(LEAVE_LOCATION_PATH)), viewerLocation);
-            MessagesUtil.sendDebugMessages("Leave Location: " + leaveLocation);
-            wardrobeLocation = new WardrobeLocation(npcLocation, viewerLocation, leaveLocation);
-        } catch (SerializationException e) {
-            throw new RuntimeException(e);
+        wardrobes = new HashMap<>();
+        for (ConfigurationNode wardrobesNode : source.node("wardrobes").childrenMap().values()) {
+            String id = wardrobesNode.key().toString();
+            try {
+                Location npcLocation = LocationSerializer.INSTANCE.deserialize(Location.class, wardrobesNode.node(NPC_LOCATION_PATH));
+                MessagesUtil.sendDebugMessages("Wardrobe Location: " + npcLocation);
+                Location viewerLocation = LocationSerializer.INSTANCE.deserialize(Location.class, wardrobesNode.node(VIEWER_LOCATION_PATH));
+                MessagesUtil.sendDebugMessages("Viewer Location: " + viewerLocation);
+                Location leaveLocation = Utils.replaceIfNull(LocationSerializer.INSTANCE.deserialize(Location.class, wardrobesNode.node(LEAVE_LOCATION_PATH)), viewerLocation);
+                MessagesUtil.sendDebugMessages("Leave Location: " + leaveLocation);
+                WardrobeLocation wardrobeLocation = new WardrobeLocation(npcLocation, viewerLocation, leaveLocation);
+
+                String permission = null;
+                int distance = -1;
+                List<String> playerNames = null;
+                if (!wardrobesNode.node("permission").virtual()) permission = wardrobesNode.node("permission").getString();
+                if (!wardrobesNode.node("int").virtual()) distance = wardrobesNode.node("int").getInt();
+                if (!wardrobesNode.node("players").virtual()) playerNames = wardrobesNode.node("players").getList(String.class);
+
+                Wardrobe wardrobe = new Wardrobe(id, wardrobeLocation, permission, distance, playerNames);
+                wardrobes.put(id, wardrobe);
+            } catch (Exception e) {
+                MessagesUtil.sendDebugMessages("Unable to create wardrobe " + id, Level.SEVERE);
+            }
         }
+
+        //throw new RuntimeException(e);
+    }
+
+    public static int getDefaultDistance() {
+        return staticRadius;
     }
 
     public static boolean getDisableOnDamage() {
@@ -172,33 +195,16 @@ public class WardrobeSettings {
         return returnLastLocation;
     }
 
-    /**
-     *
-     * @Deprecated use {@link #getLocation()}
-     */
-    @Deprecated (since = "2.3.2", forRemoval = true)
-    public static Location getWardrobeLocation() {
-        return wardrobeLocation.getNpcLocation().clone();
-    }
-    /**
-     *
-     * @Deprecated use {@link #getLocation()}
-     */
-    @Deprecated (since = "2.3.2", forRemoval = true)
-    public static Location getViewerLocation() {
-        return wardrobeLocation.getViewerLocation().clone();
-    }
-    /**
-     *
-     * @Deprecated use {@link #getLocation()}
-     */
-    @Deprecated (since = "2.3.2", forRemoval = true)
-    public static Location getLeaveLocation() {
-        return wardrobeLocation.getLeaveLocation().clone();
+    public static Wardrobe getWardrobe(String key) {
+        return wardrobes.get(key);
     }
 
-    public static WardrobeLocation getLocation() {
-        return wardrobeLocation;
+    public static Set<String> getWardrobeNames() {
+        return wardrobes.keySet();
+    }
+
+    public static Collection<Wardrobe> getWardrobes() {
+        return wardrobes.values();
     }
 
     public static boolean inDistanceOfWardrobe(final Location wardrobeLocation, final Location playerLocation) {
@@ -207,11 +213,12 @@ public class WardrobeSettings {
         return playerLocation.distanceSquared(wardrobeLocation) <= displayRadius * displayRadius;
     }
 
-    public static boolean inDistanceOfStatic(final Location location) {
+    public static boolean inDistanceOfStatic(Wardrobe wardrobe, final Location location) {
+        Location wardrobeLocation = wardrobe.getLocation().getNpcLocation();
         if (wardrobeLocation == null) return false;
         if (staticRadius == -1) return true;
-        if (!getWardrobeLocation().getWorld().equals(location.getWorld())) return false;
-        return getWardrobeLocation().distanceSquared(location) <= staticRadius * staticRadius;
+        if (!wardrobeLocation.getWorld().equals(location.getWorld())) return false;
+        return wardrobeLocation.distanceSquared(location) <= staticRadius * staticRadius;
     }
 
     public static boolean getEnabledBossbar() {
@@ -263,31 +270,20 @@ public class WardrobeSettings {
     }
 
     /**
-     * Sets where the NPC will spawn in the wardrobe
-     *
-     * @Deprecated use {@link #setNPCLocation(Location)}
-     * @param newLocation
-     */
-    @Deprecated (since = "2.3.2", forRemoval = true)
-    public static void setWardrobeLocation(Location newLocation) {
-        setNPCLocation(newLocation);
-    }
-
-    /**
      * Sets where the NPC/Mannequin will spawn in the wardrobe
      * @param newLocation
      */
-    public static void setNPCLocation(Location newLocation) {
-        wardrobeLocation.setNPCLocation(newLocation);
+    public static void setNPCLocation(Wardrobe wardrobe, Location newLocation) {
+        wardrobe.getLocation().setNPCLocation(newLocation);
 
         HMCCosmeticsPlugin plugin = HMCCosmeticsPlugin.getInstance();
 
-        plugin.getConfig().set("wardrobe.wardrobe-location." + "world", newLocation.getWorld().getName());
-        plugin.getConfig().set("wardrobe.wardrobe-location." + "x", newLocation.getX());
-        plugin.getConfig().set("wardrobe.wardrobe-location." + "y", newLocation.getY());
-        plugin.getConfig().set("wardrobe.wardrobe-location." + "z", newLocation.getZ());
-        plugin.getConfig().set("wardrobe.wardrobe-location." + "yaw", newLocation.getYaw());
-        plugin.getConfig().set("wardrobe.wardrobe-location." + "pitch", newLocation.getPitch());
+        plugin.getConfig().set("wardrobe.wardrobes." + wardrobe.getId() + ".npc-location." + "world", newLocation.getWorld().getName());
+        plugin.getConfig().set("wardrobe.wardrobes." + wardrobe.getId() + ".npc-location." + "x", newLocation.getX());
+        plugin.getConfig().set("wardrobe.wardrobes." + wardrobe.getId() + ".npc-location." + "y", newLocation.getY());
+        plugin.getConfig().set("wardrobe.wardrobes." + wardrobe.getId() + ".npc-location." + "z", newLocation.getZ());
+        plugin.getConfig().set("wardrobe.wardrobes." + wardrobe.getId() + ".npc-location." + "yaw", newLocation.getYaw());
+        plugin.getConfig().set("wardrobe.wardrobes." + wardrobe.getId() + ".npc-location." + "pitch", newLocation.getPitch());
 
         HMCCosmeticsPlugin.getInstance().saveConfig();
     }
@@ -296,17 +292,17 @@ public class WardrobeSettings {
      * Sets where the player will view the wardrobe
      * @param newLocation
      */
-    public static void setViewerLocation(Location newLocation) {
-        wardrobeLocation.setViewerLocation(newLocation);
+    public static void setViewerLocation(Wardrobe wardrobe, Location newLocation) {
+        wardrobe.getLocation().setViewerLocation(newLocation);
 
         HMCCosmeticsPlugin plugin = HMCCosmeticsPlugin.getInstance();
 
-        plugin.getConfig().set("wardrobe.viewer-location." + "world", newLocation.getWorld().getName());
-        plugin.getConfig().set("wardrobe.viewer-location." + "x", newLocation.getX());
-        plugin.getConfig().set("wardrobe.viewer-location." + "y", newLocation.getY());
-        plugin.getConfig().set("wardrobe.viewer-location." + "z", newLocation.getZ());
-        plugin.getConfig().set("wardrobe.viewer-location." + "yaw", newLocation.getYaw());
-        plugin.getConfig().set("wardrobe.viewer-location." + "pitch", newLocation.getPitch());
+        plugin.getConfig().set("wardrobe.wardrobes." + wardrobe.getId() + ".viewer-location.world", newLocation.getWorld().getName());
+        plugin.getConfig().set("wardrobe.wardrobes." + wardrobe.getId() + ".viewer-location.x", newLocation.getX());
+        plugin.getConfig().set("wardrobe.wardrobes." + wardrobe.getId() + ".viewer-location.y", newLocation.getY());
+        plugin.getConfig().set("wardrobe.wardrobes." + wardrobe.getId() + ".viewer-location.z", newLocation.getZ());
+        plugin.getConfig().set("wardrobe.wardrobes." + wardrobe.getId() + ".viewer-location.yaw", newLocation.getYaw());
+        plugin.getConfig().set("wardrobe.wardrobes." + wardrobe.getId() + ".viewer-location.pitch", newLocation.getPitch());
 
         HMCCosmeticsPlugin.getInstance().saveConfig();
     }
@@ -315,17 +311,17 @@ public class WardrobeSettings {
      * Sets where a player will leave the wardrobe from
      * @param newLocation
      */
-    public static void setLeaveLocation(Location newLocation) {
-        wardrobeLocation.setLeaveLocation(newLocation);
+    public static void setLeaveLocation(Wardrobe wardrobe, Location newLocation) {
+        wardrobe.getLocation().setLeaveLocation(newLocation);
 
         HMCCosmeticsPlugin plugin = HMCCosmeticsPlugin.getInstance();
 
-        plugin.getConfig().set("wardrobe.leave-location." + "world", newLocation.getWorld().getName());
-        plugin.getConfig().set("wardrobe.leave-location." + "x", newLocation.getX());
-        plugin.getConfig().set("wardrobe.leave-location." + "y", newLocation.getY());
-        plugin.getConfig().set("wardrobe.leave-location." + "z", newLocation.getZ());
-        plugin.getConfig().set("wardrobe.leave-location." + "yaw", newLocation.getYaw());
-        plugin.getConfig().set("wardrobe.leave-location." + "pitch", newLocation.getPitch());
+        plugin.getConfig().set("wardrobe.wardrobes." + wardrobe.getId() + ".leave-location.world", newLocation.getWorld().getName());
+        plugin.getConfig().set("wardrobe.wardrobes." + wardrobe.getId() + ".leave-location.x", newLocation.getX());
+        plugin.getConfig().set("wardrobe.wardrobes." + wardrobe.getId() + ".leave-location.y", newLocation.getY());
+        plugin.getConfig().set("wardrobe.wardrobes." + wardrobe.getId() + ".leave-location.z", newLocation.getZ());
+        plugin.getConfig().set("wardrobe.wardrobes." + wardrobe.getId() + ".leave-location.yaw", newLocation.getYaw());
+        plugin.getConfig().set("wardrobe.wardrobes." + wardrobe.getId() + ".leave-location.pitch", newLocation.getPitch());
 
         HMCCosmeticsPlugin.getInstance().saveConfig();
     }

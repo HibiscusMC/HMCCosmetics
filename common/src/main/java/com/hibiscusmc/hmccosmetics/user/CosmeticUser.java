@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.api.*;
 import com.hibiscusmc.hmccosmetics.config.Settings;
+import com.hibiscusmc.hmccosmetics.config.Wardrobe;
 import com.hibiscusmc.hmccosmetics.config.WardrobeLocation;
 import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
@@ -243,28 +244,28 @@ public class CosmeticUser {
         return userEmoteManager;
     }
 
-    public void enterWardrobe() {
-        enterWardrobe(false);
-    }
-
-    public void enterWardrobe(boolean ignoreDistance) {
-        enterWardrobe(ignoreDistance, WardrobeSettings.getLocation());
-    }
-
-    public void enterWardrobe(boolean ignoreDistance, WardrobeLocation wardrobeLocation) {
-        if (!WardrobeSettings.inDistanceOfStatic(getPlayer().getLocation()) && !ignoreDistance) {
+    public void enterWardrobe(boolean ignoreDistance, Wardrobe wardrobe) {
+        if (wardrobe.hasPlayers() && !wardrobe.getPlayers().contains(getPlayer().getName())) {
+            MessagesUtil.sendMessage(getPlayer(), "wardrobe-not-included");
+            return;
+        }
+        if (wardrobe.hasPermission() && !getPlayer().hasPermission(wardrobe.getPermission())) {
+            MessagesUtil.sendMessage(getPlayer(), "no-permission");
+            return;
+        }
+        if (!wardrobe.canEnter(this) && !ignoreDistance) {
             MessagesUtil.sendMessage(getPlayer(), "not-near-wardrobe");
             return;
         }
-        PlayerWardrobeEnterEvent event = new PlayerWardrobeEnterEvent(this, wardrobeLocation);
+        PlayerWardrobeEnterEvent event = new PlayerWardrobeEnterEvent(this, wardrobe);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             return;
         }
-        wardrobeLocation = event.getWardrobeLocation();
+        wardrobe = event.getWardrobe();
 
         if (userWardrobeManager == null) {
-            userWardrobeManager = new UserWardrobeManager(this, wardrobeLocation);
+            userWardrobeManager = new UserWardrobeManager(this, wardrobe);
             userWardrobeManager.start();
         }
     }
@@ -301,14 +302,6 @@ public class CosmeticUser {
     public boolean isInWardrobe() {
         if (userWardrobeManager == null) return false;
         return true;
-    }
-
-    public void toggleWardrobe() {
-        if (isInWardrobe()) {
-            leaveWardrobe();
-        } else {
-            enterWardrobe();
-        }
     }
 
     public void spawnBackpack(CosmeticBackpackType cosmeticBackpackType) {

@@ -92,24 +92,26 @@ wardrobe:
     title-fade-in: 1000 # milliseconds
     title-stay: 500 # milliseconds
     title-fade-out: 1000 # milliseconds
-  wardrobe-location:
-    world: "World"
-    x: 0
-    y: 0
-    z: 0
-    yaw: 0
-    pitch: 0
-  viewer-location:
-    world: "World"
-    x: 5
-    y: 0
-    z: 5
-    yaw: 0
-    pitch: 0
-  leave-location:
-    world: "World"
-    x: 5
-    y: 5
-    z: 5
-    yaw: 0
-    pitch: 0
+  wardrobes:
+    default:
+      npc-location:
+        world: "world"
+        x: 0
+        y: 0
+        z: 0
+        yaw: 0
+        pitch: 0
+      viewer-location:
+        world: "world"
+        x: 5
+        y: 0
+        z: 5
+        yaw: 0
+        pitch: 0
+      leave-location:
+        world: "world"
+        x: 5
+        y: 5
+        z: 5
+        yaw: 0
+        pitch: 0

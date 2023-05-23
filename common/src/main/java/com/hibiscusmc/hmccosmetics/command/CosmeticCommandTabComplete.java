@@ -1,5 +1,7 @@
 package com.hibiscusmc.hmccosmetics.command;
 
+import com.hibiscusmc.hmccosmetics.config.Wardrobe;
+import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
@@ -66,9 +68,14 @@ public class CosmeticCommandTabComplete implements TabCompleter {
                         if (menu.canOpen(user.getPlayer())) completions.add(menu.getId());
                     }
                 }
-                case "dataclear", "wardrobe", "hide", "show", "emote" -> {
+                case "dataclear", "hide", "show", "emote" -> {
                     for (Player player : Bukkit.getOnlinePlayers()) {
                         completions.add(player.getName());
+                    }
+                }
+                case "wardrobe" -> {
+                    for (Wardrobe wardrobe : WardrobeSettings.getWardrobes()) {
+                        completions.add(wardrobe.getId());
                     }
                 }
                 case "dye" -> {
@@ -77,9 +84,9 @@ public class CosmeticCommandTabComplete implements TabCompleter {
                     }
                 }
                 case "setlocation" -> {
-                    completions.add("wardrobelocation");
-                    completions.add("viewerlocation");
-                    completions.add("leavelocation");
+                    for (Wardrobe wardrobe : WardrobeSettings.getWardrobes()) {
+                        completions.add(wardrobe.getId());
+                    }
                 }
                 case "playemote" -> completions.addAll(EmoteManager.getAllNames());
             }
@@ -91,10 +98,15 @@ public class CosmeticCommandTabComplete implements TabCompleter {
                 case "dye" -> {
                     completions.add("#FFFFFF");
                 }
-                case "menu", "apply", "unapply", "playemote" -> {
+                case "menu", "wardrobe", "apply", "unapply", "playemote" -> {
                     for (Player player : Bukkit.getOnlinePlayers()) {
                         completions.add(player.getName());
                     }
+                }
+                case "setlocation" -> {
+                    completions.add("npclocation");
+                    completions.add("viewerlocation");
+                    completions.add("leavelocation");
                 }
             }
             StringUtil.copyPartialMatches(args[2], completions, finalCompletions);
