@@ -12,7 +12,6 @@ set-wardrobe-location: "%prefix% <gradient:#6D9DC5:#45CDE9>Set new wardrobe loca
 set-wardrobe-viewing: "%prefix% <gradient:#6D9DC5:#45CDE9>Set new wardrobe viewing location!"
 set-wardrobe-leaving: "%prefix% <gradient:#6D9DC5:#45CDE9>Set new wardrobe leaving location!"
 no-wardrobes: "%prefix% <red>There are no wardrobes with that name!"
-wardrobe-not-included: "%prefix% <red>You are not allowed in this wardrobe!"
 
 equip-cosmetic: "%prefix% <gradient:#6D9DC5:#45CDE9>You have equipped <cosmetic>!"
 unequip-cosmetic: "%prefix% <gradient:#6D9DC5:#45CDE9>You have unequipped <cosmetic>!"
