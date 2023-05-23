@@ -245,10 +245,6 @@ public class CosmeticUser {
     }
 
     public void enterWardrobe(boolean ignoreDistance, Wardrobe wardrobe) {
-        if (wardrobe.hasPlayers() && !wardrobe.getPlayers().contains(getPlayer().getName())) {
-            MessagesUtil.sendMessage(getPlayer(), "wardrobe-not-included");
-            return;
-        }
         if (wardrobe.hasPermission() && !getPlayer().hasPermission(wardrobe.getPermission())) {
             MessagesUtil.sendMessage(getPlayer(), "no-permission");
             return;

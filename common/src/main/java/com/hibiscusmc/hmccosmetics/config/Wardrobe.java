@@ -4,22 +4,19 @@ import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import org.bukkit.Location;
 
 import javax.annotation.Nullable;
-import java.util.List;
 
 public class Wardrobe {
 
     private String id;
     private int distance = WardrobeSettings.getDefaultDistance();
     private String permission;
-    private List<String> players;
     private WardrobeLocation location;
 
-    public Wardrobe(String id, WardrobeLocation location, @Nullable String permission, int distance, @Nullable List<String> players) {
+    public Wardrobe(String id, WardrobeLocation location, @Nullable String permission, int distance) {
         this.id = id;
         this.location = location;
         if (permission != null) this.permission = permission;
         if (distance != -1) this.distance = distance;
-        if (players != null) this.players = players;
     }
 
     public String getId() {
@@ -33,15 +30,6 @@ public class Wardrobe {
     public boolean hasPermission() {
         return permission != null;
     }
-
-    public boolean hasPlayers() {
-        return players != null;
-    }
-
-    public List<String> getPlayers() {
-        return players;
-    }
-
     public int getDistance() {
         return distance;
     }

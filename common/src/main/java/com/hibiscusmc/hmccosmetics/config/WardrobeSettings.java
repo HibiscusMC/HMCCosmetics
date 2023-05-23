@@ -137,9 +137,8 @@ public class WardrobeSettings {
                 List<String> playerNames = null;
                 if (!wardrobesNode.node("permission").virtual()) permission = wardrobesNode.node("permission").getString();
                 if (!wardrobesNode.node("int").virtual()) distance = wardrobesNode.node("int").getInt();
-                if (!wardrobesNode.node("players").virtual()) playerNames = wardrobesNode.node("players").getList(String.class);
 
-                Wardrobe wardrobe = new Wardrobe(id, wardrobeLocation, permission, distance, playerNames);
+                Wardrobe wardrobe = new Wardrobe(id, wardrobeLocation, permission, distance);
                 wardrobes.put(id, wardrobe);
             } catch (Exception e) {
                 MessagesUtil.sendDebugMessages("Unable to create wardrobe " + id, Level.SEVERE);
