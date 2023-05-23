@@ -9,7 +9,6 @@ import org.apache.commons.lang3.EnumUtils;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.spongepowered.configurate.ConfigurationNode;
-import org.spongepowered.configurate.serialize.SerializationException;
 
 import java.util.*;
 import java.util.logging.Level;
@@ -37,6 +36,9 @@ public class WardrobeSettings {
     private static final String GAMEMODE_OPTIONS_PATH = "gamemode-options";
     private static final String FORCE_EXIT_GAMEMODE_PATH = "exit-gamemode-enabled";
     private static final String EXIT_GAMEMODE_PATH = "exit-gamemode";
+    private static final String WARDROBES_PATH = "wardrobes";
+    private static final String PERMISSION_PATH = "permission";
+    private static final String DISTANCE_PATH = "distance";
     private static final String BOSSBAR_PATH = "bossbar";
     private static final String BOSSBAR_ENABLE_PATH = "enabled";
     private static final String BOSSBAR_TEXT_PATH = "text";
@@ -124,7 +126,7 @@ public class WardrobeSettings {
         transitionFadeOut = transitionNode.node(TRANSITION_FADE_OUT_PATH).getInt(2000);
 
         wardrobes = new HashMap<>();
-        for (ConfigurationNode wardrobesNode : source.node("wardrobes").childrenMap().values()) {
+        for (ConfigurationNode wardrobesNode : source.node(WARDROBES_PATH).childrenMap().values()) {
             String id = wardrobesNode.key().toString();
             try {
                 Location npcLocation = LocationSerializer.INSTANCE.deserialize(Location.class, wardrobesNode.node(NPC_LOCATION_PATH));
@@ -137,8 +139,8 @@ public class WardrobeSettings {
 
                 String permission = null;
                 int distance = -1;
-                if (!wardrobesNode.node("permission").virtual()) permission = wardrobesNode.node("permission").getString();
-                if (!wardrobesNode.node("int").virtual()) distance = wardrobesNode.node("int").getInt();
+                if (!wardrobesNode.node(PERMISSION_PATH).virtual()) permission = wardrobesNode.node(PERMISSION_PATH).getString();
+                if (!wardrobesNode.node(DISTANCE_PATH).virtual()) distance = wardrobesNode.node(DISTANCE_PATH).getInt();
 
                 Wardrobe wardrobe = new Wardrobe(id, wardrobeLocation, permission, distance);
                 wardrobes.put(id, wardrobe);
