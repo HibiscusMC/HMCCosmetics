@@ -208,12 +208,14 @@ public class WardrobeSettings {
         return wardrobes.values();
     }
 
+    @Deprecated
     public static boolean inDistanceOfWardrobe(final Location wardrobeLocation, final Location playerLocation) {
         if (displayRadius == -1) return true;
         if (!wardrobeLocation.getWorld().equals(playerLocation.getWorld())) return false;
         return playerLocation.distanceSquared(wardrobeLocation) <= displayRadius * displayRadius;
     }
 
+    @Deprecated
     public static boolean inDistanceOfStatic(Wardrobe wardrobe, final Location location) {
         Location wardrobeLocation = wardrobe.getLocation().getNpcLocation();
         if (wardrobeLocation == null) return false;
