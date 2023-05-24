@@ -253,6 +253,10 @@ public class CosmeticUser {
             MessagesUtil.sendMessage(getPlayer(), "not-near-wardrobe");
             return;
         }
+        if (!wardrobe.getLocation().hasAllLocations()) {
+            MessagesUtil.sendMessage(getPlayer(), "wardrobe-not-setup");
+            return;
+        }
         PlayerWardrobeEnterEvent event = new PlayerWardrobeEnterEvent(this, wardrobe);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
