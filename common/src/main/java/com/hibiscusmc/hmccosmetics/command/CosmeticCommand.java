@@ -320,7 +320,7 @@ public class CosmeticCommand implements CommandExecutor {
                 }
                 Wardrobe wardrobe = WardrobeSettings.getWardrobe(args[1]);
                 if (wardrobe == null) {
-                    MessagesUtil.sendMessage(player, "not-enough-args");
+                    MessagesUtil.sendMessage(player, "no-wardrobes");
                     return true;
                 }
 
