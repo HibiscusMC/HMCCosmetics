@@ -102,10 +102,12 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
         PlayerAnimatorImpl.initialize(this);
 
         // Configuration Sync
-        final File file = Path.of(getInstance().getDataFolder().getPath(), "config.yml").toFile();
+        final File configFile = Path.of(getInstance().getDataFolder().getPath(), "config.yml").toFile();
+        final File messageFile = Path.of(getInstance().getDataFolder().getPath(), "messages.yml").toFile();
         try {
-            CommentedConfiguration.loadConfiguration(file).syncWithConfig(file, getInstance().getResource("config.yml"),
+            CommentedConfiguration.loadConfiguration(configFile).syncWithConfig(configFile, getInstance().getResource("config.yml"),
                     "database-settings", "debug-mode", "wardrobe.viewer-location", "wardrobe.npc-location", "wardrobe.wardrobe-location", "wardrobe.leave-location");
+            CommentedConfiguration.loadConfiguration(messageFile).syncWithConfig(messageFile, getInstance().getResource("messages.yml"));
         } catch (Exception e) {}
 
         // Setup
