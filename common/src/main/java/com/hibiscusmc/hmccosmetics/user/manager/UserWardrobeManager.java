@@ -235,7 +235,7 @@ public class UserWardrobeManager {
                     this.cancel();
                     return;
                 }
-                MessagesUtil.sendDebugMessages("WardrobeUpdate[user= " + user.getUniqueId() + ",status=" + getWardrobeStatus() + "]");
+                MessagesUtil.sendDebugMessages("WardrobeUpdate[user=" + user.getUniqueId() + ",status=" + getWardrobeStatus() + "]");
                 List<Player> viewer = Collections.singletonList(player);
                 List<Player> outsideViewers = PacketManager.getViewers(viewingLocation);
                 outsideViewers.remove(player);
