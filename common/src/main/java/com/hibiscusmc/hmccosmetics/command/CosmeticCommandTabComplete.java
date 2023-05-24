@@ -75,7 +75,11 @@ public class CosmeticCommandTabComplete implements TabCompleter {
                 }
                 case "wardrobe" -> {
                     for (Wardrobe wardrobe : WardrobeSettings.getWardrobes()) {
-                        completions.add(wardrobe.getId());
+                        if (wardrobe.hasPermission()) {
+                            if (user.getPlayer().hasPermission(wardrobe.getPermission())) completions.add(wardrobe.getId());
+                        } else {
+                            completions.add(wardrobe.getId());
+                        }
                     }
                 }
                 case "dye" -> {
