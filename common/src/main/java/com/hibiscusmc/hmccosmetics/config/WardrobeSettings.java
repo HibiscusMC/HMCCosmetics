@@ -143,7 +143,7 @@ public class WardrobeSettings {
                 if (!wardrobesNode.node(DISTANCE_PATH).virtual()) distance = wardrobesNode.node(DISTANCE_PATH).getInt();
 
                 Wardrobe wardrobe = new Wardrobe(id, wardrobeLocation, permission, distance);
-                wardrobes.put(id, wardrobe);
+                addWardrobe(wardrobe);
             } catch (Exception e) {
                 MessagesUtil.sendDebugMessages("Unable to create wardrobe " + id, Level.SEVERE);
             }
@@ -208,6 +208,10 @@ public class WardrobeSettings {
 
     public static Collection<Wardrobe> getWardrobes() {
         return wardrobes.values();
+    }
+
+    public static void addWardrobe(Wardrobe wardrobe) {
+        wardrobes.put(wardrobe.getId(), wardrobe);
     }
 
     @Deprecated
