@@ -101,6 +101,7 @@ dependencies {
     implementation("com.jeff_media:SpigotUpdateChecker:3.0.0")
     implementation("com.owen1212055:particlehelper:1.0.0-SNAPSHOT")
     implementation("com.ticxo:PlayerAnimator:R1.2.6")
+    implementation("com.github.BG-Software-LLC:CommentedConfiguration:-SNAPSHOT")
     //implementation("com.ticxo.playeranimator:PlayerAnimator:R1.2.5")
 }
 
@@ -142,6 +143,7 @@ tasks {
         relocate("com.jeff_media.updatechecker", "com.hisbiscusmc.hmccosmetics.updatechecker")
         relocate("com.owen1212055.particlehelper", "com.hisbiscusmc.hmccosmetics.particlehelper")
         relocate("com.ticxo.playeranimator", "com.hisbiscusmc.hmccosmetics.playeranimator")
+        relocate("com.bgsoftware", "com.hisbiscusmc.hmccosmetics.configupdater")
         archiveFileName.set("HMCCosmeticsRemapped-${project.version}.jar")
 
         dependencies {

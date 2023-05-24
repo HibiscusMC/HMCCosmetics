@@ -1,5 +1,6 @@
 package com.hibiscusmc.hmccosmetics;
 
+import com.bgsoftware.common.config.CommentedConfiguration;
 import com.hibiscusmc.hmccosmetics.api.HMCCosmeticSetupEvent;
 import com.hibiscusmc.hmccosmetics.command.CosmeticCommand;
 import com.hibiscusmc.hmccosmetics.command.CosmeticCommandTabComplete;
@@ -100,6 +101,14 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
         // Player Animator
         PlayerAnimatorImpl.initialize(this);
 
+        // Configuration Sync
+        final File file = Path.of(getInstance().getDataFolder().getPath(), "config.yml").toFile();
+        try {
+            CommentedConfiguration.loadConfiguration(file).syncWithConfig(file, getInstance().getResource("config.yml"),
+                    "database-settings", "debug-mode", "wardrobe.viewer-location", "wardrobe.npc-location", "wardrobe.wardrobe-location", "wardrobe.leave-location");
+        } catch (Exception e) {}
+
+        // Setup
         setup();
 
         // Commands
@@ -170,7 +179,7 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
             WardrobeSettings.load(loader.load().node("wardrobe"));
             DatabaseSettings.load(loader.load().node("database-settings"));
             configLoader = loader;
-        } catch (ConfigurateException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
