@@ -3,6 +3,7 @@ package com.hibiscusmc.hmccosmetics.command;
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.config.Wardrobe;
+import com.hibiscusmc.hmccosmetics.config.WardrobeLocation;
 import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
@@ -320,8 +321,10 @@ public class CosmeticCommand implements CommandExecutor {
                 }
                 Wardrobe wardrobe = WardrobeSettings.getWardrobe(args[1]);
                 if (wardrobe == null) {
-                    MessagesUtil.sendMessage(player, "no-wardrobes");
-                    return true;
+                    wardrobe = new Wardrobe(args[1], new WardrobeLocation(null, null, null), null, -1);
+                    WardrobeSettings.addWardrobe(wardrobe);
+                    //MessagesUtil.sendMessage(player, "no-wardrobes");
+                    //return true;
                 }
 
                 if (args[2].equalsIgnoreCase("npclocation")) {
