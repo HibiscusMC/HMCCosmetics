@@ -13,6 +13,7 @@ import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
 import com.hibiscusmc.hmccosmetics.database.Database;
 import com.hibiscusmc.hmccosmetics.emotes.EmoteManager;
+import com.hibiscusmc.hmccosmetics.gui.Menu;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
 import com.hibiscusmc.hmccosmetics.hooks.Hooks;
 import com.hibiscusmc.hmccosmetics.hooks.worldguard.WGHook;
@@ -242,6 +243,12 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
             if (cosmetic.getPermission() != null) {
                 if (getInstance().getServer().getPluginManager().getPermission(cosmetic.getPermission()) != null) continue;
                 getInstance().getServer().getPluginManager().addPermission(new Permission(cosmetic.getPermission()));
+            }
+        }
+        for (Menu menu : Menus.values()) {
+            if (menu.getPermissionNode() != null) {
+                if (getInstance().getServer().getPluginManager().getPermission(menu.getPermissionNode()) != null) continue;
+                getInstance().getServer().getPluginManager().addPermission(new Permission(menu.getPermissionNode()));
             }
         }
 
