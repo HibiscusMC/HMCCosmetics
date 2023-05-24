@@ -87,13 +87,12 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
                 .checkNow();
         onLatestVersion = checker.isUsingLatestVersion();
         // File setup
-        if (!getDataFolder().exists()) {
-            saveDefaultConfig();
-            //saveResource("translations.yml", false);
-            saveResource("messages.yml", false);
-            saveResource("cosmetics/defaultcosmetics.yml", false);
-            saveResource("menus/defaultmenu.yml", false);
-        }
+        saveDefaultConfig();
+        //saveResource("translations.yml", false);
+        if (!Path.of(getDataFolder().getPath(), "messages.yml").toFile().exists()) saveResource("messages.yml", false);
+        if (!Path.of(getDataFolder().getPath() + "/cosmetics/").toFile().exists()) saveResource("cosmetics/defaultcosmetics.yml", false);
+        if (!Path.of(getDataFolder().getPath() + "/menus/").toFile().exists()) saveResource("menus/defaultmenu.yml", false);
+
         // Emote folder setup
         File emoteFile = new File(getDataFolder().getPath() + "/emotes");
         if (!emoteFile.exists()) emoteFile.mkdir();
