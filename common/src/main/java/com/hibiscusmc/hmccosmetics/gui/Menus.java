@@ -56,8 +56,8 @@ public class Menus {
         return names;
     }
 
-    public static List<Menu> values() {
-        return Menus.values();
+    public static Collection<Menu> values() {
+        return MENUS.values();
     }
 
     public static void setup() {

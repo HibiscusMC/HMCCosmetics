@@ -75,7 +75,7 @@ public class TypeCosmetic extends Type {
                 if (!actionConfig.node("on-equip").virtual()) actionStrings.addAll(actionConfig.node("on-equip").getList(String.class));
                 MessagesUtil.sendDebugMessages("on-equip");
                 // TODO: Redo this
-                if (cosmetic.isDyable()) {
+                if (cosmetic.isDyable() && Hooks.isActiveHook("HMCColor")) {
                     DyeMenu.openMenu(user, cosmetic);
                 } else {
                     user.addPlayerCosmetic(cosmetic);
@@ -99,12 +99,11 @@ public class TypeCosmetic extends Type {
 
     @Override
     public ItemStack setItem(CosmeticUser user, @NotNull ConfigurationNode config, ItemStack itemStack, int slot) {
-        ItemMeta itemMeta = itemStack.getItemMeta();
-        itemStack.setItemMeta(processLoreLines(user, itemMeta));
+        itemStack.setItemMeta(processLoreLines(user, itemStack.getItemMeta()));
 
         if (config.node("cosmetic").virtual()) {
             return itemStack;
-        };
+        }
         String cosmeticName = config.node("cosmetic").getString();
         Cosmetic cosmetic = Cosmetics.getCosmetic(cosmeticName);
         if (cosmetic == null) {
@@ -155,12 +154,10 @@ public class TypeCosmetic extends Type {
 
         if (itemMeta.hasLore()) {
             for (String loreLine : itemMeta.getLore()) {
-                if (Hooks.isActiveHook("PlaceholderAPI"))
-                    loreLine = PlaceholderAPI.setPlaceholders(user.getPlayer(), loreLine);
+                if (Hooks.isActiveHook("PlaceholderAPI")) loreLine = PlaceholderAPI.setPlaceholders(user.getPlayer(), loreLine);
                 processedLore.add(loreLine);
             }
         }
-
         itemMeta.setLore(processedLore);
         return itemMeta;
     }
