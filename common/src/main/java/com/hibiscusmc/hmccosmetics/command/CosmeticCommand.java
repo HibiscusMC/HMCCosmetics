@@ -307,8 +307,8 @@ public class CosmeticCommand implements CommandExecutor {
                     DyeMenu.openMenu(user, cosmetic);
                 }
             }
-            case ("setlocation") -> {
-                if (!sender.hasPermission("hmccosmetics.cmd.setlocation")) {
+            case ("setwardrobesetting") -> {
+                if (!sender.hasPermission("hmccosmetics.cmd.setwardrobesetting")) {
                     if (!silent) MessagesUtil.sendMessage(sender, "no-permission");
                     return true;
                 }
@@ -343,6 +343,19 @@ public class CosmeticCommand implements CommandExecutor {
                     WardrobeSettings.setLeaveLocation(wardrobe, player.getLocation());
                     if (!silent) MessagesUtil.sendMessage(player, "set-wardrobe-leaving");
                     return true;
+                }
+
+                if (args.length >= 4) {
+                    if (args[2].equalsIgnoreCase("permission")) {
+                        WardrobeSettings.setWardrobePermission(wardrobe, args[3]);
+                        if (!silent) MessagesUtil.sendMessage(player, "set-wardrobe-permission");
+                        return true;
+                    }
+                    if (args[2].equalsIgnoreCase("distance")) {
+                        WardrobeSettings.setWardrobeDistance(wardrobe, Integer.valueOf(args[3]));
+                        if (!silent) MessagesUtil.sendMessage(player, "set-wardrobe-distance");
+                        return true;
+                    }
                 }
             }
             case ("dump") -> {

@@ -38,7 +38,7 @@ public class CosmeticCommandTabComplete implements TabCompleter {
             if (hasPermission(sender, "hmccosmetics.cmd.wardrobe")) completions.add("wardrobe");
             if (hasPermission(sender, "hmccosmetics.cmd.dataclear")) completions.add("dataclear");
             if (hasPermission(sender, "hmccosmetics.cmd.dye")) completions.add("dye");
-            if (hasPermission(sender, "hmccosmetics.cmd.setlocation")) completions.add("setlocation");
+            if (hasPermission(sender, "hmccosmetics.cmd.setwardrobesetting")) completions.add("setwardrobesetting");
             if (hasPermission(sender, "hmccosmetics.cmd.hide")) completions.add("hide");
             if (hasPermission(sender, "hmccosmetics.cmd.show")) completions.add("show");
             if (hasPermission(sender, "hmccosmetics.cmd.debug")) completions.add("debug");
@@ -87,7 +87,7 @@ public class CosmeticCommandTabComplete implements TabCompleter {
                         completions.add(slot.name());
                     }
                 }
-                case "setlocation" -> {
+                case "setwardrobesetting" -> {
                     for (Wardrobe wardrobe : WardrobeSettings.getWardrobes()) {
                         completions.add(wardrobe.getId());
                     }
@@ -107,10 +107,12 @@ public class CosmeticCommandTabComplete implements TabCompleter {
                         completions.add(player.getName());
                     }
                 }
-                case "setlocation" -> {
+                case "setwardrobesetting" -> {
                     completions.add("npclocation");
                     completions.add("viewerlocation");
                     completions.add("leavelocation");
+                    completions.add("permission");
+                    completions.add("distance");
                 }
             }
             StringUtil.copyPartialMatches(args[2], completions, finalCompletions);

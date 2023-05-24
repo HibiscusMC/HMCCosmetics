@@ -213,7 +213,7 @@ bukkit {
         register("hmccosmetics.cmd.emote.other") {
             default = BukkitPluginDescription.Permission.Default.OP
         }
-        register("hmccosmetics.cmd.setlocation") {
+        register("hmccosmetics.cmd.setwardrobesetting") {
             default = BukkitPluginDescription.Permission.Default.OP
         }
         register("hmccosmetics.cmd.dataclear") {

@@ -27,6 +27,14 @@ public class Wardrobe {
         return location;
     }
 
+    public void setDistance(int distance) {
+        this.distance = distance;
+    }
+
+    public void setPermission(String permission) {
+        this.permission = permission;
+    }
+
     public boolean hasPermission() {
         return permission != null;
     }

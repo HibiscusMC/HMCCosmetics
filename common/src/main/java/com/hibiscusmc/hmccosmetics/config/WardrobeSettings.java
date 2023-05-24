@@ -302,7 +302,7 @@ public class WardrobeSettings {
         plugin.getConfig().set("wardrobe.wardrobes." + wardrobe.getId() + ".npc-location." + "yaw", newLocation.getYaw());
         plugin.getConfig().set("wardrobe.wardrobes." + wardrobe.getId() + ".npc-location." + "pitch", newLocation.getPitch());
 
-        HMCCosmeticsPlugin.getInstance().saveConfig();
+        plugin.saveConfig();
     }
 
     /**
@@ -321,7 +321,7 @@ public class WardrobeSettings {
         plugin.getConfig().set("wardrobe.wardrobes." + wardrobe.getId() + ".viewer-location.yaw", newLocation.getYaw());
         plugin.getConfig().set("wardrobe.wardrobes." + wardrobe.getId() + ".viewer-location.pitch", newLocation.getPitch());
 
-        HMCCosmeticsPlugin.getInstance().saveConfig();
+        plugin.saveConfig();
     }
 
     /**
@@ -340,6 +340,26 @@ public class WardrobeSettings {
         plugin.getConfig().set("wardrobe.wardrobes." + wardrobe.getId() + ".leave-location.yaw", newLocation.getYaw());
         plugin.getConfig().set("wardrobe.wardrobes." + wardrobe.getId() + ".leave-location.pitch", newLocation.getPitch());
 
-        HMCCosmeticsPlugin.getInstance().saveConfig();
+        plugin.saveConfig();
+    }
+
+    public static void setWardrobePermission(Wardrobe wardrobe, String permission) {
+        wardrobe.setPermission(permission);
+
+        HMCCosmeticsPlugin plugin = HMCCosmeticsPlugin.getInstance();
+
+        plugin.getConfig().set("wardrobe.wardrobes." + wardrobe.getId() + ".permission", permission);
+
+        plugin.saveConfig();
+    }
+
+    public static void setWardrobeDistance(Wardrobe wardrobe, int distance) {
+        wardrobe.setDistance(distance);
+
+        HMCCosmeticsPlugin plugin = HMCCosmeticsPlugin.getInstance();
+
+        plugin.getConfig().set("wardrobe.wardrobes." + wardrobe.getId() + ".distance", distance);
+
+        plugin.saveConfig();
     }
 }
