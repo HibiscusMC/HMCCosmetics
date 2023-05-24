@@ -214,6 +214,10 @@ public class WardrobeSettings {
         wardrobes.put(wardrobe.getId(), wardrobe);
     }
 
+    public static void removeWardrobe(String id) {
+        wardrobes.remove(id);
+    }
+
     @Deprecated
     public static boolean inDistanceOfWardrobe(final Location wardrobeLocation, final Location playerLocation) {
         if (displayRadius == -1) return true;
