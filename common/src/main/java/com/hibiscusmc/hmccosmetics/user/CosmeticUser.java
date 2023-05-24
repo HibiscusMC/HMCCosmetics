@@ -6,7 +6,6 @@ import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.api.*;
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.config.Wardrobe;
-import com.hibiscusmc.hmccosmetics.config.WardrobeLocation;
 import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
@@ -32,7 +31,7 @@ import java.util.logging.Level;
 
 public class CosmeticUser {
 
-    private UUID uniqueId;
+    private final UUID uniqueId;
     private int taskId;
     private HashMap<CosmeticSlot, Cosmetic> playerCosmetics = new HashMap<>();
     private UserWardrobeManager userWardrobeManager;
@@ -160,10 +159,7 @@ public class CosmeticUser {
 
     public boolean hasCosmeticInSlot(Cosmetic cosmetic) {
         if (getCosmetic(cosmetic.getSlot()) == null) return false;
-        if (cosmetic.getId() == getCosmetic(cosmetic.getSlot()).getId()) {
-            return true;
-        }
-        return false;
+        return Objects.equals(cosmetic.getId(), getCosmetic(cosmetic.getSlot()).getId());
     }
 
     public Set<CosmeticSlot> getSlotsWithCosmetics() {
@@ -300,8 +296,7 @@ public class CosmeticUser {
     }
 
     public boolean isInWardrobe() {
-        if (userWardrobeManager == null) return false;
-        return true;
+        return userWardrobeManager != null;
     }
 
     public void spawnBackpack(CosmeticBackpackType cosmeticBackpackType) {
@@ -317,8 +312,7 @@ public class CosmeticUser {
     }
 
     public boolean isBackpackSpawned() {
-        if (this.userBackpackManager == null) return false;
-        return true;
+        return this.userBackpackManager != null;
     }
 
     public void spawnBalloon(CosmeticBalloonType cosmeticBalloonType) {
@@ -369,7 +363,7 @@ public class CosmeticUser {
     }
 
     public List<CosmeticSlot> getDyeableSlots() {
-        ArrayList<CosmeticSlot> dyableSlots = new ArrayList();
+        ArrayList<CosmeticSlot> dyableSlots = new ArrayList<>();
 
         for (Cosmetic cosmetic : getCosmetics()) {
             if (cosmetic.isDyable()) dyableSlots.add(cosmetic.getSlot());
@@ -381,8 +375,7 @@ public class CosmeticUser {
     public boolean canEquipCosmetic(Cosmetic cosmetic) {
         if (!cosmetic.requiresPermission()) return true;
         if (isInWardrobe() && WardrobeSettings.isTryCosmeticsInWardrobe()) return true;
-        if (getPlayer().hasPermission(cosmetic.getPermission())) return true;
-        return false;
+        return getPlayer().hasPermission(cosmetic.getPermission());
     }
 
     public void hidePlayer() {
@@ -404,7 +397,7 @@ public class CosmeticUser {
     }
 
     public void hideCosmetics(HiddenReason reason) {
-        if (hideCosmetics == true) return;
+        if (hideCosmetics) return;
         PlayerCosmeticHideEvent event = new PlayerCosmeticHideEvent(this, reason);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
