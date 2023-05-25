@@ -56,6 +56,10 @@ public class Menus {
         return names;
     }
 
+    public static Collection<Menu> values() {
+        return MENUS.values();
+    }
+
     public static void setup() {
         MENUS.clear();
 

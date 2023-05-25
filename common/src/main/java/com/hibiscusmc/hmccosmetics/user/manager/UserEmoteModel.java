@@ -67,6 +67,11 @@ public class UserEmoteModel extends PlayerModel {
             MessagesUtil.sendMessage(player, "emote-blocked");
             return;
         }
+        // Check if block below player is an air block
+        if (Settings.getEmoteAirCheck() && newLocation.clone().subtract(0, 1, 0).getBlock().getType().isAir()) {
+            stopAnimation();
+            MessagesUtil.sendMessage(player, "emote-blocked");
+        }
 
         user.getPlayer().setInvisible(true);
         user.hideCosmetics(CosmeticUser.HiddenReason.EMOTE);

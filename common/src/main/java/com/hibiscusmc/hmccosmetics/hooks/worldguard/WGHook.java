@@ -4,6 +4,7 @@ import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.flags.StateFlag;
+import com.sk89q.worldguard.protection.flags.StringFlag;
 import com.sk89q.worldguard.protection.flags.registry.FlagConflictException;
 import com.sk89q.worldguard.protection.flags.registry.FlagRegistry;
 
@@ -21,13 +22,13 @@ public class WGHook {
     /**
      * @implNote Please use {@link #getCosmeticWardrobeFlag()} instead
      */
-    public static StateFlag COSMETIC_WARDROBE_FLAG;
+    public static StringFlag COSMETIC_WARDROBE_FLAG;
 
     public WGHook() {
         FlagRegistry registry = WorldGuard.getInstance().getFlagRegistry();
         try {
             StateFlag cosmeticFlag = new StateFlag("cosmetic-enable", false);
-            StateFlag wardrobeFlag = new StateFlag("cosmetic-wardrobe", false);
+            StringFlag wardrobeFlag = new StringFlag("cosmetic-wardrobe");
             registry.register(cosmeticFlag);
             registry.register(wardrobeFlag);
             COSMETIC_ENABLE_FLAG = cosmeticFlag;
@@ -56,7 +57,7 @@ public class WGHook {
      * Gets the cosmetic wardrobe {@link StateFlag}
      * @return The cosmetic wardrobe {@link StateFlag}
      */
-    public static StateFlag getCosmeticWardrobeFlag() {
+    public static StringFlag getCosmeticWardrobeFlag() {
         return COSMETIC_WARDROBE_FLAG;
     }
 

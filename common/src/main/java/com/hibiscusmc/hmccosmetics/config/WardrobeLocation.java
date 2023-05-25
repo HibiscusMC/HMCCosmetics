@@ -26,6 +26,11 @@ public class WardrobeLocation {
         return leaveLocation.clone();
     }
 
+    public boolean hasAllLocations() {
+        if (npcLocation == null || viewerLocation == null || leaveLocation == null) return false;
+        return true;
+    }
+
     public void setNPCLocation(Location wardrobeLocation) {
         this.npcLocation = wardrobeLocation;
     }

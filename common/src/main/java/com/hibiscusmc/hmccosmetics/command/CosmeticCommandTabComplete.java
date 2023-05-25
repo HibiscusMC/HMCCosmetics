@@ -1,5 +1,7 @@
 package com.hibiscusmc.hmccosmetics.command;
 
+import com.hibiscusmc.hmccosmetics.config.Wardrobe;
+import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
@@ -36,7 +38,7 @@ public class CosmeticCommandTabComplete implements TabCompleter {
             if (hasPermission(sender, "hmccosmetics.cmd.wardrobe")) completions.add("wardrobe");
             if (hasPermission(sender, "hmccosmetics.cmd.dataclear")) completions.add("dataclear");
             if (hasPermission(sender, "hmccosmetics.cmd.dye")) completions.add("dye");
-            if (hasPermission(sender, "hmccosmetics.cmd.setlocation")) completions.add("setlocation");
+            if (hasPermission(sender, "hmccosmetics.cmd.setwardrobesetting")) completions.add("setwardrobesetting");
             if (hasPermission(sender, "hmccosmetics.cmd.hide")) completions.add("hide");
             if (hasPermission(sender, "hmccosmetics.cmd.show")) completions.add("show");
             if (hasPermission(sender, "hmccosmetics.cmd.debug")) completions.add("debug");
@@ -66,9 +68,18 @@ public class CosmeticCommandTabComplete implements TabCompleter {
                         if (menu.canOpen(user.getPlayer())) completions.add(menu.getId());
                     }
                 }
-                case "dataclear", "wardrobe", "hide", "show", "emote" -> {
+                case "dataclear", "hide", "show", "emote" -> {
                     for (Player player : Bukkit.getOnlinePlayers()) {
                         completions.add(player.getName());
+                    }
+                }
+                case "wardrobe" -> {
+                    for (Wardrobe wardrobe : WardrobeSettings.getWardrobes()) {
+                        if (wardrobe.hasPermission()) {
+                            if (user.getPlayer().hasPermission(wardrobe.getPermission())) completions.add(wardrobe.getId());
+                        } else {
+                            completions.add(wardrobe.getId());
+                        }
                     }
                 }
                 case "dye" -> {
@@ -76,10 +87,10 @@ public class CosmeticCommandTabComplete implements TabCompleter {
                         completions.add(slot.name());
                     }
                 }
-                case "setlocation" -> {
-                    completions.add("wardrobelocation");
-                    completions.add("viewerlocation");
-                    completions.add("leavelocation");
+                case "setwardrobesetting" -> {
+                    for (Wardrobe wardrobe : WardrobeSettings.getWardrobes()) {
+                        completions.add(wardrobe.getId());
+                    }
                 }
                 case "playemote" -> completions.addAll(EmoteManager.getAllNames());
             }
@@ -91,10 +102,17 @@ public class CosmeticCommandTabComplete implements TabCompleter {
                 case "dye" -> {
                     completions.add("#FFFFFF");
                 }
-                case "menu", "apply", "unapply", "playemote" -> {
+                case "menu", "wardrobe", "apply", "unapply", "playemote" -> {
                     for (Player player : Bukkit.getOnlinePlayers()) {
                         completions.add(player.getName());
                     }
+                }
+                case "setwardrobesetting" -> {
+                    completions.add("npclocation");
+                    completions.add("viewerlocation");
+                    completions.add("leavelocation");
+                    completions.add("permission");
+                    completions.add("distance");
                 }
             }
             StringUtil.copyPartialMatches(args[2], completions, finalCompletions);

@@ -110,11 +110,15 @@ public class HMCPlaceholderExpansion extends PlaceholderExpansion {
                 if (placeholderArgs.get(1) != null) {
                     Cosmetic cosmetic = Cosmetics.getCosmetic(placeholderArgs.get(1));
                     if (cosmetic == null) {
-                        Cosmetic secondAttemptCosmetic = Cosmetics.getCosmetic(placeholderArgs.get(1) + "_" + placeholderArgs.get(2));
-                        if (secondAttemptCosmetic == null) {
-                            return "INVALID_COSMETIC";
+                        if (placeholderArgs.size() >= 3) {
+                            Cosmetic secondAttemptCosmetic = Cosmetics.getCosmetic(placeholderArgs.get(1) + "_" + placeholderArgs.get(2));
+                            if (secondAttemptCosmetic == null) {
+                                return "INVALID_COSMETIC";
+                            } else {
+                                cosmetic = secondAttemptCosmetic;
+                            }
                         } else {
-                            cosmetic = secondAttemptCosmetic;
+                            return "INVALID_COSMETIC";
                         }
                     }
                     return TranslationUtil.getTranslation("unlockedCosmetic", String.valueOf(user.canEquipCosmetic(cosmetic)));

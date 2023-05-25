@@ -2,6 +2,8 @@ package com.hibiscusmc.hmccosmetics.command;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.Settings;
+import com.hibiscusmc.hmccosmetics.config.Wardrobe;
+import com.hibiscusmc.hmccosmetics.config.WardrobeLocation;
 import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
@@ -194,8 +196,14 @@ public class CosmeticCommand implements CommandExecutor {
             }
             case ("wardrobe") -> {
                 if (sender instanceof Player) player = ((Player) sender).getPlayer();
+
+                if (args.length == 1) {
+                    if (!silent) MessagesUtil.sendMessage(player, "not-enough-args");
+                    return true;
+                }
+
                 if (sender.hasPermission("hmccosmetics.cmd.wardrobe.other")) {
-                    if (args.length >= 2) player = Bukkit.getPlayer(args[1]);
+                    if (args.length >= 3) player = Bukkit.getPlayer(args[2]);
                 }
 
                 if (!sender.hasPermission("hmccosmetics.cmd.wardrobe")) {
@@ -208,9 +216,19 @@ public class CosmeticCommand implements CommandExecutor {
                     return true;
                 }
 
+                if (!WardrobeSettings.getWardrobeNames().contains(args[1])) {
+                    if (!silent) MessagesUtil.sendMessage(sender, "no-wardrobes");
+                    return true;
+                }
+                Wardrobe wardrobe = WardrobeSettings.getWardrobe(args[1]);
+
                 CosmeticUser user = CosmeticUsers.getUser(player);
 
-                user.toggleWardrobe();
+                if (user.isInWardrobe()) {
+                    user.leaveWardrobe();
+                } else {
+                    user.enterWardrobe(false, wardrobe);
+                }
                 return true;
             }
             // cosmetic menu exampleMenu playerName
@@ -289,35 +307,55 @@ public class CosmeticCommand implements CommandExecutor {
                     DyeMenu.openMenu(user, cosmetic);
                 }
             }
-            case ("setlocation") -> {
-                if (!sender.hasPermission("hmccosmetics.cmd.setlocation")) {
+            case ("setwardrobesetting") -> {
+                if (!sender.hasPermission("hmccosmetics.cmd.setwardrobesetting")) {
                     if (!silent) MessagesUtil.sendMessage(sender, "no-permission");
                     return true;
                 }
 
                 if (player == null) return true;
 
-                if (args.length < 2) {
+                if (args.length < 3) {
                     if (!silent) MessagesUtil.sendMessage(player, "not-enough-args");
                     return true;
                 }
+                Wardrobe wardrobe = WardrobeSettings.getWardrobe(args[1]);
+                if (wardrobe == null) {
+                    wardrobe = new Wardrobe(args[1], new WardrobeLocation(null, null, null), null, -1);
+                    WardrobeSettings.addWardrobe(wardrobe);
+                    //MessagesUtil.sendMessage(player, "no-wardrobes");
+                    //return true;
+                }
 
-                if (args[1].equalsIgnoreCase("wardrobelocation")) {
-                    WardrobeSettings.setNPCLocation(player.getLocation());
+                if (args[2].equalsIgnoreCase("npclocation")) {
+                    WardrobeSettings.setNPCLocation(wardrobe, player.getLocation());
                     if (!silent) MessagesUtil.sendMessage(player, "set-wardrobe-location");
                     return true;
                 }
 
-                if (args[1].equalsIgnoreCase("viewerlocation")) {
-                    WardrobeSettings.setViewerLocation(player.getLocation());
+                if (args[2].equalsIgnoreCase("viewerlocation")) {
+                    WardrobeSettings.setViewerLocation(wardrobe, player.getLocation());
                     if (!silent) MessagesUtil.sendMessage(player, "set-wardrobe-viewing");
                     return true;
                 }
 
-                if (args[1].equalsIgnoreCase("leavelocation")) {
-                    WardrobeSettings.setLeaveLocation(player.getLocation());
+                if (args[2].equalsIgnoreCase("leavelocation")) {
+                    WardrobeSettings.setLeaveLocation(wardrobe, player.getLocation());
                     if (!silent) MessagesUtil.sendMessage(player, "set-wardrobe-leaving");
                     return true;
+                }
+
+                if (args.length >= 4) {
+                    if (args[2].equalsIgnoreCase("permission")) {
+                        WardrobeSettings.setWardrobePermission(wardrobe, args[3]);
+                        if (!silent) MessagesUtil.sendMessage(player, "set-wardrobe-permission");
+                        return true;
+                    }
+                    if (args[2].equalsIgnoreCase("distance")) {
+                        WardrobeSettings.setWardrobeDistance(wardrobe, Integer.valueOf(args[3]));
+                        if (!silent) MessagesUtil.sendMessage(player, "set-wardrobe-distance");
+                        return true;
+                    }
                 }
             }
             case ("dump") -> {
