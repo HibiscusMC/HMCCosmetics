@@ -105,7 +105,7 @@ public class Menu {
 
         for (ConfigurationNode config : config.node("items").childrenMap().values()) {
 
-            List<String> slotString = null;
+            List<String> slotString;
             try {
                 slotString = config.node("slots").getList(String.class);
             } catch (SerializationException e) {
@@ -126,7 +126,6 @@ public class Menu {
             ItemStack item;
             try {
                 item = ItemSerializer.INSTANCE.deserialize(ItemStack.class, config.node("item"));
-                //item = config.node("item").get(ItemStack.class);
             } catch (SerializationException e) {
                 throw new RuntimeException(e);
             }
@@ -144,17 +143,17 @@ public class Menu {
             }
 
             for (int slot : slots) {
-                ItemStack originalItem = updateItem(user, item, type, config, slot).clone();
-                GuiItem guiItem = ItemBuilder.from(originalItem).asGuiItem();
+                ItemStack modifiedItem = getMenuItem(user, type, config, item.clone(), slot).clone();
+                GuiItem guiItem = ItemBuilder.from(modifiedItem).asGuiItem();
 
                 Type finalType = type;
                 guiItem.setAction(event -> {
                     MessagesUtil.sendDebugMessages("Selected slot " + slot);
                     final ClickType clickType = event.getClick();
                     if (finalType != null) finalType.run(user, config, clickType);
-
+                    // Need to delay the update by a tick so it will actually update with new values
                     for (int guiSlot : slots) {
-                        gui.updateItem(guiSlot, updateItem(user, originalItem.clone(), finalType, config, guiSlot));
+                        gui.updateItem(guiSlot, getMenuItem(user, finalType, config, item.clone(), guiSlot));
                     }
                     MessagesUtil.sendDebugMessages("Updated slot " + slot);
                 });
@@ -194,11 +193,9 @@ public class Menu {
 
     @Contract("_, _, _, _ -> param2")
     @NotNull
-    private ItemStack updateItem(CosmeticUser user, @NotNull ItemStack itemStack, Type type, ConfigurationNode config, int slot) {
-        if (itemStack.hasItemMeta()) {
-            itemStack = type.setItem(user, config, itemStack, slot);
-        }
-        return itemStack;
+    private ItemStack getMenuItem(CosmeticUser user, Type type, ConfigurationNode config, ItemStack itemStack, int slot) {
+        if (!itemStack.hasItemMeta()) return itemStack;
+        return type.setItem(user, config, itemStack, slot);
     }
 
     public String getPermissionNode() {

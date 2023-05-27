@@ -1,5 +1,6 @@
 package com.hibiscusmc.hmccosmetics;
 
+import com.bgsoftware.common.config.CommentedConfiguration;
 import com.hibiscusmc.hmccosmetics.api.HMCCosmeticSetupEvent;
 import com.hibiscusmc.hmccosmetics.command.CosmeticCommand;
 import com.hibiscusmc.hmccosmetics.command.CosmeticCommandTabComplete;
@@ -12,6 +13,7 @@ import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
 import com.hibiscusmc.hmccosmetics.database.Database;
 import com.hibiscusmc.hmccosmetics.emotes.EmoteManager;
+import com.hibiscusmc.hmccosmetics.gui.Menu;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
 import com.hibiscusmc.hmccosmetics.hooks.Hooks;
 import com.hibiscusmc.hmccosmetics.hooks.worldguard.WGHook;
@@ -86,13 +88,12 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
                 .checkNow();
         onLatestVersion = checker.isUsingLatestVersion();
         // File setup
-        if (!getDataFolder().exists()) {
-            saveDefaultConfig();
-            saveResource("translations.yml", false);
-            saveResource("messages.yml", false);
-            saveResource("cosmetics/defaultcosmetics.yml", false);
-            saveResource("menus/defaultmenu.yml", false);
-        }
+        saveDefaultConfig();
+        //saveResource("translations.yml", false);
+        if (!Path.of(getDataFolder().getPath(), "messages.yml").toFile().exists()) saveResource("messages.yml", false);
+        if (!Path.of(getDataFolder().getPath() + "/cosmetics/").toFile().exists()) saveResource("cosmetics/defaultcosmetics.yml", false);
+        if (!Path.of(getDataFolder().getPath() + "/menus/").toFile().exists()) saveResource("menus/defaultmenu.yml", false);
+
         // Emote folder setup
         File emoteFile = new File(getDataFolder().getPath() + "/emotes");
         if (!emoteFile.exists()) emoteFile.mkdir();
@@ -100,6 +101,16 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
         // Player Animator
         PlayerAnimatorImpl.initialize(this);
 
+        // Configuration Sync
+        final File configFile = Path.of(getInstance().getDataFolder().getPath(), "config.yml").toFile();
+        final File messageFile = Path.of(getInstance().getDataFolder().getPath(), "messages.yml").toFile();
+        try {
+            CommentedConfiguration.loadConfiguration(configFile).syncWithConfig(configFile, getInstance().getResource("config.yml"),
+                    "database-settings", "debug-mode", "wardrobe.viewer-location", "wardrobe.npc-location", "wardrobe.wardrobe-location", "wardrobe.leave-location");
+            CommentedConfiguration.loadConfiguration(messageFile).syncWithConfig(messageFile, getInstance().getResource("messages.yml"));
+        } catch (Exception e) {}
+
+        // Setup
         setup();
 
         // Commands
@@ -170,7 +181,7 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
             WardrobeSettings.load(loader.load().node("wardrobe"));
             DatabaseSettings.load(loader.load().node("database-settings"));
             configLoader = loader;
-        } catch (ConfigurateException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
@@ -236,12 +247,19 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
                 getInstance().getServer().getPluginManager().addPermission(new Permission(cosmetic.getPermission()));
             }
         }
+        for (Menu menu : Menus.values()) {
+            if (menu.getPermissionNode() != null) {
+                if (getInstance().getServer().getPluginManager().getPermission(menu.getPermissionNode()) != null) continue;
+                getInstance().getServer().getPluginManager().addPermission(new Permission(menu.getPermissionNode()));
+            }
+        }
 
         EmoteManager.loadEmotes();
 
         getInstance().getLogger().info("Successfully Enabled HMCCosmetics");
         getInstance().getLogger().info(Cosmetics.values().size() + " Cosmetics Successfully Setup");
         getInstance().getLogger().info(Menus.getMenuNames().size() + " Menus Successfully Setup");
+        getInstance().getLogger().info(WardrobeSettings.getWardrobes().size() + " Wardrobes Successfully Setup");
         getInstance().getLogger().info("Data storage is set to " + DatabaseSettings.getDatabaseType());
 
         Bukkit.getPluginManager().callEvent(new HMCCosmeticSetupEvent());

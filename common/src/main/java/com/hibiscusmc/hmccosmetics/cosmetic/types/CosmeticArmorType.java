@@ -28,6 +28,7 @@ public class CosmeticArmorType extends Cosmetic {
     public void update(@NotNull CosmeticUser user) {
         Player player = Bukkit.getPlayer(user.getUniqueId());
         if (player == null) return;
+        if (user.getUserEmoteManager().isPlayingEmote()) return; // There has to be a better way of doing this...
         ItemStack cosmeticItem = user.getUserCosmeticItem(this);
         if (equipSlot.equals(EquipmentSlot.OFF_HAND)) {
             if (!player.getInventory().getItemInOffHand().getType().isAir()) return;

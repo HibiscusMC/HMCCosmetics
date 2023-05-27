@@ -2,6 +2,8 @@ package com.hibiscusmc.hmccosmetics.user.manager;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.Settings;
+import com.hibiscusmc.hmccosmetics.config.Wardrobe;
+import com.hibiscusmc.hmccosmetics.config.WardrobeLocation;
 import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
@@ -38,6 +40,8 @@ public class UserWardrobeManager {
     private String npcName;
     private GameMode originalGamemode;
     private final CosmeticUser user;
+    private final Wardrobe wardrobe;
+    private final WardrobeLocation wardrobeLocation;
     private final Location viewingLocation;
     private final Location npcLocation;
     private Location exitLocation;
@@ -45,15 +49,18 @@ public class UserWardrobeManager {
     private boolean active;
     private WardrobeStatus wardrobeStatus;
 
-    public UserWardrobeManager(CosmeticUser user, Location exitLocation, Location viewingLocation, Location npcLocation) {
+    public UserWardrobeManager(CosmeticUser user, Wardrobe wardrobe) {
         NPC_ID = NMSHandlers.getHandler().getNextEntityId();
         ARMORSTAND_ID = NMSHandlers.getHandler().getNextEntityId();
         WARDROBE_UUID = UUID.randomUUID();
         this.user = user;
 
-        this.exitLocation = exitLocation;
-        this.viewingLocation = viewingLocation;
-        this.npcLocation = npcLocation;
+        this.wardrobe = wardrobe;
+        this.wardrobeLocation = wardrobe.getLocation();
+
+        this.exitLocation = wardrobeLocation.getLeaveLocation();
+        this.viewingLocation = wardrobeLocation.getViewerLocation();
+        this.npcLocation = wardrobeLocation.getNpcLocation();
 
         wardrobeStatus = WardrobeStatus.SETUP;
     }
@@ -208,9 +215,7 @@ public class UserWardrobeManager {
 
             // For Wardrobe Temp Cosmetics
             for (Cosmetic cosmetic : user.getCosmetics()) {
-                if (cosmetic.requiresPermission()) {
-                    if (!player.hasPermission(cosmetic.getPermission())) user.removeCosmeticSlot(cosmetic.getSlot());
-                }
+                if (!user.canEquipCosmetic(cosmetic)) user.removeCosmeticSlot(cosmetic.getSlot());
             }
 
             user.updateCosmetic();
@@ -230,12 +235,12 @@ public class UserWardrobeManager {
                     this.cancel();
                     return;
                 }
-                MessagesUtil.sendDebugMessages("WardrobeUpdate[user= " + user.getUniqueId() + ",status=" + getWardrobeStatus() + "]");
+                MessagesUtil.sendDebugMessages("WardrobeUpdate[user=" + user.getUniqueId() + ",status=" + getWardrobeStatus() + "]");
                 List<Player> viewer = Collections.singletonList(player);
                 List<Player> outsideViewers = PacketManager.getViewers(viewingLocation);
                 outsideViewers.remove(player);
 
-                Location location = WardrobeSettings.getWardrobeLocation().clone();
+                Location location = npcLocation;
                 int yaw = data.get();
                 location.setYaw(yaw);
 
@@ -259,8 +264,8 @@ public class UserWardrobeManager {
                 }
 
                 if (user.hasCosmeticInSlot(CosmeticSlot.BALLOON)) {
-                    PacketManager.sendTeleportPacket(user.getBalloonManager().getPufferfishBalloonId(), WardrobeSettings.getWardrobeLocation().add(Settings.getBalloonOffset()), false, viewer);
-                    user.getBalloonManager().getModelEntity().teleport(WardrobeSettings.getWardrobeLocation().add(Settings.getBalloonOffset()));
+                    PacketManager.sendTeleportPacket(user.getBalloonManager().getPufferfishBalloonId(), npcLocation.add(Settings.getBalloonOffset()), false, viewer);
+                    user.getBalloonManager().getModelEntity().teleport(npcLocation.add(Settings.getBalloonOffset()));
                     user.getBalloonManager().sendRemoveLeashPacket(outsideViewers);
                     PacketManager.sendEntityDestroyPacket(user.getBalloonManager().getModelId(), outsideViewers);
                     user.getBalloonManager().sendLeashPacket(NPC_ID);

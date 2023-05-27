@@ -112,13 +112,10 @@ public class PlayerGameListener implements Listener {
         }
 
         if (user.hasCosmeticInSlot(CosmeticSlot.BACKPACK) && user.getUserBackpackManager() != null) {
-            user.getUserBackpackManager().hideBackpack();
-
-            user.getUserBackpackManager().getArmorStand().teleport(event.getTo());
-
             Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
+                user.respawnBackpack();
                 user.updateCosmetic();
-            }, 2);
+            }, 1);
         }
 
         if (event.getCause().equals(PlayerTeleportEvent.TeleportCause.NETHER_PORTAL) || event.getCause().equals(PlayerTeleportEvent.TeleportCause.END_PORTAL)) return;

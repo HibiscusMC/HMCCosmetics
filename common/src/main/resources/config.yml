@@ -25,6 +25,7 @@ cosmetic-settings:
 
   emote-distance: -3 # This shows how far away the camera should be while a player is doing an emote. Negative is behind player.
   emote-block-check: true # If the server should check if the block is open where the camera is placed (prevents players viewing through blocks)
+  emote-air-check: true # Check if there is air under a player, if there is, don't play emote
   emote-damage-leave: true # If the player should leave the emote when they take damage
   emote-invincible: false # If the player should not take damage while doing an emote
 
@@ -70,6 +71,8 @@ wardrobe:
   equip-pumpkin: false
   # Rather than having a set exit location, this will send the player back to where they entered the wardrobe. Not recommended for WG regions
   return-last-location: false
+  # If players in wardrobes should be able to equip any cosmetic, regardless of permission (Cosmetics they do not have access to will be removed when they leave the wardrobe)
+  unchecked-wardrobe-cosmetics: false
 
   gamemode-options:
     exit-gamemode-enabled: false # Setting this to false will set the gamemode the player came in as. True sets to exit-gamemode gamemode
@@ -91,24 +94,26 @@ wardrobe:
     title-fade-in: 1000 # milliseconds
     title-stay: 500 # milliseconds
     title-fade-out: 1000 # milliseconds
-  wardrobe-location:
-    world: "World"
-    x: 0
-    y: 0
-    z: 0
-    yaw: 0
-    pitch: 0
-  viewer-location:
-    world: "World"
-    x: 5
-    y: 0
-    z: 5
-    yaw: 0
-    pitch: 0
-  leave-location:
-    world: "World"
-    x: 5
-    y: 5
-    z: 5
-    yaw: 0
-    pitch: 0
+  wardrobes:
+    default:
+      npc-location:
+        world: "world"
+        x: 0
+        y: 0
+        z: 0
+        yaw: 0
+        pitch: 0
+      viewer-location:
+        world: "world"
+        x: 5
+        y: 0
+        z: 5
+        yaw: 0
+        pitch: 0
+      leave-location:
+        world: "world"
+        x: 5
+        y: 5
+        z: 5
+        yaw: 0
+        pitch: 0

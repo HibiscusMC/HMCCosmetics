@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "com.hibiscusmc"
-version = "2.3.0"
+version = "2.4.1-DEV"
 
 allprojects {
     apply(plugin = "java")
@@ -27,6 +27,7 @@ allprojects {
         // ProtocolLib repo
         maven("https://repo.dmulloy2.net/repository/public/") //ProtocolLib Repo, constantly down
         maven("https://repo.mineinabyss.com/releases/")
+        maven("https://repo.mineinabyss.com/snapshots/")
 
         // PlaceholderAPI
         maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
@@ -69,14 +70,12 @@ allprojects {
         compileOnly("com.mojang:authlib:1.5.25")
         compileOnly("org.spigotmc:spigot-api:1.17.1-R0.1-SNAPSHOT")
         compileOnly("org.jetbrains:annotations:23.0.0")
-        compileOnly("com.comphenix.protocol:ProtocolLib:5.0.0-SNAPSHOT")
+        compileOnly("com.comphenix.protocol:ProtocolLib:5.0.0")
         compileOnly("me.clip:placeholderapi:2.11.1")
-        compileOnly("com.ticxo.modelengine:api:R3.0.1")
+        compileOnly("com.ticxo:modelengine:R3.0.1")
         compileOnly("com.github.oraxen:oraxen:-SNAPSHOT")
         compileOnly("com.github.LoneDev6:API-ItemsAdder:3.2.5")
-        compileOnly("com.mineinabyss:idofront:0.12.111")
-        compileOnly("com.mineinabyss:geary-papermc-core:0.19.113")
-        compileOnly("com.mineinabyss:looty:0.8.67")
+        compileOnly("com.mineinabyss:geary-papermc:0.24-SNAPSHOT")
         compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.1.0-SNAPSHOT")
         compileOnly("it.unimi.dsi:fastutil:8.5.11")
         compileOnly("com.github.LeonMangler:SuperVanish:6.2.6-4")
@@ -101,6 +100,7 @@ dependencies {
     implementation("com.jeff_media:SpigotUpdateChecker:3.0.0")
     implementation("com.owen1212055:particlehelper:1.0.0-SNAPSHOT")
     implementation("com.ticxo:PlayerAnimator:R1.2.6")
+    implementation("com.github.BG-Software-LLC:CommentedConfiguration:-SNAPSHOT")
     //implementation("com.ticxo.playeranimator:PlayerAnimator:R1.2.5")
 }
 
@@ -142,6 +142,7 @@ tasks {
         relocate("com.jeff_media.updatechecker", "com.hisbiscusmc.hmccosmetics.updatechecker")
         relocate("com.owen1212055.particlehelper", "com.hisbiscusmc.hmccosmetics.particlehelper")
         relocate("com.ticxo.playeranimator", "com.hisbiscusmc.hmccosmetics.playeranimator")
+        relocate("com.bgsoftware", "com.hisbiscusmc.hmccosmetics.configupdater")
         archiveFileName.set("HMCCosmeticsRemapped-${project.version}.jar")
 
         dependencies {
@@ -169,7 +170,7 @@ bukkit {
     apiVersion = "1.17"
     authors = listOf("LoJoSho")
     depend = listOf("ProtocolLib")
-    softDepend = listOf("ModelEngine", "Oraxen", "ItemsAdder", "Looty", "HMCColor", "WorldGuard", "MythicMobs", "PlaceholderAPI", "SuperVanish", "PremiumVanish", "LibsDisguises", "Denizen")
+    softDepend = listOf("ModelEngine", "Oraxen", "ItemsAdder", "Geary", "HMCColor", "WorldGuard", "MythicMobs", "PlaceholderAPI", "SuperVanish", "PremiumVanish", "LibsDisguises", "Denizen")
     version = "${project.version}"
 
     commands {
@@ -211,7 +212,7 @@ bukkit {
         register("hmccosmetics.cmd.emote.other") {
             default = BukkitPluginDescription.Permission.Default.OP
         }
-        register("hmccosmetics.cmd.setlocation") {
+        register("hmccosmetics.cmd.setwardrobesetting") {
             default = BukkitPluginDescription.Permission.Default.OP
         }
         register("hmccosmetics.cmd.dataclear") {
