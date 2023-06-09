@@ -480,7 +480,7 @@ public class CosmeticCommand implements CommandExecutor {
                     return true;
                 }
                 CosmeticUser user = CosmeticUsers.getUser(player);
-                user.getUserEmoteManager().playEmote(EmoteManager.get(args[1]));
+                user.getUserEmoteManager().playEmote(args[1]);
                 return true;
             }
         }

@@ -36,9 +36,6 @@ public class UserEmoteModel extends PlayerModel {
 
     @Override
     public void playAnimation(@NotNull String id) {
-        if (id.contains(":")) id = id.split(":", 2)[1]; // A:B -> B -> B.B.B
-        if (!id.contains(".")) id = id + "." + id + "." + id; // Make into a format that playerAnimator works with. Requires 3 splits.
-
         super.playAnimation(id);
 
         emotePlaying = id;
@@ -122,6 +119,7 @@ public class UserEmoteModel extends PlayerModel {
 
             if (user.getPlayer() != null) player.setInvisible(false);
             PacketManager.equipmentSlotUpdate(player, false, outsideViewers);
+            user.getUserEmoteManager().despawnTextEntity();
             user.showPlayer();
             user.showCosmetics();
         });

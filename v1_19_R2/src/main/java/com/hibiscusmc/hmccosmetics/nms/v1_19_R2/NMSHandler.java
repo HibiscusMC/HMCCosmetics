@@ -13,6 +13,7 @@ import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.PlayerUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
 import com.mojang.datafixers.util.Pair;
+import net.kyori.adventure.text.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
@@ -97,6 +98,11 @@ public class NMSHandler implements com.hibiscusmc.hmccosmetics.nms.NMSHandler {
         //PacketManager.armorStandMetaPacket(invisibleArmorstand.getBukkitEntity(), sentTo);
         //PacketManager.ridingMountPacket(player.getEntityId(), invisibleArmorstand.getId(), sentTo);
 
+    }
+
+    @Override
+    public org.bukkit.entity.Entity spawnDisplayEntity(Location location, String text) {
+        return null;
     }
 
 

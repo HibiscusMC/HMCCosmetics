@@ -13,6 +13,7 @@ import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.PlayerUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
 import com.mojang.datafixers.util.Pair;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
@@ -20,6 +21,7 @@ import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerPlayerConnection;
+import net.minecraft.world.entity.Display;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Inventory;
@@ -96,10 +98,20 @@ public class NMSHandler implements com.hibiscusmc.hmccosmetics.nms.NMSHandler {
         return invisibleArmorstand.getBukkitLivingEntity();
         //PacketManager.armorStandMetaPacket(invisibleArmorstand.getBukkitEntity(), sentTo);
         //PacketManager.ridingMountPacket(player.getEntityId(), invisibleArmorstand.getId(), sentTo);
-
     }
 
-
+    @Override
+    public org.bukkit.entity.Entity spawnDisplayEntity(Location location, String text) {
+        Display.TextDisplay entity = new Display.TextDisplay(net.minecraft.world.entity.EntityType.TEXT_DISPLAY, ((CraftWorld) location.getWorld()).getHandle());
+        entity.setPos(location.getX(), location.getY(), location.getZ());
+        entity.persist = false;
+        //entity.setText(net.minecraft.network.chat.Component.literal("TEST!"));
+        entity.setCustomNameVisible(true);
+        entity.setCustomName(Component.literal(text));
+        MessagesUtil.sendDebugMessages("spawnDisplayEntity - " + entity);
+        ((CraftWorld) location.getWorld()).getHandle().addFreshEntity(entity, CreatureSpawnEvent.SpawnReason.CUSTOM);
+        return entity.getBukkitEntity();
+    }
 
     @Override
     public UserBalloonManager spawnBalloon(CosmeticUser user, CosmeticBalloonType cosmeticBalloonType) {
