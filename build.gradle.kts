@@ -89,6 +89,7 @@ dependencies {
     implementation(project(path = ":v1_19_R1", configuration = "reobf"))
     implementation(project(path = ":v1_19_R2", configuration = "reobf"))
     implementation(project(path = ":v1_19_R3", configuration = "reobf"))
+    implementation(project(path = ":v1_20_R1", configuration = "reobf"))
 
     //compileOnly("com.github.Fisher2911:FisherLib:master-SNAPSHOT")
     implementation("net.kyori:adventure-api:4.11.0")
