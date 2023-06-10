@@ -168,6 +168,15 @@ public class UserWardrobeManager {
         Runnable run = () -> {
             this.active = false;
 
+            // For Wardrobe Temp Cosmetics
+            for (Cosmetic cosmetic : user.getCosmetics()) {
+                MessagesUtil.sendDebugMessages("Checking... " + cosmetic.getId());
+                if (!user.canEquipCosmetic(cosmetic)) {
+                    MessagesUtil.sendDebugMessages("Unable to keep " + cosmetic.getId());
+                    user.removeCosmeticSlot(cosmetic.getSlot());
+                }
+            }
+
             // NPC
             if (user.hasCosmeticInSlot(CosmeticSlot.BALLOON)) user.getBalloonManager().sendRemoveLeashPacket();
             PacketManager.sendEntityDestroyPacket(NPC_ID, viewer); // Success
@@ -211,11 +220,6 @@ public class UserWardrobeManager {
                 Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.getInstance()).player(player);
 
                 target.hideBossBar(bossBar);
-            }
-
-            // For Wardrobe Temp Cosmetics
-            for (Cosmetic cosmetic : user.getCosmetics()) {
-                if (!user.canEquipCosmetic(cosmetic)) user.removeCosmeticSlot(cosmetic.getSlot());
             }
 
             user.updateCosmetic();
