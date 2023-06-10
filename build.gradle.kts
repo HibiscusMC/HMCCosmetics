@@ -130,6 +130,7 @@ tasks {
         dependsOn(":v1_19_R1:reobfJar")
         dependsOn(":v1_19_R2:reobfJar")
         dependsOn(":v1_19_R3:reobfJar")
+        dependsOn(":v1_20_R1:reobfJar")
         mergeServiceFiles()
 
         relocate("dev.triumphteam.gui", "com.hisbiscusmc.hmccosmetics.gui")
