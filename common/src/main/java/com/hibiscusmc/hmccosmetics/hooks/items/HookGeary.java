@@ -39,7 +39,7 @@ public class HookGeary extends Hook {
         if (enabled) {
             PrefabKey prefabKey = PrefabKey.Companion.ofOrNull(itemId);
             if (prefabKey == null) return null;
-            return null; //return ItemTrackingKt.getItemTracking().getProvider().serializePrefabToItemStack(prefabKey, null);
+            return ItemTrackingKt.getItemTracking().createItem(prefabKey, null);
         } else return new ItemStack(Material.AIR);
     }
 }
