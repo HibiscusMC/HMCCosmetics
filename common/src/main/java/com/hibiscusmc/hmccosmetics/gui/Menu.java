@@ -77,26 +77,21 @@ public class Menu {
 
         gui.setDefaultClickAction(event -> event.setCancelled(true));
 
+        // TODO: Redo this whole gui creation process to allow for all items, possibly implement caching
         gui = getItems(user, gui);
+        final Gui finalGui = gui; // Need to make it final for the runtask
 
-        Gui finalGui = gui;
-
+        // API
         PlayerMenuOpenEvent event = new PlayerMenuOpenEvent(user, this);
-
         Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> {
             Bukkit.getPluginManager().callEvent(event);
         });
-
-        if (event.isCancelled()) {
-            return;
-        }
+        if (event.isCancelled()) return;
+        // Internal
 
         Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> {
             finalGui.open(player);
         });
-
-        //gui.open(player);
-
     }
 
     @Contract("_, _ -> param2")
