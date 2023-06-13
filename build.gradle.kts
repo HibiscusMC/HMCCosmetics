@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "com.hibiscusmc"
-version = "2.4.2"
+version = "2.4.3-DEV"
 
 allprojects {
     apply(plugin = "java")
