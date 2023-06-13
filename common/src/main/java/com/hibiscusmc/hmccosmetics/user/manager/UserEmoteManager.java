@@ -88,6 +88,7 @@ public class UserEmoteManager {
         SNEAK,
         DAMAGE,
         CONNECTION,
-        TELEPORT
+        TELEPORT,
+        UNEQUIP
     }
 }

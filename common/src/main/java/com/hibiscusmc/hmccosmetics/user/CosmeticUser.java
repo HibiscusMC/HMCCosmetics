@@ -144,7 +144,7 @@ public class CosmeticUser {
             despawnBalloon();
         }
         if (slot == CosmeticSlot.EMOTE) {
-
+            if (getUserEmoteManager().isPlayingEmote()) getUserEmoteManager().stopEmote(UserEmoteManager.StopEmoteReason.UNEQUIP);
         }
         colors.remove(slot);
         playerCosmetics.remove(slot);
