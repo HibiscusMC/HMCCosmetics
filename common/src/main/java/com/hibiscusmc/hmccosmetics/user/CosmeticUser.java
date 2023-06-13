@@ -116,6 +116,9 @@ public class CosmeticUser {
             CosmeticBalloonType balloonType = (CosmeticBalloonType) cosmetic;
             spawnBalloon(balloonType);
         }
+        // API
+        PlayerCosmeticPostEquipEvent postEquipEvent = new PlayerCosmeticPostEquipEvent(this, cosmetic);
+        Bukkit.getPluginManager().callEvent(postEquipEvent);
     }
 
     public void removeCosmetics() {
