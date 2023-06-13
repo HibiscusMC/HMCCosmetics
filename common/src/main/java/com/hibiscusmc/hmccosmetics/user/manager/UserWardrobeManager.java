@@ -120,8 +120,9 @@ public class UserWardrobeManager {
                 user.getBalloonManager().sendLeashPacket(NPC_ID);
                 //PacketManager.sendLeashPacket(VIEWER.getBalloonEntity().getModelId(), NPC_ID, viewer);
 
-                PacketManager.sendTeleportPacket(user.getBalloonManager().getPufferfishBalloonId(), npcLocation.clone().add(Settings.getBalloonOffset()), false, viewer);
-                user.getBalloonManager().getModelEntity().teleport(npcLocation.clone().add(Settings.getBalloonOffset()));
+                Location balloonLocation = npcLocation.clone().add(Settings.getBalloonOffset());
+                PacketManager.sendTeleportPacket(user.getBalloonManager().getPufferfishBalloonId(), balloonLocation , false, viewer);
+                user.getBalloonManager().getModelEntity().teleport(balloonLocation);
             }
 
             if (WardrobeSettings.getEnabledBossbar()) {
@@ -268,8 +269,9 @@ public class UserWardrobeManager {
                 }
 
                 if (user.hasCosmeticInSlot(CosmeticSlot.BALLOON)) {
-                    PacketManager.sendTeleportPacket(user.getBalloonManager().getPufferfishBalloonId(), npcLocation.add(Settings.getBalloonOffset()), false, viewer);
-                    user.getBalloonManager().getModelEntity().teleport(npcLocation.add(Settings.getBalloonOffset()));
+                    // The two lines below broke, solved by listening to PlayerCosmeticPostEquipEvent
+                    //PacketManager.sendTeleportPacket(user.getBalloonManager().getPufferfishBalloonId(), npcLocation.add(Settings.getBalloonOffset()), false, viewer);
+                    //user.getBalloonManager().getModelEntity().teleport(npcLocation.add(Settings.getBalloonOffset()));
                     user.getBalloonManager().sendRemoveLeashPacket(outsideViewers);
                     PacketManager.sendEntityDestroyPacket(user.getBalloonManager().getModelId(), outsideViewers);
                     user.getBalloonManager().sendLeashPacket(NPC_ID);
@@ -301,5 +303,9 @@ public class UserWardrobeManager {
         STARTING,
         RUNNING,
         STOPPING,
+    }
+
+    public Location getNpcLocation() {
+        return npcLocation;
     }
 }

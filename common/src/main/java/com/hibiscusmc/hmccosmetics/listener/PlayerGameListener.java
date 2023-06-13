@@ -9,6 +9,8 @@ import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.Pair;
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
+import com.hibiscusmc.hmccosmetics.api.PlayerCosmeticEquipEvent;
+import com.hibiscusmc.hmccosmetics.api.PlayerCosmeticPostEquipEvent;
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
@@ -23,7 +25,9 @@ import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import com.hibiscusmc.hmccosmetics.user.manager.UserEmoteManager;
 import com.hibiscusmc.hmccosmetics.util.InventoryUtils;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
+import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
@@ -343,6 +347,16 @@ public class PlayerGameListener implements Listener {
             for (ItemStack armor : equippedArmor) {
                 if (InventoryUtils.isCosmeticItem(armor)) armor.setAmount(0);
             }
+        }
+    }
+
+    @EventHandler
+    public void onPlayerCosemticEquip(PlayerCosmeticPostEquipEvent event) {
+        CosmeticUser user = event.getUser();
+        if (user.isInWardrobe() && event.getCosmetic().getSlot().equals(CosmeticSlot.BALLOON)) {
+            Location NPCLocation = user.getWardrobeManager().getNpcLocation();
+            PacketManager.sendTeleportPacket(user.getBalloonManager().getPufferfishBalloonId(), NPCLocation.add(Settings.getBalloonOffset()), false, List.of(event.getUser().getPlayer()));
+            user.getBalloonManager().getModelEntity().teleport(NPCLocation.add(Settings.getBalloonOffset()));
         }
     }
 
