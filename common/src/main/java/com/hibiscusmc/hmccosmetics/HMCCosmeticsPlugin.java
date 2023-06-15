@@ -89,8 +89,8 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
         onLatestVersion = checker.isUsingLatestVersion();
         // File setup
         saveDefaultConfig();
-        //saveResource("translations.yml", false);
         if (!Path.of(getDataFolder().getPath(), "messages.yml").toFile().exists()) saveResource("messages.yml", false);
+        if (!Path.of(getDataFolder().getPath(), "translations.yml").toFile().exists()) saveResource("translations.yml", false);
         if (!Path.of(getDataFolder().getPath() + "/cosmetics/").toFile().exists()) saveResource("cosmetics/defaultcosmetics.yml", false);
         if (!Path.of(getDataFolder().getPath() + "/menus/").toFile().exists()) saveResource("menus/defaultmenu.yml", false);
 
@@ -104,11 +104,15 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
         // Configuration Sync
         final File configFile = Path.of(getInstance().getDataFolder().getPath(), "config.yml").toFile();
         final File messageFile = Path.of(getInstance().getDataFolder().getPath(), "messages.yml").toFile();
+        final File translationFile = Path.of(getInstance().getDataFolder().getPath(), "translations.yml").toFile();
         try {
             CommentedConfiguration.loadConfiguration(configFile).syncWithConfig(configFile, getInstance().getResource("config.yml"),
                     "database-settings", "debug-mode", "wardrobe.viewer-location", "wardrobe.npc-location", "wardrobe.wardrobe-location", "wardrobe.leave-location");
             CommentedConfiguration.loadConfiguration(messageFile).syncWithConfig(messageFile, getInstance().getResource("messages.yml"));
-        } catch (Exception e) {}
+            CommentedConfiguration.loadConfiguration(translationFile).syncWithConfig(translationFile, getInstance().getResource("translations.yml"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         // Setup
         setup();

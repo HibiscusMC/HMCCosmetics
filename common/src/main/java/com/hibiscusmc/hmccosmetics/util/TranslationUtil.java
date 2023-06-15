@@ -2,38 +2,37 @@ package com.hibiscusmc.hmccosmetics.util;
 
 import org.spongepowered.configurate.ConfigurationNode;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class TranslationUtil {
 
-    private static HashMap<String, String> keys = new HashMap<>();
+    // unlocked-cosmetic -> true -> True
+    private static HashMap<String, List<TranslationPair>> keys = new HashMap<>();
 
     public static void setup(ConfigurationNode config) {
-        // TODO: Finish this
-        /*
         for (ConfigurationNode node : config.childrenMap().values()) {
-            HashMap<Pair> translableMessages = new HashMap<>();
+            ArrayList<TranslationPair> pairs = new ArrayList<>();
             for (ConfigurationNode translatableMessage : node.childrenMap().values()) {
-                translableMessages.put( new Pair<>(translatableMessage.key().toString(), translatableMessage.getString()))
+                String key = translatableMessage.key().toString();
+                key.replaceAll("'", ""); // Autoupdater adds ' to it? Removes it from the key
+                TranslationPair pair = new TranslationPair(key, translatableMessage.getString());
+                pairs.add(pair);
                 MessagesUtil.sendDebugMessages("setupTranslation key:" + node.key().toString() + " | " + node);
+                MessagesUtil.sendDebugMessages("Overall Key " + node.key().toString());
+                MessagesUtil.sendDebugMessages("Key '" + pair.getKey() + "' Value '" + pair.getValue() + "'");
             }
-            keys.put(node.key().toString().toLowerCase(), HashMap);
+            keys.put(node.key().toString().toLowerCase(), pairs);
         }
-         */
     }
 
     public static String getTranslation(String key, String message) {
-        // TODO: Finish this
-        return message;
-        /*
-        key = key.toLowerCase();
-        MessagesUtil.sendDebugMessages("getTranslation key:" + key + " | " + message);
-        if (!keys.containsKey(key)) return message;
-        List<Pair> config = keys.get(key);
-        if (config.getFirst() == message) {
-            return config.getSecond().toString();
+        List<TranslationPair> pairs = keys.get(key);
+        for (TranslationPair pair : pairs) {
+            if (pair.getKey() == message) return pair.getValue();
         }
+
         return message;
-         */
     }
 }
