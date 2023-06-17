@@ -33,7 +33,7 @@ public class CosmeticBackpackType extends Cosmetic {
         Location loc = player.getLocation().clone().add(0, 2, 0);
 
         if (user.isInWardrobe() || !user.isBackpackSpawned()) return;
-        if (!user.getUserBackpackManager().getArmorStand().isValid()) {
+        if (!user.getUserBackpackManager().IsValidBackpackEntity()) {
             MessagesUtil.sendDebugMessages("Invalid Backpack Entity[owner=" + user.getUniqueId() + ",player_location=" + loc + "]!", Level.WARNING);
             user.respawnBackpack();
             return;

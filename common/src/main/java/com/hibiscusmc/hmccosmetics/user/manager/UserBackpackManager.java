@@ -39,6 +39,14 @@ public class UserBackpackManager {
         return invisibleArmorStand;
     }
 
+    public boolean IsValidBackpackEntity() {
+        if (invisibleArmorStand == null) {
+            MessagesUtil.sendDebugMessages("InvisibleArmorStand is Null!");
+            return false;
+        }
+        return getArmorStand().isValid();
+    }
+
     public void spawnBackpack(CosmeticBackpackType cosmeticBackpackType) {
         MessagesUtil.sendDebugMessages("spawnBackpack Bukkit - Start");
 
