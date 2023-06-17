@@ -10,6 +10,7 @@ import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.*;
+import com.hibiscusmc.hmccosmetics.hooks.Hooks;
 import com.hibiscusmc.hmccosmetics.user.manager.UserBackpackManager;
 import com.hibiscusmc.hmccosmetics.user.manager.UserBalloonManager;
 import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
@@ -19,6 +20,7 @@ import com.hibiscusmc.hmccosmetics.util.InventoryUtils;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.PlayerUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
+import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -209,6 +211,40 @@ public class CosmeticUser {
         }
         if (item.hasItemMeta()) {
             ItemMeta itemMeta = item.getItemMeta();
+
+            if (item.getType() == Material.PLAYER_HEAD) {
+                SkullMeta skullMeta = (SkullMeta) itemMeta;
+                if (skullMeta.getPersistentDataContainer().has(InventoryUtils.getSkullOwner(), PersistentDataType.STRING)) {
+                    String owner = skullMeta.getPersistentDataContainer().get(InventoryUtils.getSkullOwner(), PersistentDataType.STRING);
+
+                    if (Hooks.isActiveHook("PlaceholderAPI")) owner = PlaceholderAPI.setPlaceholders(getPlayer(), owner);
+
+                    skullMeta.setOwningPlayer(Bukkit.getOfflinePlayer(owner));
+                    //skullMeta.getPersistentDataContainer().remove(InventoryUtils.getSkullOwner()); // Don't really need this?
+                }
+                if (skullMeta.getPersistentDataContainer().has(InventoryUtils.getSkullTexture(), PersistentDataType.STRING)) {
+                    String texture = skullMeta.getPersistentDataContainer().get(InventoryUtils.getSkullTexture(), PersistentDataType.STRING);
+
+                    if (Hooks.isActiveHook("PlaceholderAPI")) texture = PlaceholderAPI.setPlaceholders(getPlayer(), texture);
+
+                    Bukkit.getUnsafe().modifyItemStack(item, "{SkullOwner:{Id:[I;0,0,0,0],Properties:{textures:[{Value:\""
+                            + texture + "\"}]}}}");
+                    //skullMeta.getPersistentDataContainer().remove(InventoryUtils.getSkullTexture()); // Don't really need this?
+                }
+
+                itemMeta = skullMeta;
+            }
+
+            List<String> processedLore = new ArrayList<>();
+
+            if (itemMeta.hasLore()) {
+                for (String loreLine : itemMeta.getLore()) {
+                    if (Hooks.isActiveHook("PlaceholderAPI")) loreLine = PlaceholderAPI.setPlaceholders(getPlayer(), loreLine);
+                    processedLore.add(loreLine);
+                }
+            }
+            itemMeta.setLore(processedLore);
+
             if (colors.containsKey(cosmetic.getSlot())) {
                 Color color = colors.get(cosmetic.getSlot());
                 if (itemMeta instanceof LeatherArmorMeta leatherMeta) {
