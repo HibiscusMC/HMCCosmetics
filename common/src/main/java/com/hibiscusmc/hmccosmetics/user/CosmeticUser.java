@@ -243,6 +243,11 @@ public class CosmeticUser {
                     processedLore.add(loreLine);
                 }
             }
+            if (itemMeta.hasDisplayName()) {
+                String displayName = itemMeta.getDisplayName();
+                if (Hooks.isActiveHook("PlaceholderAPI")) displayName = PlaceholderAPI.setPlaceholders(getPlayer(), displayName);
+                itemMeta.setDisplayName(displayName);
+            }
             itemMeta.setLore(processedLore);
 
             if (colors.containsKey(cosmetic.getSlot())) {
