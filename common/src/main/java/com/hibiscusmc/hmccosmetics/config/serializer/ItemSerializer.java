@@ -120,7 +120,6 @@ public class ItemSerializer implements TypeSerializer<ItemStack> {
 
         if (item.getType() == Material.PLAYER_HEAD) {
             SkullMeta skullMeta = (SkullMeta) itemMeta;
-            // TODO: Parse PAPI stuff here
             if (!ownerNode.virtual()) {
                 String ownerString = ownerNode.getString();
                 if (ownerString.contains("%")) {
