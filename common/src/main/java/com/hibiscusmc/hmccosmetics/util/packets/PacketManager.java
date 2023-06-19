@@ -136,7 +136,7 @@ public class PacketManager extends BasePacket {
         packet.getIntegers().write(0, entityId);
         WrappedDataWatcher wrapper = new WrappedDataWatcher();
 
-        if (NMSHandlers.getVersion().contains("v1_17_R1") || NMSHandlers.getVersion().contains("v1_18_R2") || NMSHandlers.getVersion().contains("v1_19_R1")) {
+        if (NMSHandlers.getVersion().contains("v1_18_R2") || NMSHandlers.getVersion().contains("v1_19_R1")) {
             wrapper.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(0, WrappedDataWatcher.Registry.get(Byte.class)), (byte) 0x20);
             packet.getWatchableCollectionModifier().write(0, wrapper.getWatchableObjects());
         } else {
@@ -307,7 +307,7 @@ public class PacketManager extends BasePacket {
         WrappedSignedProperty skinData = PlayerUtils.getSkin(skinnedPlayer);
         if (skinData != null) wrappedGameProfile.getProperties().put("textures", skinData);
         // For sor some reason <1.19.2 handles it on the 0 field index, newer versions handles it on the 1
-        if (NMSHandlers.getVersion().contains("v1_17_R1") || NMSHandlers.getVersion().contains("v1_18_R2") || NMSHandlers.getVersion().contains("v1_19_R1")) {
+        if (NMSHandlers.getVersion().contains("v1_18_R2") || NMSHandlers.getVersion().contains("v1_19_R1")) {
             info.getHandle().getPlayerInfoDataLists().write(0, Collections.singletonList(new PlayerInfoData(
                     wrappedGameProfile,
                     0,
@@ -369,7 +369,7 @@ public class PacketManager extends BasePacket {
             final UUID uuid,
             final List<Player> sendTo
     ) {
-        if (NMSHandlers.getVersion().contains("v1_17_R1") || NMSHandlers.getVersion().contains("v1_18_R2") || NMSHandlers.getVersion().contains("v1_19_R1")) {
+        if (NMSHandlers.getVersion().contains("v1_18_R2") || NMSHandlers.getVersion().contains("v1_19_R1")) {
             WrapperPlayServerPlayerInfo info = new WrapperPlayServerPlayerInfo();
             info.setAction(EnumWrappers.PlayerInfoAction.REMOVE_PLAYER);
 

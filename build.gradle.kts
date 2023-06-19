@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "com.hibiscusmc"
-version = "2.4.5"
+version = "2.4.6-DEV"
 
 allprojects {
     apply(plugin = "java")
@@ -68,7 +68,7 @@ allprojects {
     dependencies {
         compileOnly(fileTree("${project.rootDir}/lib") { include("*.jar") })
         compileOnly("com.mojang:authlib:1.5.25")
-        compileOnly("org.spigotmc:spigot-api:1.17.1-R0.1-SNAPSHOT")
+        compileOnly("org.spigotmc:spigot-api:1.18.2-R0.1-SNAPSHOT")
         compileOnly("org.jetbrains:annotations:23.0.0")
         compileOnly("com.comphenix.protocol:ProtocolLib:5.0.0")
         compileOnly("me.clip:placeholderapi:2.11.1")
@@ -84,7 +84,6 @@ allprojects {
 
 dependencies {
     implementation(project(path = ":common"))
-    implementation(project(path = ":v1_17_R1", configuration = "reobf"))
     implementation(project(path = ":v1_18_R2", configuration = "reobf"))
     implementation(project(path = ":v1_19_R1", configuration = "reobf"))
     implementation(project(path = ":v1_19_R2", configuration = "reobf"))
@@ -126,7 +125,6 @@ tasks {
     }
 
     shadowJar {
-        dependsOn(":v1_17_R1:reobfJar")
         dependsOn(":v1_18_R2:reobfJar")
         dependsOn(":v1_19_R1:reobfJar")
         dependsOn(":v1_19_R2:reobfJar")
@@ -169,7 +167,7 @@ tasks {
 bukkit {
     load = BukkitPluginDescription.PluginLoadOrder.POSTWORLD
     main = "com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin"
-    apiVersion = "1.17"
+    apiVersion = "1.18"
     authors = listOf("LoJoSho")
     depend = listOf("ProtocolLib")
     softDepend = listOf("ModelEngine", "Oraxen", "ItemsAdder", "Geary", "HMCColor", "WorldGuard", "MythicMobs", "PlaceholderAPI", "SuperVanish", "PremiumVanish", "LibsDisguises", "Denizen")
