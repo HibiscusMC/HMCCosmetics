@@ -44,9 +44,9 @@ public class UserEmoteModel extends PlayerModel {
         Player player = user.getPlayer();
         List<Player> viewer = Collections.singletonList(user.getPlayer());
         List<Player> outsideViewers = PacketManager.getViewers(player.getLocation());
-        outsideViewers.remove(player);
-
+        // Send equipment packet to the player as well (Fixes Optifine still rendering armor when emoting)
         PacketManager.equipmentSlotUpdate(player, true, outsideViewers);
+        outsideViewers.remove(player);
 
         Location newLocation = player.getLocation().clone();
         newLocation.setPitch(0);
