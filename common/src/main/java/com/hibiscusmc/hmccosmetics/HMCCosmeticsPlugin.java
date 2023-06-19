@@ -1,7 +1,7 @@
 package com.hibiscusmc.hmccosmetics;
 
 import com.bgsoftware.common.config.CommentedConfiguration;
-import com.hibiscusmc.hmccosmetics.api.HMCCosmeticSetupEvent;
+import com.hibiscusmc.hmccosmetics.api.events.HMCCosmeticSetupEvent;
 import com.hibiscusmc.hmccosmetics.command.CosmeticCommand;
 import com.hibiscusmc.hmccosmetics.command.CosmeticCommandTabComplete;
 import com.hibiscusmc.hmccosmetics.config.DatabaseSettings;

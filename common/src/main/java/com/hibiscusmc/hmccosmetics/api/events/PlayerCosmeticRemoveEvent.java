@@ -1,19 +1,31 @@
-package com.hibiscusmc.hmccosmetics.api;
+package com.hibiscusmc.hmccosmetics.api.events;
 
+import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Called when cosmetics are shown from a player
+ * Called when a player removes a cosmetic
  */
-public class PlayerCosmeticShowEvent extends PlayerCosmeticEvent implements Cancellable {
+public class PlayerCosmeticRemoveEvent extends PlayerCosmeticEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private boolean cancel = false;
+    private final Cosmetic cosmetic;
 
-    public PlayerCosmeticShowEvent(@NotNull CosmeticUser who) {
+    public PlayerCosmeticRemoveEvent(@NotNull CosmeticUser who, @NotNull Cosmetic cosmetic) {
         super(who);
+        this.cosmetic = cosmetic;
+    }
+
+    /**
+     * Gets the {@link Cosmetic} being removed in this event
+     *
+     * @return The {@link Cosmetic} which is being removed in this event
+     */
+    public Cosmetic getCosmetic() {
+        return cosmetic;
     }
 
     @Override
@@ -25,7 +37,7 @@ public class PlayerCosmeticShowEvent extends PlayerCosmeticEvent implements Canc
      * Sets the cancellation state of this event
      *
      * <p>
-     * Canceling this event will prevent the player from showing cosmetics
+     * Canceling this event will prevent the player from removing the cosmetic
      * </p>
      *
      * @param cancel true if you wish to cancel this event
@@ -41,7 +53,6 @@ public class PlayerCosmeticShowEvent extends PlayerCosmeticEvent implements Canc
         return handlers;
     }
 
-    @NotNull
     public static HandlerList getHandlerList() {
         return handlers;
     }

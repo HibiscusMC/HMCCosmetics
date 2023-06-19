@@ -1,4 +1,4 @@
-package com.hibiscusmc.hmccosmetics.api;
+package com.hibiscusmc.hmccosmetics.api.events;
 
 import com.hibiscusmc.hmccosmetics.gui.Menu;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;

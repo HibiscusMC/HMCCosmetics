@@ -1,31 +1,22 @@
-package com.hibiscusmc.hmccosmetics.api;
+package com.hibiscusmc.hmccosmetics.api.events;
 
-import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
+import com.hibiscusmc.hmccosmetics.config.Wardrobe;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Called when a player removes a cosmetic
+ * Called when a player enters their wardrobe
  */
-public class PlayerCosmeticRemoveEvent extends PlayerCosmeticEvent implements Cancellable {
+public class PlayerWardrobeEnterEvent extends PlayerCosmeticEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private boolean cancel = false;
-    private final Cosmetic cosmetic;
+    private Wardrobe wardrobe;
 
-    public PlayerCosmeticRemoveEvent(@NotNull CosmeticUser who, @NotNull Cosmetic cosmetic) {
+    public PlayerWardrobeEnterEvent(@NotNull CosmeticUser who, @NotNull Wardrobe wardrobe) {
         super(who);
-        this.cosmetic = cosmetic;
-    }
-
-    /**
-     * Gets the {@link Cosmetic} being removed in this event
-     *
-     * @return The {@link Cosmetic} which is being removed in this event
-     */
-    public Cosmetic getCosmetic() {
-        return cosmetic;
+        this.wardrobe = wardrobe;
     }
 
     @Override
@@ -37,7 +28,7 @@ public class PlayerCosmeticRemoveEvent extends PlayerCosmeticEvent implements Ca
      * Sets the cancellation state of this event
      *
      * <p>
-     * Canceling this event will prevent the player from removing the cosmetic
+     * Canceling this event will prevent the player from entering their wardrobe
      * </p>
      *
      * @param cancel true if you wish to cancel this event
@@ -53,7 +44,16 @@ public class PlayerCosmeticRemoveEvent extends PlayerCosmeticEvent implements Ca
         return handlers;
     }
 
+    @NotNull
     public static HandlerList getHandlerList() {
         return handlers;
+    }
+
+    public void setWardrobe(Wardrobe wardrobe) {
+        this.wardrobe = wardrobe;
+    }
+
+    public Wardrobe getWardrobe() {
+        return wardrobe;
     }
 }

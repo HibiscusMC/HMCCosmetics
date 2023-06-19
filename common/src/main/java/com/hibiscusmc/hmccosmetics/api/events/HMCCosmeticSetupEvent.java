@@ -1,4 +1,4 @@
-package com.hibiscusmc.hmccosmetics.api;
+package com.hibiscusmc.hmccosmetics.api.events;
 
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;

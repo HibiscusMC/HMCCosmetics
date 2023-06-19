@@ -1,4 +1,4 @@
-package com.hibiscusmc.hmccosmetics.api;
+package com.hibiscusmc.hmccosmetics.api.events;
 
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import org.bukkit.event.Cancellable;
@@ -6,27 +6,26 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Called when a player starts playing an emote
+ * Called when cosmetics are hidden from a player
  */
-public class PlayerEmoteStartEvent extends PlayerCosmeticEvent implements Cancellable {
+public class PlayerCosmeticHideEvent extends PlayerCosmeticEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private boolean cancel = false;
-    private final String animationId;
+    private final CosmeticUser.HiddenReason reason;
 
-    public PlayerEmoteStartEvent(@NotNull CosmeticUser who, @NotNull String animationId) {
+    public PlayerCosmeticHideEvent(@NotNull CosmeticUser who, @NotNull CosmeticUser.HiddenReason reason) {
         super(who);
-        this.animationId = animationId;
+        this.reason = reason;
     }
 
     /**
-     * Gets the animation id of the emote the player started playing
-     * @implNote The returned string of this method may be an invalid animation id. Make sure to validate it before use
+     * Gets the {@link CosmeticUser.HiddenReason} as to why cosmetics are being hidden for the player
      *
-     * @return The animation id of the emote which the player started playing
+     * @return The {@link CosmeticUser.HiddenReason} why cosmetics are being hidden for the player
      */
     @NotNull
-    public String getAnimationId() {
-        return animationId;
+    public CosmeticUser.HiddenReason getReason() {
+        return reason;
     }
 
     @Override
@@ -38,7 +37,7 @@ public class PlayerEmoteStartEvent extends PlayerCosmeticEvent implements Cancel
      * Sets the cancellation state of this event
      *
      * <p>
-     * Canceling this event will prevent the player from playing the emote
+     * Canceling this event will prevent the player from hiding cosmetics
      * </p>
      *
      * @param cancel true if you wish to cancel this event
