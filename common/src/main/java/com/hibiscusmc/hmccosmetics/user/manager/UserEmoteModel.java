@@ -107,6 +107,8 @@ public class UserEmoteModel extends PlayerModel {
 
             List<Player> viewer = Collections.singletonList(player);
             List<Player> outsideViewers = PacketManager.getViewers(player.getLocation());
+            // Send Equipment packet to all (Fixes Optifine Issue)
+            PacketManager.equipmentSlotUpdate(player, false, outsideViewers);
             outsideViewers.remove(player);
 
             int entityId = player.getEntityId();
@@ -118,7 +120,6 @@ public class UserEmoteModel extends PlayerModel {
             }
 
             if (user.getPlayer() != null) player.setInvisible(false);
-            PacketManager.equipmentSlotUpdate(player, false, outsideViewers);
             user.getUserEmoteManager().despawnTextEntity();
             user.showPlayer();
             user.showCosmetics();
