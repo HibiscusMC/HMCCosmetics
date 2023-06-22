@@ -1,5 +1,6 @@
 package com.hibiscusmc.hmccosmetics.user.manager;
 
+import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.PlayerUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
 import org.bukkit.Location;
@@ -14,10 +15,12 @@ public class UserBalloonPufferfish {
     private int id;
     private UUID uuid;
     private List<Player> viewers = new ArrayList<>();
+    private Long lastUpdate;
 
     public UserBalloonPufferfish(int id, UUID uuid) {
         this.id = id;
         this.uuid = uuid;
+        this.lastUpdate = System.currentTimeMillis();
     }
 
     public int getId() {
@@ -29,10 +32,10 @@ public class UserBalloonPufferfish {
     }
 
     public List<Player> refreshViewers(Location location) {
+        if (System.currentTimeMillis() - lastUpdate <= 1000) return List.of(); //Prevents mass refreshes
         ArrayList<Player> newPlayers = new ArrayList<>();
         ArrayList<Player> removePlayers = new ArrayList<>();
         List<Player> players = PlayerUtils.getNearbyPlayers(location);
-
 
         for (Player player : players) {
             if (!viewers.contains(player)) {
@@ -49,6 +52,7 @@ public class UserBalloonPufferfish {
             }
         }
         viewers.removeAll(removePlayers);
+        lastUpdate = System.currentTimeMillis();
         return newPlayers;
     }
 }
