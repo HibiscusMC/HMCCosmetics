@@ -97,7 +97,7 @@ public class PacketManager extends BasePacket {
             CosmeticSlot cosmeticSlot,
             List<Player> sendTo
     ) {
-        equipmentSlotUpdate(user.getPlayer().getEntityId(), user, cosmeticSlot, sendTo);
+        equipmentSlotUpdate(user.getEntity().getEntityId(), user, cosmeticSlot, sendTo);
     }
 
     public static void equipmentSlotUpdate(

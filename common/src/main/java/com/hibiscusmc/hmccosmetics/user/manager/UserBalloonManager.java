@@ -15,6 +15,7 @@ import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
@@ -27,13 +28,11 @@ public class UserBalloonManager {
 
     private BalloonType balloonType;
     private CosmeticBalloonType cosmeticBalloonType;
-    private final int balloonID;
-    private final UUID uniqueID;
+    private UserBalloonPufferfish pufferfish;
     private final ArmorStand modelEntity;
 
     public UserBalloonManager(@NotNull Location location) {
-        this.uniqueID = UUID.randomUUID();
-        this.balloonID = NMSHandlers.getHandler().getNextEntityId();
+        this.pufferfish = new UserBalloonPufferfish(NMSHandlers.getHandler().getNextEntityId(), UUID.randomUUID());
         this.modelEntity = NMSHandlers.getHandler().getMEGEntity(location.add(Settings.getBalloonOffset()));
     }
 
@@ -136,10 +135,10 @@ public class UserBalloonManager {
 
 
     public int getPufferfishBalloonId() {
-        return balloonID;
+        return pufferfish.getId();
     }
     public UUID getPufferfishBalloonUniqueId() {
-        return uniqueID;
+        return pufferfish.getUuid();
     }
 
     public UUID getModelUnqiueId() {
@@ -172,7 +171,13 @@ public class UserBalloonManager {
 
     public void sendLeashPacket(int entityId) {
         if (cosmeticBalloonType == null) return;
-        if (cosmeticBalloonType.isShowLead()) PacketManager.sendLeashPacket(getPufferfishBalloonId(), entityId, getLocation());
+        if (cosmeticBalloonType.isShowLead()) {
+            PacketManager.sendLeashPacket(getPufferfishBalloonId(), entityId, getLocation());
+        }
+    }
+
+    public UserBalloonPufferfish getPufferfish() {
+        return pufferfish;
     }
 
     public enum BalloonType {

@@ -8,6 +8,8 @@ import com.hibiscusmc.hmccosmetics.util.InventoryUtils;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -26,19 +28,20 @@ public class CosmeticArmorType extends Cosmetic {
 
     @Override
     public void update(@NotNull CosmeticUser user) {
-        Player player = Bukkit.getPlayer(user.getUniqueId());
-        if (player == null) return;
+        Entity entity = Bukkit.getEntity(user.getUniqueId());
+        if (entity == null) return;
         if (user.getUserEmoteManager().isPlayingEmote()) return; // There has to be a better way of doing this...
         ItemStack cosmeticItem = user.getUserCosmeticItem(this);
+        if (!(entity instanceof HumanEntity humanEntity)) return;
         if (equipSlot.equals(EquipmentSlot.OFF_HAND)) {
-            if (!player.getInventory().getItemInOffHand().getType().isAir()) return;
+            if (!humanEntity.getInventory().getItemInOffHand().getType().isAir()) return;
         }
-        ItemStack equippedItem = player.getInventory().getItem(equipSlot);
+        ItemStack equippedItem = humanEntity.getInventory().getItem(equipSlot);
         if (Settings.getShouldAddEnchants(equipSlot)) {
             cosmeticItem.addUnsafeEnchantments(equippedItem.getEnchantments());
         }
 
-        NMSHandlers.getHandler().equipmentSlotUpdate(player.getEntityId(), equipSlot, cosmeticItem, PacketManager.getViewers(player.getLocation()));
+        NMSHandlers.getHandler().equipmentSlotUpdate(entity.getEntityId(), equipSlot, cosmeticItem, PacketManager.getViewers(entity.getLocation()));
         //PacketManager.equipmentSlotUpdate(player, getSlot(), PacketManager.getViewers(player.getLocation())); Old method
     }
 

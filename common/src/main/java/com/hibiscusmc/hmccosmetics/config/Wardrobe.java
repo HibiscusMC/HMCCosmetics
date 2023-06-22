@@ -52,7 +52,7 @@ public class Wardrobe {
 
     public boolean canEnter(CosmeticUser user) {
         Location wardrobeLocation = location.getNpcLocation();
-        Location location = user.getPlayer().getLocation();
+        Location location = user.getEntity().getLocation();
         if (wardrobeLocation == null) return false;
         if (distance == -1) return true;
         if (!wardrobeLocation.getWorld().equals(location.getWorld())) return false;

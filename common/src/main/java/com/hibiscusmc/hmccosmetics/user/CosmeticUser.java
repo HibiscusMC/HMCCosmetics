@@ -22,11 +22,13 @@ import com.hibiscusmc.hmccosmetics.util.PlayerUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.*;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.*;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitTask;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.logging.Level;
@@ -261,7 +263,7 @@ public class CosmeticUser {
                 }
             }
             itemMeta.getPersistentDataContainer().set(InventoryUtils.getCosmeticKey(), PersistentDataType.STRING, cosmetic.getId());
-            itemMeta.getPersistentDataContainer().set(InventoryUtils.getOwnerKey(), PersistentDataType.STRING, getPlayer().getUniqueId().toString());
+            itemMeta.getPersistentDataContainer().set(InventoryUtils.getOwnerKey(), PersistentDataType.STRING, getEntity().getUniqueId().toString());
 
             item.setItemMeta(itemMeta);
         }
@@ -360,19 +362,13 @@ public class CosmeticUser {
     }
 
     public void spawnBalloon(CosmeticBalloonType cosmeticBalloonType) {
-        Player player = Bukkit.getPlayer(getUniqueId());
-
         if (this.userBalloonManager != null) return;
-
         this.userBalloonManager = NMSHandlers.getHandler().spawnBalloon(this, cosmeticBalloonType);
-
-        List<Player> viewer = PlayerUtils.getNearbyPlayers(player);
-        viewer.add(player);
     }
 
     public void despawnBalloon() {
         if (this.userBalloonManager == null) return;
-        List<Player> sentTo = PlayerUtils.getNearbyPlayers(getPlayer().getLocation());
+        List<Player> sentTo = PlayerUtils.getNearbyPlayers(getEntity().getLocation());
 
         PacketManager.sendEntityDestroyPacket(userBalloonManager.getPufferfishBalloonId(), sentTo);
 
@@ -395,11 +391,25 @@ public class CosmeticUser {
     }
 
     public void removeArmor(CosmeticSlot slot) {
-        PacketManager.equipmentSlotUpdate(getPlayer().getEntityId(), this, slot, PlayerUtils.getNearbyPlayers(getPlayer()));
+        PacketManager.equipmentSlotUpdate(getEntity().getEntityId(), this, slot, PlayerUtils.getNearbyPlayers(getEntity().getLocation()));
     }
 
+    /**
+     * This returns the player associated with the user. Some users may not have a player attached, ie, they are npcs
+     * wearing cosmetics through an addon. If you need to get locations, use getEntity instead.
+     * @return Player
+     */
+    @Nullable
     public Player getPlayer() {
         return Bukkit.getPlayer(uniqueId);
+    }
+
+    /**
+     * This gets the entity associated with the user.
+     * @return Entity
+     */
+    public Entity getEntity() {
+        return Bukkit.getEntity(uniqueId);
     }
 
     public Color getCosmeticColor(CosmeticSlot slot) {

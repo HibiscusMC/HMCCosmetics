@@ -47,7 +47,7 @@ import java.util.List;
 public class NMSHandler implements com.hibiscusmc.hmccosmetics.nms.NMSHandler {
     @Override
     public int getNextEntityId() {
-        return Entity.nextEntityId();
+        return net.minecraft.world.entity.Entity.nextEntityId();
     }
 
     @Override
@@ -85,19 +85,16 @@ public class NMSHandler implements com.hibiscusmc.hmccosmetics.nms.NMSHandler {
 
     @Override
     public org.bukkit.entity.Entity spawnBackpack(CosmeticUser user, CosmeticBackpackType cosmeticBackpackType) {
-        HMCArmorStand invisibleArmorstand = new HMCArmorStand(user.getPlayer().getLocation());
+        HMCArmorStand invisibleArmorstand = new HMCArmorStand(user.getEntity().getLocation());
 
         ItemStack item = user.getUserCosmeticItem(cosmeticBackpackType);
 
         invisibleArmorstand.setItemSlot(EquipmentSlot.HEAD, CraftItemStack.asNMSCopy(item));
-        ((CraftWorld) user.getPlayer().getWorld()).getHandle().addFreshEntity(invisibleArmorstand, CreatureSpawnEvent.SpawnReason.CUSTOM);
+        ((CraftWorld) user.getEntity().getWorld()).getHandle().addFreshEntity(invisibleArmorstand, CreatureSpawnEvent.SpawnReason.CUSTOM);
 
         MessagesUtil.sendDebugMessages("spawnBackpack NMS");
 
         return invisibleArmorstand.getBukkitLivingEntity();
-        //PacketManager.armorStandMetaPacket(invisibleArmorstand.getBukkitEntity(), sentTo);
-        //PacketManager.ridingMountPacket(player.getEntityId(), invisibleArmorstand.getId(), sentTo);
-
     }
 
     @Override
@@ -109,19 +106,19 @@ public class NMSHandler implements com.hibiscusmc.hmccosmetics.nms.NMSHandler {
 
     @Override
     public UserBalloonManager spawnBalloon(CosmeticUser user, CosmeticBalloonType cosmeticBalloonType) {
-        Player player = user.getPlayer();
-        Location newLoc = player.getLocation().clone().add(Settings.getBalloonOffset());
+        org.bukkit.entity.Entity entity = user.getEntity();
+        Location newLoc = entity.getLocation().clone().add(Settings.getBalloonOffset());
 
-        UserBalloonManager userBalloonManager1 = new UserBalloonManager(user.getPlayer().getLocation());
-        List<Player> sentTo = PlayerUtils.getNearbyPlayers(player.getLocation());
-        userBalloonManager1.getModelEntity().teleport(user.getPlayer().getLocation().add(Settings.getBalloonOffset()));
+        UserBalloonManager userBalloonManager1 = new UserBalloonManager(entity.getLocation());
+        List<Player> sentTo = PlayerUtils.getNearbyPlayers(entity.getLocation());
+        userBalloonManager1.getModelEntity().teleport(entity.getLocation().add(Settings.getBalloonOffset()));
 
         userBalloonManager1.spawnModel(cosmeticBalloonType, user.getCosmeticColor(cosmeticBalloonType.getSlot()));
         userBalloonManager1.addPlayerToModel(user, cosmeticBalloonType, user.getCosmeticColor(cosmeticBalloonType.getSlot()));
 
         PacketManager.sendEntitySpawnPacket(newLoc, userBalloonManager1.getPufferfishBalloonId(), EntityType.PUFFERFISH, userBalloonManager1.getPufferfishBalloonUniqueId(), sentTo);
         PacketManager.sendInvisibilityPacket(userBalloonManager1.getPufferfishBalloonId(), sentTo);
-        userBalloonManager1.sendLeashPacket(player.getEntityId());
+        userBalloonManager1.sendLeashPacket(entity.getEntityId());
 
         return userBalloonManager1;
     }

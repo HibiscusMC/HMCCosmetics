@@ -50,10 +50,13 @@ public abstract class Data {
         return data;
     }
 
-    @NotNull
     public final Map<CosmeticSlot, Map<Cosmetic, Color>> deserializeData(CosmeticUser user, @NotNull String raw) {
+        return deserializeData(user, raw, Settings.getForcePermissionJoin());
+    }
+
+    @NotNull
+    public final Map<CosmeticSlot, Map<Cosmetic, Color>> deserializeData(CosmeticUser user, @NotNull String raw, boolean checkpermissions) {
         Map<CosmeticSlot, Map<Cosmetic, Color>> cosmetics = new HashMap<>();
-        boolean checkPermission = Settings.getForcePermissionJoin();
 
         String[] rawData = raw.split(",");
         for (String a : rawData) {
@@ -75,8 +78,8 @@ public abstract class Data {
                 String[] colorSplitData = splitData[1].split("&");
                 if (Cosmetics.hasCosmetic(colorSplitData[0])) cosmetic = Cosmetics.getCosmetic(colorSplitData[0]);
                 if (slot == null || cosmetic == null) continue;
-                if (cosmetic.requiresPermission() && checkPermission) {
-                    if (!user.getPlayer().hasPermission(cosmetic.getPermission())) {
+                if (checkpermissions && cosmetic.requiresPermission()) {
+                    if (user.getPlayer() != null && !user.getPlayer().hasPermission(cosmetic.getPermission())) {
                         continue;
                     }
                 }
@@ -84,8 +87,8 @@ public abstract class Data {
             } else {
                 if (Cosmetics.hasCosmetic(splitData[1])) cosmetic = Cosmetics.getCosmetic(splitData[1]);
                 if (slot == null || cosmetic == null) continue;
-                if (cosmetic.requiresPermission() && checkPermission) {
-                    if (!user.getPlayer().hasPermission(cosmetic.getPermission())) {
+                if (checkpermissions && cosmetic.requiresPermission()) {
+                    if (user.getPlayer() != null && !user.getPlayer().hasPermission(cosmetic.getPermission())) {
                         continue;
                     }
                 }

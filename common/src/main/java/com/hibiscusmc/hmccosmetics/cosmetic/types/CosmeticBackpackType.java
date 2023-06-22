@@ -7,6 +7,7 @@ import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.ConfigurationNode;
@@ -27,10 +28,10 @@ public class CosmeticBackpackType extends Cosmetic {
 
     @Override
     public void update(@NotNull CosmeticUser user) {
-        Player player = Bukkit.getPlayer(user.getUniqueId());
-        if (player == null) return;
+        Entity entity = Bukkit.getEntity(user.getUniqueId());
+        if (entity == null) return;
 
-        Location loc = player.getLocation().clone().add(0, 2, 0);
+        Location loc = entity.getLocation().clone().add(0, 2, 0);
 
         if (user.isInWardrobe() || !user.isBackpackSpawned()) return;
         if (!user.getUserBackpackManager().IsValidBackpackEntity()) {
@@ -46,10 +47,10 @@ public class CosmeticBackpackType extends Cosmetic {
 
         if (user.getUserBackpackManager().getBackpackType().equals(UserBackpackManager.BackpackType.FIRST_PERSON)) {
             user.getUserBackpackManager().teleportEffectEntity(loc);
-            PacketManager.sendRidingPacket(player.getEntityId(), user.getUserBackpackManager().getAreaEffectEntityId(), loc);
+            PacketManager.sendRidingPacket(entity.getEntityId(), user.getUserBackpackManager().getAreaEffectEntityId(), loc);
             PacketManager.sendRidingPacket(user.getUserBackpackManager().getAreaEffectEntityId(), user.getUserBackpackManager().getFirstArmorStandId(), loc);
         } else {
-            PacketManager.sendRidingPacket(player.getEntityId(), user.getUserBackpackManager().getFirstArmorStandId(), loc);
+            PacketManager.sendRidingPacket(entity.getEntityId(), user.getUserBackpackManager().getFirstArmorStandId(), loc);
         }
 
         user.getUserBackpackManager().getArmorStand().setRotation(loc.getYaw(), loc.getPitch());
