@@ -15,8 +15,11 @@ import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Set;
 import java.util.logging.Level;
+import java.util.stream.Stream;
 
 public class Cosmetics {
 
@@ -68,19 +71,23 @@ public class Cosmetics {
         File[] directoryListing = cosmeticFolder.listFiles();
         if (directoryListing == null) return;
 
-        for (File child : directoryListing) {
-            if (child.toString().contains(".yml") || child.toString().contains(".yaml")) {
-                MessagesUtil.sendDebugMessages("Scanning " + child);
-                // Loads file
-                YamlConfigurationLoader loader = YamlConfigurationLoader.builder().path(child.toPath()).build();
-                CommentedConfigurationNode root;
-                try {
-                    root = loader.load();
-                } catch (ConfigurateException e) {
-                    throw new RuntimeException(e);
+        try (Stream<Path> walkStream = Files.walk(cosmeticFolder.toPath())) {
+            walkStream.filter(p -> p.toFile().isFile()).forEach(child -> {
+                if (child.toString().contains(".yml") || child.toString().contains(".yaml")) {
+                    MessagesUtil.sendDebugMessages("Scanning " + child);
+                    // Loads file
+                    YamlConfigurationLoader loader = YamlConfigurationLoader.builder().path(child).build();
+                    CommentedConfigurationNode root;
+                    try {
+                        root = loader.load();
+                    } catch (ConfigurateException e) {
+                        throw new RuntimeException(e);
+                    }
+                    setupCosmetics(root);
                 }
-                setupCosmetics(root);
-            }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

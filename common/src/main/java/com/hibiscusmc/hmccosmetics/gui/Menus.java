@@ -11,11 +11,15 @@ import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.stream.Stream;
 
 public class Menus {
 
@@ -66,27 +70,29 @@ public class Menus {
         File cosmeticFolder = new File(HMCCosmeticsPlugin.getInstance().getDataFolder() + "/menus");
         if (!cosmeticFolder.exists()) cosmeticFolder.mkdir();
 
-        File[] directoryListing = cosmeticFolder.listFiles();
-        if (directoryListing == null) return;
-
-        for (File child : directoryListing) {
-            if (child.toString().contains(".yml") || child.toString().contains(".yaml")) {
-                MessagesUtil.sendDebugMessages("Scanning " + child);
-                // Loads file
-                YamlConfigurationLoader loader = YamlConfigurationLoader.builder().path(child.toPath()).build();
-                CommentedConfigurationNode root;
-                try {
-                    root = loader.load();
-                } catch (ConfigurateException e) {
-                    throw new RuntimeException(e);
+        // Recursive file lookup
+        try (Stream<Path> walkStream = Files.walk(cosmeticFolder.toPath())) {
+            walkStream.filter(p -> p.toFile().isFile()).forEach(child -> {
+                if (child.toString().endsWith("yml") || child.toString().endsWith("yaml")) {
+                    MessagesUtil.sendDebugMessages("Scanning " + child);
+                    // Loads file
+                    YamlConfigurationLoader loader = YamlConfigurationLoader.builder().path(child).build();
+                    CommentedConfigurationNode root;
+                    try {
+                        root = loader.load();
+                    } catch (ConfigurateException e) {
+                        throw new RuntimeException(e);
+                    }
+                    try {
+                        new Menu(FilenameUtils.removeExtension(child.getFileName().toString()), root);
+                    } catch (Exception e) {
+                        MessagesUtil.sendDebugMessages("Unable to create menu in " + child.getFileName().toString(), Level.WARNING);
+                        if (Settings.isDebugEnabled()) e.printStackTrace();
+                    }
                 }
-                try {
-                    new Menu(FilenameUtils.removeExtension(child.getName()), root);
-                } catch (Exception e) {
-                    MessagesUtil.sendDebugMessages("Unable to create menu in " + child, Level.WARNING);
-                    if (Settings.isDebugEnabled()) e.printStackTrace();
-                }
-            }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
