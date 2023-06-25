@@ -46,16 +46,6 @@ public class ServerUtils {
         }
 
         return Color.WHITE;
-        /* Old method
-        try {
-            return Color.fromRGB(
-                    Integer.valueOf(colorStr.substring(1, 3), 16),
-                    Integer.valueOf(colorStr.substring(3, 5), 16),
-                    Integer.valueOf(colorStr.substring(5, 7), 16));
-        } catch (StringIndexOutOfBoundsException e) {
-            return null;
-        }
-         */
     }
 
     // particle amount offsetxyz
