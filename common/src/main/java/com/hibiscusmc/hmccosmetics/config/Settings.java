@@ -34,6 +34,7 @@ public class Settings {
     private static final String TICK_PERIOD_PATH = "tick-period";
     private static final String UNAPPLY_DEATH_PATH = "unapply-on-death";
     private static final String FORCE_PERMISSION_JOIN_PATH = "force-permission-join";
+    private static final String FORCE_SHOW_COSMETICS_PATH = "force-show-join";
     private static final String EMOTE_DISTANCE_PATH = "emote-distance";
     private static final String HOOK_SETTING_PATH = "hook-settings";
     private static final String HOOK_ITEMADDER_PATH = "itemsadder";
@@ -64,6 +65,7 @@ public class Settings {
     private static boolean debugMode;
     private static boolean unapplyOnDeath;
     private static boolean forcePermissionJoin;
+    private static boolean forceShowOnJoin;
     private static boolean itemsAdderChangeReload;
     private static boolean worldGuardMoveCheck;
     private static boolean cosmeticEmoteBlockCheck;
@@ -105,6 +107,7 @@ public class Settings {
         requireEmptyBoots = cosmeticSettings.node(REQUIRE_EMPTY_BOOTS_PATH).getBoolean();
         unapplyOnDeath = cosmeticSettings.node(UNAPPLY_DEATH_PATH).getBoolean(false);
         forcePermissionJoin = cosmeticSettings.node(FORCE_PERMISSION_JOIN_PATH).getBoolean(false);
+        forceShowOnJoin = cosmeticSettings.node(FORCE_SHOW_COSMETICS_PATH).getBoolean(false);
         emoteDistance = cosmeticSettings.node(EMOTE_DISTANCE_PATH).getDouble(-3);
         cosmeticEmoteBlockCheck = cosmeticSettings.node(COSMETIC_EMOTE_CHECK_PATH).getBoolean(true);
         emoteAirCheck = cosmeticSettings.node(COSMETIC_EMOTE_AIR_CHECK_PATH).getBoolean(true);
@@ -252,6 +255,10 @@ public class Settings {
     }
     public static boolean getForcePermissionJoin() {
         return forcePermissionJoin;
+    }
+
+    public static boolean isForceShowOnJoin() {
+        return forceShowOnJoin;
     }
 
     public static boolean getDebugMode() {

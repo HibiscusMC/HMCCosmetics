@@ -22,6 +22,7 @@ cosmetic-settings:
 
   unapply-on-death: false # If when a player dies, their cosmetics should be unapplied. If this is true, use hmccosmetics.unapplydeath.bypass to bypass
   force-permission-join: true # Checks a player permission if they can have a cosmetic when they join the server.
+  force-show-join: false # If the plugin should force show a player's cosmetics when they join the server.
 
   emote-distance: -3 # This shows how far away the camera should be while a player is doing an emote. Negative is behind player.
   emote-block-check: true # If the server should check if the block is open where the camera is placed (prevents players viewing through blocks)

@@ -55,7 +55,7 @@ public abstract class Data {
     }
 
     @NotNull
-    public final Map<CosmeticSlot, Map<Cosmetic, Color>> deserializeData(CosmeticUser user, @NotNull String raw, boolean checkpermissions) {
+    public final Map<CosmeticSlot, Map<Cosmetic, Color>> deserializeData(CosmeticUser user, @NotNull String raw, boolean permissionCheck) {
         Map<CosmeticSlot, Map<Cosmetic, Color>> cosmetics = new HashMap<>();
 
         String[] rawData = raw.split(",");
@@ -67,6 +67,7 @@ public abstract class Data {
             MessagesUtil.sendDebugMessages("First split (suppose slot) " + splitData[0]);
             if (splitData[0].equalsIgnoreCase("HIDDEN")) {
                 if (EnumUtils.isValidEnum(CosmeticUser.HiddenReason.class, splitData[1])) {
+                    if (Settings.isForceShowOnJoin()) continue;
                     Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> {
                         user.hideCosmetics(CosmeticUser.HiddenReason.valueOf(splitData[1]));
                     });
@@ -78,7 +79,7 @@ public abstract class Data {
                 String[] colorSplitData = splitData[1].split("&");
                 if (Cosmetics.hasCosmetic(colorSplitData[0])) cosmetic = Cosmetics.getCosmetic(colorSplitData[0]);
                 if (slot == null || cosmetic == null) continue;
-                if (checkpermissions && cosmetic.requiresPermission()) {
+                if (permissionCheck && cosmetic.requiresPermission()) {
                     if (user.getPlayer() != null && !user.getPlayer().hasPermission(cosmetic.getPermission())) {
                         continue;
                     }
@@ -87,7 +88,7 @@ public abstract class Data {
             } else {
                 if (Cosmetics.hasCosmetic(splitData[1])) cosmetic = Cosmetics.getCosmetic(splitData[1]);
                 if (slot == null || cosmetic == null) continue;
-                if (checkpermissions && cosmetic.requiresPermission()) {
+                if (permissionCheck && cosmetic.requiresPermission()) {
                     if (user.getPlayer() != null && !user.getPlayer().hasPermission(cosmetic.getPermission())) {
                         continue;
                     }
