@@ -1,3 +1,8 @@
+#
+# Messages.yml File
+# If you don't wish for a message to be sent, simply make it blank.
+#
+
 prefix: "<gradient:#f368ec:#f39cef>HMCCosmetics <GRAY>»<WHITE>"
 reloaded: "%prefix% <gradient:#6D9DC5:#45CDE9>Config files reloaded!"
 not-enough-args: "%prefix% <red>Improper amount of arguments"
@@ -20,6 +25,7 @@ equip-cosmetic: "%prefix% <gradient:#6D9DC5:#45CDE9>You have equipped <cosmetic>
 unequip-cosmetic: "%prefix% <gradient:#6D9DC5:#45CDE9>You have unequipped <cosmetic>!"
 hide-cosmetic: "%prefix% <gradient:#6D9DC5:#45CDE9>Hidden cosmetics"
 show-cosmetic: "%prefix% <gradient:#6D9DC5:#45CDE9>Revealed cosmetics!"
+hidden-cosmetics: "%prefix% <red>Your cosmetics are hidden!"
 
 emote-blocked: "%prefix% <red>You can not use your emote here!"
 emote-none: "%prefix% <red>You have no emote equipped!"

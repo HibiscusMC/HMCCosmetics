@@ -59,6 +59,7 @@ public class CosmeticUser {
         Runnable run = () -> {
             MessagesUtil.sendDebugMessages("Tick[uuid=" + uniqueId + "]", Level.INFO);
             updateCosmetic();
+            if (getHidden()) MessagesUtil.sendActionBar(getPlayer(), "hidden-cosmetics");
         };
 
         int tickPeriod = Settings.getTickPeriod();
