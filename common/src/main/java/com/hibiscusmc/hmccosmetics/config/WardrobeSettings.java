@@ -33,6 +33,10 @@ public class WardrobeSettings {
     private static final String EQUIP_PUMPKIN_WARDROBE = "equip-pumpkin";
     private static final String TRY_COSMETICS_WARDROBE = "unchecked-wardrobe-cosmetics";
     private static final String RETURN_LAST_LOCATION = "return-last-location";
+
+    private static final String WARDROBE_MENU_OPTIONS = "menu-options";
+    private static final String WARDROBE_ENTER_OPEN_MENU_PATH = "enter-open-menu";
+
     private static final String GAMEMODE_OPTIONS_PATH = "gamemode-options";
     private static final String FORCE_EXIT_GAMEMODE_PATH = "exit-gamemode-enabled";
     private static final String EXIT_GAMEMODE_PATH = "exit-gamemode";
@@ -68,6 +72,7 @@ public class WardrobeSettings {
     private static boolean equipPumpkin;
     private static boolean returnLastLocation;
     private static boolean enabledBossbar;
+    private static boolean enterOpenMenu;
     private static boolean forceExitGamemode;
     private static GameMode exitGamemode;
     private static HashMap<String, Wardrobe> wardrobes;
@@ -96,6 +101,9 @@ public class WardrobeSettings {
         equipPumpkin = source.node(EQUIP_PUMPKIN_WARDROBE).getBoolean();
         returnLastLocation = source.node(RETURN_LAST_LOCATION).getBoolean(false);
         tryCosmeticsInWardrobe = source.node(TRY_COSMETICS_WARDROBE).getBoolean(false);
+
+        ConfigurationNode menuOptionsNode = source.node(WARDROBE_MENU_OPTIONS);
+        enterOpenMenu = menuOptionsNode.node(WARDROBE_ENTER_OPEN_MENU_PATH).getBoolean(false);
 
         ConfigurationNode gamemodeNode = source.node(GAMEMODE_OPTIONS_PATH);
         forceExitGamemode = gamemodeNode.node(FORCE_EXIT_GAMEMODE_PATH).getBoolean(false);
@@ -272,6 +280,10 @@ public class WardrobeSettings {
     }
     public static int getTransitionFadeOut() {
         return transitionFadeOut;
+    }
+
+    public static boolean isEnterOpenMenu() {
+        return enterOpenMenu;
     }
 
     public static boolean isForceExitGamemode() {

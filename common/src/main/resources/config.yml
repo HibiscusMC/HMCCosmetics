@@ -74,6 +74,9 @@ wardrobe:
   # If players in wardrobes should be able to equip any cosmetic, regardless of permission (Cosmetics they do not have access to will be removed when they leave the wardrobe)
   unchecked-wardrobe-cosmetics: false
 
+  menu-options:
+    enter-open-menu: false # If the menu should open when a player enters a wardrobe
+
   gamemode-options:
     exit-gamemode-enabled: false # Setting this to false will set the gamemode the player came in as. True sets to exit-gamemode gamemode
     exit-gamemode: "SURVIVAL" # Only activates if exit-gamemode-enabled is true, find gamemodes here: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/GameMode.html

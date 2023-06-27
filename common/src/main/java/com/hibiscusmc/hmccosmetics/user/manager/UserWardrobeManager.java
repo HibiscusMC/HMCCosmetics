@@ -7,6 +7,8 @@ import com.hibiscusmc.hmccosmetics.config.WardrobeLocation;
 import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
+import com.hibiscusmc.hmccosmetics.gui.Menu;
+import com.hibiscusmc.hmccosmetics.gui.Menus;
 import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
@@ -133,6 +135,11 @@ public class UserWardrobeManager {
                 Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.getInstance()).player(player);
 
                 target.showBossBar(bossBar);
+            }
+
+            if (WardrobeSettings.isEnterOpenMenu()) {
+                Menu menu = Menus.getDefaultMenu();
+                if (menu != null) menu.openMenu(user);
             }
 
             this.active = true;
