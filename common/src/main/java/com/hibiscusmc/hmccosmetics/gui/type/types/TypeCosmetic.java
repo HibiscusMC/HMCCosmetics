@@ -152,6 +152,10 @@ public class TypeCosmetic extends Type {
     private ItemMeta processLoreLines(CosmeticUser user, @NotNull ItemMeta itemMeta) {
         List<String> processedLore = new ArrayList<>();
 
+        if (itemMeta.hasDisplayName()) {
+            if (Hooks.isActiveHook("PlaceholderAPI")) itemMeta.setDisplayName(PlaceholderAPI.setPlaceholders(user.getPlayer(), itemMeta.getDisplayName()));
+        }
+
         if (itemMeta.hasLore()) {
             for (String loreLine : itemMeta.getLore()) {
                 if (Hooks.isActiveHook("PlaceholderAPI")) loreLine = PlaceholderAPI.setPlaceholders(user.getPlayer(), loreLine);
