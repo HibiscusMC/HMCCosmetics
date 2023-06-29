@@ -58,6 +58,10 @@ public class TypeEmpty extends Type {
         List<String> processedLore = new ArrayList<>();
         ItemMeta itemMeta = itemStack.getItemMeta();
 
+        if (itemMeta.hasDisplayName()) {
+            if (Hooks.isActiveHook("PlaceholderAPI")) itemMeta.setDisplayName(PlaceholderAPI.setPlaceholders(user.getPlayer(), itemMeta.getDisplayName()));
+        }
+
         if (itemMeta.hasLore()) {
             for (String loreLine : itemMeta.getLore()) {
                 if (Hooks.isActiveHook("PlaceholderAPI"))
