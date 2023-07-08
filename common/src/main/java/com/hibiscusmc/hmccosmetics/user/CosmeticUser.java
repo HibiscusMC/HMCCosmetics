@@ -476,7 +476,7 @@ public class CosmeticUser {
     }
 
     public void showCosmetics() {
-        if (hideCosmetics == false) return;
+        if (!hideCosmetics) return;
 
         PlayerCosmeticShowEvent event = new PlayerCosmeticShowEvent(this);
         Bukkit.getPluginManager().callEvent(event);
