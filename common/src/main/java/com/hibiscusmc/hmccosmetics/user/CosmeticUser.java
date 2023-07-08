@@ -365,6 +365,7 @@ public class CosmeticUser {
     public void spawnBalloon(CosmeticBalloonType cosmeticBalloonType) {
         if (this.userBalloonManager != null) return;
         this.userBalloonManager = NMSHandlers.getHandler().spawnBalloon(this, cosmeticBalloonType);
+        updateCosmetic(cosmeticBalloonType);
     }
 
     public void despawnBalloon() {

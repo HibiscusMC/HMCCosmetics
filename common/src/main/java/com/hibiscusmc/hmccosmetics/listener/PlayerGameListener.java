@@ -114,22 +114,17 @@ public class PlayerGameListener implements Listener {
             return;
         }
 
-        if (user.hasCosmeticInSlot(CosmeticSlot.BACKPACK) && user.getUserBackpackManager() != null) {
-            Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
+        Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
+            if (user.hasCosmeticInSlot(CosmeticSlot.BACKPACK) && user.getUserBackpackManager() != null) {
                 user.respawnBackpack();
-                user.updateCosmetic();
-            }, 1);
-        }
+            }
+            if (user.hasCosmeticInSlot(CosmeticSlot.BALLOON)) {
+                user.respawnBalloon();
+            }
+            user.updateCosmetic();
+        }, 1);
 
         if (event.getCause().equals(PlayerTeleportEvent.TeleportCause.NETHER_PORTAL) || event.getCause().equals(PlayerTeleportEvent.TeleportCause.END_PORTAL)) return;
-
-        if (user.hasCosmeticInSlot(CosmeticSlot.BALLOON)) {
-            final CosmeticBalloonType cosmeticBalloonType = (CosmeticBalloonType) user.getCosmetic(CosmeticSlot.BALLOON);
-            user.despawnBalloon();
-            Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
-                user.spawnBalloon(cosmeticBalloonType);
-            }, 2);
-        }
         if (user.getUserEmoteManager().isPlayingEmote()) {
             user.getUserEmoteManager().stopEmote(UserEmoteManager.StopEmoteReason.TELEPORT);
         }

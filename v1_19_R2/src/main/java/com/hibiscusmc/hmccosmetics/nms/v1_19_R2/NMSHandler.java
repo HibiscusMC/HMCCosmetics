@@ -107,18 +107,12 @@ public class NMSHandler implements com.hibiscusmc.hmccosmetics.nms.NMSHandler {
     @Override
     public UserBalloonManager spawnBalloon(CosmeticUser user, CosmeticBalloonType cosmeticBalloonType) {
         org.bukkit.entity.Entity entity = user.getEntity();
-        Location newLoc = entity.getLocation().clone().add(Settings.getBalloonOffset());
 
         UserBalloonManager userBalloonManager1 = new UserBalloonManager(entity.getLocation());
-        List<Player> sentTo = PlayerUtils.getNearbyPlayers(entity.getLocation());
         userBalloonManager1.getModelEntity().teleport(entity.getLocation().add(Settings.getBalloonOffset()));
 
         userBalloonManager1.spawnModel(cosmeticBalloonType, user.getCosmeticColor(cosmeticBalloonType.getSlot()));
         userBalloonManager1.addPlayerToModel(user, cosmeticBalloonType, user.getCosmeticColor(cosmeticBalloonType.getSlot()));
-
-        PacketManager.sendEntitySpawnPacket(newLoc, userBalloonManager1.getPufferfishBalloonId(), EntityType.PUFFERFISH, userBalloonManager1.getPufferfishBalloonUniqueId(), sentTo);
-        PacketManager.sendInvisibilityPacket(userBalloonManager1.getPufferfishBalloonId(), sentTo);
-        userBalloonManager1.sendLeashPacket(entity.getEntityId());
 
         return userBalloonManager1;
     }

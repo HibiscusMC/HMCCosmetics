@@ -20,7 +20,7 @@ public class UserBalloonPufferfish {
     public UserBalloonPufferfish(int id, UUID uuid) {
         this.id = id;
         this.uuid = uuid;
-        this.lastUpdate = System.currentTimeMillis();
+        this.lastUpdate = 0L;
     }
 
     public int getId() {
@@ -54,5 +54,10 @@ public class UserBalloonPufferfish {
         viewers.removeAll(removePlayers);
         lastUpdate = System.currentTimeMillis();
         return newPlayers;
+    }
+
+    public void hidePufferfish() {
+        PacketManager.sendEntityDestroyPacket(id, viewers);
+        viewers.clear();
     }
 }
