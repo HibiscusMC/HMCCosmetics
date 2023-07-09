@@ -6,7 +6,6 @@ import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
 import com.hibiscusmc.hmccosmetics.hooks.Hooks;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.misc.Adventure;
-import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;

@@ -4,7 +4,6 @@ import com.hibiscusmc.hmccosmetics.config.Wardrobe;
 import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
-import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;

@@ -4,7 +4,6 @@ import com.hibiscusmc.hmccosmetics.gui.action.Actions;
 import com.hibiscusmc.hmccosmetics.gui.type.Type;
 import com.hibiscusmc.hmccosmetics.hooks.Hooks;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
-import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;

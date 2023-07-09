@@ -6,7 +6,10 @@ import org.bukkit.Bukkit;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.UUID;
 import java.util.logging.Level;
 

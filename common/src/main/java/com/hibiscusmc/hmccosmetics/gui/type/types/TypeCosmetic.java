@@ -11,9 +11,6 @@ import com.hibiscusmc.hmccosmetics.gui.type.Type;
 import com.hibiscusmc.hmccosmetics.hooks.Hooks;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
-import com.hibiscusmc.hmccosmetics.util.misc.StringUtils;
-import com.hibiscusmc.hmccosmetics.util.misc.Utils;
-import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -25,10 +22,8 @@ import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 
-import java.lang.invoke.TypeDescriptor;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class TypeCosmetic extends Type {
 

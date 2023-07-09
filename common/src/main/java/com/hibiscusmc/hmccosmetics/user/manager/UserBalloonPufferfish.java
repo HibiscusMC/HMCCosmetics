@@ -1,6 +1,5 @@
 package com.hibiscusmc.hmccosmetics.user.manager;
 
-import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.PlayerUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
 import org.bukkit.Location;

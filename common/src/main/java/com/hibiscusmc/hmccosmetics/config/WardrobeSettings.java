@@ -10,7 +10,9 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.spongepowered.configurate.ConfigurationNode;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Set;
 import java.util.logging.Level;
 
 public class WardrobeSettings {
