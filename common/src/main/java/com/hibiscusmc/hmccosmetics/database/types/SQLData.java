@@ -15,7 +15,7 @@ import java.util.UUID;
 
 public abstract class SQLData extends Data {
     @Override
-    @SuppressWarnings({"Duplicates", "resource"}) // Duplicate is from deprecated InternalData
+    @SuppressWarnings({"resource"}) // Duplicate is from deprecated InternalData
     public CosmeticUser get(UUID uniqueId) {
         CosmeticUser user = new CosmeticUser(uniqueId);
 

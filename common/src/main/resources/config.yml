@@ -6,7 +6,7 @@ config-version: 1
 default-menu: defaultmenu
 debug-mode: false
 database-settings:
-  type: sqlite #MYSQL, SQLite, INTERNAL (not recommended!)
+  type: sqlite #MYSQL, SQLite
   mysql:
     database: database
     password: cherryBomb

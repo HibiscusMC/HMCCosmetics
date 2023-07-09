@@ -2,7 +2,6 @@ package com.hibiscusmc.hmccosmetics.database;
 
 import com.hibiscusmc.hmccosmetics.config.DatabaseSettings;
 import com.hibiscusmc.hmccosmetics.database.types.Data;
-import com.hibiscusmc.hmccosmetics.database.types.InternalData;
 import com.hibiscusmc.hmccosmetics.database.types.MySQLData;
 import com.hibiscusmc.hmccosmetics.database.types.SQLiteData;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
@@ -15,9 +14,6 @@ import java.util.UUID;
 public class Database {
 
     private static Data data;
-
-    @Deprecated
-    private static InternalData INTERNAL_DATA  = new InternalData();
 
     private static final MySQLData MYSQL_DATA = new MySQLData();
     private static final SQLiteData SQLITE_DATA = new SQLiteData();
