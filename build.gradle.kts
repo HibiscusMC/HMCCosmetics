@@ -172,6 +172,9 @@ bukkit {
     depend = listOf("ProtocolLib")
     softDepend = listOf("ModelEngine", "Oraxen", "ItemsAdder", "Geary", "HMCColor", "WorldGuard", "MythicMobs", "PlaceholderAPI", "SuperVanish", "PremiumVanish", "LibsDisguises", "Denizen")
     version = "${project.version}"
+    loadBefore = listOf(
+        "Cosmin" // Fixes an issue with Cosmin loading before and taking /cosmetic, when messing with what we do.
+    )
 
     commands {
         register("cosmetic") {
