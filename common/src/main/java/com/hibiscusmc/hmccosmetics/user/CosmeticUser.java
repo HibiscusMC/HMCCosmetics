@@ -220,7 +220,7 @@ public class CosmeticUser {
                 if (skullMeta.getPersistentDataContainer().has(InventoryUtils.getSkullOwner(), PersistentDataType.STRING)) {
                     String owner = skullMeta.getPersistentDataContainer().get(InventoryUtils.getSkullOwner(), PersistentDataType.STRING);
 
-                    if (Hooks.isActiveHook("PlaceholderAPI")) owner = PlaceholderAPI.setPlaceholders(getPlayer(), owner);
+                    owner = Hooks.processPlaceholders(getPlayer(), owner);
 
                     skullMeta.setOwningPlayer(Bukkit.getOfflinePlayer(owner));
                     //skullMeta.getPersistentDataContainer().remove(InventoryUtils.getSkullOwner()); // Don't really need this?
@@ -228,7 +228,7 @@ public class CosmeticUser {
                 if (skullMeta.getPersistentDataContainer().has(InventoryUtils.getSkullTexture(), PersistentDataType.STRING)) {
                     String texture = skullMeta.getPersistentDataContainer().get(InventoryUtils.getSkullTexture(), PersistentDataType.STRING);
 
-                    if (Hooks.isActiveHook("PlaceholderAPI")) texture = PlaceholderAPI.setPlaceholders(getPlayer(), texture);
+                    texture = Hooks.processPlaceholders(getPlayer(), texture);
 
                     Bukkit.getUnsafe().modifyItemStack(item, "{SkullOwner:{Id:[I;0,0,0,0],Properties:{textures:[{Value:\""
                             + texture + "\"}]}}}");
@@ -242,14 +242,12 @@ public class CosmeticUser {
 
             if (itemMeta.hasLore()) {
                 for (String loreLine : itemMeta.getLore()) {
-                    if (Hooks.isActiveHook("PlaceholderAPI")) loreLine = PlaceholderAPI.setPlaceholders(getPlayer(), loreLine);
-                    processedLore.add(loreLine);
+                    processedLore.add(Hooks.processPlaceholders(getPlayer(), loreLine));
                 }
             }
             if (itemMeta.hasDisplayName()) {
                 String displayName = itemMeta.getDisplayName();
-                if (Hooks.isActiveHook("PlaceholderAPI")) displayName = PlaceholderAPI.setPlaceholders(getPlayer(), displayName);
-                itemMeta.setDisplayName(displayName);
+                itemMeta.setDisplayName(Hooks.processPlaceholders(getPlayer(), displayName));
             }
             itemMeta.setLore(processedLore);
 

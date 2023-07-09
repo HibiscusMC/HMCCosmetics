@@ -104,7 +104,7 @@ public class MessagesUtil {
         if (!MESSAGES.containsKey(key)) return null;
         if (MESSAGES.get(key) == null) return null;
         String message = MESSAGES.get(key);
-        if (Hooks.isActiveHook("PlaceholderAPI") && player != null) message = PlaceholderAPI.setPlaceholders(player, message);
+        if (player != null) message = Hooks.processPlaceholders(player, message);
         message = message.replaceAll("%prefix%", prefix);
         if (placeholders != null ) {
             return Adventure.MINI_MESSAGE.deserialize(message, placeholders);
@@ -125,7 +125,7 @@ public class MessagesUtil {
     @NotNull
     public static Component processStringNoKey(Player player, String message, TagResolver placeholders) {
         message = message.replaceAll("%prefix%", prefix);
-        if (Hooks.isActiveHook("PlaceholderAPI") && player != null) message = PlaceholderAPI.setPlaceholders(player, message);
+        if (player != null) message = Hooks.processPlaceholders(player, message);
         if (placeholders != null ) {
             return Adventure.MINI_MESSAGE.deserialize(message, placeholders);
         }
@@ -134,7 +134,7 @@ public class MessagesUtil {
 
     public static String processStringNoKeyString(Player player, String message) {
         message = message.replaceAll("%prefix%", prefix);
-        if (Hooks.isActiveHook("PlaceholderAPI") && player != null) message = PlaceholderAPI.setPlaceholders(player, message);
+        if (player != null) message = Hooks.processPlaceholders(player, message);
         return message;
     }
 

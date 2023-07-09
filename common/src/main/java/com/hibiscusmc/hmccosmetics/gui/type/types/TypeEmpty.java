@@ -59,14 +59,12 @@ public class TypeEmpty extends Type {
         ItemMeta itemMeta = itemStack.getItemMeta();
 
         if (itemMeta.hasDisplayName()) {
-            if (Hooks.isActiveHook("PlaceholderAPI")) itemMeta.setDisplayName(PlaceholderAPI.setPlaceholders(user.getPlayer(), itemMeta.getDisplayName()));
+            itemMeta.setDisplayName(Hooks.processPlaceholders(user.getPlayer(), itemMeta.getDisplayName()));
         }
 
         if (itemMeta.hasLore()) {
             for (String loreLine : itemMeta.getLore()) {
-                if (Hooks.isActiveHook("PlaceholderAPI"))
-                    loreLine = PlaceholderAPI.setPlaceholders(user.getPlayer(), loreLine);
-                processedLore.add(loreLine);
+                processedLore.add(Hooks.processPlaceholders(user.getPlayer(), loreLine));
             }
         }
         itemStack.setItemMeta(itemMeta);

@@ -4,8 +4,10 @@ import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.hooks.items.*;
 import com.hibiscusmc.hmccosmetics.hooks.misc.*;
 import com.hibiscusmc.hmccosmetics.hooks.placeholders.HookPlaceholderAPI;
+import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -68,6 +70,12 @@ public class Hooks {
         if (!hook.hasEnabledItemHook()) return null;
         if (!hook.isActive()) return null;
         return hook.getItem(split[1]);
+    }
+
+    @NotNull
+    public static String processPlaceholders(OfflinePlayer player, String raw) {
+        if (getHook("PlaceholderAPI").isActive()) return PlaceholderAPI.setPlaceholders(player, raw);
+        return raw;
     }
 
     public static boolean isActiveHook(String id) {
