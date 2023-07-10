@@ -71,7 +71,7 @@ allprojects {
         compileOnly("org.spigotmc:spigot-api:1.18.2-R0.1-SNAPSHOT")
         compileOnly("org.jetbrains:annotations:23.0.0")
         compileOnly("com.comphenix.protocol:ProtocolLib:5.0.0")
-        compileOnly("me.clip:placeholderapi:2.11.1")
+        compileOnly("me.clip:placeholderapi:2.11.3")
         compileOnly("com.ticxo:modelengine:R3.0.1")
         compileOnly("com.github.oraxen:oraxen:-SNAPSHOT")
         compileOnly("com.github.LoneDev6:API-ItemsAdder:3.2.5")
