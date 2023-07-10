@@ -468,15 +468,6 @@ public class PacketManager extends BasePacket {
         }
     }
 
-    public static void sendMovePacket(
-            final int entityId,
-            final Location from,
-            final Location to,
-            final boolean onGround
-    ) {
-        sendMovePacket(entityId, from, to, onGround, getViewers(to));
-    }
-
     @NotNull
     public static List<Player> getViewers(Location location) {
         ArrayList<Player> viewers = new ArrayList();
