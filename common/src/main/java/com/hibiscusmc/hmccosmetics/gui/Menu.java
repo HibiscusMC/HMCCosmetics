@@ -5,10 +5,10 @@ import com.hibiscusmc.hmccosmetics.api.events.PlayerMenuOpenEvent;
 import com.hibiscusmc.hmccosmetics.config.serializer.ItemSerializer;
 import com.hibiscusmc.hmccosmetics.gui.type.Type;
 import com.hibiscusmc.hmccosmetics.gui.type.Types;
+import com.hibiscusmc.hmccosmetics.hooks.Hooks;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.misc.Adventure;
-import com.hibiscusmc.hmccosmetics.util.misc.Placeholder;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
@@ -69,7 +69,7 @@ public class Menu {
                 return;
             }
         }
-        final Component component = Adventure.MINI_MESSAGE.deserialize(Placeholder.applyPapiPlaceholders(player, this.title));
+        final Component component = Adventure.MINI_MESSAGE.deserialize(Hooks.processPlaceholders(player, this.title));
         Gui gui = Gui.gui().
                 title(component).
                 rows(this.rows).
