@@ -1,5 +1,6 @@
 package com.hibiscusmc.hmccosmetics.hooks.worldguard;
 
+import com.hibiscusmc.hmccosmetics.api.events.PlayerEmoteStartEvent;
 import com.hibiscusmc.hmccosmetics.config.Wardrobe;
 import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
@@ -11,6 +12,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -26,10 +28,7 @@ public class WGListener implements Listener {
         CosmeticUser user = CosmeticUsers.getUser(event.getPlayer());
         if (user == null) return;
         Location location = event.getPlayer().getLocation();
-        com.sk89q.worldedit.util.Location loc = BukkitAdapter.adapt(location);
-        RegionContainer region = WorldGuard.getInstance().getPlatform().getRegionContainer();
-        RegionQuery query = region.createQuery();
-        ApplicableRegionSet set = query.getApplicableRegions(loc);
+        ApplicableRegionSet set = getRegions(location);
         if (user.getHidden()) {
             if (user.getHiddenReason() == CosmeticUser.HiddenReason.WORLDGUARD && set.getRegions().size() == 0) {
                 user.showCosmetics();
@@ -57,10 +56,7 @@ public class WGListener implements Listener {
         CosmeticUser user = CosmeticUsers.getUser(event.getPlayer());
         if (user == null) return;
         Location location = event.getTo();
-        com.sk89q.worldedit.util.Location loc = BukkitAdapter.adapt(location);
-        RegionContainer region = WorldGuard.getInstance().getPlatform().getRegionContainer();
-        RegionQuery query = region.createQuery();
-        ApplicableRegionSet set = query.getApplicableRegions(loc);
+        ApplicableRegionSet set = getRegions(location);
         if (user.getHidden()) {
             if (user.getHiddenReason() == CosmeticUser.HiddenReason.WORLDGUARD && set.getRegions().size() == 0) {
                 user.showCosmetics();
@@ -81,5 +77,29 @@ public class WGListener implements Listener {
                 user.enterWardrobe(true, wardrobe);
             }
         }
+    }
+
+    @EventHandler
+    public void onPlayerEmote(PlayerEmoteStartEvent event) {
+        Player player = event.getUser().getPlayer();
+        if (player == null) return;
+        Location location = player.getLocation();
+        ApplicableRegionSet set = getRegions(location);
+        for (ProtectedRegion protectedRegion : set.getRegions()) {
+            if (protectedRegion.getFlags().containsKey(WGHook.getEmotesEnableFlag())) {
+                if (protectedRegion.getFlags().get(WGHook.getEmotesEnableFlag()).toString().equalsIgnoreCase("DENY")) {
+                    event.setCancelled(true);
+                    return;
+                }
+                return;
+            }
+        }
+    }
+
+    private ApplicableRegionSet getRegions(Location location) {
+        com.sk89q.worldedit.util.Location loc = BukkitAdapter.adapt(location);
+        RegionContainer region = WorldGuard.getInstance().getPlatform().getRegionContainer();
+        RegionQuery query = region.createQuery();
+        return query.getApplicableRegions(loc);
     }
 }
