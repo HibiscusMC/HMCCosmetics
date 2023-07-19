@@ -3,6 +3,7 @@ package com.hibiscusmc.hmccosmetics.user.manager;
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
+import com.hibiscusmc.hmccosmetics.hooks.Hooks;
 import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
@@ -36,7 +37,7 @@ public class UserBalloonManager {
 
     public void spawnModel(@NotNull CosmeticBalloonType cosmeticBalloonType, Color color) {
         // redo this
-        if (cosmeticBalloonType.getModelName() != null && HMCCosmeticsPlugin.hasModelEngine()) {
+        if (cosmeticBalloonType.getModelName() != null && Hooks.isActiveHook("ModelEngine")) {
             balloonType = BalloonType.MODELENGINE;
         } else {
             if (cosmeticBalloonType.getItem() != null) {

@@ -29,6 +29,7 @@ public class Hooks {
     private static HookHMCColor HMC_COLOR_HOOK = new HookHMCColor();
     private static HookCMI CMI_HOOK = new HookCMI();
     private static HookLibsDisguises LIBS_DISGUISES_HOOK = new HookLibsDisguises();
+    private static HookModelEngine MODEL_ENGINE_HOOK = new HookModelEngine();
 
     public static Hook getHook(@NotNull String id) {
         return hooks.get(id.toLowerCase());

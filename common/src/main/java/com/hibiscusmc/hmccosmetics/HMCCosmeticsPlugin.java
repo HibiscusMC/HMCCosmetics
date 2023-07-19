@@ -50,7 +50,6 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
     private static boolean disable = false;
     private static YamlConfigurationLoader configLoader;
     private static final int pluginId = 13873;
-    private static boolean hasModelEngine = false;
     private static boolean onLatestVersion = true;
     private static String latestVersion = "";
 
@@ -127,11 +126,6 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
 
         // Database
         new Database();
-
-        // ModelEngine
-        if (Bukkit.getPluginManager().getPlugin("ModelEngine") != null) {
-            hasModelEngine = true;
-        }
 
         // WorldGuard
         if (Bukkit.getPluginManager().getPlugin("WorldGuard") != null && Settings.isWorldGuardMoveCheckEnabled()) {
@@ -286,9 +280,6 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
         }
     }
 
-    public static boolean hasModelEngine() {
-        return hasModelEngine;
-    }
     public static boolean isOnLatestVersion() {
         return onLatestVersion;
     }
