@@ -18,7 +18,7 @@ dependencies {
     compileOnly("it.unimi.dsi:fastutil:8.5.11")
     compileOnly("io.lumine:Mythic-Dist:5.2.1")
     compileOnly("com.denizenscript:denizen:1.2.7-SNAPSHOT")
-    compileOnly("com.github.LeonMangler:SuperVanish:6.2.6-4")
+    compileOnly("com.github.LeonMangler:SuperVanish:6.2.17")
     compileOnlyApi("LibsDisguises:LibsDisguises:10.0.21") {
         exclude("org.spigotmc", "spigot")
     }
