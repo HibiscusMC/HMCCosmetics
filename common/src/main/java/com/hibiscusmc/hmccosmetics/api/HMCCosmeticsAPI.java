@@ -1,11 +1,14 @@
 package com.hibiscusmc.hmccosmetics.api;
 
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
+import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
 import com.hibiscusmc.hmccosmetics.gui.Menu;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
+import org.bukkit.Color;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
@@ -45,5 +48,33 @@ public class HMCCosmeticsAPI {
     @Nullable
     public static Menu getMenu(String id) {
         return Menus.getMenu(id);
+    }
+
+    /**
+     * Equips a cosmetic to a player. You can use getUser and getCosmetic to get the CosmeticUser and Cosmetic to equip.
+     * @param user CosmeticUser to equip cosmetic to
+     * @param cosmetic Cosmetic to equip
+     */
+    public static void equipCosmetic(@NotNull CosmeticUser user, @NotNull Cosmetic cosmetic) {
+        equipCosmetic(user, cosmetic, null);
+    }
+
+    /**
+     * Equips a cosmetic to a player with a color. You can use getUser and getCosmetic to get the CosmeticUser and Cosmetic to equip.
+     * @param user CosmeticUser to equip cosmetic to
+     * @param cosmetic Cosmetic to equip
+     * @param color Color to apply to cosmetic
+     */
+    public static void equipCosmetic(@NotNull CosmeticUser user, @NotNull Cosmetic cosmetic, @Nullable Color color) {
+        user.addPlayerCosmetic(cosmetic, color);
+    }
+
+    /**
+     * Removes a cosmetic in cosmeticslot.
+     * @param user The user to remove the cosmetic from
+     * @param slot The slot to remove the cosmetic from
+     */
+    public static void unequipCosmetic(CosmeticUser user, CosmeticSlot slot) {
+        user.removeCosmeticSlot(slot);
     }
 }
