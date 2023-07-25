@@ -7,10 +7,12 @@ import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.AreaEffectCloud;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.ConfigurationNode;
 
+import java.util.ArrayList;
 import java.util.logging.Level;
 
 public class CosmeticBackpackType extends Cosmetic {
@@ -45,9 +47,19 @@ public class CosmeticBackpackType extends Cosmetic {
         user.getUserBackpackManager().getArmorStand().teleport(loc);
 
         if (user.getUserBackpackManager().getBackpackType().equals(UserBackpackManager.BackpackType.FIRST_PERSON)) {
-            user.getUserBackpackManager().teleportEffectEntity(loc);
-            PacketManager.sendRidingPacket(entity.getEntityId(), user.getUserBackpackManager().getAreaEffectEntityId(), loc);
-            PacketManager.sendRidingPacket(user.getUserBackpackManager().getAreaEffectEntityId(), user.getUserBackpackManager().getFirstArmorStandId(), loc);
+            ArrayList<Integer> particleCloud = user.getUserBackpackManager().getAreaEffectEntityId();
+            for (int i = 0; i < particleCloud.size(); i++) {
+                //particleCloud.get(i).teleport(loc);
+                if (i == 0) {
+                    PacketManager.sendRidingPacket(entity.getEntityId(), particleCloud.get(i), loc);
+                } else {
+                    PacketManager.sendRidingPacket(particleCloud.get(i - 1), particleCloud.get(i) , loc);
+                }
+                MessagesUtil.sendDebugMessages("num: " + i + " / valid? ");
+            }
+            //PacketManager.sendRidingPacket(entity.getEntityId(), user.getUserBackpackManager().getAreaEffectEntityId(), loc);
+            PacketManager.sendRidingPacket(particleCloud.get(particleCloud.size() - 1), user.getUserBackpackManager().getFirstArmorStandId(), loc);
+            MessagesUtil.sendDebugMessages("ParticleCloud: " + particleCloud.toString());
         } else {
             PacketManager.sendRidingPacket(entity.getEntityId(), user.getUserBackpackManager().getFirstArmorStandId(), loc);
         }

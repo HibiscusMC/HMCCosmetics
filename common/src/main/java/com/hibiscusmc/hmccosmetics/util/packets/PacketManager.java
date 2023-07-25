@@ -17,6 +17,7 @@ import com.hibiscusmc.hmccosmetics.util.packets.wrappers.WrapperPlayServerRelEnt
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -30,6 +31,15 @@ import java.util.List;
 import java.util.UUID;
 
 public class PacketManager extends BasePacket {
+
+    public static void sendEntitySpawnPacket(
+            final @NotNull Location location,
+            final int entityId,
+            final EntityType entityType,
+            final UUID uuid
+            ) {
+        sendEntitySpawnPacket(location, entityId, entityType, uuid, getViewers(location));
+    }
 
     public static void sendEntitySpawnPacket(
             final @NotNull Location location,
@@ -145,7 +155,29 @@ public class PacketManager extends BasePacket {
             packet.getDataValueCollectionModifier().write(0, wrappedDataValueList);
         }
         for (Player p : sendTo) sendPacket(p, packet);
+    }
 
+    public static void sendCloudEffect(
+            int entityId,
+            List<Player> sendTo
+    ) {
+        PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
+        packet.getModifier().writeDefaults();
+        packet.getIntegers().write(0, entityId);
+        WrappedDataWatcher wrapper = new WrappedDataWatcher();
+
+        if (NMSHandlers.getVersion().contains("v1_18_R2") || NMSHandlers.getVersion().contains("v1_19_R1")) {
+            wrapper.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(0, WrappedDataWatcher.Registry.get(Byte.class)), (byte) 0x20);
+            wrapper.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(8, WrappedDataWatcher.Registry.get(Float.class)), 0f);
+            packet.getWatchableCollectionModifier().write(0, wrapper.getWatchableObjects());
+        } else {
+            final List<WrappedDataValue> wrappedDataValueList = Lists.newArrayList();
+            wrappedDataValueList.add(new WrappedDataValue(0, WrappedDataWatcher.Registry.get(Byte.class), (byte) 0x20));
+            wrappedDataValueList.add(new WrappedDataValue(8, WrappedDataWatcher.Registry.get(Float.class), 0f));
+            //wrappedDataValueList.add(new WrappedDataValue(11, WrappedDataWatcher.Registry.get(Integer.class), 21));
+            packet.getDataValueCollectionModifier().write(0, wrappedDataValueList);
+        }
+        for (Player p : sendTo) sendPacket(p, packet);
     }
 
     public static void sendLookPacket(
