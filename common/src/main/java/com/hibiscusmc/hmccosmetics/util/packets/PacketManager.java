@@ -281,6 +281,18 @@ public class PacketManager extends BasePacket {
     }
 
     /**
+     * Destroys an entity from a player
+     * @param sendTo The players the packet should be sent to
+     */
+    public static void sendEntityDestroyPacket(final List<Integer> ids, @NotNull List<Player> sendTo) {
+        PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_DESTROY);
+        IntArrayList entities = new IntArrayList(new int[]{});
+        for (int id : ids) entities.add(id);
+        packet.getModifier().write(0, entities);
+        for (final Player p : sendTo) sendPacket(p, packet);
+    }
+
+    /**
      * Sends a camera packet
      * @param entityId The Entity ID that camera will go towards
      * @param sendTo The players that will be sent this packet

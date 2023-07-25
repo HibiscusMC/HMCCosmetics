@@ -28,12 +28,14 @@ public class UserBackpackManager {
     private ArmorStand invisibleArmorStand;
     private ArrayList<Integer> particleCloud = new ArrayList<>();
     private final CosmeticUser user;
-    private BackpackType backpackType;
+    private boolean firstPerson;
+    private UserBackpackCloudManager cloudManager;
 
-    public UserBackpackManager(CosmeticUser user, BackpackType backpackType) {
+    public UserBackpackManager(CosmeticUser user, boolean firstPersonView) {
         this.user = user;
         this.hideBackpack = false;
-        this.backpackType = backpackType;
+        this.firstPerson = firstPersonView;
+        this.cloudManager = new UserBackpackCloudManager(user.getUniqueId());
     }
 
     public int getFirstArmorStandId() {
@@ -55,16 +57,14 @@ public class UserBackpackManager {
     public void spawnBackpack(CosmeticBackpackType cosmeticBackpackType) {
         MessagesUtil.sendDebugMessages("spawnBackpack Bukkit - Start");
 
-        if (getBackpackType().equals(BackpackType.NORMAL)) {
+        if (!firstPerson) {
             spawnNormalBackpack(cosmeticBackpackType);
-        }
-        if (getBackpackType().equals(BackpackType.FIRST_PERSON)) {
+        } else {
             spawnFirstPersonBackpack(cosmeticBackpackType);
         }
     }
 
     private void spawnNormalBackpack(CosmeticBackpackType cosmeticBackpackType) {
-
         if (this.invisibleArmorStand != null) return;
 
         this.invisibleArmorStand = (ArmorStand) NMSHandlers.getHandler().spawnBackpack(user, cosmeticBackpackType);
@@ -87,27 +87,13 @@ public class UserBackpackManager {
         if (this.invisibleArmorStand != null) return;
 
         this.invisibleArmorStand = (ArmorStand) NMSHandlers.getHandler().spawnBackpack(user, cosmeticBackpackType);
+
         for (int i = particleCloud.size(); i < 5; i++) {
             int entityId = NMSHandlers.getHandler().getNextEntityId();
             PacketManager.sendEntitySpawnPacket(user.getPlayer().getLocation(), entityId, EntityType.AREA_EFFECT_CLOUD, UUID.randomUUID());
             PacketManager.sendCloudEffect(entityId, PacketManager.getViewers(user.getPlayer().getLocation()));
             this.particleCloud.add(entityId);
-            //this.particleCloud.add((AreaEffectCloud) NMSHandlers.getHandler().spawnHMCParticleCloud(user.getPlayer().getLocation()));
         }
-        //this.particleCloud = (AreaEffectCloud) NMSHandlers.getHandler().spawnHMCParticleCloud(user.getPlayer().getLocation());
-
-        /*
-        if (cosmeticBackpackType.getModelName() != null && Hooks.isActiveHook("ModelEngine")) {
-            if (ModelEngineAPI.api.getModelRegistry().getBlueprint(cosmeticBackpackType.getModelName()) == null) {
-                MessagesUtil.sendDebugMessages("Invalid Model Engine Blueprint " + cosmeticBackpackType.getModelName(), Level.SEVERE);
-                return;
-            }
-            ModeledEntity modeledEntity = ModelEngineAPI.getOrCreateModeledEntity(invisibleArmorStand);
-            ActiveModel model = ModelEngineAPI.createActiveModel(ModelEngineAPI.getBlueprint(cosmeticBackpackType.getModelName()));
-            model.setCanHurt(false);
-            modeledEntity.addModel(model, false);
-        }
-         */
 
         MessagesUtil.sendDebugMessages("spawnBackpackFirstPerson Bukkit - Finish");
     }
@@ -144,10 +130,6 @@ public class UserBackpackManager {
         hideBackpack = shown;
     }
 
-    public BackpackType getBackpackType() {
-        return backpackType;
-    }
-
     public ArrayList<Integer> getAreaEffectEntityId() {
         return particleCloud;
     }
@@ -159,6 +141,10 @@ public class UserBackpackManager {
     public void clearItems() {
         ItemStack item = new ItemStack(Material.AIR);
         getArmorStand().getEquipment().setHelmet(item);
+    }
+
+    public UserBackpackCloudManager getCloudManager() {
+        return cloudManager;
     }
 
     public enum BackpackType {

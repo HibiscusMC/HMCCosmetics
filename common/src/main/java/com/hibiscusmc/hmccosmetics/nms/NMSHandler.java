@@ -25,8 +25,6 @@ public interface NMSHandler {
 
     Entity spawnBackpack(CosmeticUser user, CosmeticBackpackType cosmeticBackpackType);
 
-    Entity spawnHMCParticleCloud(Location location);
-
     Entity spawnDisplayEntity(Location location, String text);
 
     UserBalloonManager spawnBalloon(CosmeticUser user, CosmeticBalloonType cosmeticBalloonType);

@@ -70,12 +70,6 @@ public class NMSHandler implements com.hibiscusmc.hmccosmetics.nms.NMSHandler {
     }
 
     @Override
-    public org.bukkit.entity.Entity spawnHMCParticleCloud(Location location) {
-        HMCParticleCloud hmcParticleCloud = new HMCParticleCloud(location);
-        return hmcParticleCloud.getBukkitEntity();
-    }
-
-    @Override
     public ArmorStand getMEGEntity(Location loc) {
         return (ArmorStand) new MEGEntity(loc).getBukkitEntity();
     }
