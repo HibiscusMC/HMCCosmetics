@@ -61,4 +61,8 @@ public class UserBackpackCloudManager {
         viewers.clear();
     }
 
+    public List<Player> getViewers() {
+        return viewers;
+    }
+
 }
