@@ -1,5 +1,6 @@
 title: "<white>"
 rows: 6
+refresh-rate: 20 # Set to -1 or remove to disable auto-updating, leading to it only using event-based updates.
 items:
   beanie:
     slots:

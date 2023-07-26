@@ -14,6 +14,7 @@ import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
@@ -23,7 +24,9 @@ import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Menu {
 
@@ -32,6 +35,8 @@ public class Menu {
     private final int rows;
     private final ConfigurationNode config;
     private final String permissionNode;
+    private final ArrayList<MenuItem> items;
+    private final int refreshRate;
 
     public Menu(String id, @NotNull ConfigurationNode config) {
         this.id = id;
@@ -40,64 +45,15 @@ public class Menu {
         title = config.node("title").getString("chest");
         rows = config.node("rows").getInt(1);
         permissionNode = config.node("permission").getString("");
+        refreshRate = config.node("refresh-rate").getInt(-1);
+
+        items = new ArrayList<>();
+        setupItems();
 
         Menus.addMenu(this);
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public String getTitle() {
-        return this.title;
-    }
-
-    public int getRows() {
-        return this.getRows();
-    }
-
-    public void openMenu(CosmeticUser user) {
-        openMenu(user, false);
-    }
-
-    public void openMenu(@NotNull CosmeticUser user, boolean ignorePermission) {
-        Player player = user.getPlayer();
-        if (player == null) return;
-        if (!ignorePermission && !permissionNode.isEmpty()) {
-            if (!player.hasPermission(permissionNode) && !player.isOp()) {
-                MessagesUtil.sendMessage(player, "no-permission");
-                return;
-            }
-        }
-        final Component component = Adventure.MINI_MESSAGE.deserialize(Hooks.processPlaceholders(player, this.title));
-        Gui gui = Gui.gui().
-                title(component).
-                rows(this.rows).
-                create();
-
-        gui.setDefaultClickAction(event -> event.setCancelled(true));
-
-        // TODO: Redo this whole gui creation process to allow for all items, possibly implement caching
-        gui = getItems(user, gui);
-        final Gui finalGui = gui; // Need to make it final for the runtask
-
-        // API
-        PlayerMenuOpenEvent event = new PlayerMenuOpenEvent(user, this);
-        Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> {
-            Bukkit.getPluginManager().callEvent(event);
-        });
-        if (event.isCancelled()) return;
-        // Internal
-
-        Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> {
-            finalGui.open(player);
-        });
-    }
-
-    @Contract("_, _ -> param2")
-    private Gui getItems(@NotNull CosmeticUser user, Gui gui) {
-        Player player = user.getPlayer();
-
+    private void setupItems() {
         for (ConfigurationNode config : config.node("items").childrenMap().values()) {
 
             List<String> slotString;
@@ -137,27 +93,97 @@ public class Menu {
                 if (Types.isType(typeId)) type = Types.getType(typeId);
             }
 
-            for (int slot : slots) {
-                ItemStack modifiedItem = getMenuItem(user, type, config, item.clone(), slot).clone();
-                GuiItem guiItem = ItemBuilder.from(modifiedItem).asGuiItem();
+            items.add(new MenuItem(slots, item, type, config));
+        }
+    }
 
-                Type finalType = type;
+    public String getId() {
+        return id;
+    }
+
+    public String getTitle() {
+        return this.title;
+    }
+
+    public int getRows() {
+        return this.getRows();
+    }
+
+    public void openMenu(CosmeticUser user) {
+        openMenu(user, false);
+    }
+
+    public void openMenu(@NotNull CosmeticUser user, boolean ignorePermission) {
+        Player player = user.getPlayer();
+        if (player == null) return;
+        if (!ignorePermission && !permissionNode.isEmpty()) {
+            if (!player.hasPermission(permissionNode) && !player.isOp()) {
+                MessagesUtil.sendMessage(player, "no-permission");
+                return;
+            }
+        }
+        final Component component = Adventure.MINI_MESSAGE.deserialize(Hooks.processPlaceholders(player, this.title));
+        Gui gui = Gui.gui().
+                title(component).
+                rows(this.rows).
+                create();
+
+        gui.setDefaultClickAction(event -> event.setCancelled(true));
+
+        AtomicInteger taskid = new AtomicInteger(-1);
+        gui.setOpenGuiAction(event -> {
+            Runnable run = new Runnable() {
+                @Override
+                public void run() {
+                    if (gui.getInventory().getViewers().size() == 0 && taskid.get() != -1) {
+                        Bukkit.getScheduler().cancelTask(taskid.get());
+                    }
+
+                    updateMenu(user, gui);
+                }
+            };
+
+            if (refreshRate != -1) {
+                taskid.set(Bukkit.getScheduler().scheduleSyncRepeatingTask(HMCCosmeticsPlugin.getInstance(), run, 0, refreshRate));
+            } else {
+                run.run();
+            }
+        });
+
+        gui.setCloseGuiAction(event -> {
+            if (taskid.get() != -1) Bukkit.getScheduler().cancelTask(taskid.get());
+        });
+
+        // API
+        PlayerMenuOpenEvent event = new PlayerMenuOpenEvent(user, this);
+        Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> {
+            Bukkit.getPluginManager().callEvent(event);
+        });
+        if (event.isCancelled()) return;
+        // Internal
+
+        Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> {
+            gui.open(player);
+        });
+    }
+
+    private void updateMenu(CosmeticUser user, Gui gui) {
+        for (MenuItem item : items) {
+            Type type = item.getType();
+            for (int slot : item.getSlots()) {
+                ItemStack modifiedItem = getMenuItem(user, type, item.getItemConfig(), item.getItem().clone(), slot);
+                GuiItem guiItem = ItemBuilder.from(modifiedItem).asGuiItem();
                 guiItem.setAction(event -> {
                     MessagesUtil.sendDebugMessages("Selected slot " + slot);
                     final ClickType clickType = event.getClick();
-                    if (finalType != null) finalType.run(user, config, clickType);
-                    // Need to delay the update by a tick so it will actually update with new values
-                    for (int guiSlot : slots) {
-                        gui.updateItem(guiSlot, getMenuItem(user, finalType, config, item.clone(), guiSlot));
-                    }
-                    MessagesUtil.sendDebugMessages("Updated slot " + slot);
+                    if (type != null) type.run(user, item.getItemConfig(), clickType);
+                    updateMenu(user, gui);
                 });
 
-                MessagesUtil.sendDebugMessages("Added " + slots + " as " + guiItem + " in the menu");
-                gui.setItem(slot, guiItem);
+                MessagesUtil.sendDebugMessages("Added " + slot + " as " + guiItem + " in the menu");
+                gui.updateItem(slot, guiItem);
             }
         }
-        return gui;
     }
 
     @NotNull
