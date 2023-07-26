@@ -1,6 +1,5 @@
 package com.hibiscusmc.hmccosmetics.user.manager;
 
-import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBackpackType;
 import com.hibiscusmc.hmccosmetics.hooks.Hooks;
@@ -11,9 +10,7 @@ import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
 import com.ticxo.modelengine.api.ModelEngineAPI;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
-import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.AreaEffectCloud;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
@@ -57,18 +54,23 @@ public class UserBackpackManager {
     public void spawnBackpack(CosmeticBackpackType cosmeticBackpackType) {
         MessagesUtil.sendDebugMessages("spawnBackpack Bukkit - Start");
 
-        if (!firstPerson) {
-            spawnNormalBackpack(cosmeticBackpackType);
-        } else {
-            spawnFirstPersonBackpack(cosmeticBackpackType);
-        }
+        spawn(cosmeticBackpackType);
     }
 
-    private void spawnNormalBackpack(CosmeticBackpackType cosmeticBackpackType) {
+    private void spawn(CosmeticBackpackType cosmeticBackpackType) {
         if (this.invisibleArmorStand != null) return;
-
         this.invisibleArmorStand = (ArmorStand) NMSHandlers.getHandler().spawnBackpack(user, cosmeticBackpackType);
 
+        if (cosmeticBackpackType.isFirstPersonCompadible()) {
+            for (int i = particleCloud.size(); i < 5; i++) {
+                int entityId = NMSHandlers.getHandler().getNextEntityId();
+                PacketManager.sendEntitySpawnPacket(user.getPlayer().getLocation(), entityId, EntityType.AREA_EFFECT_CLOUD, UUID.randomUUID());
+                PacketManager.sendCloudEffect(entityId, PacketManager.getViewers(user.getPlayer().getLocation()));
+                this.particleCloud.add(entityId);
+            }
+        }
+
+        // No one should be using ME because it barely works but some still use it, so it's here
         if (cosmeticBackpackType.getModelName() != null && Hooks.isActiveHook("ModelEngine")) {
             if (ModelEngineAPI.api.getModelRegistry().getBlueprint(cosmeticBackpackType.getModelName()) == null) {
                 MessagesUtil.sendDebugMessages("Invalid Model Engine Blueprint " + cosmeticBackpackType.getModelName(), Level.SEVERE);
@@ -81,21 +83,6 @@ public class UserBackpackManager {
         }
 
         MessagesUtil.sendDebugMessages("spawnBackpack Bukkit - Finish");
-    }
-
-    public void spawnFirstPersonBackpack(CosmeticBackpackType cosmeticBackpackType) {
-        if (this.invisibleArmorStand != null) return;
-
-        this.invisibleArmorStand = (ArmorStand) NMSHandlers.getHandler().spawnBackpack(user, cosmeticBackpackType);
-
-        for (int i = particleCloud.size(); i < 5; i++) {
-            int entityId = NMSHandlers.getHandler().getNextEntityId();
-            PacketManager.sendEntitySpawnPacket(user.getPlayer().getLocation(), entityId, EntityType.AREA_EFFECT_CLOUD, UUID.randomUUID());
-            PacketManager.sendCloudEffect(entityId, PacketManager.getViewers(user.getPlayer().getLocation()));
-            this.particleCloud.add(entityId);
-        }
-
-        MessagesUtil.sendDebugMessages("spawnBackpackFirstPerson Bukkit - Finish");
     }
 
     public void despawnBackpack() {

@@ -1,5 +1,6 @@
 package com.hibiscusmc.hmccosmetics.util;
 
+import com.hibiscusmc.hmccosmetics.util.misc.StringUtils;
 import org.spongepowered.configurate.ConfigurationNode;
 
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ public class TranslationUtil {
     public static String getTranslation(String key, String message) {
         List<TranslationPair> pairs = keys.get(key);
         for (TranslationPair pair : pairs) {
-            if (pair.getKey() == message) return pair.getValue();
+            if (pair.getKey() == message) return StringUtils.parseStringToString(pair.getValue());
         }
 
         return message;
