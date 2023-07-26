@@ -146,9 +146,4 @@ public class UserBackpackManager {
     public UserBackpackCloudManager getCloudManager() {
         return cloudManager;
     }
-
-    public enum BackpackType {
-        NORMAL,
-        FIRST_PERSON // First person not yet implemented
-    }
 }
