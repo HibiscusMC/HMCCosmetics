@@ -57,7 +57,7 @@ public class CosmeticBackpackType extends Cosmetic {
         user.getUserBackpackManager().getArmorStand().setRotation(loc.getYaw(), loc.getPitch());
 
         List<Player> outsideViewers = user.getUserBackpackManager().getCloudManager().refreshViewers(loc);
-        if (isFirstPersonCompadible()) {
+        if (!user.isInWardrobe() && isFirstPersonCompadible()) {
             List<Player> owner = List.of(user.getPlayer());
 
             ArrayList<Integer> particleCloud = user.getUserBackpackManager().getAreaEffectEntityId();
@@ -67,11 +67,9 @@ public class CosmeticBackpackType extends Cosmetic {
                 } else {
                     PacketManager.sendRidingPacket(particleCloud.get(i - 1), particleCloud.get(i) , owner);
                 }
-                MessagesUtil.sendDebugMessages("num: " + i + " / valid? ");
             }
             PacketManager.sendRidingPacket(particleCloud.get(particleCloud.size() - 1), user.getUserBackpackManager().getFirstArmorStandId(), owner);
             NMSHandlers.getHandler().equipmentSlotUpdate(user.getUserBackpackManager().getFirstArmorStandId(), EquipmentSlot.HEAD, firstPersonBackpack, owner);
-            MessagesUtil.sendDebugMessages("ParticleCloud: " + particleCloud.toString());
         }
         PacketManager.sendRidingPacket(entity.getEntityId(), user.getUserBackpackManager().getFirstArmorStandId(), outsideViewers);
 

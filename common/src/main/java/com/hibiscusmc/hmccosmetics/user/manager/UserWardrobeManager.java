@@ -114,6 +114,7 @@ public class UserWardrobeManager {
             // Misc
             if (user.hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
                 user.getUserBackpackManager().getArmorStand().teleport(npcLocation.clone().add(0, 2, 0));
+                NMSHandlers.getHandler().equipmentSlotUpdate(user.getUserBackpackManager().getFirstArmorStandId(), EquipmentSlot.HEAD, user.getUserCosmeticItem(user.getCosmetic(CosmeticSlot.BACKPACK)), viewer);
                 PacketManager.ridingMountPacket(NPC_ID, user.getUserBackpackManager().getFirstArmorStandId(), viewer);
             }
 
