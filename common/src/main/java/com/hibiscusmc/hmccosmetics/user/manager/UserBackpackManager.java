@@ -106,7 +106,7 @@ public class UserBackpackManager {
         }
         if (particleCloud != null) {
             for (int i = 0; i < particleCloud.size(); i++) {
-                //particleCloud.get(i).remove();
+                PacketManager.sendEntityDestroyPacket(particleCloud.get(i), getCloudManager().getViewers());
             }
             this.particleCloud = null;
         }
