@@ -82,6 +82,8 @@ public class UserBackpackManager {
             modeledEntity.addModel(model, false);
         }
 
+        cosmeticBackpackType.update(user);
+
         MessagesUtil.sendDebugMessages("spawnBackpack Bukkit - Finish");
     }
 
