@@ -114,6 +114,10 @@ public class PlayerGameListener implements Listener {
             return;
         }
 
+        if (user.isInWardrobe()) {
+            user.leaveWardrobe();
+        }
+
         Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
             if (user.hasCosmeticInSlot(CosmeticSlot.BACKPACK) && user.getUserBackpackManager() != null) {
                 user.respawnBackpack();
