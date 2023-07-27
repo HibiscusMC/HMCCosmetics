@@ -11,6 +11,7 @@ import com.comphenix.protocol.wrappers.Pair;
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.api.events.PlayerCosmeticPostEquipEvent;
 import com.hibiscusmc.hmccosmetics.config.Settings;
+import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticArmorType;
@@ -112,6 +113,10 @@ public class PlayerGameListener implements Listener {
         if (user == null) {
             MessagesUtil.sendDebugMessages("user is null");
             return;
+        }
+
+        if (user.isInWardrobe()) {
+            user.leaveWardrobe();
         }
 
         Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
