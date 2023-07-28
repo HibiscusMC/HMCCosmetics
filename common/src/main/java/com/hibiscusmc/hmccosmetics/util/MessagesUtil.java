@@ -88,7 +88,7 @@ public class MessagesUtil {
     public static void sendTitle(Player player, String message, int fadein, int stay, int fadeout) {
         Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.getInstance()).player(player);
 
-        Title.Times times = Title.Times.times(Duration.ofMillis(WardrobeSettings.getTransitionFadeIn()), Duration.ofMillis(3000), Duration.ofMillis(1000));
+        Title.Times times = Title.Times.times(Duration.ofMillis(fadein), Duration.ofMillis(stay), Duration.ofMillis(fadeout));
         Title title = Title.title(processStringNoKey(player, message), Component.empty(), times);
 
         target.showTitle(title);
