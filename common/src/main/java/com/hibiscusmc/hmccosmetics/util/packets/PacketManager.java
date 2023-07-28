@@ -393,16 +393,14 @@ public class PacketManager extends BasePacket {
         PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
         packet.getModifier().writeDefaults();
         packet.getIntegers().write(0, playerId);
+        WrappedDataWatcher wrapper = new WrappedDataWatcher();
 
         if (NMSHandlers.getVersion().contains("v1_18_R2") || NMSHandlers.getVersion().contains("v1_19_R1")) {
-            WrappedDataWatcher wrapper = new WrappedDataWatcher();
             wrapper.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(17, WrappedDataWatcher.Registry.get(Byte.class)), mask);
-            wrapper.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(15, WrappedDataWatcher.Registry.get(Byte.class)), (byte) 0x10);
             packet.getWatchableCollectionModifier().write(0, wrapper.getWatchableObjects());
         } else {
             final List<WrappedDataValue> wrappedDataValueList = Lists.newArrayList();
             wrappedDataValueList.add(new WrappedDataValue(17, WrappedDataWatcher.Registry.get(Byte.class), mask));
-            wrappedDataValueList.add(new WrappedDataValue(15, WrappedDataWatcher.Registry.get(Byte.class), (byte) 0x10));
             packet.getDataValueCollectionModifier().write(0, wrappedDataValueList);
         }
 
