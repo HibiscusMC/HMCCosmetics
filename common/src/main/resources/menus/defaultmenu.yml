@@ -191,3 +191,14 @@ items:
         - "<gray>Allowed: <#6D9DC5>%HMCCosmetics_unlocked_earth_day_grabber%" 
     type: cosmetic
     cosmetic: earth_day_grabber
+  hibiscus_flower:
+    slots:
+      - 18
+    item:
+      material: hmccosmetics:hibiscus_flower
+      lore:
+        - ""
+        - "<gray>Enabled: <#6D9DC5>%HMCCosmetics_equipped_hibiscus_flower%"
+        - "<gray>Allowed: <#6D9DC5>%HMCCosmetics_unlocked_hibiscus_flower%" 
+    type: cosmetic
+    cosmetic: hibiscus_flower
