@@ -65,6 +65,11 @@ jetpack:
     model-data: 12
     name: "<blue>Jetpack"
     amount: 1
+  firstperson-item:
+    material: PAPER
+    model-data: 14
+    name: "<white>Jetpack"
+    amount: 1
 hammer:
   slot: OFFHAND
   permission: "hmccosmetics.hammer"
