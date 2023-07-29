@@ -15,6 +15,11 @@ backpack:
     model-data: 4
     name: "<blue>Backpack"
     amount: 1
+  firstperson-item:
+    material: PAPER
+    model-data: 8
+    name: "<white>Backpack"
+    amount: 1
 future_wings:
   slot: BACKPACK
   permission: "hmccosmetics.future_wings"
@@ -22,6 +27,11 @@ future_wings:
     material: PAPER
     model-data: 9
     name: "<#d24c9f>Future Wings"
+    amount: 1
+  firstperson-item:
+    material: PAPER
+    model-data: 10
+    name: "<white>Future Wings"
     amount: 1
 lantern_cosmetic:
   slot: OFFHAND
@@ -109,6 +119,11 @@ explorer_backpack:
   item:
     material: LEATHER_HORSE_ARMOR
     model-data: 3
+    name: "<white>Explorer's Backpack"
+    amount: 1
+  firstperson-item:
+    material: LEATHER_HORSE_ARMOR
+    model-data: 5
     name: "<white>Explorer's Backpack"
     amount: 1
 garbage_truck_balloon:
