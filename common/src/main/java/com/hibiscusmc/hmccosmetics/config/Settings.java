@@ -47,6 +47,10 @@ public class Settings {
     private static final String COSMETIC_ADD_ENCHANTS_LEGGINGS_PATH = "leggings-add-enchantments";
     private static final String COSMETIC_ADD_ENCHANTS_BOOTS_PATH = "boots-add-enchantments";
     private static final String COSMETIC_DESTROY_LOOSE_COSMETIC_PATH = "destroy-loose-cosmetics";
+    private static final String MENU_SETTINGS_PATH = "menu-settings";
+    private static final String COSMETIC_TYPE_SETTINGS_PATH = "cosmetic-type";
+    private static final String EQUIP_CLICK_TYPE = "equip-click";
+    private static final String UNEQUIP_CLICK_TYPE = "unequip-click";
 
     private static String defaultMenu;
     private static String dyeMenuName;
@@ -77,6 +81,8 @@ public class Settings {
     private static int tickPeriod;
     private static double emoteDistance;
     private static Vector balloonOffset;
+    private static String cosmeticEquipClickType;
+    private static String cosmeticUnEquipClickType;
 
     public static void load(ConfigurationNode source) {
 
@@ -113,9 +119,13 @@ public class Settings {
         addChestplateEnchants = cosmeticSettings.node(COSMETIC_ADD_ENCHANTS_CHESTPLATE_PATH).getBoolean(false);
         addLeggingEnchants = cosmeticSettings.node(COSMETIC_ADD_ENCHANTS_LEGGINGS_PATH).getBoolean(false);
         addBootsEnchants = cosmeticSettings.node(COSMETIC_ADD_ENCHANTS_BOOTS_PATH).getBoolean(false);
-
         tickPeriod = cosmeticSettings.node(TICK_PERIOD_PATH).getInt(-1);
         viewDistance = cosmeticSettings.node(VIEW_DISTANCE_PATH).getInt();
+
+        ConfigurationNode menuSettings = source.node(MENU_SETTINGS_PATH);
+        ConfigurationNode cosmeticTypeSettings = menuSettings.node(COSMETIC_TYPE_SETTINGS_PATH);
+        cosmeticEquipClickType = cosmeticTypeSettings.node(EQUIP_CLICK_TYPE).getString("ALL");
+        cosmeticUnEquipClickType = cosmeticTypeSettings.node(UNEQUIP_CLICK_TYPE).getString("ALL");
 
         final var balloonSection = cosmeticSettings.node(BALLOON_OFFSET);
 
@@ -311,5 +321,13 @@ public class Settings {
         plugin.getConfig().set("debug-mode", newSetting);
 
         plugin.saveConfig();
+    }
+
+    public static String getCosmeticEquipClickType() {
+        return cosmeticEquipClickType;
+    }
+
+    public static String getCosmeticUnEquipClickType() {
+        return cosmeticUnEquipClickType;
     }
 }

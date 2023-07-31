@@ -1,6 +1,7 @@
 package com.hibiscusmc.hmccosmetics.gui.type.types;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
+import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.config.serializer.ItemSerializer;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
@@ -53,6 +54,20 @@ public class TypeCosmetic extends Type {
             return;
         }
 
+        boolean isUnEquippingCosmetic = false;
+        if (user.getCosmetic(cosmetic.getSlot()) == cosmetic) isUnEquippingCosmetic = true;
+
+        String requiredClick;
+        if (isUnEquippingCosmetic) requiredClick = Settings.getCosmeticUnEquipClickType();
+        else requiredClick = Settings.getCosmeticEquipClickType();
+
+        MessagesUtil.sendDebugMessages("Required click type: " + requiredClick);
+        MessagesUtil.sendDebugMessages("Click type: " + clickType.name());
+        if (!requiredClick.equalsIgnoreCase("ANY") && !requiredClick.equalsIgnoreCase(clickType.name())) {
+            MessagesUtil.sendMessage(user.getPlayer(), "invalid-click-type");
+            return;
+        }
+
         List<String> actionStrings = new ArrayList<>();
         ConfigurationNode actionConfig = config.node("actions");
 
@@ -70,7 +85,7 @@ public class TypeCosmetic extends Type {
                 }
             }
 
-            if (user.getCosmetic(cosmetic.getSlot()) == cosmetic) {
+            if (isUnEquippingCosmetic) {
                 if (!actionConfig.node("on-unequip").virtual()) actionStrings.addAll(actionConfig.node("on-unequip").getList(String.class));
                 MessagesUtil.sendDebugMessages("on-unequip");
                 user.removeCosmeticSlot(cosmetic);

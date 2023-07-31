@@ -48,6 +48,11 @@ cosmetic-settings:
     x: 0.5
     y: 3
     z: 0.5
+menu-settings:
+  cosmetic-type:
+    # This allows you to specify if it should require a special click type for the interaction to work.
+    equip-click: "ANY" # ANY or ClickType, https://jd.papermc.io/paper/1.20/org/bukkit/event/inventory/ClickType.html
+    unequip-click: "ANY" # ANY or ClickType, https://jd.papermc.io/paper/1.20/org/bukkit/event/inventory/ClickType.html
 dye-menu:
   # If you use ItemsAdder, set this to "§f:offset_-8::dye_menu:"
   # If you use Oraxen, set this to "<glyph:neg_shift_8><glyph:dye_menu>"
