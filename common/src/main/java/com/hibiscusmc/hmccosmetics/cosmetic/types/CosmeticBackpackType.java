@@ -57,7 +57,7 @@ public class CosmeticBackpackType extends Cosmetic {
         user.getUserBackpackManager().getArmorStand().setRotation(loc.getYaw(), loc.getPitch());
 
         List<Player> outsideViewers = user.getUserBackpackManager().getCloudManager().refreshViewers(loc);
-        if (!user.isInWardrobe() && isFirstPersonCompadible()) {
+        if (!user.isInWardrobe() && isFirstPersonCompadible() && user.getPlayer() != null) {
             List<Player> owner = List.of(user.getPlayer());
 
             ArrayList<Integer> particleCloud = user.getUserBackpackManager().getAreaEffectEntityId();
@@ -83,5 +83,9 @@ public class CosmeticBackpackType extends Cosmetic {
 
     public boolean isFirstPersonCompadible() {
         return firstPersonBackpack != null;
+    }
+
+    public ItemStack getFirstPersonBackpack() {
+        return firstPersonBackpack;
     }
 }

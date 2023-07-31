@@ -12,10 +12,15 @@ import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 
@@ -61,14 +66,29 @@ public class UserBackpackManager {
         if (this.invisibleArmorStand != null) return;
         this.invisibleArmorStand = (ArmorStand) NMSHandlers.getHandler().spawnBackpack(user, cosmeticBackpackType);
 
+        List<Player> outsideViewers = user.getUserBackpackManager().getCloudManager().refreshViewers(user.getEntity().getLocation());
+        PacketManager.sendRidingPacket(user.getEntity().getEntityId(), user.getUserBackpackManager().getFirstArmorStandId(), outsideViewers);
+
+        ArrayList<Player> owner = new ArrayList<>();
+        if (user.getPlayer() != null) owner.add(user.getPlayer());
+        Entity entity = user.getEntity();
+
         if (cosmeticBackpackType.isFirstPersonCompadible()) {
             for (int i = particleCloud.size(); i < 5; i++) {
                 int entityId = NMSHandlers.getHandler().getNextEntityId();
-                PacketManager.sendEntitySpawnPacket(user.getPlayer().getLocation(), entityId, EntityType.AREA_EFFECT_CLOUD, UUID.randomUUID());
-                PacketManager.sendCloudEffect(entityId, PacketManager.getViewers(user.getPlayer().getLocation()));
+                PacketManager.sendEntitySpawnPacket(user.getEntity().getLocation(), entityId, EntityType.AREA_EFFECT_CLOUD, UUID.randomUUID());
+                PacketManager.sendCloudEffect(entityId, PacketManager.getViewers(user.getEntity().getLocation()));
                 this.particleCloud.add(entityId);
             }
+            // Copied code from updating the backpack
+            for (int i = 0; i < particleCloud.size(); i++) {
+                if (i == 0) PacketManager.sendRidingPacket(entity.getEntityId(), particleCloud.get(i), owner);
+                else PacketManager.sendRidingPacket(particleCloud.get(i - 1), particleCloud.get(i) , owner);
+            }
+            PacketManager.sendRidingPacket(particleCloud.get(particleCloud.size() - 1), user.getUserBackpackManager().getFirstArmorStandId(), owner);
+            if (!user.getHidden()) NMSHandlers.getHandler().equipmentSlotUpdate(user.getUserBackpackManager().getFirstArmorStandId(), EquipmentSlot.HEAD, cosmeticBackpackType.getFirstPersonBackpack(), owner);
         }
+        PacketManager.sendRidingPacket(entity.getEntityId(), user.getUserBackpackManager().getFirstArmorStandId(), outsideViewers);
 
         // No one should be using ME because it barely works but some still use it, so it's here
         if (cosmeticBackpackType.getModelName() != null && Hooks.isActiveHook("ModelEngine")) {
@@ -81,8 +101,6 @@ public class UserBackpackManager {
             model.setCanHurt(false);
             modeledEntity.addModel(model, false);
         }
-
-        cosmeticBackpackType.update(user);
 
         MessagesUtil.sendDebugMessages("spawnBackpack Bukkit - Finish");
     }
