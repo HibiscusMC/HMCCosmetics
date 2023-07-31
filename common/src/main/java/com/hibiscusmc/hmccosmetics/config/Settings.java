@@ -21,11 +21,7 @@ public class Settings {
     private static final String REQUIRE_EMPTY_PANTS_PATH = "require-empty-pants";
     private static final String REQUIRE_EMPTY_BOOTS_PATH = "require-empty-boots";
     private static final String BALLOON_OFFSET = "balloon-offset";
-    private static final String FIRST_PERSON_BACKPACK_MODE = "first-person-backpack-mode";
-
-    private static final transient String LOOK_DOWN_PITCH_PATH = "look-down-backpack-remove";
     private static final String VIEW_DISTANCE_PATH = "view-distance";
-    private static final String PARTICLE_COUNT = "particle-count";
     private static final String DYE_MENU_PATH = "dye-menu";
     private static final String DYE_MENU_NAME = "title";
     private static final String DYE_MENU_INPUT_SLOT = "input-slot";
@@ -77,7 +73,6 @@ public class Settings {
     private static boolean emoteDamageLeave;
     private static boolean emoteInvincible;
     private static boolean destroyLooseCosmetics;
-    private static int lookDownPitch;
     private static int viewDistance;
     private static int tickPeriod;
     private static double emoteDistance;
@@ -120,7 +115,6 @@ public class Settings {
         addBootsEnchants = cosmeticSettings.node(COSMETIC_ADD_ENCHANTS_BOOTS_PATH).getBoolean(false);
 
         tickPeriod = cosmeticSettings.node(TICK_PERIOD_PATH).getInt(-1);
-        lookDownPitch = cosmeticSettings.node(LOOK_DOWN_PITCH_PATH).getInt();
         viewDistance = cosmeticSettings.node(VIEW_DISTANCE_PATH).getInt();
 
         final var balloonSection = cosmeticSettings.node(BALLOON_OFFSET);
@@ -216,10 +210,6 @@ public class Settings {
     public static Vector getBalloonOffset() {
         if (balloonOffset == null) HMCCosmeticsPlugin.getInstance().getLogger().info("Shits null");
         return balloonOffset;
-    }
-
-    public static int getLookDownPitch() {
-        return lookDownPitch;
     }
 
     public static int getViewDistance() {
