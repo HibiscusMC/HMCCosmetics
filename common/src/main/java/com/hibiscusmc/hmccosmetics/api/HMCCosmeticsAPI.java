@@ -11,6 +11,7 @@ import org.bukkit.Color;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.UUID;
 
 public class HMCCosmeticsAPI {
@@ -22,7 +23,7 @@ public class HMCCosmeticsAPI {
      * @return A {@link Cosmetic} if exists or null if it does not
      */
     @Nullable
-    public static Cosmetic getCosmetic(String cosmetic) {
+    public static Cosmetic getCosmetic(@NotNull String cosmetic) {
         return Cosmetics.getCosmetic(cosmetic);
     }
 
@@ -35,7 +36,7 @@ public class HMCCosmeticsAPI {
      * @return A {@link CosmeticUser} if exists or null if it does not
      */
     @Nullable
-    public static CosmeticUser getUser(UUID uuid) {
+    public static CosmeticUser getUser(@NotNull UUID uuid) {
         return CosmeticUsers.getUser(uuid);
     }
 
@@ -46,7 +47,7 @@ public class HMCCosmeticsAPI {
      * @return A {@link Menu} if exists or null if it does not
      */
     @Nullable
-    public static Menu getMenu(String id) {
+    public static Menu getMenu(@NotNull String id) {
         return Menus.getMenu(id);
     }
 
@@ -74,7 +75,23 @@ public class HMCCosmeticsAPI {
      * @param user The user to remove the cosmetic from
      * @param slot The slot to remove the cosmetic from
      */
-    public static void unequipCosmetic(CosmeticUser user, CosmeticSlot slot) {
+    public static void unequipCosmetic(@NotNull CosmeticUser user, @NotNull CosmeticSlot slot) {
         user.removeCosmeticSlot(slot);
+    }
+
+    /**
+     * Gets all Cosmetics that are currently registered with HMCC. This list is immutable!
+     * @return A list of all registered cosmetics
+     */
+    public static List<Cosmetic> getAllCosmetics() {
+        return List.copyOf(Cosmetics.values());
+    }
+
+    /**
+     * Gets all CosmeticUsers that are currently registered with HMCC. This list is immutable!
+     * @return A list of all registered CosmeticUsers
+     */
+    public static List<CosmeticUser> getAllCosmeticUsers() {
+        return List.copyOf(CosmeticUsers.values());
     }
 }

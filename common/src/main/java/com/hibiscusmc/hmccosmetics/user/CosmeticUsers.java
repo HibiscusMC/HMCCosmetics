@@ -7,6 +7,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Set;
 import java.util.UUID;
 
 public class CosmeticUsers {
@@ -42,5 +43,9 @@ public class CosmeticUsers {
         if (entity == null) return null;
         if (entity.getType().equals(EntityType.PLAYER)) return null;
         return COSMETIC_USERS.get(entity.getUniqueId());
+    }
+
+    public static Set<CosmeticUser> values() {
+        return COSMETIC_USERS.values();
     }
 }
