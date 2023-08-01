@@ -168,8 +168,7 @@ public class PlayerGameListener implements Listener {
     @EventHandler(priority = EventPriority.LOW)
     public void onPlayerDamaged(EntityDamageEvent event) {
         if (event.isCancelled()) return;
-        if (!(event.getEntity() instanceof Player)) return;
-        Player player = ((Player) event.getEntity()).getPlayer();
+        if (!(event.getEntity() instanceof Player player)) return;
         CosmeticUser user = CosmeticUsers.getUser(player);
         if (user == null) return;
         if (user.getUserEmoteManager().isPlayingEmote()) {
@@ -189,7 +188,6 @@ public class PlayerGameListener implements Listener {
     public void onPlayerLook(PlayerMoveEvent event) {
         if (event.isCancelled()) return;
         Player player = event.getPlayer();
-        // TODO: Move to packets
         CosmeticUser user = CosmeticUsers.getUser(player);
         if (user == null) return;
         // Really need to look into optimization of this
@@ -199,8 +197,7 @@ public class PlayerGameListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerPoseChange(EntityPoseChangeEvent event) {
-        if (!(event.getEntity() instanceof Player)) return;
-        Player player = ((Player) event.getEntity()).getPlayer();
+        if (!(event.getEntity() instanceof Player player)) return;
         CosmeticUser user = CosmeticUsers.getUser(player);
         if (user == null) return;
         if (!user.hasCosmeticInSlot(CosmeticSlot.BACKPACK)) return;
@@ -208,14 +205,7 @@ public class PlayerGameListener implements Listener {
         if (pose.equals(Pose.STANDING)) {
             // #84, Riptides mess with backpacks
             ItemStack currentItem = player.getInventory().getItemInMainHand();
-            if (currentItem != null) {
-                if (currentItem.hasItemMeta()) {
-                    if (currentItem.containsEnchantment(Enchantment.RIPTIDE)) {
-                        return;
-                    }
-                }
-            }
-
+            if (currentItem.containsEnchantment(Enchantment.RIPTIDE)) return;
             if (!user.isBackpackSpawned()) {
                 user.spawnBackpack((CosmeticBackpackType) user.getCosmetic(CosmeticSlot.BACKPACK));
             }
@@ -229,7 +219,6 @@ public class PlayerGameListener implements Listener {
     @EventHandler(priority = EventPriority.LOW)
     public void onPlayerArmorDamage(PlayerItemDamageEvent event) {
         // Possibly look into cancelling the event, then handling the damage on our own.
-
         if (event.isCancelled()) return;
         MessagesUtil.sendDebugMessages("PlayerItemDamageEvent");
 
@@ -247,6 +236,7 @@ public class PlayerGameListener implements Listener {
         if (slot == -1) return;
 
         CosmeticUser user = CosmeticUsers.getUser(event.getPlayer().getUniqueId());
+        if (user == null) return;
         CosmeticSlot cosmeticSlot = InventoryUtils.BukkitCosmeticSlot(slot);
 
         if (!user.hasCosmeticInSlot(cosmeticSlot)) {
@@ -354,7 +344,8 @@ public class PlayerGameListener implements Listener {
         CosmeticUser user = event.getUser();
         if (user.isInWardrobe() && event.getCosmetic().getSlot().equals(CosmeticSlot.BALLOON)) {
             Location NPCLocation = user.getWardrobeManager().getNpcLocation();
-            PacketManager.sendTeleportPacket(user.getBalloonManager().getPufferfishBalloonId(), NPCLocation.add(Settings.getBalloonOffset()), false, List.of(event.getUser().getPlayer()));
+            // We know that no other entity besides a regular player will be in the wardrobe
+            PacketManager.sendTeleportPacket(user.getBalloonManager().getPufferfishBalloonId(), NPCLocation.add(Settings.getBalloonOffset()), false, List.of(user.getPlayer()));
             user.getBalloonManager().getModelEntity().teleport(NPCLocation.add(Settings.getBalloonOffset()));
         }
     }
@@ -371,7 +362,7 @@ public class PlayerGameListener implements Listener {
                 if (invTypeClicked != 0) return;
                 // -999 is when a player clicks outside their inventory. https://wiki.vg/Inventory#Player_Inventory
                 if (slotClicked == -999) return;
-                if (!(event.getPlayer() instanceof Player)) return;
+                if (event.getPlayer() == null) return;
 
                 CosmeticUser user = CosmeticUsers.getUser(player);
                 if (user == null) return;
@@ -391,7 +382,6 @@ public class PlayerGameListener implements Listener {
                 MessagesUtil.sendDebugMessages("Menu Initial ");
                 Player player = event.getPlayer();
                 if (event.getPlayer() == null) return;
-                if (!(event.getPlayer() instanceof Player)) return;
 
                 int windowID = event.getPacket().getIntegers().read(0);
                 List<ItemStack> slotData = event.getPacket().getItemListModifier().read(0);
@@ -487,9 +477,8 @@ public class PlayerGameListener implements Listener {
         ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(HMCCosmeticsPlugin.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Client.USE_ENTITY) {
             @Override
             public void onPacketReceiving(PacketEvent event) {
-                if (!(event.getPlayer() instanceof Player)) return;
-                Player player = event.getPlayer();
-                CosmeticUser user = CosmeticUsers.getUser(player);
+                if (event.getPlayer() == null) return;
+                CosmeticUser user = CosmeticUsers.getUser(event.getPlayer());
                 if (user == null) return;
                 if (user.getUserEmoteManager().isPlayingEmote() || user.isInWardrobe()) {
                     event.setCancelled(true);
