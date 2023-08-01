@@ -10,14 +10,15 @@ import java.util.List;
 public class TranslationUtil {
 
     // unlocked-cosmetic -> true -> True
-    private static HashMap<String, List<TranslationPair>> keys = new HashMap<>();
+    private static final HashMap<String, List<TranslationPair>> keys = new HashMap<>();
 
     public static void setup(ConfigurationNode config) {
+        keys.clear();
         for (ConfigurationNode node : config.childrenMap().values()) {
             ArrayList<TranslationPair> pairs = new ArrayList<>();
             for (ConfigurationNode translatableMessage : node.childrenMap().values()) {
                 String key = translatableMessage.key().toString();
-                key.replaceAll("'", ""); // Autoupdater adds ' to it? Removes it from the key
+                key = key.replaceAll("'", ""); // Autoupdater adds ' to it? Removes it from the key
                 TranslationPair pair = new TranslationPair(key, translatableMessage.getString());
                 pairs.add(pair);
                 MessagesUtil.sendDebugMessages("setupTranslation key:" + node.key().toString() + " | " + node);
@@ -31,7 +32,7 @@ public class TranslationUtil {
     public static String getTranslation(String key, String message) {
         List<TranslationPair> pairs = keys.get(key);
         for (TranslationPair pair : pairs) {
-            if (pair.key() == message) return StringUtils.parseStringToString(pair.value());
+            if (pair.key().equals(message)) return StringUtils.parseStringToString(pair.value());
         }
 
         return message;
