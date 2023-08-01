@@ -415,6 +415,7 @@ public class PacketManager extends BasePacket {
      * @param uuid What is the fake player UUID
      * @param sendTo Whom to send the packet to
      */
+    @SuppressWarnings("deprecation")
     public static void sendRemovePlayerPacket(
             final Player player,
             final UUID uuid,
@@ -422,6 +423,7 @@ public class PacketManager extends BasePacket {
     ) {
         if (NMSHandlers.getVersion().contains("v1_18_R2") || NMSHandlers.getVersion().contains("v1_19_R1")) {
             WrapperPlayServerPlayerInfo info = new WrapperPlayServerPlayerInfo();
+            // Remove player is deprecated on 1.19.3+, but we still need to support 1.18.2
             info.setAction(EnumWrappers.PlayerInfoAction.REMOVE_PLAYER);
 
             String name = "Mannequin-" + player.getEntityId();
