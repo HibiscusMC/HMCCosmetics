@@ -523,7 +523,7 @@ public class PacketManager extends BasePacket {
 
     @NotNull
     public static List<Player> getViewers(Location location) {
-        ArrayList<Player> viewers = new ArrayList();
+        ArrayList<Player> viewers = new ArrayList<>();
         if (Settings.getViewDistance() <= 0) {
             viewers.addAll(location.getWorld().getPlayers());
         } else {
