@@ -112,8 +112,8 @@ public class UserBackpackManager {
             this.invisibleArmorStand = null;
         }
         if (particleCloud != null) {
-            for (int i = 0; i < particleCloud.size(); i++) {
-                PacketManager.sendEntityDestroyPacket(particleCloud.get(i), getCloudManager().getViewers());
+            for (Integer entityId : particleCloud) {
+                PacketManager.sendEntityDestroyPacket(entityId, getCloudManager().getViewers());
             }
             this.particleCloud = null;
         }
