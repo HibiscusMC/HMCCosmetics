@@ -466,7 +466,7 @@ public class PlayerGameListener implements Listener {
         ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(HMCCosmeticsPlugin.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Client.ARM_ANIMATION) {
             @Override
             public void onPacketReceiving(PacketEvent event) {
-                if (!(event.getPlayer() instanceof Player)) return;
+                if (event.getPlayer() == null) return;
                 Player player = event.getPlayer();
                 CosmeticUser user = CosmeticUsers.getUser(player);
                 if (user == null) return;
