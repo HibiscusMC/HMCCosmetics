@@ -14,6 +14,7 @@ import com.sk89q.worldguard.protection.regions.RegionQuery;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -23,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
  * Contains {@link com.sk89q.worldguard.WorldGuard WorldGuard} related event listeners
  */
 public class WGListener implements Listener {
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerMove(@NotNull PlayerMoveEvent event) {
         CosmeticUser user = CosmeticUsers.getUser(event.getPlayer());
         if (user == null) return;
@@ -51,7 +52,7 @@ public class WGListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerTeleport(PlayerTeleportEvent event) {
         CosmeticUser user = CosmeticUsers.getUser(event.getPlayer());
         if (user == null) return;
@@ -79,7 +80,7 @@ public class WGListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerEmote(PlayerEmoteStartEvent event) {
         Player player = event.getUser().getPlayer();
         if (player == null) return;

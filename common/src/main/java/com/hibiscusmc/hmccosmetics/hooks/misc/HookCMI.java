@@ -7,6 +7,7 @@ import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -17,7 +18,7 @@ public class HookCMI extends Hook {
         super("CMI");
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerVanish(@NotNull CMIPlayerVanishEvent event) {
         Player player = event.getPlayer();
         CosmeticUser user = CosmeticUsers.getUser(player);
@@ -25,7 +26,7 @@ public class HookCMI extends Hook {
         user.hideCosmetics(CosmeticUser.HiddenReason.PLUGIN);
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerShow(@NotNull CMIPlayerUnVanishEvent event) {
         Player player = event.getPlayer();
         CosmeticUser user = CosmeticUsers.getUser(player);

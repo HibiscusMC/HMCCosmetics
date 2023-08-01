@@ -7,6 +7,7 @@ import me.libraryaddict.disguise.events.DisguiseEvent;
 import me.libraryaddict.disguise.events.UndisguiseEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.jetbrains.annotations.NotNull;
 
 public class HookLibsDisguises extends Hook {
@@ -14,7 +15,7 @@ public class HookLibsDisguises extends Hook {
         super("LibsDisguises");
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerVanish(@NotNull DisguiseEvent event) {
         if (!(event.getEntity() instanceof Player player)) return;
         CosmeticUser user = CosmeticUsers.getUser(player);
@@ -22,7 +23,7 @@ public class HookLibsDisguises extends Hook {
         user.hideCosmetics(CosmeticUser.HiddenReason.PLUGIN);
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerShow(@NotNull UndisguiseEvent event) {
         if (!(event.getEntity() instanceof Player player)) return;
         CosmeticUser user = CosmeticUsers.getUser(player);

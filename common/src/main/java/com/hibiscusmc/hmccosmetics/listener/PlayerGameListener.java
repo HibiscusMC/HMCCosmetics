@@ -35,6 +35,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Pose;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -62,7 +63,7 @@ public class PlayerGameListener implements Listener {
         //registerTeleportMovement();
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOW)
     public void onPlayerClick(@NotNull InventoryClickEvent event) {
         // || !event.getClickedInventory().getType().equals(InventoryType.PLAYER)
         if (event.getClick().isShiftClick()) return;
@@ -89,7 +90,7 @@ public class PlayerGameListener implements Listener {
         MessagesUtil.sendDebugMessages("Event fired, updated cosmetic " + cosmeticSlot);
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOW)
     public void onPlayerShift(PlayerToggleSneakEvent event) {
         CosmeticUser user = CosmeticUsers.getUser(event.getPlayer().getUniqueId());
 
@@ -104,7 +105,7 @@ public class PlayerGameListener implements Listener {
         user.leaveWardrobe();
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOW)
     public void onPlayerTeleport(PlayerTeleportEvent event) {
         CosmeticUser user = CosmeticUsers.getUser(event.getPlayer().getUniqueId());
 
@@ -134,7 +135,7 @@ public class PlayerGameListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOW)
     public void portalTeleport(PlayerPortalEvent event) {
         CosmeticUser user = CosmeticUsers.getUser(event.getPlayer().getUniqueId());
 
@@ -154,7 +155,7 @@ public class PlayerGameListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerHit(EntityDamageByEntityEvent event) {
         if (event.isCancelled()) return;
         Entity entity = event.getEntity();
@@ -164,7 +165,7 @@ public class PlayerGameListener implements Listener {
         event.setCancelled(true);
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOW)
     public void onPlayerDamaged(EntityDamageEvent event) {
         if (event.isCancelled()) return;
         if (!(event.getEntity() instanceof Player)) return;
@@ -184,7 +185,7 @@ public class PlayerGameListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerLook(PlayerMoveEvent event) {
         if (event.isCancelled()) return;
         Player player = event.getPlayer();
@@ -196,7 +197,7 @@ public class PlayerGameListener implements Listener {
         user.updateCosmetic(CosmeticSlot.BALLOON);
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerPoseChange(EntityPoseChangeEvent event) {
         if (!(event.getEntity() instanceof Player)) return;
         Player player = ((Player) event.getEntity()).getPlayer();
@@ -225,7 +226,7 @@ public class PlayerGameListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOW)
     public void onPlayerArmorDamage(PlayerItemDamageEvent event) {
         // Possibly look into cancelling the event, then handling the damage on our own.
 
@@ -259,7 +260,7 @@ public class PlayerGameListener implements Listener {
         }, 2);
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOW)
     public void playerOffhandSwap(PlayerSwapHandItemsEvent event) {
         CosmeticUser user = CosmeticUsers.getUser(event.getPlayer().getUniqueId());
         if (user == null) return;
@@ -275,7 +276,7 @@ public class PlayerGameListener implements Listener {
         }, 2);
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerPickupItem(EntityPickupItemEvent event) {
         if (!(event.getEntity() instanceof Player)) return;
         CosmeticUser user = CosmeticUsers.getUser(event.getEntity().getUniqueId());
@@ -283,7 +284,7 @@ public class PlayerGameListener implements Listener {
         if (user.isInWardrobe()) event.setCancelled(true);
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR)
     public void playerInvisibility(EntityPotionEffectEvent event) {
         if (event.isCancelled()) return;
         if (!event.getModifiedType().equals(PotionEffectType.INVISIBILITY)) return;
@@ -301,7 +302,7 @@ public class PlayerGameListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOW)
     public void onMainHandSwitch(PlayerItemHeldEvent event) {
         CosmeticUser user = CosmeticUsers.getUser(event.getPlayer());
         if (user == null) return;
@@ -322,7 +323,7 @@ public class PlayerGameListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOW)
     public void onPlayerDeath(PlayerDeathEvent event) {
         CosmeticUser user = CosmeticUsers.getUser(event.getEntity());
         if (user == null) return;
@@ -334,7 +335,7 @@ public class PlayerGameListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOW)
     public void onPlayerGamemodeSwitch(PlayerGameModeChangeEvent event) {
         CosmeticUser user = CosmeticUsers.getUser(event.getPlayer());
         if (user == null) return;
@@ -348,7 +349,7 @@ public class PlayerGameListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOW)
     public void onPlayerCosemticEquip(PlayerCosmeticPostEquipEvent event) {
         CosmeticUser user = event.getUser();
         if (user.isInWardrobe() && event.getCosmetic().getSlot().equals(CosmeticSlot.BALLOON)) {

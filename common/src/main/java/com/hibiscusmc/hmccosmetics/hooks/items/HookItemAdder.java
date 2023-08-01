@@ -7,6 +7,7 @@ import dev.lone.itemsadder.api.CustomStack;
 import dev.lone.itemsadder.api.Events.ItemsAdderLoadDataEvent;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,7 +37,7 @@ public class HookItemAdder extends Hook {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onItemAdderDataLoad(ItemsAdderLoadDataEvent event) {
         // By default, it will only run once at startup, if hook setting is enabled
         if (enabled && !Settings.getItemsAdderReloadChange()) return;
