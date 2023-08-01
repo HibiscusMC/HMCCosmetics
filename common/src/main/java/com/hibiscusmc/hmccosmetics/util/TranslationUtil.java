@@ -22,7 +22,7 @@ public class TranslationUtil {
                 pairs.add(pair);
                 MessagesUtil.sendDebugMessages("setupTranslation key:" + node.key().toString() + " | " + node);
                 MessagesUtil.sendDebugMessages("Overall Key " + node.key().toString());
-                MessagesUtil.sendDebugMessages("Key '" + pair.getKey() + "' Value '" + pair.getValue() + "'");
+                MessagesUtil.sendDebugMessages("Key '" + pair.key() + "' Value '" + pair.value() + "'");
             }
             keys.put(node.key().toString().toLowerCase(), pairs);
         }
@@ -31,7 +31,7 @@ public class TranslationUtil {
     public static String getTranslation(String key, String message) {
         List<TranslationPair> pairs = keys.get(key);
         for (TranslationPair pair : pairs) {
-            if (pair.getKey() == message) return StringUtils.parseStringToString(pair.getValue());
+            if (pair.key() == message) return StringUtils.parseStringToString(pair.value());
         }
 
         return message;
