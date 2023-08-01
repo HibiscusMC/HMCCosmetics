@@ -1,6 +1,5 @@
 package com.hibiscusmc.hmccosmetics.user.manager;
 
-import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBackpackType;
 import com.hibiscusmc.hmccosmetics.hooks.Hooks;
@@ -11,8 +10,6 @@ import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
 import com.ticxo.modelengine.api.ModelEngineAPI;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
-
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -67,26 +64,6 @@ public class UserBackpackManager {
 
     private void spawn(CosmeticBackpackType cosmeticBackpackType) {
         if (this.invisibleArmorStand != null) return;
-
-        attach(cosmeticBackpackType);
-
-        // No one should be using ME because it barely works but some still use it, so it's here
-        if (cosmeticBackpackType.getModelName() != null && Hooks.isActiveHook("ModelEngine")) {
-            if (ModelEngineAPI.api.getModelRegistry().getBlueprint(cosmeticBackpackType.getModelName()) == null) {
-                MessagesUtil.sendDebugMessages("Invalid Model Engine Blueprint " + cosmeticBackpackType.getModelName(), Level.SEVERE);
-                return;
-            }
-            ModeledEntity modeledEntity = ModelEngineAPI.getOrCreateModeledEntity(invisibleArmorStand);
-            ActiveModel model = ModelEngineAPI.createActiveModel(ModelEngineAPI.getBlueprint(cosmeticBackpackType.getModelName()));
-            model.setCanHurt(false);
-            modeledEntity.addModel(model, false);
-        }
-
-        MessagesUtil.sendDebugMessages("spawnBackpack Bukkit - Finish");
-    }
-
-    private void attach(CosmeticBackpackType cosmeticBackpackType) {
-        if (this.invisibleArmorStand != null) return;
         this.invisibleArmorStand = (ArmorStand) NMSHandlers.getHandler().spawnBackpack(user, cosmeticBackpackType);
 
         List<Player> outsideViewers = user.getUserBackpackManager().getCloudManager().refreshViewers(user.getEntity().getLocation());
@@ -112,10 +89,20 @@ public class UserBackpackManager {
             if (!user.getHidden()) NMSHandlers.getHandler().equipmentSlotUpdate(user.getUserBackpackManager().getFirstArmorStandId(), EquipmentSlot.HEAD, cosmeticBackpackType.getFirstPersonBackpack(), owner);
         }
         PacketManager.sendRidingPacket(entity.getEntityId(), user.getUserBackpackManager().getFirstArmorStandId(), outsideViewers);
-    }
 
-    public void reattach() {
-        attach((CosmeticBackpackType) user.getCosmetic(CosmeticSlot.BACKPACK));
+        // No one should be using ME because it barely works but some still use it, so it's here
+        if (cosmeticBackpackType.getModelName() != null && Hooks.isActiveHook("ModelEngine")) {
+            if (ModelEngineAPI.api.getModelRegistry().getBlueprint(cosmeticBackpackType.getModelName()) == null) {
+                MessagesUtil.sendDebugMessages("Invalid Model Engine Blueprint " + cosmeticBackpackType.getModelName(), Level.SEVERE);
+                return;
+            }
+            ModeledEntity modeledEntity = ModelEngineAPI.getOrCreateModeledEntity(invisibleArmorStand);
+            ActiveModel model = ModelEngineAPI.createActiveModel(ModelEngineAPI.getBlueprint(cosmeticBackpackType.getModelName()));
+            model.setCanHurt(false);
+            modeledEntity.addModel(model, false);
+        }
+
+        MessagesUtil.sendDebugMessages("spawnBackpack Bukkit - Finish");
     }
 
     public void despawnBackpack() {

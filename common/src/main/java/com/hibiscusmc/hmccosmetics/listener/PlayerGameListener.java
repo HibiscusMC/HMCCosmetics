@@ -45,8 +45,6 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.spigotmc.event.entity.EntityDismountEvent;
-import org.spigotmc.event.entity.EntityMountEvent;
 
 import java.util.*;
 
@@ -359,24 +357,6 @@ public class PlayerGameListener implements Listener {
             user.getBalloonManager().getModelEntity().teleport(NPCLocation.add(Settings.getBalloonOffset()));
         }
     }
-
-    @EventHandler
-	public void onPlayerMounted(EntityMountEvent event) {
-		if (!event.isCancelled() && event.getMount() instanceof Player player) {
-            CosmeticUser user = CosmeticUsers.getUser(player);
-            Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(HMCCosmeticsPlugin.getInstance(), ()->{
-                user.getUserBackpackManager().reattach();
-            }, 1);
-		}
-	}
-
-	@EventHandler
-	public void onPlayerDismounted(EntityDismountEvent event) {
-		if (!event.isCancelled() && event.getDismounted() instanceof Player player) {
-            CosmeticUser user = CosmeticUsers.getUser(player);
-            user.getUserBackpackManager().reattach();
-		}
-	}
 
     private void registerInventoryClickListener() {
         ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(HMCCosmeticsPlugin.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Client.WINDOW_CLICK) {
