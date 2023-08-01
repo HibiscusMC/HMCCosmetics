@@ -44,8 +44,9 @@ public class CosmeticBackpackType extends Cosmetic {
         Location loc = entity.getLocation().clone().add(0, 2, 0);
 
         if (user.isInWardrobe() || !user.isBackpackSpawned()) return;
+        // This needs to be moved to purely packet based, there are far to many plugin doing dumb stuff that prevents spawning armorstands ignoring our spawn reason.
         if (!user.getUserBackpackManager().IsValidBackpackEntity()) {
-            MessagesUtil.sendDebugMessages("Invalid Backpack Entity[owner=" + user.getUniqueId() + ",player_location=" + loc + "]!", Level.WARNING);
+            MessagesUtil.sendDebugMessages("Invalid Backpack Entity[owner=" + user.getUniqueId() + ",player_location=" + loc + "]!");
             user.respawnBackpack();
             return;
         }
