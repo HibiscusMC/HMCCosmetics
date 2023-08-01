@@ -22,7 +22,7 @@ public class PlayerConnectionListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerJoin(@NotNull PlayerJoinEvent event) {
         if (event.getPlayer().isOp() || event.getPlayer().hasPermission("hmccosmetics.notifyupdate")) {
-            if (!HMCCosmeticsPlugin.getLatestVersion().equalsIgnoreCase(HMCCosmeticsPlugin.getInstance().getDescription().getVersion()) && HMCCosmeticsPlugin.getLatestVersion() != null)
+            if (!HMCCosmeticsPlugin.getLatestVersion().equalsIgnoreCase(HMCCosmeticsPlugin.getInstance().getDescription().getVersion()) && HMCCosmeticsPlugin.getLatestVersion().isEmpty())
                 MessagesUtil.sendMessageNoKey(
                         event.getPlayer(),
                         "<br>" +
