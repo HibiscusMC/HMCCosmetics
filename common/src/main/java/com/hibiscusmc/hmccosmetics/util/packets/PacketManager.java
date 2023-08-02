@@ -253,6 +253,25 @@ public class PacketManager extends BasePacket {
     /**
      * Mostly to deal with backpacks, this deals with entities riding other entities.
      * @param mountId The entity that is the "mount", ex. a player
+     * @param passengerIds The entities that are riding the mount, ex. a armorstand for a backpack
+     * @param sendTo Whom to send the packet to
+     */
+    public static void sendRidingPacket(
+            final int mountId,
+            final int[] passengerIds,
+            final @NotNull List<Player> sendTo
+    ) {
+        PacketContainer packet = new PacketContainer(PacketType.Play.Server.MOUNT);
+        packet.getIntegers().write(0, mountId);
+        packet.getIntegerArrays().write(0, passengerIds);
+        for (final Player p : sendTo) {
+            sendPacket(p, packet);
+        }
+    }
+
+    /**
+     * Mostly to deal with backpacks, this deals with entities riding other entities.
+     * @param mountId The entity that is the "mount", ex. a player
      * @param passengerId The entity that is riding the mount, ex. a armorstand for a backpack
      * @param sendTo Whom to send the packet to
      */
@@ -261,12 +280,7 @@ public class PacketManager extends BasePacket {
             final int passengerId,
             final @NotNull List<Player> sendTo
     ) {
-        PacketContainer packet = new PacketContainer(PacketType.Play.Server.MOUNT);
-        packet.getIntegers().write(0, mountId);
-        packet.getIntegerArrays().write(0, new int[]{passengerId});
-        for (final Player p : sendTo) {
-            sendPacket(p, packet);
-        }
+        sendRidingPacket(mountId, new int[] {passengerId}, sendTo);
     }
 
     /**
