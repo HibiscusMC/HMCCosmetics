@@ -66,12 +66,21 @@ public class UserBackpackManager {
         if (this.invisibleArmorStand != null) return;
         this.invisibleArmorStand = (ArmorStand) NMSHandlers.getHandler().spawnBackpack(user, cosmeticBackpackType);
 
+        Entity entity = user.getEntity();
+
+        int[] passengerIDs = new int[entity.getPassengers().size() + 1];
+
+        for (int i = 0; i < entity.getPassengers().size(); i++) {
+            passengerIDs[i] = entity.getPassengers().get(i).getEntityId();
+        }
+
+        passengerIDs[passengerIDs.length - 1] = this.getFirstArmorStandId();
+
         List<Player> outsideViewers = user.getUserBackpackManager().getCloudManager().refreshViewers(user.getEntity().getLocation());
-        PacketManager.sendRidingPacket(user.getEntity().getEntityId(), user.getUserBackpackManager().getFirstArmorStandId(), outsideViewers);
+        PacketManager.sendRidingPacket(user.getEntity().getEntityId(), passengerIDs, outsideViewers);
 
         ArrayList<Player> owner = new ArrayList<>();
         if (user.getPlayer() != null) owner.add(user.getPlayer());
-        Entity entity = user.getEntity();
 
         if (cosmeticBackpackType.isFirstPersonCompadible()) {
             for (int i = particleCloud.size(); i < 5; i++) {
@@ -88,7 +97,7 @@ public class UserBackpackManager {
             PacketManager.sendRidingPacket(particleCloud.get(particleCloud.size() - 1), user.getUserBackpackManager().getFirstArmorStandId(), owner);
             if (!user.getHidden()) NMSHandlers.getHandler().equipmentSlotUpdate(user.getUserBackpackManager().getFirstArmorStandId(), EquipmentSlot.HEAD, cosmeticBackpackType.getFirstPersonBackpack(), owner);
         }
-        PacketManager.sendRidingPacket(entity.getEntityId(), user.getUserBackpackManager().getFirstArmorStandId(), outsideViewers);
+        PacketManager.sendRidingPacket(entity.getEntityId(), passengerIDs, outsideViewers);
 
         // No one should be using ME because it barely works but some still use it, so it's here
         if (cosmeticBackpackType.getModelName() != null && Hooks.isActiveHook("ModelEngine")) {
