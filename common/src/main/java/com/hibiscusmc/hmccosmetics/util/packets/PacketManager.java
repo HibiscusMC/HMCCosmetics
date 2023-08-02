@@ -252,7 +252,7 @@ public class PacketManager extends BasePacket {
 
     /**
      * Mostly to deal with backpacks, this deals with entities riding other entities.
-     * @param mountIds The entity that is the "mount", ex. a player
+     * @param mountId The entity that is the "mount", ex. a player
      * @param passengerIds The entities that are riding the mount, ex. a armorstand for a backpack
      * @param sendTo Whom to send the packet to
      */
@@ -271,7 +271,7 @@ public class PacketManager extends BasePacket {
 
     /**
      * Mostly to deal with backpacks, this deals with entities riding other entities.
-     * @param mountIds The entity that is the "mount", ex. a player
+     * @param mountId The entity that is the "mount", ex. a player
      * @param passengerId The entity that is riding the mount, ex. a armorstand for a backpack
      * @param sendTo Whom to send the packet to
      */
