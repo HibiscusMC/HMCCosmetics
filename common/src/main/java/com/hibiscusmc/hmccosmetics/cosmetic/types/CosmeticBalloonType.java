@@ -21,7 +21,7 @@ public class CosmeticBalloonType extends Cosmetic {
 
     private final String modelName;
     private List<String> dyableParts;
-    private boolean showLead;
+    private final boolean showLead;
 
     public CosmeticBalloonType(String id, ConfigurationNode config) {
         super(id, config);
@@ -38,7 +38,7 @@ public class CosmeticBalloonType extends Cosmetic {
             // Seriously?
             throw new RuntimeException(e);
         }
-
+        if (modelId != null) modelId = modelId.toLowerCase(); // ME only accepts lowercase
         this.modelName = modelId;
     }
 
