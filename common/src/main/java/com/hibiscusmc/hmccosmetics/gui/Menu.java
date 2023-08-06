@@ -16,6 +16,7 @@ import com.hibiscusmc.hmccosmetics.util.misc.StringUtils;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
+import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -33,13 +34,20 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class Menu {
 
+    @Getter
     private final String id;
+    @Getter
     private final String title;
+    @Getter
     private final int rows;
+    @Getter
     private final ConfigurationNode config;
+    @Getter
     private final String permissionNode;
     private final HashMap<Integer, MenuItem> items;
+    @Getter
     private final int refreshRate;
+    @Getter
     private final boolean shading;
 
     public Menu(String id, @NotNull ConfigurationNode config) {
@@ -74,8 +82,8 @@ public class Menu {
 
             List<Integer> slots = getSlots(slotString);
 
-            if (slots == null) {
-                MessagesUtil.sendDebugMessages("Slot is null for " + config.key().toString());
+            if (slots.isEmpty()) {
+                MessagesUtil.sendDebugMessages("Slot is empty for " + config.key().toString());
                 continue;
             }
 
@@ -102,18 +110,6 @@ public class Menu {
                 items.put(slot, new MenuItem(slots, item, type, config));
             }
         }
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public String getTitle() {
-        return this.title;
-    }
-
-    public int getRows() {
-        return this.getRows();
     }
 
     public void openMenu(CosmeticUser user) {
@@ -247,8 +243,8 @@ public class Menu {
         for (String a : slotString) {
             if (a.contains("-")) {
                 String[] split = a.split("-");
-                int min = Integer.valueOf(split[0]);
-                int max = Integer.valueOf(split[1]);
+                int min = Integer.parseInt(split[0]);
+                int max = Integer.parseInt(split[1]);
                 slots.addAll(getSlots(min, max));
             } else {
                 slots.add(Integer.valueOf(a));
@@ -271,10 +267,6 @@ public class Menu {
     private ItemStack getMenuItem(CosmeticUser user, Type type, ConfigurationNode config, ItemStack itemStack, int slot) {
         if (!itemStack.hasItemMeta()) return itemStack;
         return type.setItem(user, config, itemStack, slot);
-    }
-
-    public String getPermissionNode() {
-        return permissionNode;
     }
 
     public boolean canOpen(Player player) {
