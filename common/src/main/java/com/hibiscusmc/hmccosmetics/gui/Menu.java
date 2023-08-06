@@ -172,7 +172,7 @@ public class Menu {
     }
 
     private void updateMenu(CosmeticUser user, Gui gui) {
-        String title = this.title;
+        StringBuilder title = new StringBuilder(this.title);
 
         int row = 0;
         if (shading) {
@@ -185,33 +185,33 @@ public class Menu {
                     // Handles the title
                     if (i % 9 == 0) {
                         if (row == 0) {
-                            title += Settings.getFirstRowShift(); // Goes back to the start of the gui
+                            title.append(Settings.getFirstRowShift()); // Goes back to the start of the gui
                         } else {
-                            title += Settings.getSequentRowShift();
+                            title.append(Settings.getSequentRowShift());
                         }
                         row += 1;
                     } else {
-                        title += Settings.getIndividualColumnShift(); // Goes to the next slot
+                        title.append(Settings.getIndividualColumnShift()); // Goes to the next slot
                     }
 
                     if (item.type().getId().equalsIgnoreCase("cosmetic")) {
                         Cosmetic cosmetic = Cosmetics.getCosmetic(item.itemConfig().node("cosmetic").getString(""));
                         if (cosmetic == null) continue;
                         if (user.hasCosmeticInSlot(cosmetic)) {
-                            title += Settings.getEquippedCosmeticColor();
+                            title.append(Settings.getEquippedCosmeticColor());
                         } else {
                             if (user.canEquipCosmetic(cosmetic)) {
-                                title += Settings.getEquipableCosmeticColor();
+                                title.append(Settings.getEquipableCosmeticColor());
                             } else {
-                                title += Settings.getLockedCosmeticColor();
+                                title.append(Settings.getLockedCosmeticColor());
                             }
                         }
-                        title += Settings.getBackground().replaceAll("<row>", String.valueOf(row));
+                        title.append(Settings.getBackground().replaceAll("<row>", String.valueOf(row)));
                     }
                 }
             }
             MessagesUtil.sendDebugMessages("Updated menu with title " + title);
-            gui.updateTitle(StringUtils.parseStringToString(Hooks.processPlaceholders(user.getPlayer(), title)));
+            gui.updateTitle(StringUtils.parseStringToString(Hooks.processPlaceholders(user.getPlayer(), title.toString())));
         } else {
             for (MenuItem item : items.values()) {
                 updateItem(user, gui, item);
