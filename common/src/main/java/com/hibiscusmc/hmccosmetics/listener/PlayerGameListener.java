@@ -138,7 +138,7 @@ public class PlayerGameListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOW)
-    public void portalTeleport(PlayerPortalEvent event) {
+    public void onPortalTeleport(PlayerPortalEvent event) {
         CosmeticUser user = CosmeticUsers.getUser(event.getPlayer().getUniqueId());
 
         MessagesUtil.sendDebugMessages("Player Teleport Event");
@@ -157,9 +157,8 @@ public class PlayerGameListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerHit(EntityDamageByEntityEvent event) {
-        if (event.isCancelled()) return;
         Entity entity = event.getEntity();
         if (event.getEntity().getEntityId() == event.getDamager().getEntityId()) event.setCancelled(true);
         if (!entity.getPersistentDataContainer().has(new NamespacedKey(HMCCosmeticsPlugin.getInstance(), "cosmeticMob"), PersistentDataType.SHORT))
@@ -167,9 +166,8 @@ public class PlayerGameListener implements Listener {
         event.setCancelled(true);
     }
 
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlayerDamaged(EntityDamageEvent event) {
-        if (event.isCancelled()) return;
         if (!(event.getEntity() instanceof Player player)) return;
         CosmeticUser user = CosmeticUsers.getUser(player);
         if (user == null) return;
@@ -186,9 +184,8 @@ public class PlayerGameListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerLook(PlayerMoveEvent event) {
-        if (event.isCancelled()) return;
         Player player = event.getPlayer();
         CosmeticUser user = CosmeticUsers.getUser(player);
         if (user == null) return;
@@ -218,10 +215,9 @@ public class PlayerGameListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlayerArmorDamage(PlayerItemDamageEvent event) {
         // Possibly look into cancelling the event, then handling the damage on our own.
-        if (event.isCancelled()) return;
         MessagesUtil.sendDebugMessages("PlayerItemDamageEvent");
 
         int slot = -1;
@@ -253,7 +249,7 @@ public class PlayerGameListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOW)
-    public void playerOffhandSwap(PlayerSwapHandItemsEvent event) {
+    public void onPlayerOffhandSwap(PlayerSwapHandItemsEvent event) {
         CosmeticUser user = CosmeticUsers.getUser(event.getPlayer().getUniqueId());
         if (user == null) return;
         // Really need to look into optimization of this
@@ -263,9 +259,7 @@ public class PlayerGameListener implements Listener {
             event.setCancelled(true);
             return;
         }
-        Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
-            user.updateCosmetic(CosmeticSlot.OFFHAND);
-        }, 2);
+        Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> user.updateCosmetic(CosmeticSlot.OFFHAND), 2);
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
@@ -276,9 +270,8 @@ public class PlayerGameListener implements Listener {
         if (user.isInWardrobe()) event.setCancelled(true);
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void playerInvisibility(EntityPotionEffectEvent event) {
-        if (event.isCancelled()) return;
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onPlayerPotionEffect(EntityPotionEffectEvent event) {
         if (!event.getModifiedType().equals(PotionEffectType.INVISIBILITY)) return;
         if (!event.getEntityType().equals(EntityType.PLAYER)) return;
         Player player = (Player) event.getEntity();
@@ -352,9 +345,9 @@ public class PlayerGameListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerMounted(EntityMountEvent event) {
-		if (!event.isCancelled() && event.getEntity() instanceof Player player) {
+		if (event.getEntity() instanceof Player player) {
             CosmeticUser user = CosmeticUsers.getUser(player);
             if (user == null) return;
 
@@ -362,9 +355,9 @@ public class PlayerGameListener implements Listener {
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerDismounted(EntityDismountEvent event) {
-		if (!event.isCancelled() && event.getDismounted() instanceof Player player) {
+		if (event.getDismounted() instanceof Player player) {
             CosmeticUser user = CosmeticUsers.getUser(player);
             if (user == null) return;
 
