@@ -102,7 +102,7 @@ public class Menu {
             Type type = null;
 
             if (!config.node("type").virtual()) {
-                String typeId = config.node("type").getString();
+                String typeId = config.node("type").getString("");
                 if (Types.isType(typeId)) type = Types.getType(typeId);
             }
 
