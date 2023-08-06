@@ -7,14 +7,15 @@ import com.hibiscusmc.hmccosmetics.database.types.SQLiteData;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
+import lombok.Getter;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
 public class Database {
 
+    @Getter
     private static Data data;
-
     private static final MySQLData MYSQL_DATA = new MySQLData();
     private static final SQLiteData SQLITE_DATA = new SQLiteData();
 
@@ -48,10 +49,6 @@ public class Database {
 
     public static CosmeticUser get(UUID uniqueId) {
         return data.get(uniqueId);
-    }
-
-    public static Data getData() {
-        return data;
     }
 
     public static void clearData(UUID uniqueId) {
