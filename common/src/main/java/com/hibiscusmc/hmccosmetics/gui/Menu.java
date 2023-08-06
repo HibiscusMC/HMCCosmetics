@@ -95,7 +95,7 @@ public class Menu {
             }
 
             if (item == null) {
-                MessagesUtil.sendDebugMessages("something went wrong! " + item);
+                MessagesUtil.sendDebugMessages("Something went wrong with the item creation for " + config.key().toString());
                 continue;
             }
 
