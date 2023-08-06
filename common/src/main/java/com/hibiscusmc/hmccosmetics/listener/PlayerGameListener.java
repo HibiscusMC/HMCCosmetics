@@ -342,7 +342,7 @@ public class PlayerGameListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOW)
-    public void onPlayerCosemticEquip(PlayerCosmeticPostEquipEvent event) {
+    public void onPlayerCosmeticEquip(PlayerCosmeticPostEquipEvent event) {
         CosmeticUser user = event.getUser();
         if (user.isInWardrobe() && event.getCosmetic().getSlot().equals(CosmeticSlot.BALLOON)) {
             Location NPCLocation = user.getWardrobeManager().getNpcLocation();
