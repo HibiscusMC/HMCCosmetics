@@ -74,7 +74,7 @@ public class SQLiteData extends SQLData {
             Class.forName("org.sqlite.JDBC");
             connection = DriverManager.getConnection("jdbc:sqlite:" + dataFolder);
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -83,9 +83,7 @@ public class SQLiteData extends SQLData {
     @Override
     public PreparedStatement preparedStatement(String query) {
         PreparedStatement ps = null;
-        if (!isConnectionOpen()) {
-            HMCCosmeticsPlugin.getInstance().getLogger().info("Connection is not open");
-        }
+        if (!isConnectionOpen()) MessagesUtil.sendDebugMessages("Connection is not open");
 
         try {
             ps = connection.prepareStatement(query);
