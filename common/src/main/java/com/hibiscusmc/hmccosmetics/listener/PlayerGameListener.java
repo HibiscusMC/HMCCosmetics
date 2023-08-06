@@ -322,7 +322,7 @@ public class PlayerGameListener implements Listener {
 
         if (user.isInWardrobe()) user.leaveWardrobe();
 
-        if (Settings.getUnapplyOnDeath() && !event.getEntity().hasPermission("hmccosmetics.unapplydeath.bypass")) {
+        if (Settings.isUnapplyOnDeath() && !event.getEntity().hasPermission("hmccosmetics.unapplydeath.bypass")) {
             user.removeCosmetics();
         }
     }

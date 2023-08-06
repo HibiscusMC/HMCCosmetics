@@ -128,7 +128,7 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
         new Database();
 
         // WorldGuard
-        if (Bukkit.getPluginManager().getPlugin("WorldGuard") != null && Settings.isWorldGuardMoveCheckEnabled()) {
+        if (Bukkit.getPluginManager().getPlugin("WorldGuard") != null && Settings.isWorldGuardMoveCheck()) {
             getServer().getPluginManager().registerEvents(new WGListener(), this);
         }
     }

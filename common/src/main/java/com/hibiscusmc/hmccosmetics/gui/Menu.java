@@ -14,12 +14,10 @@ import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.misc.Adventure;
 import com.hibiscusmc.hmccosmetics.util.misc.StringUtils;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
-import dev.triumphteam.gui.guis.BaseGui;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
@@ -200,8 +198,8 @@ public class Menu {
                         title += Settings.getIndividualColumnShift(); // Goes to the next slot
                     }
 
-                    if (item.getType().getId().equalsIgnoreCase("cosmetic")) {
-                        Cosmetic cosmetic = Cosmetics.getCosmetic(item.getItemConfig().node("cosmetic").getString(""));
+                    if (item.type().getId().equalsIgnoreCase("cosmetic")) {
+                        Cosmetic cosmetic = Cosmetics.getCosmetic(item.itemConfig().node("cosmetic").getString(""));
                         if (cosmetic == null) continue;
                         if (user.hasCosmeticInSlot(cosmetic)) {
                             title += Settings.getEquippedCosmeticColor();
@@ -226,14 +224,14 @@ public class Menu {
     }
 
     private void updateItem(CosmeticUser user, Gui gui, MenuItem item) {
-        Type type = item.getType();
-        for (int slot : item.getSlots()) {
-            ItemStack modifiedItem = getMenuItem(user, type, item.getItemConfig(), item.getItem().clone(), slot);
+        Type type = item.type();
+        for (int slot : item.slots()) {
+            ItemStack modifiedItem = getMenuItem(user, type, item.itemConfig(), item.item().clone(), slot);
             GuiItem guiItem = ItemBuilder.from(modifiedItem).asGuiItem();
             guiItem.setAction(event -> {
                 MessagesUtil.sendDebugMessages("Selected slot " + slot);
                 final ClickType clickType = event.getClick();
-                if (type != null) type.run(user, item.getItemConfig(), clickType);
+                if (type != null) type.run(user, item.itemConfig(), clickType);
                 updateMenu(user, gui);
             });
 

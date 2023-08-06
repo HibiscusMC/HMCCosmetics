@@ -2,6 +2,7 @@ package com.hibiscusmc.hmccosmetics.nms;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
+import lombok.Getter;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
@@ -10,6 +11,7 @@ public class NMSHandlers {
 
     private static final String[] SUPPORTED_VERSION = new String[]{"v1_18_R2", "v1_19_R1", "v1_19_R2", "v1_19_R3", "v1_20_R1"};
     private static NMSHandler handler;
+    @Getter
     private static String version;
 
     public static NMSHandler getHandler() {
@@ -19,10 +21,6 @@ public class NMSHandlers {
             setup();
         }
         return handler;
-    }
-
-    public static String getVersion() {
-        return version;
     }
 
     public static void setup() {

@@ -58,13 +58,13 @@ public class UserEmoteModel extends PlayerModel {
             MessagesUtil.sendDebugMessages("New Yaw " + ServerUtils.getNextYaw((int) thirdPersonLocation.getYaw(), 180));
             thirdPersonLocation.setYaw(ServerUtils.getNextYaw((int) thirdPersonLocation.getYaw(), 180));
         }
-        if (Settings.getCosmeticEmoteBlockCheck() && thirdPersonLocation.getBlock().getType().isOccluding()) {
+        if (Settings.isCosmeticEmoteBlockCheck() && thirdPersonLocation.getBlock().getType().isOccluding()) {
             stopAnimation();
             MessagesUtil.sendMessage(player, "emote-blocked");
             return;
         }
         // Check if block below player is an air block
-        if (Settings.getEmoteAirCheck() && newLocation.clone().subtract(0, 1, 0).getBlock().getType().isAir()) {
+        if (Settings.isEmoteAirCheck() && newLocation.clone().subtract(0, 1, 0).getBlock().getType().isAir()) {
             stopAnimation();
             MessagesUtil.sendMessage(player, "emote-blocked");
         }

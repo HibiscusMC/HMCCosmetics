@@ -113,7 +113,7 @@ public class Cosmetics {
                     default -> new CosmeticArmorType(id, cosmeticConfig);
                 }
             } catch (Exception e) {
-                if (Settings.isDebugEnabled()) e.printStackTrace();
+                if (Settings.isDebugMode()) e.printStackTrace();
             }
         }
     }

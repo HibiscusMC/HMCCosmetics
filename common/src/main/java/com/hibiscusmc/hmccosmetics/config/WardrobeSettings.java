@@ -4,6 +4,7 @@ import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.serializer.LocationSerializer;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.misc.Utils;
+import lombok.Getter;
 import net.kyori.adventure.bossbar.BossBar;
 import org.apache.commons.lang3.EnumUtils;
 import org.bukkit.GameMode;
@@ -17,7 +18,6 @@ import java.util.logging.Level;
 
 public class WardrobeSettings {
 
-    private static final String WARDROBE_PATH = "wardrobe";
     private static final String DISABLE_ON_DAMAGE_PATH = "disable-on-damage";
     private static final String DISPLAY_RADIUS_PATH = "display-radius";
     private static final String PORTABLE_PATH = "portable";
@@ -60,32 +60,58 @@ public class WardrobeSettings {
     private static final String TRANSITION_FADE_OUT_PATH = "title-fade-out";
 
     private static ConfigurationNode configRoot;
+    @Getter
     private static boolean disableOnDamage;
+    @Getter
     private static int displayRadius;
+    @Getter
     private static boolean portable;
+    @Getter
     private static boolean alwaysDisplay;
+    @Getter
     private static int staticRadius;
+    @Getter
     private static int rotationSpeed;
+    @Getter
     private static int spawnDelay;
+    @Getter
     private static int despawnDelay;
+    @Getter
     private static float bossbarProgress;
+    @Getter
     private static boolean applyCosmeticsOnClose;
+    @Getter
     private static boolean tryCosmeticsInWardrobe;
+    @Getter
     private static boolean equipPumpkin;
+    @Getter
     private static boolean returnLastLocation;
+    @Getter
     private static boolean enabledBossbar;
+    @Getter
     private static boolean enterOpenMenu;
+    @Getter
     private static boolean forceExitGamemode;
+    @Getter
     private static GameMode exitGamemode;
     private static HashMap<String, Wardrobe> wardrobes;
+    @Getter
     private static String bossbarMessage;
+    @Getter
     private static BossBar.Overlay bossbarOverlay;
+    @Getter
     private static BossBar.Color bossbarColor;
+    @Getter
     private static boolean enabledTransition;
+    @Getter
     private static String transitionText;
+    @Getter
     private static int transitionDelay;
+    @Getter
     private static int transitionFadeIn;
+    @Getter
     private static int transitionStay;
+    @Getter
     private static int transitionFadeOut;
 
     public static void load(ConfigurationNode source) {
@@ -158,54 +184,6 @@ public class WardrobeSettings {
                 MessagesUtil.sendDebugMessages("Unable to create wardrobe " + id, Level.SEVERE);
             }
         }
-
-        //throw new RuntimeException(e);
-    }
-
-    public static int getDefaultDistance() {
-        return staticRadius;
-    }
-
-    public static boolean getDisableOnDamage() {
-        return disableOnDamage;
-    }
-
-    public static int getDisplayRadius() {
-        return displayRadius;
-    }
-
-    public static boolean isPortable() {
-        return portable;
-    }
-
-    public static boolean isAlwaysDisplay() {
-        return alwaysDisplay;
-    }
-
-    public static int getStaticRadius() {
-        return staticRadius;
-    }
-
-    public static int getRotationSpeed() {
-        return rotationSpeed;
-    }
-
-    public static int getSpawnDelay() {
-        return spawnDelay;
-    }
-
-    public static int getDespawnDelay() {
-        return despawnDelay;
-    }
-
-    public static boolean isApplyCosmeticsOnClose() {
-        return applyCosmeticsOnClose;
-    }
-    public static boolean isEquipPumpkin() {
-        return equipPumpkin;
-    }
-    public static boolean isReturnLastLocation() {
-        return returnLastLocation;
     }
 
     public static Wardrobe getWardrobe(String key) {
@@ -244,68 +222,12 @@ public class WardrobeSettings {
         return wardrobeLocation.distanceSquared(location) <= staticRadius * staticRadius;
     }
 
-    public static boolean getEnabledBossbar() {
-        return enabledBossbar;
-    }
-
-    public static float getBossbarProgress() {
-        return bossbarProgress;
-    }
-
-    public static String getBossbarText() {
-        return bossbarMessage;
-    }
-
-    public static BossBar.Overlay getBossbarOverlay() {
-        return bossbarOverlay;
-    }
-
-    public static BossBar.Color getBossbarColor() {
-        return bossbarColor;
-    }
-    public static boolean isEnabledTransition() {
-        return enabledTransition;
-    }
-
-    public static String getTransitionText() {
-        return transitionText;
-    }
-
-    public static int getTransitionDelay() {
-        return transitionDelay;
-    }
-    public static int getTransitionFadeIn() {
-        return transitionFadeIn;
-    }
-    public static int getTransitionStay() {
-        return transitionStay;
-    }
-    public static int getTransitionFadeOut() {
-        return transitionFadeOut;
-    }
-
-    public static boolean isEnterOpenMenu() {
-        return enterOpenMenu;
-    }
-
-    public static boolean isForceExitGamemode() {
-        return forceExitGamemode;
-    }
-
-    public static GameMode getExitGamemode() {
-        return exitGamemode;
-    }
-
-    public static boolean isTryCosmeticsInWardrobe() {
-        return tryCosmeticsInWardrobe;
-    }
-
     /**
      * Sets where the NPC/Mannequin will spawn in the wardrobe
      * @param newLocation
      */
     public static void setNPCLocation(Wardrobe wardrobe, Location newLocation) {
-        wardrobe.getLocation().setNPCLocation(newLocation);
+        wardrobe.getLocation().setNpcLocation(newLocation);
 
         HMCCosmeticsPlugin plugin = HMCCosmeticsPlugin.getInstance();
 

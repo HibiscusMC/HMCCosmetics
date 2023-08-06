@@ -86,7 +86,7 @@ public class Menus {
                         new Menu(FilenameUtils.removeExtension(child.getFileName().toString()), root);
                     } catch (Exception e) {
                         MessagesUtil.sendDebugMessages("Unable to create menu in " + child.getFileName().toString(), Level.WARNING);
-                        if (Settings.isDebugEnabled()) e.printStackTrace();
+                        if (Settings.isDebugMode()) e.printStackTrace();
                     }
                 }
             });

@@ -1,11 +1,15 @@
 package com.hibiscusmc.hmccosmetics.config;
 
+import lombok.Setter;
 import org.bukkit.Location;
 
 public class WardrobeLocation {
 
+    @Setter
     private Location npcLocation;
+    @Setter
     private Location viewerLocation;
+    @Setter
     private Location leaveLocation;
 
     public WardrobeLocation(Location npcLocation, Location viewerLocation, Location leaveLocation) {
@@ -29,17 +33,5 @@ public class WardrobeLocation {
     public boolean hasAllLocations() {
         if (npcLocation == null || viewerLocation == null || leaveLocation == null) return false;
         return true;
-    }
-
-    public void setNPCLocation(Location wardrobeLocation) {
-        this.npcLocation = wardrobeLocation;
-    }
-
-    public void setViewerLocation(Location viewerLocation) {
-        this.viewerLocation = viewerLocation;
-    }
-
-    public void setLeaveLocation(Location leaveLocation) {
-        this.leaveLocation = leaveLocation;
     }
 }

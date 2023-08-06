@@ -40,7 +40,7 @@ public class HookItemAdder extends Hook {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onItemAdderDataLoad(ItemsAdderLoadDataEvent event) {
         // By default, it will only run once at startup, if hook setting is enabled
-        if (enabled && !Settings.getItemsAdderReloadChange()) return;
+        if (enabled && !Settings.isItemsAdderChangeReload()) return;
         this.enabled = true;
         HMCCosmeticsPlugin.setup();
     }

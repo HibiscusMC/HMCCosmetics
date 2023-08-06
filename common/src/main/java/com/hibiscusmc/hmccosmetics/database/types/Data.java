@@ -51,7 +51,7 @@ public abstract class Data {
     }
 
     public final Map<CosmeticSlot, Map<Cosmetic, Color>> deserializeData(CosmeticUser user, @NotNull String raw) {
-        return deserializeData(user, raw, Settings.getForcePermissionJoin());
+        return deserializeData(user, raw, Settings.isForcePermissionJoin());
     }
 
     @NotNull
@@ -101,7 +101,7 @@ public abstract class Data {
         return cosmetics;
     }
 
-    private boolean shouldHiddenSave(CosmeticUser.@NotNull HiddenReason reason) {
+    private boolean shouldHiddenSave(CosmeticUser.HiddenReason reason) {
         switch (reason) {
             case EMOTE, NONE -> {
                 return false;

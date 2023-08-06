@@ -131,9 +131,9 @@ public class UserWardrobeManager {
                 user.getBalloonManager().getModelEntity().teleport(balloonLocation);
             }
 
-            if (WardrobeSettings.getEnabledBossbar()) {
+            if (WardrobeSettings.isEnabledBossbar()) {
                 float progress = WardrobeSettings.getBossbarProgress();
-                Component message = MessagesUtil.processStringNoKey(WardrobeSettings.getBossbarText());
+                Component message = MessagesUtil.processStringNoKey(WardrobeSettings.getBossbarMessage());
 
                 bossBar = BossBar.bossBar(message, progress, WardrobeSettings.getBossbarColor(), WardrobeSettings.getBossbarOverlay());
                 Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.getInstance()).player(player);
@@ -228,7 +228,7 @@ public class UserWardrobeManager {
                 NMSHandlers.getHandler().equipmentSlotUpdate(user.getPlayer().getEntityId(), EquipmentSlot.HEAD, player.getInventory().getHelmet(), viewer);
             }
 
-            if (WardrobeSettings.getEnabledBossbar()) {
+            if (WardrobeSettings.isEnabledBossbar()) {
                 Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.getInstance()).player(player);
 
                 target.hideBossBar(bossBar);

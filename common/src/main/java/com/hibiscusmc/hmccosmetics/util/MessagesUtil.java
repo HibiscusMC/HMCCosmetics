@@ -142,7 +142,7 @@ public class MessagesUtil {
     }
 
     public static void sendDebugMessages(String message, Level level) {
-        if (!Settings.isDebugEnabled() && level == Level.INFO) return;
+        if (!Settings.isDebugMode() && level == Level.INFO) return;
         HMCCosmeticsPlugin.getInstance().getLogger().log(level, message);
     }
 }

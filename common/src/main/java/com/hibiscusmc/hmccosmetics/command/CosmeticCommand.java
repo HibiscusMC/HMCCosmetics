@@ -423,7 +423,7 @@ public class CosmeticCommand implements CommandExecutor {
                     return true;
                 }
 
-                if (Settings.getDebugMode()) {
+                if (Settings.isDebugMode()) {
                     Settings.setDebugMode(false);
                     if (!silent) MessagesUtil.sendMessage(sender, "debug-disabled");
                 } else {

@@ -8,7 +8,7 @@ import javax.annotation.Nullable;
 public class Wardrobe {
 
     private String id;
-    private int distance = WardrobeSettings.getDefaultDistance();
+    private int distance = WardrobeSettings.getDisplayRadius();
     private String permission;
     private WardrobeLocation location;
 

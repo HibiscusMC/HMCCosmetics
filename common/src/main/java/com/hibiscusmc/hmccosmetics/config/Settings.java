@@ -1,7 +1,6 @@
 package com.hibiscusmc.hmccosmetics.config;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
-import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import lombok.Getter;
 import org.bukkit.inventory.EquipmentSlot;
@@ -16,11 +15,6 @@ public class Settings {
     private static final String DEFAULT_MENU = "default-menu";
     private static final String CONFIG_VERSION = "config-version";
     private static final String COSMETIC_SETTINGS_PATH = "cosmetic-settings";
-    private static final String REQUIRE_EMPTY_HELMET_PATH = "require-empty-helmet";
-    private static final String REQUIRE_EMPTY_OFF_HAND_PATH = "require-empty-off-hand";
-    private static final String REQUIRE_EMPTY_CHEST_PLATE_PATH = "require-empty-chest-plate";
-    private static final String REQUIRE_EMPTY_PANTS_PATH = "require-empty-pants";
-    private static final String REQUIRE_EMPTY_BOOTS_PATH = "require-empty-boots";
     private static final String BALLOON_OFFSET = "balloon-offset";
     private static final String VIEW_DISTANCE_PATH = "view-distance";
     private static final String DYE_MENU_PATH = "dye-menu";
@@ -62,37 +56,57 @@ public class Settings {
     private static final String LOCKED_COSMETIC_COLOR_PATH = "locked-cosmetic-color";
     private static final String ENABLED_PATH = "enabled";
 
+    @Getter
     private static String defaultMenu;
+    @Getter
     private static String dyeMenuName;
+    @Getter
     private static int dyeMenuInputSlot;
+    @Getter
     private static int dyeMenuOutputSlot;
+    @Getter
     private static int configVersion;
-    private static boolean requireEmptyHelmet;
-    private static boolean requireEmptyOffHand;
-    private static boolean requireEmptyChestPlate;
-    private static boolean requireEmptyPants;
-    private static boolean requireEmptyBoots;
+    @Getter
     private static boolean debugMode;
+    @Getter
     private static boolean unapplyOnDeath;
+    @Getter
     private static boolean forcePermissionJoin;
+    @Getter
     private static boolean forceShowOnJoin;
+    @Getter
     private static boolean itemsAdderChangeReload;
+    @Getter
     private static boolean worldGuardMoveCheck;
+    @Getter
     private static boolean cosmeticEmoteBlockCheck;
+    @Getter
     private static boolean addHelmetEnchants;
+    @Getter
     private static boolean addChestplateEnchants;
+    @Getter
     private static boolean addLeggingEnchants;
+    @Getter
     private static boolean addBootsEnchants;
+    @Getter
     private static boolean emoteAirCheck;
+    @Getter
     private static boolean emoteDamageLeave;
+    @Getter
     private static boolean emoteInvincible;
+    @Getter
     private static boolean destroyLooseCosmetics;
+    @Getter
     private static int viewDistance;
+    @Getter
     private static int tickPeriod;
     @Getter
     private static double emoteDistance;
+    @Getter
     private static Vector balloonOffset;
+    @Getter
     private static String cosmeticEquipClickType;
+    @Getter
     private static String cosmeticUnEquipClickType;
     @Getter
     private static boolean defaultShading;
@@ -129,11 +143,6 @@ public class Settings {
 
         ConfigurationNode cosmeticSettings = source.node(COSMETIC_SETTINGS_PATH);
 
-        requireEmptyHelmet = cosmeticSettings.node(REQUIRE_EMPTY_HELMET_PATH).getBoolean();
-        requireEmptyOffHand = cosmeticSettings.node(REQUIRE_EMPTY_OFF_HAND_PATH).getBoolean();
-        requireEmptyChestPlate = cosmeticSettings.node(REQUIRE_EMPTY_CHEST_PLATE_PATH).getBoolean();
-        requireEmptyPants = cosmeticSettings.node(REQUIRE_EMPTY_PANTS_PATH).getBoolean();
-        requireEmptyBoots = cosmeticSettings.node(REQUIRE_EMPTY_BOOTS_PATH).getBoolean();
         unapplyOnDeath = cosmeticSettings.node(UNAPPLY_DEATH_PATH).getBoolean(false);
         forcePermissionJoin = cosmeticSettings.node(FORCE_PERMISSION_JOIN_PATH).getBoolean(false);
         forceShowOnJoin = cosmeticSettings.node(FORCE_SHOW_COSMETICS_PATH).getBoolean(false);
@@ -193,141 +202,6 @@ public class Settings {
         return new Vector(config.node("x").getDouble(), config.node("y").getDouble(), config.node("z").getDouble());
     }
 
-    public static boolean isRequireEmptyHelmet() {
-        return requireEmptyHelmet;
-    }
-
-    public static boolean isRequireEmptyOffHand() {
-        return requireEmptyOffHand;
-    }
-
-
-    public static boolean isRequireEmptyChestPlate() {
-        return requireEmptyChestPlate;
-    }
-
-    public static boolean isRequireEmptyPants() {
-        return requireEmptyPants;
-    }
-
-    public static boolean isRequireEmptyBoots() {
-        return requireEmptyBoots;
-    }
-
-    public static boolean getRequireEmpty(CosmeticSlot slot) {
-        switch (slot) {
-            case HELMET -> {
-                return requireEmptyHelmet;
-            }
-            case CHESTPLATE -> {
-                return requireEmptyChestPlate;
-            }
-            case LEGGINGS -> {
-                return requireEmptyPants;
-            }
-            case BOOTS -> {
-                return requireEmptyBoots;
-            }
-            case OFFHAND -> {
-                return requireEmptyOffHand;
-            }
-        }
-        return false;
-    }
-
-    public static boolean getRequireEmpty(EquipmentSlot slot) {
-        switch (slot) {
-            case HEAD -> {
-                return requireEmptyHelmet;
-            }
-            case CHEST -> {
-                return requireEmptyChestPlate;
-            }
-            case LEGS -> {
-                return requireEmptyPants;
-            }
-            case FEET -> {
-                return requireEmptyBoots;
-            }
-            case OFF_HAND -> {
-                return requireEmptyOffHand;
-            }
-        }
-        return false;
-    }
-
-    public static Vector getBalloonOffset() {
-        if (balloonOffset == null) HMCCosmeticsPlugin.getInstance().getLogger().info("Shits null");
-        return balloonOffset;
-    }
-
-    public static int getViewDistance() {
-        return viewDistance;
-    }
-
-    public static String getDefaultMenu() {
-        return defaultMenu;
-    }
-
-    public static int getConfigVersion() {
-        return configVersion;
-    }
-
-    public static String getDyeMenuName() {
-        return dyeMenuName;
-    }
-    public static int getDyeMenuInputSlot() { return dyeMenuInputSlot; }
-    public static int getDyeMenuOutputSlot() { return dyeMenuOutputSlot; }
-
-    public static boolean isDebugEnabled() {
-        return debugMode;
-    }
-    public static boolean getItemsAdderReloadChange() {
-        return itemsAdderChangeReload;
-    }
-
-    public static int getTickPeriod() {
-        return tickPeriod;
-    }
-    public static boolean getUnapplyOnDeath() {
-        return unapplyOnDeath;
-    }
-    public static boolean getForcePermissionJoin() {
-        return forcePermissionJoin;
-    }
-
-    public static boolean isForceShowOnJoin() {
-        return forceShowOnJoin;
-    }
-
-    public static boolean getDebugMode() {
-        return debugMode;
-    }
-
-    public static boolean getCosmeticEmoteBlockCheck() {
-        return cosmeticEmoteBlockCheck;
-    }
-
-    public static boolean getEmoteAirCheck() {
-        return emoteAirCheck;
-    }
-
-    public static boolean isEmoteDamageLeave() {
-        return emoteDamageLeave;
-    }
-
-    public static boolean isEmoteInvincible() {
-        return emoteInvincible;
-    }
-
-    public static boolean isWorldGuardMoveCheckEnabled() {
-        return worldGuardMoveCheck;
-    }
-
-    public static boolean isDestroyLooseCosmetics() {
-        return destroyLooseCosmetics;
-    }
-
     public static boolean getShouldAddEnchants(EquipmentSlot slot) {
         switch (slot) {
             case HEAD -> {
@@ -356,13 +230,5 @@ public class Settings {
         plugin.getConfig().set("debug-mode", newSetting);
 
         plugin.saveConfig();
-    }
-
-    public static String getCosmeticEquipClickType() {
-        return cosmeticEquipClickType;
-    }
-
-    public static String getCosmeticUnEquipClickType() {
-        return cosmeticUnEquipClickType;
     }
 }
