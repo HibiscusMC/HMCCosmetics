@@ -42,6 +42,12 @@ public class TypeEmpty extends Type {
                 if (clickType.isRightClick()) {
                     if (!actionConfig.node("right-click").virtual()) actionStrings.addAll(actionConfig.node("right-click").getList(String.class));
                 }
+                if (clickType.equals(ClickType.SHIFT_LEFT)) {
+                    if (!actionConfig.node("shift-left-click").virtual()) actionStrings.addAll(actionConfig.node("shift-left-click").getList(String.class));
+                }
+                if (clickType.equals(ClickType.SHIFT_RIGHT)) {
+                    if (!actionConfig.node("shift-right-click").virtual()) actionStrings.addAll(actionConfig.node("shift-right-click").getList(String.class));
+                }
             }
 
             // We run the actions once we got the raw strings from the config.
