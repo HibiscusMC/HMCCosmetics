@@ -358,9 +358,7 @@ public class PlayerGameListener implements Listener {
             CosmeticUser user = CosmeticUsers.getUser(player);
             if (user == null) return;
 
-            Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(HMCCosmeticsPlugin.getInstance(), ()->{
-                user.respawnBackpack();
-            }, 1);
+            Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(HMCCosmeticsPlugin.getInstance(), user::respawnBackpack, 1);
 		}
 	}
 
@@ -370,9 +368,7 @@ public class PlayerGameListener implements Listener {
             CosmeticUser user = CosmeticUsers.getUser(player);
             if (user == null) return;
 
-            Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(HMCCosmeticsPlugin.getInstance(), ()->{
-                user.respawnBackpack();
-            }, 1);
+            Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(HMCCosmeticsPlugin.getInstance(), user::respawnBackpack, 1);
 		}
 	}
 
