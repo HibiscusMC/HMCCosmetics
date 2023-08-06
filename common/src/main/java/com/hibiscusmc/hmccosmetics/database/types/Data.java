@@ -31,23 +31,23 @@ public abstract class Data {
     // BACKPACK=colorfulbackpack&RRGGBB,HELMET=niftyhat,BALLOON=colorfulballoon,CHESTPLATE=niftychestplate
     @NotNull
     public final String serializeData(@NotNull CosmeticUser user) {
-        String data = "";
+        StringBuilder data = new StringBuilder();
         if (user.getHidden()) {
             if (shouldHiddenSave(user.getHiddenReason())) {
-                data = "HIDDEN=" + user.getHiddenReason();
+                data.append("HIDDEN=").append(user.getHiddenReason());
             }
         }
         for (Cosmetic cosmetic : user.getCosmetics()) {
             Color color = user.getCosmeticColor(cosmetic.getSlot());
             String input = cosmetic.getSlot() + "=" + cosmetic.getId();
             if (color != null) input = input + "&" + color.asRGB();
-            if (data.length() == 0) {
-                data = input;
+            if (data.isEmpty()) {
+                data.append(input);
                 continue;
             }
-            data = data + "," + input;
+            data.append(",").append(input);
         }
-        return data;
+        return data.toString();
     }
 
     public final Map<CosmeticSlot, Map<Cosmetic, Color>> deserializeData(CosmeticUser user, @NotNull String raw) {
