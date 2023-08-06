@@ -135,15 +135,12 @@ public class Menu {
 
         AtomicInteger taskid = new AtomicInteger(-1);
         gui.setOpenGuiAction(event -> {
-            Runnable run = new Runnable() {
-                @Override
-                public void run() {
-                    if (gui.getInventory().getViewers().isEmpty() && taskid.get() != -1) {
-                        Bukkit.getScheduler().cancelTask(taskid.get());
-                    }
-
-                    updateMenu(user, gui);
+            Runnable run = () -> {
+                if (gui.getInventory().getViewers().isEmpty() && taskid.get() != -1) {
+                    Bukkit.getScheduler().cancelTask(taskid.get());
                 }
+
+                updateMenu(user, gui);
             };
 
             if (refreshRate != -1) {
@@ -159,9 +156,7 @@ public class Menu {
 
         // API
         PlayerMenuOpenEvent event = new PlayerMenuOpenEvent(user, this);
-        Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> {
-            Bukkit.getPluginManager().callEvent(event);
-        });
+        Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> Bukkit.getPluginManager().callEvent(event));
         if (event.isCancelled()) return;
         // Internal
 
