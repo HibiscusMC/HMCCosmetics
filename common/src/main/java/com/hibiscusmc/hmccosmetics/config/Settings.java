@@ -3,6 +3,7 @@ package com.hibiscusmc.hmccosmetics.config;
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
+import lombok.Getter;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.util.Vector;
 import org.spongepowered.configurate.ConfigurationNode;
@@ -51,6 +52,15 @@ public class Settings {
     private static final String COSMETIC_TYPE_SETTINGS_PATH = "cosmetic-type";
     private static final String EQUIP_CLICK_TYPE = "equip-click";
     private static final String UNEQUIP_CLICK_TYPE = "unequip-click";
+    private static final String SHADING_PATH = "shading";
+    private static final String FIRST_ROW_SHIFT_PATH = "first-row-shift";
+    private static final String SEQUENT_ROW_SHIFT_PATH = "sequent-row-shift";
+    private static final String INDIVIDUAL_COLUMN_SHIFT_PATH = "individual-column-shift";
+    private static final String BACKGROUND_PATH = "background";
+    private static final String EQUIPPED_COSMETIC_COLOR_PATH = "equipped-cosmetic-color";
+    private static final String EQUIPABLE_COSMETIC_COLOR_PATH = "equipable-cosmetic-color";
+    private static final String LOCKED_COSMETIC_COLOR_PATH = "locked-cosmetic-color";
+    private static final String ENABLED_PATH = "enabled";
 
     private static String defaultMenu;
     private static String dyeMenuName;
@@ -79,10 +89,28 @@ public class Settings {
     private static boolean destroyLooseCosmetics;
     private static int viewDistance;
     private static int tickPeriod;
+    @Getter
     private static double emoteDistance;
     private static Vector balloonOffset;
     private static String cosmeticEquipClickType;
     private static String cosmeticUnEquipClickType;
+    @Getter
+    private static boolean defaultShading;
+    @Getter
+    private static String firstRowShift;
+    @Getter
+    private static String sequentRowShift;
+    @Getter
+    private static String individualColumnShift;
+    @Getter
+    private static String background;
+    @Getter
+    private static String equippedCosmeticColor;
+    @Getter
+    private static String equipableCosmeticColor;
+    @Getter
+    private static String lockedCosmeticColor;
+
 
     public static void load(ConfigurationNode source) {
 
@@ -123,6 +151,17 @@ public class Settings {
         viewDistance = cosmeticSettings.node(VIEW_DISTANCE_PATH).getInt();
 
         ConfigurationNode menuSettings = source.node(MENU_SETTINGS_PATH);
+
+        ConfigurationNode shadingSettings = menuSettings.node(SHADING_PATH);
+        defaultShading = shadingSettings.node(ENABLED_PATH).getBoolean();
+        firstRowShift = shadingSettings.node(FIRST_ROW_SHIFT_PATH).getString();
+        sequentRowShift = shadingSettings.node(SEQUENT_ROW_SHIFT_PATH).getString();
+        individualColumnShift = shadingSettings.node(INDIVIDUAL_COLUMN_SHIFT_PATH).getString();
+        background = shadingSettings.node(BACKGROUND_PATH).getString();
+        equippedCosmeticColor = shadingSettings.node(EQUIPPED_COSMETIC_COLOR_PATH).getString();
+        equipableCosmeticColor = shadingSettings.node(EQUIPABLE_COSMETIC_COLOR_PATH).getString();
+        lockedCosmeticColor = shadingSettings.node(LOCKED_COSMETIC_COLOR_PATH).getString();
+
         ConfigurationNode cosmeticTypeSettings = menuSettings.node(COSMETIC_TYPE_SETTINGS_PATH);
         cosmeticEquipClickType = cosmeticTypeSettings.node(EQUIP_CLICK_TYPE).getString("ALL");
         cosmeticUnEquipClickType = cosmeticTypeSettings.node(UNEQUIP_CLICK_TYPE).getString("ALL");
@@ -263,10 +302,6 @@ public class Settings {
 
     public static boolean getDebugMode() {
         return debugMode;
-    }
-
-    public static double getEmoteDistance() {
-        return emoteDistance;
     }
 
     public static boolean getCosmeticEmoteBlockCheck() {

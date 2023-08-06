@@ -79,6 +79,11 @@ allprojects {
         compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.1.0-SNAPSHOT")
         compileOnly("it.unimi.dsi:fastutil:8.5.11")
         compileOnly("com.github.LeonMangler:SuperVanish:6.2.17")
+        compileOnly("org.projectlombok:lombok:1.18.2")
+
+        annotationProcessor("org.projectlombok:lombok:1.18.28")
+        testCompileOnly("org.projectlombok:lombok:1.18.28")
+        testAnnotationProcessor("org.projectlombok:lombok:1.18.28")
     }
 }
 

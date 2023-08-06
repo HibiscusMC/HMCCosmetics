@@ -4,13 +4,17 @@ import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.api.events.PlayerMenuOpenEvent;
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.config.serializer.ItemSerializer;
+import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
+import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
 import com.hibiscusmc.hmccosmetics.gui.type.Type;
 import com.hibiscusmc.hmccosmetics.gui.type.Types;
 import com.hibiscusmc.hmccosmetics.hooks.Hooks;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.misc.Adventure;
+import com.hibiscusmc.hmccosmetics.util.misc.StringUtils;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
+import dev.triumphteam.gui.guis.BaseGui;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import net.kyori.adventure.text.Component;
@@ -36,8 +40,9 @@ public class Menu {
     private final int rows;
     private final ConfigurationNode config;
     private final String permissionNode;
-    private final ArrayList<MenuItem> items;
+    private final HashMap<Integer, MenuItem> items;
     private final int refreshRate;
+    private final boolean shading;
 
     public Menu(String id, @NotNull ConfigurationNode config) {
         this.id = id;
@@ -47,8 +52,9 @@ public class Menu {
         rows = config.node("rows").getInt(1);
         permissionNode = config.node("permission").getString("");
         refreshRate = config.node("refresh-rate").getInt(-1);
+        shading = config.node("shading").getBoolean(Settings.isDefaultShading());
 
-        items = new ArrayList<>();
+        items = new HashMap<>();
         setupItems();
 
         Menus.addMenu(this);
@@ -94,7 +100,9 @@ public class Menu {
                 if (Types.isType(typeId)) type = Types.getType(typeId);
             }
 
-            items.add(new MenuItem(slots, item, type, config));
+            for (Integer slot : slots) {
+                items.put(slot, new MenuItem(slots, item, type, config));
+            }
         }
     }
 
@@ -124,10 +132,10 @@ public class Menu {
             }
         }
         final Component component = Adventure.MINI_MESSAGE.deserialize(Hooks.processPlaceholders(player, this.title));
-        Gui gui = Gui.gui().
-                title(component).
-                rows(this.rows).
-                create();
+        Gui gui = Gui.gui()
+                .title(component)
+                .rows(this.rows)
+                .create();
 
         gui.setDefaultClickAction(event -> event.setCancelled(true));
 
@@ -136,7 +144,7 @@ public class Menu {
             Runnable run = new Runnable() {
                 @Override
                 public void run() {
-                    if (gui.getInventory().getViewers().size() == 0 && taskid.get() != -1) {
+                    if (gui.getInventory().getViewers().isEmpty() && taskid.get() != -1) {
                         Bukkit.getScheduler().cancelTask(taskid.get());
                     }
 
@@ -165,25 +173,72 @@ public class Menu {
 
         Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> {
             gui.open(player);
+            updateMenu(user, gui); // fixes shading? I know I do this twice but it's easier than writing a whole new class to deal with this shit
         });
     }
 
     private void updateMenu(CosmeticUser user, Gui gui) {
-        for (MenuItem item : items) {
-            Type type = item.getType();
-            for (int slot : item.getSlots()) {
-                ItemStack modifiedItem = getMenuItem(user, type, item.getItemConfig(), item.getItem().clone(), slot);
-                GuiItem guiItem = ItemBuilder.from(modifiedItem).asGuiItem();
-                guiItem.setAction(event -> {
-                    MessagesUtil.sendDebugMessages("Selected slot " + slot);
-                    final ClickType clickType = event.getClick();
-                    if (type != null) type.run(user, item.getItemConfig(), clickType);
-                    updateMenu(user, gui);
-                });
+        String title = this.title;
 
-                MessagesUtil.sendDebugMessages("Added " + slot + " as " + guiItem + " in the menu");
-                gui.updateItem(slot, guiItem);
+        int row = 0;
+        if (shading) {
+            for (int i = 0; i < gui.getInventory().getSize(); i++) {
+                if (items.containsKey(i)) {
+                    // Handles the items
+                    MenuItem item = items.get(i);
+                    updateItem(user, gui, item);
+
+                    // Handles the title
+                    if (i % 9 == 0) {
+                        if (row == 0) {
+                            title += Settings.getFirstRowShift(); // Goes back to the start of the gui
+                        } else {
+                            title += Settings.getSequentRowShift();
+                        }
+                        row += 1;
+                    } else {
+                        title += Settings.getIndividualColumnShift(); // Goes to the next slot
+                    }
+
+                    if (item.getType().getId().equalsIgnoreCase("cosmetic")) {
+                        Cosmetic cosmetic = Cosmetics.getCosmetic(item.getItemConfig().node("cosmetic").getString(""));
+                        if (cosmetic == null) continue;
+                        if (user.hasCosmeticInSlot(cosmetic)) {
+                            title += Settings.getEquippedCosmeticColor();
+                        } else {
+                            if (user.canEquipCosmetic(cosmetic)) {
+                                title += Settings.getEquipableCosmeticColor();
+                            } else {
+                                title += Settings.getLockedCosmeticColor();
+                            }
+                        }
+                        title += Settings.getBackground().replaceAll("<row>", String.valueOf(row));
+                    }
+                }
             }
+            MessagesUtil.sendDebugMessages("Updated menu with title " + title);
+            gui.updateTitle(StringUtils.parseStringToString(Hooks.processPlaceholders(user.getPlayer(), title)));
+        } else {
+            for (MenuItem item : items.values()) {
+                updateItem(user, gui, item);
+            }
+        }
+    }
+
+    private void updateItem(CosmeticUser user, Gui gui, MenuItem item) {
+        Type type = item.getType();
+        for (int slot : item.getSlots()) {
+            ItemStack modifiedItem = getMenuItem(user, type, item.getItemConfig(), item.getItem().clone(), slot);
+            GuiItem guiItem = ItemBuilder.from(modifiedItem).asGuiItem();
+            guiItem.setAction(event -> {
+                MessagesUtil.sendDebugMessages("Selected slot " + slot);
+                final ClickType clickType = event.getClick();
+                if (type != null) type.run(user, item.getItemConfig(), clickType);
+                updateMenu(user, gui);
+            });
+
+            MessagesUtil.sendDebugMessages("Added " + slot + " as " + guiItem + " in the menu");
+            gui.updateItem(slot, guiItem);
         }
     }
 
