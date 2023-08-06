@@ -17,19 +17,19 @@ import java.util.HashMap;
 public class Hooks {
 
     private static final HashMap<String, Hook> hooks = new HashMap<>();
-    private static HookOraxen ORAXEN_HOOK = new HookOraxen();
-    private static HookItemAdder ITEMADDER_HOOK = new HookItemAdder();
-    private static HookGeary GEARY_HOOK = new HookGeary();
-    private static HookMythic MYTHIC_HOOK = new HookMythic();
-    private static HookDenizen DENIZEN_HOOK = new HookDenizen();
-    private static HookHMCCosmetics HMCCOSMETIC_HOOK = new HookHMCCosmetics();
-    private static HookPlaceholderAPI PAPI_HOOK = new HookPlaceholderAPI();
-    private static HookPremiumVanish PREMIUM_VANISH_HOOK = new HookPremiumVanish();
-    private static HookSuperVanish SUPER_VANISH_HOOK = new HookSuperVanish();
-    private static HookHMCColor HMC_COLOR_HOOK = new HookHMCColor();
-    private static HookCMI CMI_HOOK = new HookCMI();
-    private static HookLibsDisguises LIBS_DISGUISES_HOOK = new HookLibsDisguises();
-    private static HookModelEngine MODEL_ENGINE_HOOK = new HookModelEngine();
+    private static final HookOraxen ORAXEN_HOOK = new HookOraxen();
+    private static final HookItemAdder ITEMADDER_HOOK = new HookItemAdder();
+    private static final HookGeary GEARY_HOOK = new HookGeary();
+    private static final HookMythic MYTHIC_HOOK = new HookMythic();
+    private static final HookDenizen DENIZEN_HOOK = new HookDenizen();
+    private static final HookHMCCosmetics HMCCOSMETIC_HOOK = new HookHMCCosmetics();
+    private static final HookPlaceholderAPI PAPI_HOOK = new HookPlaceholderAPI();
+    private static final HookPremiumVanish PREMIUM_VANISH_HOOK = new HookPremiumVanish();
+    private static final HookSuperVanish SUPER_VANISH_HOOK = new HookSuperVanish();
+    private static final HookHMCColor HMC_COLOR_HOOK = new HookHMCColor();
+    private static final HookCMI CMI_HOOK = new HookCMI();
+    private static final HookLibsDisguises LIBS_DISGUISES_HOOK = new HookLibsDisguises();
+    private static final HookModelEngine MODEL_ENGINE_HOOK = new HookModelEngine();
 
     public static Hook getHook(@NotNull String id) {
         return hooks.get(id.toLowerCase());
