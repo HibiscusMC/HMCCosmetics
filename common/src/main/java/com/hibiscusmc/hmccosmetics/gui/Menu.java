@@ -262,7 +262,7 @@ public class Menu {
         return slots;
     }
 
-    @Contract("_, _, _, _ -> param2")
+    @Contract("_, _, _, _, _ -> param2")
     @NotNull
     private ItemStack getMenuItem(CosmeticUser user, Type type, ConfigurationNode config, ItemStack itemStack, int slot) {
         if (!itemStack.hasItemMeta()) return itemStack;
