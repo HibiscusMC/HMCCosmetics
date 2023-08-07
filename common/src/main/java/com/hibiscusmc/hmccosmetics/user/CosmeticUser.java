@@ -217,6 +217,10 @@ public class CosmeticUser {
             MessagesUtil.sendDebugMessages("GetUserCosemticUser Item is null");
             return null;
         }
+        return getUserCosmeticItem(cosmetic, item);
+    }
+
+    public ItemStack getUserCosmeticItem(Cosmetic cosmetic, ItemStack item) {
         if (item.hasItemMeta()) {
             ItemMeta itemMeta = item.getItemMeta();
 
