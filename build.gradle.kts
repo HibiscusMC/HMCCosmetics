@@ -73,7 +73,7 @@ allprojects {
         compileOnly("com.comphenix.protocol:ProtocolLib:5.0.0")
         compileOnly("me.clip:placeholderapi:2.11.3")
         compileOnly("com.ticxo:modelengine:R3.0.1")
-        compileOnly("com.github.oraxen:oraxen:-SNAPSHOT")
+        compileOnly("com.github.oraxen:oraxen:1.160.0")
         compileOnly("com.github.LoneDev6:API-ItemsAdder:3.2.5")
         compileOnly("com.mineinabyss:geary-papermc:0.24-SNAPSHOT")
         compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.1.0-SNAPSHOT")
