@@ -152,8 +152,9 @@ public class HMCPlaceholderExpansion extends PlaceholderExpansion {
                             return "INVALID_COSMETIC";
                         }
                     }
-                    if (user.getCosmetic(cosmetic.getSlot()) == null) TranslationUtil.getTranslation("equipped-cosmetic", "false");
-                    return TranslationUtil.getTranslation("equipped-cosmetic", String.valueOf(cosmetic.getId() == user.getCosmetic(cosmetic.getSlot()).getId()));
+                    Cosmetic equippedCosmetic = user.getCosmetic(cosmetic.getSlot());
+                    if (equippedCosmetic == null) return TranslationUtil.getTranslation("equipped-cosmetic", "false");
+                    return TranslationUtil.getTranslation("equipped-cosmetic", String.valueOf(cosmetic.getId().equals(equippedCosmetic.getId())));
                 }
             case "wardrobe-enabled":
                 return TranslationUtil.getTranslation("in-wardrobe", String.valueOf(user.isInWardrobe()));
