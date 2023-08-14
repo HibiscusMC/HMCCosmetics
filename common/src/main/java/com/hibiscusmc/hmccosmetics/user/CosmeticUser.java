@@ -347,7 +347,7 @@ public class CosmeticUser {
 
     public void spawnBackpack(CosmeticBackpackType cosmeticBackpackType) {
         if (this.userBackpackManager != null) return;
-        this.userBackpackManager = new UserBackpackManager(this, cosmeticBackpackType.isFirstPersonCompadible());
+        this.userBackpackManager = new UserBackpackManager(this);
         userBackpackManager.spawnBackpack(cosmeticBackpackType);
     }
 

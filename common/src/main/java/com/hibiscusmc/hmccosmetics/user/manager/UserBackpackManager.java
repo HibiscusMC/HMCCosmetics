@@ -10,6 +10,7 @@ import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
 import com.ticxo.modelengine.api.ModelEngineAPI;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
+import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -30,13 +31,12 @@ public class UserBackpackManager {
     private ArmorStand invisibleArmorStand;
     private ArrayList<Integer> particleCloud = new ArrayList<>();
     private final CosmeticUser user;
-    private boolean firstPerson;
+    @Getter
     private UserBackpackCloudManager cloudManager;
 
-    public UserBackpackManager(CosmeticUser user, boolean firstPersonView) {
+    public UserBackpackManager(CosmeticUser user) {
         this.user = user;
         this.hideBackpack = false;
-        this.firstPerson = firstPersonView;
         this.cloudManager = new UserBackpackCloudManager(user.getUniqueId());
     }
 
@@ -83,7 +83,7 @@ public class UserBackpackManager {
         if (user.getPlayer() != null) owner.add(user.getPlayer());
 
         if (cosmeticBackpackType.isFirstPersonCompadible()) {
-            for (int i = particleCloud.size(); i < 5; i++) {
+            for (int i = particleCloud.size(); i < cosmeticBackpackType.getHeight(); i++) {
                 int entityId = NMSHandlers.getHandler().getNextEntityId();
                 PacketManager.sendEntitySpawnPacket(user.getEntity().getLocation(), entityId, EntityType.AREA_EFFECT_CLOUD, UUID.randomUUID());
                 PacketManager.sendCloudEffect(entityId, PacketManager.getViewers(user.getEntity().getLocation()));
@@ -159,7 +159,4 @@ public class UserBackpackManager {
         getArmorStand().getEquipment().setHelmet(item);
     }
 
-    public UserBackpackCloudManager getCloudManager() {
-        return cloudManager;
-    }
 }

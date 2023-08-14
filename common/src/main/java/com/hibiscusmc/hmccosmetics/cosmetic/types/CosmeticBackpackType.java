@@ -6,6 +6,7 @@ import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.manager.UserBackpackManager;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -23,7 +24,10 @@ import java.util.logging.Level;
 
 public class CosmeticBackpackType extends Cosmetic {
 
+    @Getter
     private final String modelName;
+    @Getter
+    private int height = -1;
     private ItemStack firstPersonBackpack;
 
     public CosmeticBackpackType(String id, ConfigurationNode config) {
@@ -33,6 +37,7 @@ public class CosmeticBackpackType extends Cosmetic {
 
         if (!config.node("firstperson-item").virtual()) {
             this.firstPersonBackpack = generateItemStack(config.node("firstperson-item"));
+            this.height = config.node("height").getInt(5);
         }
     }
 
@@ -80,10 +85,6 @@ public class CosmeticBackpackType extends Cosmetic {
         PacketManager.sendRidingPacket(entity.getEntityId(), user.getUserBackpackManager().getFirstArmorStandId(), outsideViewers);
 
         user.getUserBackpackManager().showBackpack();
-    }
-
-    public String getModelName() {
-        return modelName;
     }
 
     public boolean isFirstPersonCompadible() {
