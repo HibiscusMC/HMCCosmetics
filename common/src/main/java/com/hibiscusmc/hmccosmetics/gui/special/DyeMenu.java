@@ -1,8 +1,8 @@
 package com.hibiscusmc.hmccosmetics.gui.special;
 
 import com.hibiscusmc.hmccolor.HMCColorApi;
-import com.hibiscusmc.hmccolor.gui.guis.Gui;
-import com.hibiscusmc.hmccolor.gui.guis.GuiItem;
+import com.hibiscusmc.hmccolor.shaded.gui.guis.Gui;
+import com.hibiscusmc.hmccolor.shaded.gui.guis.GuiItem;
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;

@@ -13,7 +13,7 @@ dependencies {
     compileOnly("com.github.oraxen:oraxen:1.160.0")
     compileOnly("com.github.LoneDev6:API-ItemsAdder:3.2.5")
     compileOnly("com.mineinabyss:geary-papermc:0.24-SNAPSHOT")
-    compileOnly("com.hibiscus:hmccolor:0.3-SNAPSHOT")
+    //compileOnly("com.hibiscus:hmccolor:0.3-SNAPSHOT") USE LIB PROVIDED FILE
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.1.0-SNAPSHOT")
     compileOnly("it.unimi.dsi:fastutil:8.5.11")
     compileOnly("io.lumine:Mythic-Dist:5.2.1")
