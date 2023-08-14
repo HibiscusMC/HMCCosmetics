@@ -13,7 +13,6 @@ import org.jetbrains.annotations.NotNull;
 /**
  * A hook that integrates the plugin {@link com.mineinabyss.geary.papermc.GearyPlugin Geary} to provide custom items
  */
-@SuppressWarnings("SpellCheckingInspection")
 public class HookGeary extends Hook {
     private boolean enabled = false;
 
@@ -24,7 +23,7 @@ public class HookGeary extends Hook {
 
     @Override
     public void load() {
-        GearyModuleKt.getGeary().getPipeline().intercept(GearyPhase.ENABLE, () -> {
+        if (!enabled) GearyModuleKt.getGeary().getPipeline().intercept(GearyPhase.INIT_ENTITIES, () -> {
             enabled = true;
             HMCCosmeticsPlugin.setup();
             return null;
