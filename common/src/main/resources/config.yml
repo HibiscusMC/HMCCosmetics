@@ -60,6 +60,7 @@ menu-settings:
     sequent-row-shift: " <s:-169>" # Oraxen: " <s:-169>" / ItemsAdder: " :offset_-169:" (Space is important here!)
     individual-column-shift: "<s:-3>" # Oraxen: "<s:-3>" / ItemsAdder: ":offset_-3:"
     background: "<g:shade_row_<row>:colorable> " # Oraxen: "<g:shade_row_<row>:colorable> " / ItemsAdder: ":shade_row_<row>:colorable: "
+    clear-background: "<g:clear_row_<row>:colorable> " # Oraxen: "<g:clear_row_<row>:colorable> " / ItemsAdder: ":clear_row_<row>:colorable: "
     #These use MiniMessage for color! https://docs.advntr.dev/minimessage/format.html#color
     equipped-cosmetic-color: "<yellow>"
     equipable-cosmetic-color: "<green>"

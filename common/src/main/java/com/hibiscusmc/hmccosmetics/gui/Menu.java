@@ -172,22 +172,24 @@ public class Menu {
         int row = 0;
         if (shading) {
             for (int i = 0; i < gui.getInventory().getSize(); i++) {
+                // Handles the title
+                if (i % 9 == 0) {
+                    if (row == 0) {
+                        title.append(Settings.getFirstRowShift()); // Goes back to the start of the gui
+                    } else {
+                        title.append(Settings.getSequentRowShift());
+                    }
+                    row += 1;
+                } else {
+                    title.append(Settings.getIndividualColumnShift()); // Goes to the next slot
+                }
+
+                boolean occupied = false;
+
                 if (items.containsKey(i)) {
                     // Handles the items
                     MenuItem item = items.get(i);
                     updateItem(user, gui, item);
-
-                    // Handles the title
-                    if (i % 9 == 0) {
-                        if (row == 0) {
-                            title.append(Settings.getFirstRowShift()); // Goes back to the start of the gui
-                        } else {
-                            title.append(Settings.getSequentRowShift());
-                        }
-                        row += 1;
-                    } else {
-                        title.append(Settings.getIndividualColumnShift()); // Goes to the next slot
-                    }
 
                     if (item.type().getId().equalsIgnoreCase("cosmetic")) {
                         Cosmetic cosmetic = Cosmetics.getCosmetic(item.itemConfig().node("cosmetic").getString(""));
@@ -201,8 +203,13 @@ public class Menu {
                                 title.append(Settings.getLockedCosmeticColor());
                             }
                         }
-                        title.append(Settings.getBackground().replaceAll("<row>", String.valueOf(row)));
+                        occupied = true;
                     }
+                }
+                if (occupied) {
+                    title.append(Settings.getBackground().replaceAll("<row>", String.valueOf(row)));
+                } else {
+                    title.append(Settings.getClearBackground().replaceAll("<row>", String.valueOf(row)));
                 }
             }
             MessagesUtil.sendDebugMessages("Updated menu with title " + title);

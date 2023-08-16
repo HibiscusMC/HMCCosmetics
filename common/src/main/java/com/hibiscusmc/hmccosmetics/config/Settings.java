@@ -51,6 +51,7 @@ public class Settings {
     private static final String SEQUENT_ROW_SHIFT_PATH = "sequent-row-shift";
     private static final String INDIVIDUAL_COLUMN_SHIFT_PATH = "individual-column-shift";
     private static final String BACKGROUND_PATH = "background";
+    private static final String CLEAR_BACKGROUND_PATH = "clear-background";
     private static final String EQUIPPED_COSMETIC_COLOR_PATH = "equipped-cosmetic-color";
     private static final String EQUIPABLE_COSMETIC_COLOR_PATH = "equipable-cosmetic-color";
     private static final String LOCKED_COSMETIC_COLOR_PATH = "locked-cosmetic-color";
@@ -119,6 +120,8 @@ public class Settings {
     @Getter
     private static String background;
     @Getter
+    private static String clearBackground;
+    @Getter
     private static String equippedCosmeticColor;
     @Getter
     private static String equipableCosmeticColor;
@@ -170,6 +173,7 @@ public class Settings {
         sequentRowShift = shadingSettings.node(SEQUENT_ROW_SHIFT_PATH).getString();
         individualColumnShift = shadingSettings.node(INDIVIDUAL_COLUMN_SHIFT_PATH).getString();
         background = shadingSettings.node(BACKGROUND_PATH).getString();
+        clearBackground = shadingSettings.node(CLEAR_BACKGROUND_PATH).getString();
         equippedCosmeticColor = shadingSettings.node(EQUIPPED_COSMETIC_COLOR_PATH).getString();
         equipableCosmeticColor = shadingSettings.node(EQUIPABLE_COSMETIC_COLOR_PATH).getString();
         lockedCosmeticColor = shadingSettings.node(LOCKED_COSMETIC_COLOR_PATH).getString();
