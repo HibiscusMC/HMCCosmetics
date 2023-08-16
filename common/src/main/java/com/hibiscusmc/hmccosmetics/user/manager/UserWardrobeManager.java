@@ -7,6 +7,7 @@ import com.hibiscusmc.hmccosmetics.config.WardrobeLocation;
 import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
+import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
 import com.hibiscusmc.hmccosmetics.gui.Menu;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
 import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
@@ -122,11 +123,12 @@ public class UserWardrobeManager {
             }
 
             if (user.hasCosmeticInSlot(CosmeticSlot.BALLOON)) {
+                CosmeticBalloonType cosmetic = (CosmeticBalloonType) user.getCosmetic(CosmeticSlot.BALLOON);
                 user.getBalloonManager().sendRemoveLeashPacket(viewer);
                 user.getBalloonManager().sendLeashPacket(NPC_ID);
                 //PacketManager.sendLeashPacket(VIEWER.getBalloonEntity().getModelId(), NPC_ID, viewer);
 
-                Location balloonLocation = npcLocation.clone().add(Settings.getBalloonOffset());
+                Location balloonLocation = npcLocation.clone().add(cosmetic.getBalloonOffset());
                 PacketManager.sendTeleportPacket(user.getBalloonManager().getPufferfishBalloonId(), balloonLocation , false, viewer);
                 user.getBalloonManager().getModelEntity().teleport(balloonLocation);
             }

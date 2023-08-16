@@ -11,6 +11,7 @@ import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
 import com.ticxo.modelengine.api.ModelEngineAPI;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
+import lombok.Getter;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
@@ -27,6 +28,7 @@ public class UserBalloonManager {
 
     private BalloonType balloonType;
     private CosmeticBalloonType cosmeticBalloonType;
+    @Getter
     private UserBalloonPufferfish pufferfish;
     private final ArmorStand modelEntity;
 
@@ -173,10 +175,6 @@ public class UserBalloonManager {
         if (cosmeticBalloonType.isShowLead()) {
             PacketManager.sendLeashPacket(getPufferfishBalloonId(), entityId, getLocation());
         }
-    }
-
-    public UserBalloonPufferfish getPufferfish() {
-        return pufferfish;
     }
 
     public enum BalloonType {

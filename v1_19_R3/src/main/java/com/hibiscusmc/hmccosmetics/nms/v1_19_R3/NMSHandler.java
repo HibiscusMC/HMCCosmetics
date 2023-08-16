@@ -107,7 +107,7 @@ public class NMSHandler implements com.hibiscusmc.hmccosmetics.nms.NMSHandler {
         Entity entity = user.getEntity();
 
         UserBalloonManager userBalloonManager1 = new UserBalloonManager(entity.getLocation());
-        userBalloonManager1.getModelEntity().teleport(entity.getLocation().add(Settings.getBalloonOffset()));
+        userBalloonManager1.getModelEntity().teleport(entity.getLocation().add(cosmeticBalloonType.getBalloonOffset()));
 
         userBalloonManager1.spawnModel(cosmeticBalloonType, user.getCosmeticColor(cosmeticBalloonType.getSlot()));
         userBalloonManager1.addPlayerToModel(user, cosmeticBalloonType, user.getCosmeticColor(cosmeticBalloonType.getSlot()));

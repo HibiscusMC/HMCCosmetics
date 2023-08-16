@@ -176,7 +176,6 @@ public class Settings {
         cosmeticUnEquipClickType = cosmeticTypeSettings.node(UNEQUIP_CLICK_TYPE).getString("ALL");
 
         final var balloonSection = cosmeticSettings.node(BALLOON_OFFSET);
-
         balloonOffset = loadVector(balloonSection);
 
         ConfigurationNode dyeMenuSettings = source.node(DYE_MENU_PATH);
@@ -198,7 +197,7 @@ public class Settings {
         }
     }
 
-    private static Vector loadVector(final ConfigurationNode config) {
+    public static Vector loadVector(final ConfigurationNode config) {
         return new Vector(config.node("x").getDouble(), config.node("y").getDouble(), config.node("z").getDouble());
     }
 

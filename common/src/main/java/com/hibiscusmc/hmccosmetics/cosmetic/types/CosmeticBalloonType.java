@@ -5,6 +5,7 @@ import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.manager.UserBalloonManager;
 import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -19,16 +20,26 @@ import java.util.List;
 
 public class CosmeticBalloonType extends Cosmetic {
 
+    @Getter
     private final String modelName;
+    @Getter
     private List<String> dyableParts;
+    @Getter
     private final boolean showLead;
+    @Getter
+    private Vector balloonOffset;
 
     public CosmeticBalloonType(String id, ConfigurationNode config) {
         super(id, config);
 
         String modelId = config.node("model").getString();
-
         showLead = config.node("show-lead").getBoolean(true);
+
+        ConfigurationNode balloonOffsetNode = config.node("balloon-offset");
+        if (balloonOffsetNode.virtual())
+            balloonOffset = Settings.getBalloonOffset();
+        else
+            balloonOffset = Settings.loadVector(balloonOffsetNode);
 
         try {
             if (!config.node("dyable-parts").virtual()) {
@@ -57,7 +68,7 @@ public class CosmeticBalloonType extends Cosmetic {
 
         Location newLocation = entity.getLocation();
         Location currentLocation = user.getBalloonManager().getLocation();
-        newLocation = newLocation.clone().add(Settings.getBalloonOffset());
+        newLocation = newLocation.clone().add(getBalloonOffset());
 
         List<Player> viewer = PacketManager.getViewers(entity.getLocation());
 
@@ -85,22 +96,10 @@ public class CosmeticBalloonType extends Cosmetic {
         }
     }
 
-    public String getModelName() {
-        return this.modelName;
-    }
-
-    public List<String> getDyableParts() {
-        return dyableParts;
-    }
-
     public boolean isDyablePart(String name) {
         // If player does not define parts, dye whole model
         if (dyableParts == null) return true;
         if (dyableParts.isEmpty()) return true;
         return dyableParts.contains(name);
-    }
-
-    public boolean isShowLead() {
-        return showLead;
     }
 }
