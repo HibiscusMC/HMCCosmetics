@@ -47,39 +47,42 @@ public class UserEmoteModel extends PlayerModel {
         PacketManager.equipmentSlotUpdate(player, true, outsideViewers);
         outsideViewers.remove(player);
 
-        Location newLocation = player.getLocation().clone();
-        newLocation.setPitch(0);
-
-        double DISTANCE = Settings.getEmoteDistance();
-
-        Location thirdPersonLocation = newLocation.add(newLocation.getDirection().normalize().multiply(DISTANCE));
-        if (DISTANCE > 0) {
-            MessagesUtil.sendDebugMessages("Yaw " + (int) thirdPersonLocation.getYaw());
-            MessagesUtil.sendDebugMessages("New Yaw " + ServerUtils.getNextYaw((int) thirdPersonLocation.getYaw(), 180));
-            thirdPersonLocation.setYaw(ServerUtils.getNextYaw((int) thirdPersonLocation.getYaw(), 180));
-        }
-        if (Settings.isCosmeticEmoteBlockCheck() && thirdPersonLocation.getBlock().getType().isOccluding()) {
-            stopAnimation();
-            MessagesUtil.sendMessage(player, "emote-blocked");
-            return;
-        }
-        // Check if block below player is an air block
-        if (Settings.isEmoteAirCheck() && newLocation.clone().subtract(0, 1, 0).getBlock().getType().isAir()) {
-            stopAnimation();
-            MessagesUtil.sendMessage(player, "emote-blocked");
-        }
-
         user.getPlayer().setInvisible(true);
         user.hideCosmetics(CosmeticUser.HiddenReason.EMOTE);
 
         originalGamemode = player.getGameMode();
 
-        PacketManager.sendEntitySpawnPacket(thirdPersonLocation, armorStandId, EntityType.ARMOR_STAND, UUID.randomUUID(), viewer);
-        PacketManager.sendInvisibilityPacket(armorStandId, viewer);
-        PacketManager.sendLookPacket(armorStandId, thirdPersonLocation, viewer);
+        if (Settings.isEmoteCameraEnabled()) {
+            Location newLocation = player.getLocation().clone();
+            newLocation.setPitch(0);
 
-        PacketManager.gamemodeChangePacket(player, 3);
-        PacketManager.sendCameraPacket(armorStandId, viewer);
+            double DISTANCE = Settings.getEmoteDistance();
+
+            Location thirdPersonLocation = newLocation.add(newLocation.getDirection().normalize().multiply(DISTANCE));
+            if (DISTANCE > 0) {
+                MessagesUtil.sendDebugMessages("Yaw " + (int) thirdPersonLocation.getYaw());
+                MessagesUtil.sendDebugMessages("New Yaw " + ServerUtils.getNextYaw((int) thirdPersonLocation.getYaw(), 180));
+                thirdPersonLocation.setYaw(ServerUtils.getNextYaw((int) thirdPersonLocation.getYaw(), 180));
+            }
+            if (Settings.isCosmeticEmoteBlockCheck() && thirdPersonLocation.getBlock().getType().isOccluding()) {
+                stopAnimation();
+                MessagesUtil.sendMessage(player, "emote-blocked");
+                return;
+            }
+            // Check if block below player is an air block
+            if (Settings.isEmoteAirCheck() && newLocation.clone().subtract(0, 1, 0).getBlock().getType().isAir()) {
+                stopAnimation();
+                MessagesUtil.sendMessage(player, "emote-blocked");
+            }
+
+            PacketManager.sendEntitySpawnPacket(thirdPersonLocation, armorStandId, EntityType.ARMOR_STAND, UUID.randomUUID(), viewer);
+            PacketManager.sendInvisibilityPacket(armorStandId, viewer);
+            PacketManager.sendLookPacket(armorStandId, thirdPersonLocation, viewer);
+
+            PacketManager.gamemodeChangePacket(player, 3);
+            PacketManager.sendCameraPacket(armorStandId, viewer);
+        }
+
 
         MessagesUtil.sendDebugMessages("playAnimation run");
     }

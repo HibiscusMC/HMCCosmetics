@@ -29,6 +29,8 @@ cosmetic-settings:
   emote-air-check: true # Check if there is air under a player, if there is, don't play emote
   emote-damage-leave: true # If the player should leave the emote when they take damage
   emote-invincible: false # If the player should not take damage while doing an emote
+  # If a player should be put into camera mode when looking at an emote. Highly recommend keeping it as true.
+  emote-camera: true
 
   helmet-add-enchantments: false # If the plugin should keep enchants on helmets. This is useful as some enchantments are client side only.
   chest-add-enchantments: false # If the plugin should keep enchants on chestplate. This is useful as some enchantments are client side only.

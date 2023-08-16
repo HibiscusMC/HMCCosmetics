@@ -124,6 +124,8 @@ public class Settings {
     private static String equipableCosmeticColor;
     @Getter
     private static String lockedCosmeticColor;
+    @Getter
+    private static boolean emoteCameraEnabled;
 
 
     public static void load(ConfigurationNode source) {
@@ -158,6 +160,7 @@ public class Settings {
         addBootsEnchants = cosmeticSettings.node(COSMETIC_ADD_ENCHANTS_BOOTS_PATH).getBoolean(false);
         tickPeriod = cosmeticSettings.node(TICK_PERIOD_PATH).getInt(-1);
         viewDistance = cosmeticSettings.node(VIEW_DISTANCE_PATH).getInt();
+        emoteCameraEnabled = cosmeticSettings.node("emote-camera").getBoolean(true);
 
         ConfigurationNode menuSettings = source.node(MENU_SETTINGS_PATH);
 
