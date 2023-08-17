@@ -59,6 +59,7 @@ public class PlayerGameListener implements Listener {
         registerPlayerEquipmentListener();
         registerPlayerArmListener();
         registerEntityUseListener();
+        registerSlotChangeListener();
 
         //registerLookMovement();
         //registerMoveListener();
@@ -441,6 +442,30 @@ public class PlayerGameListener implements Listener {
                     }
                 }
                  */
+            }
+        });
+    }
+
+    private void registerSlotChangeListener() {
+        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(HMCCosmeticsPlugin.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Server.SET_SLOT) {
+            @Override
+            public void onPacketSending(PacketEvent event) {
+                MessagesUtil.sendDebugMessages("SetSlot Initial ");
+
+                Player player = event.getPlayer();
+                if (event.getPlayer() == null) return;
+
+                int windowID = event.getPacket().getIntegers().read(0);
+                if (windowID != 0) return;
+
+                CosmeticUser user = CosmeticUsers.getUser(player);
+                if (user == null) return;
+
+                int slot = event.getPacket().getIntegers().read(2);
+                MessagesUtil.sendDebugMessages("SetSlot Slot " + slot);
+                if (slot == 45 && user.hasCosmeticInSlot(CosmeticSlot.OFFHAND)) {
+                    event.getPacket().getItemModifier().write(0, user.getUserCosmeticItem(CosmeticSlot.OFFHAND));
+                }
             }
         });
     }
