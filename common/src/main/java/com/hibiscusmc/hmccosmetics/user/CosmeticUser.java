@@ -197,6 +197,10 @@ public class CosmeticUser {
         }
     }
 
+    public ItemStack getUserCosmeticItem(CosmeticSlot slot) {
+        return getUserCosmeticItem(getCosmetic(slot));
+    }
+
     public ItemStack getUserCosmeticItem(Cosmetic cosmetic) {
         ItemStack item = null;
         if (hideCosmetics) {
@@ -364,7 +368,7 @@ public class CosmeticUser {
     public void spawnBalloon(CosmeticBalloonType cosmeticBalloonType) {
         if (this.userBalloonManager != null) return;
         this.userBalloonManager = NMSHandlers.getHandler().spawnBalloon(this, cosmeticBalloonType);
-        updateCosmetic(cosmeticBalloonType);
+        //updateCosmetic(cosmeticBalloonType);
     }
 
     public void despawnBalloon() {
