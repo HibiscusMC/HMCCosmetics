@@ -1,10 +1,12 @@
 package com.hibiscusmc.hmccosmetics.api;
 
+import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
 import com.hibiscusmc.hmccosmetics.gui.Menu;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
+import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import org.bukkit.Color;
@@ -93,5 +95,23 @@ public class HMCCosmeticsAPI {
      */
     public static List<CosmeticUser> getAllCosmeticUsers() {
         return List.copyOf(CosmeticUsers.values());
+    }
+
+    /**
+     * This returns the NMS version of the server as recognized by HMCCosmetics. This will be null until HMCC setup has been completed.
+     * @return The NMS version of the server in String format
+     */
+    @Nullable
+    public static String getNMSVersion() {
+        return NMSHandlers.getVersion();
+    }
+
+    /**
+     * This returns the HMCCosmetics version.
+     * @return The HMCCosmetics version in String format
+     */
+    @NotNull
+    public static String getHMCCVersion() {
+        return HMCCosmeticsPlugin.getInstance().getDescription().getVersion();
     }
 }
