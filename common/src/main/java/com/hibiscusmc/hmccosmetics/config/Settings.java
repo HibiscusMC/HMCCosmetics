@@ -37,6 +37,8 @@ public class Settings {
     private static final String COSMETIC_EMOTE_AIR_CHECK_PATH = "emote-air-check";
     private static final String COSMETIC_EMOTE_DAMAGE_PATH = "emote-damage-leave";
     private static final String COSMETIC_EMOTE_INVINCIBLE_PATH = "emote-invincible";
+    private static final String COSMETIC_EMOTE_CAMERA_PATH = "emote-camera";
+    private static final String COSMETIC_EMOTE_MOVE_CHECK_PATH = "emote-move";
     private static final String COSMETIC_ADD_ENCHANTS_HELMET_PATH = "helmet-add-enchantments";
     private static final String COSMETIC_ADD_ENCHANTS_CHESTPLATE_PATH = "chest-add-enchantments";
     private static final String COSMETIC_ADD_ENCHANTS_LEGGINGS_PATH = "leggings-add-enchantments";
@@ -129,6 +131,8 @@ public class Settings {
     private static String lockedCosmeticColor;
     @Getter
     private static boolean emoteCameraEnabled;
+    @Getter
+    private static boolean emoteMoveCheck;
 
 
     public static void load(ConfigurationNode source) {
@@ -162,8 +166,9 @@ public class Settings {
         addLeggingEnchants = cosmeticSettings.node(COSMETIC_ADD_ENCHANTS_LEGGINGS_PATH).getBoolean(false);
         addBootsEnchants = cosmeticSettings.node(COSMETIC_ADD_ENCHANTS_BOOTS_PATH).getBoolean(false);
         tickPeriod = cosmeticSettings.node(TICK_PERIOD_PATH).getInt(-1);
-        viewDistance = cosmeticSettings.node(VIEW_DISTANCE_PATH).getInt();
-        emoteCameraEnabled = cosmeticSettings.node("emote-camera").getBoolean(true);
+        viewDistance = cosmeticSettings.node(VIEW_DISTANCE_PATH).getInt(-3);
+        emoteCameraEnabled = cosmeticSettings.node(COSMETIC_EMOTE_CAMERA_PATH).getBoolean(true);
+        emoteMoveCheck = cosmeticSettings.node(COSMETIC_EMOTE_MOVE_CHECK_PATH).getBoolean(false);
 
         ConfigurationNode menuSettings = source.node(MENU_SETTINGS_PATH);
 
