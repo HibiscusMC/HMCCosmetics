@@ -4,6 +4,7 @@ import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.gui.action.Action;
 import com.hibiscusmc.hmccosmetics.hooks.Hooks;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
 public class ActionConsoleCommand extends Action {
@@ -14,6 +15,6 @@ public class ActionConsoleCommand extends Action {
 
     @Override
     public void run(@NotNull CosmeticUser user, String raw) {
-        HMCCosmeticsPlugin.getInstance().getServer().dispatchCommand(user.getPlayer(), Hooks.processPlaceholders(user.getPlayer(), raw));
+        HMCCosmeticsPlugin.getInstance().getServer().dispatchCommand(Bukkit.getConsoleSender(), Hooks.processPlaceholders(user.getPlayer(), raw));
     }
 }
