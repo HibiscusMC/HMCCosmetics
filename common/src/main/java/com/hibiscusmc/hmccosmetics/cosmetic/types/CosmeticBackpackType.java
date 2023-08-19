@@ -3,15 +3,13 @@ package com.hibiscusmc.hmccosmetics.cosmetic.types;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
-import com.hibiscusmc.hmccosmetics.user.manager.UserBackpackManager;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.entity.AreaEffectCloud;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -20,6 +18,7 @@ import org.spongepowered.configurate.ConfigurationNode;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.logging.Level;
 
 public class CosmeticBackpackType extends Cosmetic {
@@ -50,19 +49,16 @@ public class CosmeticBackpackType extends Cosmetic {
 
         if (user.isInWardrobe() || !user.isBackpackSpawned()) return;
         // This needs to be moved to purely packet based, there are far to many plugin doing dumb stuff that prevents spawning armorstands ignoring our spawn reason.
-        if (!user.getUserBackpackManager().IsValidBackpackEntity()) {
-            MessagesUtil.sendDebugMessages("Invalid Backpack Entity[owner=" + user.getUniqueId() + ",player_location=" + loc + "]!");
-            user.respawnBackpack();
-            return;
-        }
-        if (loc.getWorld() != user.getUserBackpackManager().getArmorStand().getWorld()) {
-            user.getUserBackpackManager().getArmorStand().teleport(loc);
-        }
+        List<Player> outsideViewers = user.getUserBackpackManager().getEntityManager().refreshViewers(loc);
 
-        user.getUserBackpackManager().getArmorStand().teleport(loc);
-        user.getUserBackpackManager().getArmorStand().setRotation(loc.getYaw(), loc.getPitch());
+        user.getUserBackpackManager().getEntityManager().teleport(loc);
+        user.getUserBackpackManager().getEntityManager().setRotation((int) loc.getYaw());
 
-        List<Player> outsideViewers = user.getUserBackpackManager().getCloudManager().refreshViewers(loc);
+        PacketManager.sendEntitySpawnPacket(user.getEntity().getLocation(), user.getUserBackpackManager().getFirstArmorStandId(), EntityType.ARMOR_STAND, UUID.randomUUID(), outsideViewers);
+        PacketManager.sendInvisibilityPacket(user.getUserBackpackManager().getFirstArmorStandId(), outsideViewers);
+        NMSHandlers.getHandler().equipmentSlotUpdate(user.getUserBackpackManager().getFirstArmorStandId(), EquipmentSlot.HEAD, user.getUserCosmeticItem(this, getItem()), outsideViewers);
+        PacketManager.sendRidingPacket(entity.getEntityId(), user.getUserBackpackManager().getFirstArmorStandId(), outsideViewers);
+
         if (!user.isInWardrobe() && isFirstPersonCompadible() && user.getPlayer() != null) {
             List<Player> owner = List.of(user.getPlayer());
 
@@ -82,7 +78,6 @@ public class CosmeticBackpackType extends Cosmetic {
             }
             MessagesUtil.sendDebugMessages("First Person Backpack Update[owner=" + user.getUniqueId() + ",player_location=" + loc + "]!", Level.INFO);
         }
-        PacketManager.sendRidingPacket(entity.getEntityId(), user.getUserBackpackManager().getFirstArmorStandId(), outsideViewers);
 
         user.getUserBackpackManager().showBackpack();
     }

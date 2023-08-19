@@ -32,8 +32,8 @@ public class UserBalloonManager {
     private UserBalloonPufferfish pufferfish;
     private final ArmorStand modelEntity;
 
-    public UserBalloonManager(@NotNull Location location) {
-        this.pufferfish = new UserBalloonPufferfish(NMSHandlers.getHandler().getNextEntityId(), UUID.randomUUID());
+    public UserBalloonManager(CosmeticUser user, @NotNull Location location) {
+        this.pufferfish = new UserBalloonPufferfish(user.getUniqueId(), NMSHandlers.getHandler().getNextEntityId(), UUID.randomUUID());
         this.modelEntity = NMSHandlers.getHandler().getMEGEntity(location.add(Settings.getBalloonOffset()));
     }
 

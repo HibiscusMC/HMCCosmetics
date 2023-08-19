@@ -194,7 +194,6 @@ public class PlayerGameListener implements Listener {
             event.setCancelled(true);
             return;
         }
-        // Really need to look into optimization of this
         user.updateCosmetic(CosmeticSlot.BACKPACK);
         user.updateCosmetic(CosmeticSlot.BALLOON);
     }
@@ -301,7 +300,6 @@ public class PlayerGameListener implements Listener {
         //NMSHandlers.getHandler().slotUpdate(event.getPlayer(), event.getPreviousSlot());
         Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
             user.updateCosmetic(CosmeticSlot.MAINHAND);
-            user.updateCosmetic(CosmeticSlot.OFFHAND);
         }, 2);
 
         // #84, Riptides mess with backpacks

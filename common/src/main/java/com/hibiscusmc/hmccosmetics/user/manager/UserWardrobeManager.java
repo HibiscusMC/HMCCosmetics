@@ -1,7 +1,6 @@
 package com.hibiscusmc.hmccosmetics.user.manager;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
-import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.config.Wardrobe;
 import com.hibiscusmc.hmccosmetics.config.WardrobeLocation;
 import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
@@ -15,6 +14,7 @@ import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.ServerUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
+import lombok.Getter;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
@@ -37,19 +37,33 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class UserWardrobeManager {
 
+    @Getter
     private final int NPC_ID;
+    @Getter
     private final int ARMORSTAND_ID;
+    @Getter
     private final UUID WARDROBE_UUID;
+    @Getter
     private String npcName;
+    @Getter
     private GameMode originalGamemode;
+    @Getter
     private final CosmeticUser user;
+    @Getter
     private final Wardrobe wardrobe;
+    @Getter
     private final WardrobeLocation wardrobeLocation;
+    @Getter
     private final Location viewingLocation;
+    @Getter
     private final Location npcLocation;
+    @Getter
     private Location exitLocation;
+    @Getter
     private BossBar bossBar;
+    @Getter
     private boolean active;
+    @Getter
     private WardrobeStatus wardrobeStatus;
 
     public UserWardrobeManager(CosmeticUser user, Wardrobe wardrobe) {
@@ -117,7 +131,7 @@ public class UserWardrobeManager {
             if (user.hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
                 // Maybe null as backpack maybe despawned before entering
                 if (user.getUserBackpackManager() == null) user.respawnBackpack();
-                user.getUserBackpackManager().getArmorStand().teleport(npcLocation.clone().add(0, 2, 0));
+                user.getUserBackpackManager().getEntityManager().teleport(npcLocation.clone().add(0, 2, 0));
                 NMSHandlers.getHandler().equipmentSlotUpdate(user.getUserBackpackManager().getFirstArmorStandId(), EquipmentSlot.HEAD, user.getUserCosmeticItem(user.getCosmetic(CosmeticSlot.BACKPACK)), viewer);
                 PacketManager.ridingMountPacket(NPC_ID, user.getUserBackpackManager().getFirstArmorStandId(), viewer);
             }
@@ -277,7 +291,7 @@ public class UserWardrobeManager {
                 if (user.hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
                     PacketManager.sendTeleportPacket(user.getUserBackpackManager().getFirstArmorStandId(), location, false, viewer);
                     PacketManager.ridingMountPacket(NPC_ID, user.getUserBackpackManager().getFirstArmorStandId(), viewer);
-                    user.getUserBackpackManager().getArmorStand().setRotation(nextyaw, 0);
+                    user.getUserBackpackManager().getEntityManager().setRotation(nextyaw);
                     PacketManager.sendEntityDestroyPacket(user.getUserBackpackManager().getFirstArmorStandId(), outsideViewers);
                 }
 
@@ -299,14 +313,6 @@ public class UserWardrobeManager {
         runnable.runTaskTimer(HMCCosmeticsPlugin.getInstance(), 0, 2);
     }
 
-    public int getCameraId() {
-        return ARMORSTAND_ID;
-    }
-
-    public WardrobeStatus getWardrobeStatus() {
-        return wardrobeStatus;
-    }
-
     public void setWardrobeStatus(WardrobeStatus status) {
         this.wardrobeStatus = status;
     }
@@ -318,7 +324,4 @@ public class UserWardrobeManager {
         STOPPING,
     }
 
-    public Location getNpcLocation() {
-        return npcLocation;
-    }
 }

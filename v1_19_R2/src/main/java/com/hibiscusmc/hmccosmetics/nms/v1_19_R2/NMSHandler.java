@@ -97,7 +97,7 @@ public class NMSHandler implements com.hibiscusmc.hmccosmetics.nms.NMSHandler {
     public UserBalloonManager spawnBalloon(CosmeticUser user, CosmeticBalloonType cosmeticBalloonType) {
         org.bukkit.entity.Entity entity = user.getEntity();
 
-        UserBalloonManager userBalloonManager1 = new UserBalloonManager(entity.getLocation());
+        UserBalloonManager userBalloonManager1 = new UserBalloonManager(user, entity.getLocation());
         userBalloonManager1.getModelEntity().teleport(entity.getLocation().add(cosmeticBalloonType.getBalloonOffset()));
 
         userBalloonManager1.spawnModel(cosmeticBalloonType, user.getCosmeticColor(cosmeticBalloonType.getSlot()));
