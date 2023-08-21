@@ -495,7 +495,7 @@ public class CosmeticUser {
             List<Player> viewer = PlayerUtils.getNearbyPlayers(getEntity().getLocation());
             PacketManager.sendLeashPacket(getBalloonManager().getPufferfishBalloonId(), getPlayer().getEntityId(), viewer);
         }
-        if (hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
+        if (hasCosmeticInSlot(CosmeticSlot.BACKPACK) && isBackpackSpawned()) {
             CosmeticBackpackType cosmeticBackpackType = (CosmeticBackpackType) getCosmetic(CosmeticSlot.BACKPACK);
             ItemStack item = getUserCosmeticItem(cosmeticBackpackType);
             userBackpackManager.setItem(item);
