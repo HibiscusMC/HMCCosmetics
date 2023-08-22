@@ -432,8 +432,12 @@ public class CosmeticUser {
     }
 
     public boolean canEquipCosmetic(Cosmetic cosmetic) {
+        return canEquipCosmetic(cosmetic, false);
+    }
+
+    public boolean canEquipCosmetic(Cosmetic cosmetic, boolean ignoreWardrobe) {
         if (!cosmetic.requiresPermission()) return true;
-        if (isInWardrobe()) {
+        if (isInWardrobe() && !ignoreWardrobe) {
             if (WardrobeSettings.isTryCosmeticsInWardrobe() && userWardrobeManager.getWardrobeStatus().equals(UserWardrobeManager.WardrobeStatus.RUNNING)) return true;
         }
         return getPlayer().hasPermission(cosmetic.getPermission());

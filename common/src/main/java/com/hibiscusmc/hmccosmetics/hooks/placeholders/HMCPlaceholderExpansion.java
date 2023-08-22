@@ -124,7 +124,7 @@ public class HMCPlaceholderExpansion extends PlaceholderExpansion {
                             return "INVALID_COSMETIC";
                         }
                     }
-                    return TranslationUtil.getTranslation("unlocked-cosmetic", String.valueOf(user.canEquipCosmetic(cosmetic)));
+                    return TranslationUtil.getTranslation("unlocked-cosmetic", String.valueOf(user.canEquipCosmetic(cosmetic, true)));
                 }
             case "equipped":
                 if (placeholderArgs == null) {

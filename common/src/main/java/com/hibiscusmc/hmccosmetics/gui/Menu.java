@@ -197,7 +197,7 @@ public class Menu {
                         if (user.hasCosmeticInSlot(cosmetic)) {
                             title.append(Settings.getEquippedCosmeticColor());
                         } else {
-                            if (user.canEquipCosmetic(cosmetic)) {
+                            if (user.canEquipCosmetic(cosmetic, true)) {
                                 title.append(Settings.getEquipableCosmeticColor());
                             } else {
                                 title.append(Settings.getLockedCosmeticColor());
