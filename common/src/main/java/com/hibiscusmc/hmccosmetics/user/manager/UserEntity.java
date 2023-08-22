@@ -42,7 +42,7 @@ public class UserEntity {
 
         for (Player player : players) {
             CosmeticUser user = CosmeticUsers.getUser(player);
-            if (user != null && user.isInWardrobe()) { // Fixes issue where players in wardrobe would see other players cosmetics if they were not in wardrobe
+            if (user != null && owner != user.getUniqueId() && user.isInWardrobe()) { // Fixes issue where players in wardrobe would see other players cosmetics if they were not in wardrobe
                 removePlayers.add(player);
                 PacketManager.sendEntityDestroyPacket(ids, List.of(player));
                 continue;
