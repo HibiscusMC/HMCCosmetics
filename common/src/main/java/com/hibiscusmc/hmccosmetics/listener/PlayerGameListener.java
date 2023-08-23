@@ -461,7 +461,7 @@ public class PlayerGameListener implements Listener {
 
                 int slot = event.getPacket().getIntegers().read(2);
                 MessagesUtil.sendDebugMessages("SetSlot Slot " + slot);
-                if (slot == 45 && user.hasCosmeticInSlot(CosmeticSlot.OFFHAND)) {
+                if (slot == 45 && user.hasCosmeticInSlot(CosmeticSlot.OFFHAND) && player.getInventory().getItemInOffHand().getType().isAir()) {
                     event.getPacket().getItemModifier().write(0, user.getUserCosmeticItem(CosmeticSlot.OFFHAND));
                 }
             }
