@@ -39,6 +39,7 @@ public class Settings {
     private static final String COSMETIC_EMOTE_INVINCIBLE_PATH = "emote-invincible";
     private static final String COSMETIC_EMOTE_CAMERA_PATH = "emote-camera";
     private static final String COSMETIC_EMOTE_MOVE_CHECK_PATH = "emote-move";
+    private static final String COSMETIC_BACKPACK_FORCE_RIDING_PACKET_PATH = "backpack-force-riding-packet";
     private static final String COSMETIC_ADD_ENCHANTS_HELMET_PATH = "helmet-add-enchantments";
     private static final String COSMETIC_ADD_ENCHANTS_CHESTPLATE_PATH = "chest-add-enchantments";
     private static final String COSMETIC_ADD_ENCHANTS_LEGGINGS_PATH = "leggings-add-enchantments";
@@ -99,6 +100,8 @@ public class Settings {
     private static boolean emoteInvincible;
     @Getter
     private static boolean destroyLooseCosmetics;
+    @Getter
+    private static boolean backpackForceRidingEnabled;
     @Getter
     private static int viewDistance;
     @Getter
@@ -161,6 +164,7 @@ public class Settings {
         emoteDamageLeave = cosmeticSettings.node(COSMETIC_EMOTE_DAMAGE_PATH).getBoolean(false);
         emoteInvincible = cosmeticSettings.node(COSMETIC_EMOTE_INVINCIBLE_PATH).getBoolean(false);
         destroyLooseCosmetics = cosmeticSettings.node(COSMETIC_DESTROY_LOOSE_COSMETIC_PATH).getBoolean(false);
+        backpackForceRidingEnabled = cosmeticSettings.node(COSMETIC_BACKPACK_FORCE_RIDING_PACKET_PATH).getBoolean(false);
         addHelmetEnchants = cosmeticSettings.node(COSMETIC_ADD_ENCHANTS_HELMET_PATH).getBoolean(false);
         addChestplateEnchants = cosmeticSettings.node(COSMETIC_ADD_ENCHANTS_CHESTPLATE_PATH).getBoolean(false);
         addLeggingEnchants = cosmeticSettings.node(COSMETIC_ADD_ENCHANTS_LEGGINGS_PATH).getBoolean(false);

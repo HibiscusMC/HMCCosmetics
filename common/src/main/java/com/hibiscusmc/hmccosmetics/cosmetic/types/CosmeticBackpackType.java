@@ -1,5 +1,6 @@
 package com.hibiscusmc.hmccosmetics.cosmetic.types;
 
+import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
@@ -57,7 +58,9 @@ public class CosmeticBackpackType extends Cosmetic {
         PacketManager.sendEntitySpawnPacket(user.getEntity().getLocation(), user.getUserBackpackManager().getFirstArmorStandId(), EntityType.ARMOR_STAND, UUID.randomUUID(), outsideViewers);
         PacketManager.sendInvisibilityPacket(user.getUserBackpackManager().getFirstArmorStandId(), outsideViewers);
         NMSHandlers.getHandler().equipmentSlotUpdate(user.getUserBackpackManager().getFirstArmorStandId(), EquipmentSlot.HEAD, user.getUserCosmeticItem(this, getItem()), outsideViewers);
-        PacketManager.sendRidingPacket(entity.getEntityId(), user.getUserBackpackManager().getFirstArmorStandId(), outsideViewers);
+        // If true, it will send the riding packet to all players. If false, it will send the riding packet only to new players
+        if (Settings.isBackpackForceRidingEnabled()) PacketManager.sendRidingPacket(entity.getEntityId(), user.getUserBackpackManager().getFirstArmorStandId(), user.getUserBackpackManager().getEntityManager().getViewers());
+        else PacketManager.sendRidingPacket(entity.getEntityId(), user.getUserBackpackManager().getFirstArmorStandId(), outsideViewers);
 
         if (!user.isInWardrobe() && isFirstPersonCompadible() && user.getPlayer() != null) {
             List<Player> owner = List.of(user.getPlayer());

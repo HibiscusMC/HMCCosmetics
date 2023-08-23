@@ -33,6 +33,8 @@ cosmetic-settings:
   emote-camera: true
   # If a player should be able to move in an emote. This option really only affects if "emote-camera" is false
   emote-move: false
+  # This make it so it always sends the riding packets for the backpack. This sends more packets but is more reliable for servers which modify player passengers.
+  backpack-force-riding-packet: false
 
   helmet-add-enchantments: false # If the plugin should keep enchants on helmets. This is useful as some enchantments are client side only.
   chest-add-enchantments: false # If the plugin should keep enchants on chestplate. This is useful as some enchantments are client side only.
