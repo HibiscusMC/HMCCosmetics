@@ -29,6 +29,7 @@ import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.*;
 import org.bukkit.persistence.PersistentDataType;
@@ -397,7 +398,13 @@ public class CosmeticUser {
     }
 
     public void removeArmor(CosmeticSlot slot) {
-        PacketManager.equipmentSlotUpdate(getEntity().getEntityId(), this, slot, PlayerUtils.getNearbyPlayers(getEntity().getLocation()));
+        EquipmentSlot equipmentSlot = InventoryUtils.getEquipmentSlot(slot);
+        if (equipmentSlot == null) return;
+        if (getPlayer() != null) {
+            NMSHandlers.getHandler().equipmentSlotUpdate(getEntity().getEntityId(), equipmentSlot, getPlayer().getInventory().getItem(equipmentSlot), PlayerUtils.getNearbyPlayers(getEntity().getLocation()));
+        } else {
+            PacketManager.equipmentSlotUpdate(getEntity().getEntityId(), this, slot, PlayerUtils.getNearbyPlayers(getEntity().getLocation()));
+        }
     }
 
     /**
