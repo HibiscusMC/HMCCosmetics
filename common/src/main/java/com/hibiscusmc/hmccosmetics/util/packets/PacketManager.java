@@ -9,6 +9,7 @@ import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
+import com.hibiscusmc.hmccosmetics.util.InventoryUtils;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.PlayerUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.wrappers.WrapperPlayServerNamedEntitySpawn;
@@ -118,7 +119,7 @@ public class PacketManager extends BasePacket {
     ) {
         if (cosmeticSlot == CosmeticSlot.BACKPACK || cosmeticSlot == CosmeticSlot.BALLOON || cosmeticSlot == CosmeticSlot.EMOTE) return;
 
-        NMSHandlers.getHandler().equipmentSlotUpdate(entityId, user, cosmeticSlot, sendTo);
+        NMSHandlers.getHandler().equipmentSlotUpdate(entityId, InventoryUtils.getEquipmentSlot(cosmeticSlot), user.getUserCosmeticItem(cosmeticSlot), sendTo);
     }
 
     public static void armorStandMetaPacket(

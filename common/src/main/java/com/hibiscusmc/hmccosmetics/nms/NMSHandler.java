@@ -29,6 +29,7 @@ public interface NMSHandler {
 
     UserBalloonManager spawnBalloon(CosmeticUser user, CosmeticBalloonType cosmeticBalloonType);
 
+    @Deprecated(since = "2.6.0")
     void equipmentSlotUpdate(
             int entityId,
             CosmeticUser user,
