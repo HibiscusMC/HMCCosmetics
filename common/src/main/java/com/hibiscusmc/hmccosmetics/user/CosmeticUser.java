@@ -224,6 +224,7 @@ public class CosmeticUser {
         return getUserCosmeticItem(cosmetic, item);
     }
 
+    @SuppressWarnings("deprecation")
     public ItemStack getUserCosmeticItem(Cosmetic cosmetic, ItemStack item) {
         if (item.hasItemMeta()) {
             ItemMeta itemMeta = item.getItemMeta();
