@@ -58,7 +58,7 @@ menu-settings:
   shading:
     # Below is the shading mechanism behind cosmetic items. This is a bit complicated, but it allows for a lot of customization.
     # The shading is done through the title and by shifting textures around. This is done by offsets.
-    # Vanilla, ItemsAdder, and Oraxen are supported **BUT** requires some manual work. Default values are Vanilla. See below.
+    # Only Oraxen is support by default. Vanilla can't properly handle it without a lot of unicodes and ItemsAdder adds weird offsets and decolors it. (This is why it is disabled by default)
     enabled: false # Default of menus having shading. This can be toggled individually in menus with "shading: true/false"
     first-row-shift: "<s:-169>" # Oraxen: "<s:-169>"
     sequent-row-shift: " <s:-169>" # Oraxen: " <s:-169>" (Space is important here!)
