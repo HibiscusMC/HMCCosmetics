@@ -22,7 +22,6 @@ public class WardrobeSettings {
     private static final String DISPLAY_RADIUS_PATH = "display-radius";
     private static final String PORTABLE_PATH = "portable";
     private static final String ALWAYS_DISPLAY_PATH = "always-display";
-    private static final String STATIC_RADIUS_PATH = "static-radius";
     private static final String ROTATION_SPEED_PATH = "rotation-speed";
     private static final String SPAWN_DELAY_PATH = "spawn-delay";
     private static final String DESPAWN_DELAY_PATH = "despawn-delay";
@@ -68,8 +67,6 @@ public class WardrobeSettings {
     private static boolean portable;
     @Getter
     private static boolean alwaysDisplay;
-    @Getter
-    private static int staticRadius;
     @Getter
     private static int rotationSpeed;
     @Getter
@@ -120,7 +117,6 @@ public class WardrobeSettings {
         disableOnDamage = source.node(DISABLE_ON_DAMAGE_PATH).getBoolean();
         displayRadius = source.node(DISPLAY_RADIUS_PATH).getInt();
         portable = source.node(PORTABLE_PATH).getBoolean();
-        staticRadius = source.node(STATIC_RADIUS_PATH).getInt();
         alwaysDisplay = source.node(ALWAYS_DISPLAY_PATH).getBoolean();
         rotationSpeed = source.node(ROTATION_SPEED_PATH).getInt();
         spawnDelay = source.node(SPAWN_DELAY_PATH).getInt();
@@ -204,22 +200,6 @@ public class WardrobeSettings {
 
     public static void removeWardrobe(String id) {
         wardrobes.remove(id);
-    }
-
-    @Deprecated
-    public static boolean inDistanceOfWardrobe(final Location wardrobeLocation, final Location playerLocation) {
-        if (displayRadius == -1) return true;
-        if (!wardrobeLocation.getWorld().equals(playerLocation.getWorld())) return false;
-        return playerLocation.distanceSquared(wardrobeLocation) <= displayRadius * displayRadius;
-    }
-
-    @Deprecated
-    public static boolean inDistanceOfStatic(Wardrobe wardrobe, final Location location) {
-        Location wardrobeLocation = wardrobe.getLocation().getNpcLocation();
-        if (wardrobeLocation == null) return false;
-        if (staticRadius == -1) return true;
-        if (!wardrobeLocation.getWorld().equals(location.getWorld())) return false;
-        return wardrobeLocation.distanceSquared(location) <= staticRadius * staticRadius;
     }
 
     /**
