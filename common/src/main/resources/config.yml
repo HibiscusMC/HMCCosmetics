@@ -60,11 +60,11 @@ menu-settings:
     # The shading is done through the title and by shifting textures around. This is done by offsets.
     # Vanilla, ItemsAdder, and Oraxen are supported **BUT** requires some manual work. Default values are Vanilla. See below.
     enabled: false # Default of menus having shading. This can be toggled individually in menus with "shading: true/false"
-    first-row-shift: "<s:-169>" # Oraxen: "<s:-169>" / ItemsAdder: ":offset_-169:"
-    sequent-row-shift: " <s:-169>" # Oraxen: " <s:-169>" / ItemsAdder: " :offset_-169:" (Space is important here!)
-    individual-column-shift: "<s:-3>" # Oraxen: "<s:-3>" / ItemsAdder: ":offset_-3:"
-    background: "<g:shade_row_<row>:colorable> " # Oraxen: "<g:shade_row_<row>:colorable> " / ItemsAdder: ":shade_row_<row>:colorable: "
-    clear-background: "<g:clear_row_<row>:colorable> " # Oraxen: "<g:clear_row_<row>:colorable> " / ItemsAdder: ":clear_row_<row>:colorable: "
+    first-row-shift: "<s:-169>" # Oraxen: "<s:-169>"
+    sequent-row-shift: " <s:-169>" # Oraxen: " <s:-169>" (Space is important here!)
+    individual-column-shift: "<s:-3>" # Oraxen: "<s:-3>"
+    background: "<g:shade_row_<row>:colorable> " # Oraxen: "<g:shade_row_<row>:colorable> 
+    clear-background: "<g:clear_row_<row>:colorable> " # Oraxen: "<g:clear_row_<row>:colorable> "
     #These use MiniMessage for color! https://docs.advntr.dev/minimessage/format.html#color
     equipped-cosmetic-color: "<yellow>"
     equipable-cosmetic-color: "<green>"
