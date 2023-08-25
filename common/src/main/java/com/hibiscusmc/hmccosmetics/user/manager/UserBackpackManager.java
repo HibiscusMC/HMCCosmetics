@@ -56,7 +56,7 @@ public class UserBackpackManager {
         getEntityManager().teleport(user.getEntity().getLocation());
         List<Player> outsideViewers = getEntityManager().getViewers();
         PacketManager.sendEntitySpawnPacket(user.getEntity().getLocation(), getFirstArmorStandId(), EntityType.ARMOR_STAND, UUID.randomUUID(), getEntityManager().getViewers());
-        PacketManager.sendInvisibilityPacket(getFirstArmorStandId(), outsideViewers);
+        PacketManager.sendArmorstandMetadata(getFirstArmorStandId(), outsideViewers);
 
         Entity entity = user.getEntity();
 

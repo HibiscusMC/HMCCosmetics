@@ -122,19 +122,25 @@ public class PacketManager extends BasePacket {
         NMSHandlers.getHandler().equipmentSlotUpdate(entityId, InventoryUtils.getEquipmentSlot(cosmeticSlot), user.getUserCosmeticItem(cosmeticSlot), sendTo);
     }
 
-    public static void armorStandMetaPacket(
-            @NotNull Entity entity,
+    public static void sendArmorstandMetadata(
+            int entityId,
             List<Player> sendTo
     ) {
         PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
         packet.getModifier().writeDefaults();
-        packet.getIntegers().write(0, entity.getEntityId());
-        WrappedDataWatcher metadata = new WrappedDataWatcher();
-        if (metadata == null) return;
-        // 0x10 & 0x20
-        metadata.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(0, WrappedDataWatcher.Registry.get(Byte.class)), (byte) 0x20);
-        metadata.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(15, WrappedDataWatcher.Registry.get(Byte.class)), (byte) 0x10);
-        packet.getWatchableCollectionModifier().write(0, metadata.getWatchableObjects());
+        packet.getIntegers().write(0, entityId);
+        WrappedDataWatcher wrapper = new WrappedDataWatcher();
+
+        if (NMSHandlers.getVersion().contains("v1_18_R2") || NMSHandlers.getVersion().contains("v1_19_R1")) {
+            wrapper.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(0, WrappedDataWatcher.Registry.get(Byte.class)), (byte) 0x20);
+            wrapper.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(15, WrappedDataWatcher.Registry.get(Byte.class)), (byte) 0x10);
+            packet.getWatchableCollectionModifier().write(0, wrapper.getWatchableObjects());
+        } else {
+            final List<WrappedDataValue> wrappedDataValueList = Lists.newArrayList();
+            wrappedDataValueList.add(new WrappedDataValue(0, WrappedDataWatcher.Registry.get(Byte.class), (byte) 0x20));
+            wrapper.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(15, WrappedDataWatcher.Registry.get(Byte.class)), (byte) 0x10);
+            packet.getDataValueCollectionModifier().write(0, wrappedDataValueList);
+        }
         for (Player p : sendTo) sendPacket(p, packet);
     }
 

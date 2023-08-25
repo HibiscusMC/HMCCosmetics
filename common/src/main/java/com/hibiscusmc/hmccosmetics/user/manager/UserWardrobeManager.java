@@ -101,7 +101,7 @@ public class UserWardrobeManager {
         Runnable run = () -> {
             // Armorstand
             PacketManager.sendEntitySpawnPacket(viewingLocation, ARMORSTAND_ID, EntityType.ARMOR_STAND, UUID.randomUUID(), viewer);
-            PacketManager.sendInvisibilityPacket(ARMORSTAND_ID, viewer);
+            PacketManager.sendArmorstandMetadata(ARMORSTAND_ID, viewer);
             PacketManager.sendLookPacket(ARMORSTAND_ID, viewingLocation, viewer);
 
             // Player
