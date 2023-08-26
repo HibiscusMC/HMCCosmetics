@@ -2,6 +2,8 @@ package com.hibiscusmc.hmccosmetics.api.events;
 
 import com.hibiscusmc.hmccosmetics.config.Wardrobe;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
@@ -12,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 public class PlayerWardrobeEnterEvent extends PlayerCosmeticEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private boolean cancel = false;
+    @Getter @Setter
     private Wardrobe wardrobe;
 
     public PlayerWardrobeEnterEvent(@NotNull CosmeticUser who, @NotNull Wardrobe wardrobe) {
@@ -47,13 +50,5 @@ public class PlayerWardrobeEnterEvent extends PlayerCosmeticEvent implements Can
     @NotNull
     public static HandlerList getHandlerList() {
         return handlers;
-    }
-
-    public void setWardrobe(Wardrobe wardrobe) {
-        this.wardrobe = wardrobe;
-    }
-
-    public Wardrobe getWardrobe() {
-        return wardrobe;
     }
 }

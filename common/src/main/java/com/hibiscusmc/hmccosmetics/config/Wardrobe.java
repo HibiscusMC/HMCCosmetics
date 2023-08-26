@@ -1,56 +1,52 @@
 package com.hibiscusmc.hmccosmetics.config;
 
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Location;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
 public class Wardrobe {
 
-    private String id;
+    @Getter
+    private final String id;
+    @Getter @Setter
     private int distance = WardrobeSettings.getDisplayRadius();
+    @Getter @Setter
     private String permission;
+    @Getter @Setter
     private WardrobeLocation location;
 
-    public Wardrobe(String id, WardrobeLocation location, @Nullable String permission, int distance) {
+    /**
+     * This creates a Wardrobe object with all the information that a user will need when entering.
+     * @param id The id of the wardrobe
+     * @param location The 3 locations of the Wardrobe, if any of these 3 locations are null, the wardrobe will not work
+     * @param permission The permission required to enter the wardrobe, if null, no permission is required
+     * @param distance The distance from the wardrobe that the player can be to enter, if -1, the player can enter from any distance
+     */
+    public Wardrobe(@NotNull String id, @NotNull WardrobeLocation location, @Nullable String permission, int distance) {
         this.id = id;
         this.location = location;
         if (permission != null) this.permission = permission;
         if (distance != -1) this.distance = distance;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public WardrobeLocation getLocation() {
-        return location;
-    }
-
-    public void setDistance(int distance) {
-        this.distance = distance;
-    }
-
-    public void setPermission(String permission) {
-        this.permission = permission;
-    }
-
+    /**
+     * This checks if the wardrobe has a permission. If it's null, no permission is required and will return false. If it's not null, it will return true.
+     * @return if the wardrobe has a permission
+     */
     public boolean hasPermission() {
         return permission != null;
     }
-    public int getDistance() {
-        return distance;
-    }
 
-    public String getPermission() {
-        return permission;
-    }
-
-    public void setLocation(WardrobeLocation location) {
-        this.location = location;
-    }
-
-    public boolean canEnter(CosmeticUser user) {
+    /**
+     * Calculates if a player can enter a wardrobe. Will return true if the player can enter, else false.
+     * @param user The user that is trying to enter the wardrobe
+     * @return if the player can enter the wardrobe
+     */
+    public boolean canEnter(@NotNull CosmeticUser user) {
         Location wardrobeLocation = location.getNpcLocation();
         Location location = user.getEntity().getLocation();
         if (wardrobeLocation == null) return false;
