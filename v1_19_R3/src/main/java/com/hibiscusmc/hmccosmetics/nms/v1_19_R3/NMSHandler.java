@@ -58,7 +58,7 @@ public class NMSHandler implements com.hibiscusmc.hmccosmetics.nms.NMSHandler {
     private net.minecraft.world.entity.Entity getNMSEntity(int entityId) {
         for (ServerLevel world : ((CraftServer) Bukkit.getServer()).getHandle().getServer().getAllLevels()) {
             net.minecraft.world.entity.Entity entity = world.getEntity(entityId);
-            if (entity == null) return null;
+            if (entity == null) continue;
             return entity;
         }
         return null;

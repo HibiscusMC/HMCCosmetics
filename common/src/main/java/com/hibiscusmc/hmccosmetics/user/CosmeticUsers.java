@@ -41,8 +41,8 @@ public class CosmeticUsers {
     public static CosmeticUser getUser(int entityId) {
         Entity entity = ServerUtils.getEntity(entityId);
         if (entity == null) return null;
-        if (entity.getType().equals(EntityType.PLAYER)) return null;
-        return COSMETIC_USERS.get(entity.getUniqueId());
+        if (!(entity instanceof Player player)) return null;
+        return COSMETIC_USERS.get(player.getUniqueId());
     }
 
     public static Set<CosmeticUser> values() {

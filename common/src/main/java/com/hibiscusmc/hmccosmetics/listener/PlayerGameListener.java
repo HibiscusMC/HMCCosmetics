@@ -8,6 +8,7 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.Pair;
+import com.comphenix.protocol.wrappers.WrappedEnumEntityUseAction;
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.api.events.PlayerCosmeticPostEquipEvent;
 import com.hibiscusmc.hmccosmetics.config.Settings;
@@ -19,6 +20,7 @@ import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticEmoteType;
 import com.hibiscusmc.hmccosmetics.gui.Menu;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
+import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import com.hibiscusmc.hmccosmetics.user.manager.UserEmoteManager;
@@ -56,6 +58,7 @@ public class PlayerGameListener implements Listener {
     public PlayerGameListener() {
         registerInventoryClickListener();
         registerMenuChangeListener();
+        registerEntityStatusListener();
         registerPlayerEquipmentListener();
         registerPlayerArmListener();
         registerEntityUseListener();
@@ -483,6 +486,22 @@ public class PlayerGameListener implements Listener {
                 List<com.comphenix.protocol.wrappers.Pair<EnumWrappers.ItemSlot, ItemStack>> armor = event.getPacket().getSlotStackPairLists().read(0);
 
                 for (EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
+                    if (equipmentSlot.equals(EquipmentSlot.HAND)) {
+                        Pair<EnumWrappers.ItemSlot, ItemStack> pair = new Pair<>(EnumWrappers.ItemSlot.MAINHAND, user.getPlayer().getInventory().getItemInMainHand());
+                        armor.add(pair);
+                        continue;
+                    }
+                    if (equipmentSlot.equals(EquipmentSlot.OFF_HAND)) {
+                        ItemStack item = null;
+                        if (user.getPlayer().getInventory().getItemInOffHand().getType().isAir()) {
+                            if (user.hasCosmeticInSlot(CosmeticSlot.OFFHAND)) item = user.getUserCosmeticItem(CosmeticSlot.OFFHAND);
+                        } else {
+                            item = user.getPlayer().getInventory().getItemInOffHand();
+                        }
+                        Pair<EnumWrappers.ItemSlot, ItemStack> pair = new Pair<>(EnumWrappers.ItemSlot.OFFHAND, item);
+                        armor.add(pair);
+                        continue;
+                    }
                     CosmeticArmorType cosmeticArmor = (CosmeticArmorType) user.getCosmetic(InventoryUtils.BukkitCosmeticSlot(equipmentSlot));
                     if (cosmeticArmor == null) continue;
                     Pair<EnumWrappers.ItemSlot, ItemStack> pair = new Pair<>(InventoryUtils.itemBukkitSlot(cosmeticArmor.getEquipSlot()), cosmeticArmor.getItem());
@@ -491,6 +510,27 @@ public class PlayerGameListener implements Listener {
 
                 event.getPacket().getSlotStackPairLists().write(0, armor);
                 MessagesUtil.sendDebugMessages("Equipment for " + user.getPlayer().getName() + " has been updated for " + player.getName());
+            }
+        });
+    }
+
+    private void registerEntityStatusListener() {
+        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(HMCCosmeticsPlugin.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Server.ENTITY_STATUS) {
+            @Override
+            public void onPacketSending(PacketEvent event) {
+                int entityid = event.getPacket().getIntegers().read(0);
+                byte status = event.getPacket().getBytes().read(0);
+
+                MessagesUtil.sendDebugMessages("EntityStatus Initial " + entityid + " - " + status);
+                if (status != 55) return;
+
+                CosmeticUser user = CosmeticUsers.getUser(entityid);
+                if (user == null) {
+                    MessagesUtil.sendDebugMessages("EntityStatus User is null");
+                    return;
+                }
+                if (!user.hasCosmeticInSlot(CosmeticSlot.OFFHAND)) return;
+                event.setCancelled(true);
             }
         });
     }

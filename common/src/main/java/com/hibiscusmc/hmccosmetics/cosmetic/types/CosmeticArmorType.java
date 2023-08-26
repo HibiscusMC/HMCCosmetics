@@ -31,16 +31,12 @@ public class CosmeticArmorType extends Cosmetic {
         if (user.getUserEmoteManager().isPlayingEmote()) return; // There has to be a better way of doing this...
         ItemStack cosmeticItem = user.getUserCosmeticItem(this);
         if (!(entity instanceof HumanEntity humanEntity)) return;
-        if (equipSlot.equals(EquipmentSlot.OFF_HAND)) {
-            if (!humanEntity.getInventory().getItemInOffHand().getType().isAir()) return;
-        }
         ItemStack equippedItem = humanEntity.getInventory().getItem(equipSlot);
         if (Settings.getShouldAddEnchants(equipSlot)) {
             cosmeticItem.addUnsafeEnchantments(equippedItem.getEnchantments());
         }
 
         NMSHandlers.getHandler().equipmentSlotUpdate(entity.getEntityId(), equipSlot, cosmeticItem, PacketManager.getViewers(entity.getLocation()));
-        //PacketManager.equipmentSlotUpdate(player, getSlot(), PacketManager.getViewers(player.getLocation())); Old method
     }
 
     public EquipmentSlot getEquipSlot() {
