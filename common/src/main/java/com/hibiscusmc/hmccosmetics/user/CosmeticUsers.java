@@ -3,7 +3,6 @@ package com.hibiscusmc.hmccosmetics.user;
 import com.google.common.collect.HashBiMap;
 import com.hibiscusmc.hmccosmetics.util.ServerUtils;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
