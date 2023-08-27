@@ -63,6 +63,9 @@ allprojects {
 
         // md-5 Repo
         maven("https://repo.md-5.net/content/groups/public/")
+
+        // MMOItems
+        maven("https://nexus.phoenixdevt.fr/repository/maven-public/")
     }
 
     dependencies {
@@ -175,7 +178,7 @@ bukkit {
     apiVersion = "1.18"
     authors = listOf("LoJoSho")
     depend = listOf("ProtocolLib")
-    softDepend = listOf("ModelEngine", "Oraxen", "ItemsAdder", "Geary", "HMCColor", "WorldGuard", "MythicMobs", "PlaceholderAPI", "SuperVanish", "PremiumVanish", "LibsDisguises", "Denizen")
+    softDepend = listOf("ModelEngine", "Oraxen", "ItemsAdder", "Geary", "HMCColor", "WorldGuard", "MythicMobs", "PlaceholderAPI", "SuperVanish", "PremiumVanish", "LibsDisguises", "Denizen", "MMOItems")
     version = "${project.version}"
     loadBefore = listOf(
         "Cosmin" // Fixes an issue with Cosmin loading before and taking /cosmetic, when messing with what we do.
