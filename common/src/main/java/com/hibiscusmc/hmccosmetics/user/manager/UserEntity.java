@@ -1,5 +1,6 @@
 package com.hibiscusmc.hmccosmetics.user.manager;
 
+import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import com.hibiscusmc.hmccosmetics.util.PlayerUtils;
@@ -20,7 +21,9 @@ public class UserEntity {
     @Getter
     private List<Player> viewers = new ArrayList<>();
     @Getter @Setter
-    private Long lastUpdate = 0L;
+    private Long viewerLastUpdate = 0L;
+    @Getter @Setter
+    private Long lastPositionUpdate = 0L;
     @Getter @Setter
     private List<Integer> ids = new ArrayList<>();
     @Getter
@@ -35,7 +38,7 @@ public class UserEntity {
     }
 
     public List<Player> refreshViewers(Location location) {
-        if (System.currentTimeMillis() - lastUpdate <= 1000) return List.of(); //Prevents mass refreshes
+        if (System.currentTimeMillis() - viewerLastUpdate <= 1000) return List.of(); //Prevents mass refreshes
         ArrayList<Player> newPlayers = new ArrayList<>();
         ArrayList<Player> removePlayers = new ArrayList<>();
         List<Player> players = PlayerUtils.getNearbyPlayers(location);
@@ -61,20 +64,33 @@ public class UserEntity {
             }
         }
         viewers.removeAll(removePlayers);
-        lastUpdate = System.currentTimeMillis();
+        setViewerLastUpdate(System.currentTimeMillis());
         return newPlayers;
     }
 
     public void teleport(Location location) {
+        if (this.getLocation() != null && this.getLocation().getWorld() == location.getWorld()) {
+            // Was thinking about using schedulers to just send the packet later... but that would be a lot of tasks and
+            // would probably cause more lag. Furthermore, the server "ticks" the cosmetics every second by defualt. So it's fine like this.
+            if (System.currentTimeMillis() - getLastPositionUpdate() <= Settings.getPacketEntityTeleportCooldown()) return;
+        }
         this.location = location;
         for (Integer entity : ids) {
             PacketManager.sendTeleportPacket(entity, location, false, getViewers());
         }
+        setLastPositionUpdate(System.currentTimeMillis());
     }
 
     public void setRotation(int yaw) {
+        setRotation(yaw, false);
+    }
+
+    public void setRotation(int yaw, boolean additonalPacket) {
         location.setYaw(yaw);
         for (Integer entity : ids) {
+            // First person backpacks need both packets to rotate properly, otherwise they look off
+            // Regular backpacks just need the look packet
+            if (additonalPacket) PacketManager.sendRotationPacket(entity, yaw, false, getViewers());
             PacketManager.sendLookPacket(entity, location, getViewers());
         }
     }

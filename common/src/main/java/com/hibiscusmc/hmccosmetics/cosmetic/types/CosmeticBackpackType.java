@@ -53,7 +53,7 @@ public class CosmeticBackpackType extends Cosmetic {
         List<Player> outsideViewers = user.getUserBackpackManager().getEntityManager().refreshViewers(loc);
 
         user.getUserBackpackManager().getEntityManager().teleport(loc);
-        user.getUserBackpackManager().getEntityManager().setRotation((int) loc.getYaw());
+        user.getUserBackpackManager().getEntityManager().setRotation((int) loc.getYaw(), isFirstPersonCompadible());
 
         PacketManager.sendEntitySpawnPacket(user.getEntity().getLocation(), user.getUserBackpackManager().getFirstArmorStandId(), EntityType.ARMOR_STAND, UUID.randomUUID(), outsideViewers);
         PacketManager.sendArmorstandMetadata(user.getUserBackpackManager().getFirstArmorStandId(), outsideViewers);
