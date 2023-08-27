@@ -136,7 +136,7 @@ public class PacketManager extends BasePacket {
         } else {
             final List<WrappedDataValue> wrappedDataValueList = Lists.newArrayList();
             wrappedDataValueList.add(new WrappedDataValue(0, WrappedDataWatcher.Registry.get(Byte.class), (byte) 0x20));
-            wrapper.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(15, WrappedDataWatcher.Registry.get(Byte.class)), (byte) 0x10);
+            wrappedDataValueList.add(new WrappedDataValue(15, WrappedDataWatcher.Registry.get(Byte.class), (byte) 0x10));
             packet.getDataValueCollectionModifier().write(0, wrappedDataValueList);
         }
         for (Player p : sendTo) sendPacket(p, packet);
