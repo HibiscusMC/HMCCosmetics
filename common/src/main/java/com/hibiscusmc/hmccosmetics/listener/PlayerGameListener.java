@@ -484,6 +484,7 @@ public class PlayerGameListener implements Listener {
 
                 for (EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
                     if (equipmentSlot.equals(EquipmentSlot.HAND)) {
+                        if (user.getPlayer() == event.getPlayer()) continue; // When a player scrolls real fast, it messes up the mainhand. This fixes it
                         Pair<EnumWrappers.ItemSlot, ItemStack> pair = new Pair<>(EnumWrappers.ItemSlot.MAINHAND, user.getPlayer().getInventory().getItemInMainHand());
                         armor.add(pair);
                         continue;
@@ -491,6 +492,7 @@ public class PlayerGameListener implements Listener {
                     if (equipmentSlot.equals(EquipmentSlot.OFF_HAND)) {
                         if (Settings.isCosmeticForceOffhandCosmeticShow() && user.hasCosmeticInSlot(CosmeticSlot.OFFHAND)) {
                             ItemStack item = user.getUserCosmeticItem(CosmeticSlot.OFFHAND);
+                            if (item == null) continue;
                             Pair<EnumWrappers.ItemSlot, ItemStack> pair = new Pair<>(EnumWrappers.ItemSlot.OFFHAND, item);
                             armor.add(pair);
                         }
@@ -498,7 +500,9 @@ public class PlayerGameListener implements Listener {
                     }
                     CosmeticArmorType cosmeticArmor = (CosmeticArmorType) user.getCosmetic(InventoryUtils.BukkitCosmeticSlot(equipmentSlot));
                     if (cosmeticArmor == null) continue;
-                    Pair<EnumWrappers.ItemSlot, ItemStack> pair = new Pair<>(InventoryUtils.itemBukkitSlot(cosmeticArmor.getEquipSlot()), cosmeticArmor.getItem());
+                    ItemStack item = user.getUserCosmeticItem(cosmeticArmor);
+                    if (item == null) continue;
+                    Pair<EnumWrappers.ItemSlot, ItemStack> pair = new Pair<>(InventoryUtils.itemBukkitSlot(cosmeticArmor.getEquipSlot()), item);
                     armor.add(pair);
                 }
 
