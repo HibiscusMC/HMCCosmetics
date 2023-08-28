@@ -38,6 +38,9 @@ cosmetic-settings:
   # This helps reduce the amount of packets sent for packet entities, but reduces accuracy of the entity. This is in milliseconds. -1 to disable.
   # This is useful for servers with a lot of backpacks, as they are passengers, which means the client will update their position automatically within an area where the entity is located.
   entity-cooldown-teleport-packet: 500
+  # This forces the offhand to always show the cosmetic. False means it will only show when the slot is empty.
+  # There is a small visual blip for a tick when you put a new item in the offhand slot, hence why its disabled by default.
+  offhand-always-show: false
 
   helmet-add-enchantments: false # If the plugin should keep enchants on helmets. This is useful as some enchantments are client side only.
   chest-add-enchantments: false # If the plugin should keep enchants on chestplate. This is useful as some enchantments are client side only.

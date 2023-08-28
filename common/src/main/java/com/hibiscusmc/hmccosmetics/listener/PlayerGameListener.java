@@ -480,7 +480,6 @@ public class PlayerGameListener implements Listener {
                 if (user == null) {
                     return;
                 }
-
                 List<com.comphenix.protocol.wrappers.Pair<EnumWrappers.ItemSlot, ItemStack>> armor = event.getPacket().getSlotStackPairLists().read(0);
 
                 for (EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
@@ -490,14 +489,11 @@ public class PlayerGameListener implements Listener {
                         continue;
                     }
                     if (equipmentSlot.equals(EquipmentSlot.OFF_HAND)) {
-                        ItemStack item = null;
-                        if (user.getPlayer().getInventory().getItemInOffHand().getType().isAir()) {
-                            if (user.hasCosmeticInSlot(CosmeticSlot.OFFHAND)) item = user.getUserCosmeticItem(CosmeticSlot.OFFHAND);
-                        } else {
-                            item = user.getPlayer().getInventory().getItemInOffHand();
+                        if (Settings.isCosmeticForceOffhandCosmeticShow() && user.hasCosmeticInSlot(CosmeticSlot.OFFHAND)) {
+                            ItemStack item = user.getUserCosmeticItem(CosmeticSlot.OFFHAND);
+                            Pair<EnumWrappers.ItemSlot, ItemStack> pair = new Pair<>(EnumWrappers.ItemSlot.OFFHAND, item);
+                            armor.add(pair);
                         }
-                        Pair<EnumWrappers.ItemSlot, ItemStack> pair = new Pair<>(EnumWrappers.ItemSlot.OFFHAND, item);
-                        armor.add(pair);
                         continue;
                     }
                     CosmeticArmorType cosmeticArmor = (CosmeticArmorType) user.getCosmetic(InventoryUtils.BukkitCosmeticSlot(equipmentSlot));
