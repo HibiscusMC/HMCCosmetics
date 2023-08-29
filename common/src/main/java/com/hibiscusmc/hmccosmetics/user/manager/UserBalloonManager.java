@@ -135,7 +135,7 @@ public class UserBalloonManager {
 
 
     public int getPufferfishBalloonId() {
-        return pufferfish.getId();
+        return pufferfish.getPufferFishEntityId();
     }
     public UUID getPufferfishBalloonUniqueId() {
         return pufferfish.getUuid();
