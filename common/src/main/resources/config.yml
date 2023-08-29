@@ -129,6 +129,8 @@ wardrobe:
     title-fade-out: 1000 # milliseconds
   wardrobes:
     default:
+      distance: -1 # Distance in blocks that a player can interact with the wardrobe. -1 to ignore.
+      permission: "hmccosmetics.wardrobe.default" # Permission required to use the wardrobe.
       npc-location:
         world: "world"
         x: 0
