@@ -218,15 +218,15 @@ public class CosmeticUser {
                 item = cosmetic.getItem();
             }
         }
-        if (item == null) {
-            MessagesUtil.sendDebugMessages("GetUserCosemticUser Item is null");
-            return null;
-        }
         return getUserCosmeticItem(cosmetic, item);
     }
 
     @SuppressWarnings("deprecation")
     public ItemStack getUserCosmeticItem(Cosmetic cosmetic, ItemStack item) {
+        if (item == null) {
+            MessagesUtil.sendDebugMessages("GetUserCosemticUser Item is null");
+            return new ItemStack(Material.AIR);
+        }
         if (item.hasItemMeta()) {
             ItemMeta itemMeta = item.getItemMeta();
 
