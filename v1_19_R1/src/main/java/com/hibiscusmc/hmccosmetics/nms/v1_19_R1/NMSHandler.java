@@ -1,10 +1,8 @@
 package com.hibiscusmc.hmccosmetics.nms.v1_19_R1;
 
-import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBackpackType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.manager.UserBalloonManager;
-import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
@@ -21,13 +19,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_19_R1.CraftEquipmentSlot;
 import org.bukkit.craftbukkit.v1_19_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_19_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.v1_19_R1.scoreboard.CraftScoreboard;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -62,26 +58,9 @@ public class NMSHandler implements com.hibiscusmc.hmccosmetics.nms.NMSHandler {
     }
 
     @Override
-    public org.bukkit.entity.Entity spawnBackpack(CosmeticUser user, CosmeticBackpackType cosmeticBackpackType) {
-        HMCArmorStand invisibleArmorstand = new HMCArmorStand(user.getEntity().getLocation());
-
-        ItemStack item = user.getUserCosmeticItem(cosmeticBackpackType);
-
-        invisibleArmorstand.setItemSlot(EquipmentSlot.HEAD, CraftItemStack.asNMSCopy(item));
-        ((CraftWorld) user.getEntity().getWorld()).getHandle().addFreshEntity(invisibleArmorstand, CreatureSpawnEvent.SpawnReason.CUSTOM);
-
-        MessagesUtil.sendDebugMessages("spawnBackpack NMS");
-
-        return invisibleArmorstand.getBukkitLivingEntity();
-    }
-
-    @Override
     public org.bukkit.entity.Entity spawnDisplayEntity(Location location, String text) {
         return null;
     }
-
-
-
 
     @Override
     public UserBalloonManager spawnBalloon(CosmeticUser user, CosmeticBalloonType cosmeticBalloonType) {

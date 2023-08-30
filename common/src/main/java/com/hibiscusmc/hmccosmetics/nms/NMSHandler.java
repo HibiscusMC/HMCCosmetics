@@ -20,8 +20,6 @@ public interface NMSHandler {
 
     ArmorStand getMEGEntity(Location loc);
 
-    Entity spawnBackpack(CosmeticUser user, CosmeticBackpackType cosmeticBackpackType);
-
     Entity spawnDisplayEntity(Location location, String text);
 
     UserBalloonManager spawnBalloon(CosmeticUser user, CosmeticBalloonType cosmeticBalloonType);

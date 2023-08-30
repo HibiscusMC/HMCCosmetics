@@ -1,10 +1,8 @@
 package com.hibiscusmc.hmccosmetics.nms.v1_18_R2;
 
-import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBackpackType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.manager.UserBalloonManager;
-import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
@@ -21,13 +19,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_18_R2.CraftEquipmentSlot;
 import org.bukkit.craftbukkit.v1_18_R2.CraftServer;
-import org.bukkit.craftbukkit.v1_18_R2.CraftWorld;
 import org.bukkit.craftbukkit.v1_18_R2.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.v1_18_R2.scoreboard.CraftScoreboard;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -59,20 +55,6 @@ public class NMSHandler implements com.hibiscusmc.hmccosmetics.nms.NMSHandler {
     @Override
     public ArmorStand getMEGEntity(Location loc) {
         return (ArmorStand) new MEGEntity(loc).getBukkitEntity();
-    }
-
-    @Override
-    public org.bukkit.entity.Entity spawnBackpack(CosmeticUser user, CosmeticBackpackType cosmeticBackpackType) {
-        HMCArmorStand invisibleArmorstand = new HMCArmorStand(user.getEntity().getLocation());
-
-        ItemStack item = user.getUserCosmeticItem(cosmeticBackpackType);
-
-        invisibleArmorstand.setItemSlot(EquipmentSlot.HEAD, CraftItemStack.asNMSCopy(item));
-        ((CraftWorld) user.getEntity().getWorld()).getHandle().addFreshEntity(invisibleArmorstand, CreatureSpawnEvent.SpawnReason.CUSTOM);
-
-        MessagesUtil.sendDebugMessages("spawnBackpack NMS");
-
-        return invisibleArmorstand.getBukkitLivingEntity();
     }
 
     @Override

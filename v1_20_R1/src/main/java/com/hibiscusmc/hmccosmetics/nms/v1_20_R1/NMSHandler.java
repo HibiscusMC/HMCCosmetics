@@ -1,6 +1,5 @@
 package com.hibiscusmc.hmccosmetics.nms.v1_20_R1;
 
-import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBackpackType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.manager.UserBalloonManager;
@@ -61,22 +60,6 @@ public class NMSHandler implements com.hibiscusmc.hmccosmetics.nms.NMSHandler {
     @Override
     public ArmorStand getMEGEntity(Location loc) {
         return (ArmorStand) new MEGEntity(loc).getBukkitEntity();
-    }
-
-    @Override
-    public org.bukkit.entity.Entity spawnBackpack(CosmeticUser user, CosmeticBackpackType cosmeticBackpackType) {
-        HMCArmorStand invisibleArmorstand = new HMCArmorStand(user.getEntity().getLocation());
-
-        ItemStack item = user.getUserCosmeticItem(cosmeticBackpackType);
-
-        invisibleArmorstand.setItemSlot(EquipmentSlot.HEAD, CraftItemStack.asNMSCopy(item));
-        ((CraftWorld) user.getEntity().getWorld()).getHandle().addFreshEntity(invisibleArmorstand, CreatureSpawnEvent.SpawnReason.CUSTOM);
-
-        MessagesUtil.sendDebugMessages("spawnBackpack NMS");
-
-        return invisibleArmorstand.getBukkitLivingEntity();
-        //PacketManager.armorStandMetaPacket(invisibleArmorstand.getBukkitEntity(), sentTo);
-        //PacketManager.ridingMountPacket(player.getEntityId(), invisibleArmorstand.getId(), sentTo);
     }
 
     @Override
