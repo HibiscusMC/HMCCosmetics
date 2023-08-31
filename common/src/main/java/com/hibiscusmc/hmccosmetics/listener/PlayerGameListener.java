@@ -19,6 +19,7 @@ import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticEmoteType;
 import com.hibiscusmc.hmccosmetics.gui.Menu;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
+import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import com.hibiscusmc.hmccosmetics.user.manager.UserEmoteManager;
@@ -264,7 +265,13 @@ public class PlayerGameListener implements Listener {
             event.setCancelled(true);
             return;
         }
-        Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> user.updateCosmetic(CosmeticSlot.OFFHAND), 2);
+        Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
+            user.updateCosmetic(CosmeticSlot.OFFHAND);
+            List<Player> viewers = PacketManager.getViewers(user.getEntity().getLocation());
+            if (viewers.isEmpty()) return;
+            viewers.remove(user.getPlayer());
+            NMSHandlers.getHandler().equipmentSlotUpdate(user.getEntity().getEntityId(), EquipmentSlot.HAND, event.getPlayer().getInventory().getItemInMainHand(), viewers);
+        }, 2);
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
@@ -482,28 +489,30 @@ public class PlayerGameListener implements Listener {
                 }
                 List<com.comphenix.protocol.wrappers.Pair<EnumWrappers.ItemSlot, ItemStack>> armor = event.getPacket().getSlotStackPairLists().read(0);
 
-                for (EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
-                    if (equipmentSlot.equals(EquipmentSlot.HAND)) {
-                        if (user.getPlayer() == event.getPlayer()) continue; // When a player scrolls real fast, it messes up the mainhand. This fixes it
-                        Pair<EnumWrappers.ItemSlot, ItemStack> pair = new Pair<>(EnumWrappers.ItemSlot.MAINHAND, user.getPlayer().getInventory().getItemInMainHand());
-                        armor.add(pair);
-                        continue;
-                    }
-                    if (equipmentSlot.equals(EquipmentSlot.OFF_HAND)) {
-                        if (Settings.isCosmeticForceOffhandCosmeticShow() && user.hasCosmeticInSlot(CosmeticSlot.OFFHAND)) {
-                            ItemStack item = user.getUserCosmeticItem(CosmeticSlot.OFFHAND);
-                            if (item == null) continue;
-                            Pair<EnumWrappers.ItemSlot, ItemStack> pair = new Pair<>(EnumWrappers.ItemSlot.OFFHAND, item);
-                            armor.add(pair);
+                for (int i = 0; i < armor.size(); i++) {
+                    com.comphenix.protocol.wrappers.Pair<EnumWrappers.ItemSlot, ItemStack> pair = armor.get(i);
+                    switch (pair.getFirst()) {
+                        case MAINHAND -> {
+                            if (user.getPlayer() == event.getPlayer()) continue; // When a player scrolls real fast, it messes up the mainhand. This fixes it
+                            armor.set(i, new Pair<>(pair.getFirst(), user.getPlayer().getInventory().getItemInMainHand()));
                         }
-                        continue;
+                        case OFFHAND -> {
+                            if (Settings.isCosmeticForceOffhandCosmeticShow() && user.hasCosmeticInSlot(CosmeticSlot.OFFHAND)) {
+                                ItemStack item = user.getUserCosmeticItem(CosmeticSlot.OFFHAND);
+                                if (item == null) continue;
+                                Pair<EnumWrappers.ItemSlot, ItemStack> offhandPair = new Pair<>(EnumWrappers.ItemSlot.OFFHAND, item);
+                                armor.set(i, offhandPair);
+                            }
+                        }
+                        default -> {
+                            CosmeticArmorType cosmeticArmor = (CosmeticArmorType) user.getCosmetic(InventoryUtils.getItemSlotToCosmeticSlot(pair.getFirst()));
+                            if (cosmeticArmor == null) continue;
+                            ItemStack item = user.getUserCosmeticItem(cosmeticArmor);
+                            if (item == null) continue;
+                            Pair<EnumWrappers.ItemSlot, ItemStack> armorPair = new Pair<>(InventoryUtils.itemBukkitSlot(cosmeticArmor.getEquipSlot()), item);
+                            armor.set(i, armorPair);
+                        }
                     }
-                    CosmeticArmorType cosmeticArmor = (CosmeticArmorType) user.getCosmetic(InventoryUtils.BukkitCosmeticSlot(equipmentSlot));
-                    if (cosmeticArmor == null) continue;
-                    ItemStack item = user.getUserCosmeticItem(cosmeticArmor);
-                    if (item == null) continue;
-                    Pair<EnumWrappers.ItemSlot, ItemStack> pair = new Pair<>(InventoryUtils.itemBukkitSlot(cosmeticArmor.getEquipSlot()), item);
-                    armor.add(pair);
                 }
 
                 event.getPacket().getSlotStackPairLists().write(0, armor);

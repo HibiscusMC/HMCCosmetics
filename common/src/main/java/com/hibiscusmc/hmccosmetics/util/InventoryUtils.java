@@ -52,6 +52,17 @@ public class InventoryUtils {
         };
     }
 
+    public static CosmeticSlot getItemSlotToCosmeticSlot(final EnumWrappers.ItemSlot slot) {
+        return switch (slot) {
+            case HEAD -> CosmeticSlot.HELMET;
+            case CHEST -> CosmeticSlot.CHESTPLATE;
+            case LEGS -> CosmeticSlot.LEGGINGS;
+            case FEET -> CosmeticSlot.BOOTS;
+            case OFFHAND -> CosmeticSlot.OFFHAND;
+            case MAINHAND -> CosmeticSlot.MAINHAND;
+        };
+    }
+
     public static CosmeticSlot BukkitCosmeticSlot(EquipmentSlot slot) {
         return switch (slot) {
             case HAND -> CosmeticSlot.MAINHAND;
