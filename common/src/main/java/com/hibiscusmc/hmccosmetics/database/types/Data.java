@@ -31,29 +31,32 @@ public abstract class Data {
     // BACKPACK=colorfulbackpack&RRGGBB,HELMET=niftyhat,BALLOON=colorfulballoon,CHESTPLATE=niftychestplate
     @NotNull
     public final String serializeData(@NotNull CosmeticUser user) {
-        String data = "";
+        StringBuilder data = new StringBuilder();
         if (user.getHidden()) {
             if (shouldHiddenSave(user.getHiddenReason())) {
-                data = "HIDDEN=" + user.getHiddenReason();
+                data.append("HIDDEN=").append(user.getHiddenReason());
             }
         }
         for (Cosmetic cosmetic : user.getCosmetics()) {
             Color color = user.getCosmeticColor(cosmetic.getSlot());
             String input = cosmetic.getSlot() + "=" + cosmetic.getId();
             if (color != null) input = input + "&" + color.asRGB();
-            if (data.length() == 0) {
-                data = input;
+            if (data.isEmpty()) {
+                data.append(input);
                 continue;
             }
-            data = data + "," + input;
+            data.append(",").append(input);
         }
-        return data;
+        return data.toString();
+    }
+
+    public final Map<CosmeticSlot, Map<Cosmetic, Color>> deserializeData(CosmeticUser user, @NotNull String raw) {
+        return deserializeData(user, raw, Settings.isForcePermissionJoin());
     }
 
     @NotNull
-    public final Map<CosmeticSlot, Map<Cosmetic, Color>> deserializeData(CosmeticUser user, @NotNull String raw) {
+    public final Map<CosmeticSlot, Map<Cosmetic, Color>> deserializeData(CosmeticUser user, @NotNull String raw, boolean permissionCheck) {
         Map<CosmeticSlot, Map<Cosmetic, Color>> cosmetics = new HashMap<>();
-        boolean checkPermission = Settings.getForcePermissionJoin();
 
         String[] rawData = raw.split(",");
         for (String a : rawData) {
@@ -64,6 +67,7 @@ public abstract class Data {
             MessagesUtil.sendDebugMessages("First split (suppose slot) " + splitData[0]);
             if (splitData[0].equalsIgnoreCase("HIDDEN")) {
                 if (EnumUtils.isValidEnum(CosmeticUser.HiddenReason.class, splitData[1])) {
+                    if (Settings.isForceShowOnJoin()) continue;
                     Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> {
                         user.hideCosmetics(CosmeticUser.HiddenReason.valueOf(splitData[1]));
                     });
@@ -75,8 +79,8 @@ public abstract class Data {
                 String[] colorSplitData = splitData[1].split("&");
                 if (Cosmetics.hasCosmetic(colorSplitData[0])) cosmetic = Cosmetics.getCosmetic(colorSplitData[0]);
                 if (slot == null || cosmetic == null) continue;
-                if (cosmetic.requiresPermission() && checkPermission) {
-                    if (!user.getPlayer().hasPermission(cosmetic.getPermission())) {
+                if (permissionCheck && cosmetic.requiresPermission()) {
+                    if (user.getPlayer() != null && !user.getPlayer().hasPermission(cosmetic.getPermission())) {
                         continue;
                     }
                 }
@@ -84,8 +88,8 @@ public abstract class Data {
             } else {
                 if (Cosmetics.hasCosmetic(splitData[1])) cosmetic = Cosmetics.getCosmetic(splitData[1]);
                 if (slot == null || cosmetic == null) continue;
-                if (cosmetic.requiresPermission() && checkPermission) {
-                    if (!user.getPlayer().hasPermission(cosmetic.getPermission())) {
+                if (permissionCheck && cosmetic.requiresPermission()) {
+                    if (user.getPlayer() != null && !user.getPlayer().hasPermission(cosmetic.getPermission())) {
                         continue;
                     }
                 }
@@ -97,7 +101,7 @@ public abstract class Data {
         return cosmetics;
     }
 
-    private boolean shouldHiddenSave(CosmeticUser.@NotNull HiddenReason reason) {
+    private boolean shouldHiddenSave(CosmeticUser.HiddenReason reason) {
         switch (reason) {
             case EMOTE, NONE -> {
                 return false;

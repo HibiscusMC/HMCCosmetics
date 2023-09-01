@@ -2,12 +2,9 @@ package com.hibiscusmc.hmccosmetics.util;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.Settings;
-import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
 import com.hibiscusmc.hmccosmetics.hooks.Hooks;
-import com.hibiscusmc.hmccosmetics.hooks.placeholders.HMCPlaceholderExpansion;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.misc.Adventure;
-import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
@@ -26,14 +23,16 @@ import java.util.logging.Level;
 public class MessagesUtil {
 
     private static String prefix;
-    private static final HashMap<String, String> messages = new HashMap<>();
+    private static final HashMap<String, String> MESSAGES = new HashMap<>();
 
     public static void setup(@NotNull ConfigurationNode config) {
+        MESSAGES.clear();
+
         prefix = config.node("prefix").getString("");
         for (ConfigurationNode node : config.childrenMap().values()) {
             if (node.virtual()) continue;
             if (node.empty()) continue;
-            messages.put(node.key().toString(), node.getString());
+            MESSAGES.put(node.key().toString(), node.getString());
         }
      }
 
@@ -43,6 +42,7 @@ public class MessagesUtil {
 
     public static void sendMessage(Player player, String key) {
         Component finalMessage = processString(player, key);
+        if (finalMessage == null) return;
         Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.getInstance()).player(player);
 
         target.sendMessage(finalMessage);
@@ -58,6 +58,7 @@ public class MessagesUtil {
 
     public static void sendMessage(Player player, String key, TagResolver placeholder) {
         Component finalMessage = processString(player, key, placeholder);
+        if (finalMessage == null) return;
         Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.getInstance()).player(player);
 
         target.sendMessage(finalMessage);
@@ -65,6 +66,7 @@ public class MessagesUtil {
 
     public static void sendMessageNoKey(Player player, String message) {
         Component finalMessage = processStringNoKey(player, message);
+        if (finalMessage == null) return;
         Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.getInstance()).player(player);
 
         target.sendMessage(finalMessage);
@@ -72,6 +74,7 @@ public class MessagesUtil {
 
     public static void sendActionBar(Player player, String key) {
         Component finalMessage = processString(player, key);
+        if (finalMessage == null) return;
         Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.getInstance()).player(player);
 
         target.sendActionBar(finalMessage);
@@ -84,7 +87,7 @@ public class MessagesUtil {
     public static void sendTitle(Player player, String message, int fadein, int stay, int fadeout) {
         Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.getInstance()).player(player);
 
-        Title.Times times = Title.Times.times(Duration.ofMillis(WardrobeSettings.getTransitionFadeIn()), Duration.ofMillis(3000), Duration.ofMillis(1000));
+        Title.Times times = Title.Times.times(Duration.ofMillis(fadein), Duration.ofMillis(stay), Duration.ofMillis(fadeout));
         Title title = Title.title(processStringNoKey(player, message), Component.empty(), times);
 
         target.showTitle(title);
@@ -96,10 +99,10 @@ public class MessagesUtil {
 
     @Nullable
     public static Component processString(Player player, String key, TagResolver placeholders) {
-        if (!messages.containsKey(key)) return null;
-        if (messages.get(key) == null) return null;
-        String message = messages.get(key);
-        if (Hooks.isActiveHook("PlaceholderAPI") && player != null) message = PlaceholderAPI.setPlaceholders(player, message);
+        if (!MESSAGES.containsKey(key)) return null;
+        if (MESSAGES.get(key) == null) return null;
+        String message = MESSAGES.get(key);
+        if (player != null) message = Hooks.processPlaceholders(player, message);
         message = message.replaceAll("%prefix%", prefix);
         if (placeholders != null ) {
             return Adventure.MINI_MESSAGE.deserialize(message, placeholders);
@@ -120,7 +123,7 @@ public class MessagesUtil {
     @NotNull
     public static Component processStringNoKey(Player player, String message, TagResolver placeholders) {
         message = message.replaceAll("%prefix%", prefix);
-        if (Hooks.isActiveHook("PlaceholderAPI") && player != null) message = PlaceholderAPI.setPlaceholders(player, message);
+        if (player != null) message = Hooks.processPlaceholders(player, message);
         if (placeholders != null ) {
             return Adventure.MINI_MESSAGE.deserialize(message, placeholders);
         }
@@ -129,7 +132,7 @@ public class MessagesUtil {
 
     public static String processStringNoKeyString(Player player, String message) {
         message = message.replaceAll("%prefix%", prefix);
-        if (Hooks.isActiveHook("PlaceholderAPI") && player != null) message = PlaceholderAPI.setPlaceholders(player, message);
+        if (player != null) message = Hooks.processPlaceholders(player, message);
         return message;
     }
 
@@ -138,7 +141,7 @@ public class MessagesUtil {
     }
 
     public static void sendDebugMessages(String message, Level level) {
-        if (!Settings.isDebugEnabled() && level == Level.INFO) return;
+        if (!Settings.isDebugMode() && level == Level.INFO) return;
         HMCCosmeticsPlugin.getInstance().getLogger().log(level, message);
     }
 }

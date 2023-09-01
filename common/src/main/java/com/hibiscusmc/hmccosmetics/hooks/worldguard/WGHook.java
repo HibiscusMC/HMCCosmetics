@@ -17,21 +17,26 @@ public class WGHook {
     /**
      * @implNote Please use {@link #getCosmeticEnableFlag()} instead
      */
-    public static StateFlag COSMETIC_ENABLE_FLAG;
+    private static StateFlag COSMETIC_ENABLE_FLAG;
+
+    private static StateFlag EMOTES_ENABLE_FLAG;
 
     /**
      * @implNote Please use {@link #getCosmeticWardrobeFlag()} instead
      */
-    public static StringFlag COSMETIC_WARDROBE_FLAG;
+    private static StringFlag COSMETIC_WARDROBE_FLAG;
 
     public WGHook() {
         FlagRegistry registry = WorldGuard.getInstance().getFlagRegistry();
         try {
             StateFlag cosmeticFlag = new StateFlag("cosmetic-enable", false);
+            StateFlag emoteFlag = new StateFlag("emotes-enable", false);
             StringFlag wardrobeFlag = new StringFlag("cosmetic-wardrobe");
             registry.register(cosmeticFlag);
+            registry.register(emoteFlag);
             registry.register(wardrobeFlag);
             COSMETIC_ENABLE_FLAG = cosmeticFlag;
+            EMOTES_ENABLE_FLAG = emoteFlag;
             COSMETIC_WARDROBE_FLAG = wardrobeFlag;
         } catch (FlagConflictException e) {
             Flag<?> existing = registry.get("cosmetic-enable");
@@ -51,6 +56,14 @@ public class WGHook {
      */
     public static StateFlag getCosmeticEnableFlag() {
         return COSMETIC_ENABLE_FLAG;
+    }
+
+    /**
+     * Gets the emotes enable {@link StateFlag}
+     * @return The emotes enable {@link StateFlag}
+     */
+    public static StateFlag getEmotesEnableFlag() {
+        return EMOTES_ENABLE_FLAG;
     }
 
     /**

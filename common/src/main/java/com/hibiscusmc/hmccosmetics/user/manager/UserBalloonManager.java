@@ -1,16 +1,16 @@
 package com.hibiscusmc.hmccosmetics.user.manager;
 
-import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
+import com.hibiscusmc.hmccosmetics.hooks.Hooks;
 import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
-import com.hibiscusmc.hmccosmetics.util.PlayerUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
 import com.ticxo.modelengine.api.ModelEngineAPI;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
+import lombok.Getter;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
@@ -27,19 +27,18 @@ public class UserBalloonManager {
 
     private BalloonType balloonType;
     private CosmeticBalloonType cosmeticBalloonType;
-    private final int balloonID;
-    private final UUID uniqueID;
+    @Getter
+    private UserBalloonPufferfish pufferfish;
     private final ArmorStand modelEntity;
 
-    public UserBalloonManager(@NotNull Location location) {
-        this.uniqueID = UUID.randomUUID();
-        this.balloonID = NMSHandlers.getHandler().getNextEntityId();
+    public UserBalloonManager(CosmeticUser user, @NotNull Location location) {
+        this.pufferfish = new UserBalloonPufferfish(user.getUniqueId(), NMSHandlers.getHandler().getNextEntityId(), UUID.randomUUID());
         this.modelEntity = NMSHandlers.getHandler().getMEGEntity(location.add(Settings.getBalloonOffset()));
     }
 
     public void spawnModel(@NotNull CosmeticBalloonType cosmeticBalloonType, Color color) {
         // redo this
-        if (cosmeticBalloonType.getModelName() != null && HMCCosmeticsPlugin.hasModelEngine()) {
+        if (cosmeticBalloonType.getModelName() != null && Hooks.isActiveHook("ModelEngine")) {
             balloonType = BalloonType.MODELENGINE;
         } else {
             if (cosmeticBalloonType.getItem() != null) {
@@ -136,10 +135,10 @@ public class UserBalloonManager {
 
 
     public int getPufferfishBalloonId() {
-        return balloonID;
+        return pufferfish.getPufferFishEntityId();
     }
     public UUID getPufferfishBalloonUniqueId() {
-        return uniqueID;
+        return pufferfish.getUuid();
     }
 
     public UUID getModelUnqiueId() {
@@ -172,7 +171,9 @@ public class UserBalloonManager {
 
     public void sendLeashPacket(int entityId) {
         if (cosmeticBalloonType == null) return;
-        if (cosmeticBalloonType.isShowLead()) PacketManager.sendLeashPacket(getPufferfishBalloonId(), entityId, getLocation());
+        if (cosmeticBalloonType.isShowLead()) {
+            PacketManager.sendLeashPacket(getPufferfishBalloonId(), entityId, getLocation());
+        }
     }
 
     public enum BalloonType {

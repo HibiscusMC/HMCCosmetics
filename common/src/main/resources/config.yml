@@ -6,7 +6,7 @@ config-version: 1
 default-menu: defaultmenu
 debug-mode: false
 database-settings:
-  type: sqlite #MYSQL, SQLite, INTERNAL (not recommended!)
+  type: sqlite #MYSQL, SQLite
   mysql:
     database: database
     password: cherryBomb
@@ -22,12 +22,25 @@ cosmetic-settings:
 
   unapply-on-death: false # If when a player dies, their cosmetics should be unapplied. If this is true, use hmccosmetics.unapplydeath.bypass to bypass
   force-permission-join: true # Checks a player permission if they can have a cosmetic when they join the server.
+  force-show-join: false # If the plugin should force show a player's cosmetics when they join the server.
 
   emote-distance: -3 # This shows how far away the camera should be while a player is doing an emote. Negative is behind player.
   emote-block-check: true # If the server should check if the block is open where the camera is placed (prevents players viewing through blocks)
   emote-air-check: true # Check if there is air under a player, if there is, don't play emote
   emote-damage-leave: true # If the player should leave the emote when they take damage
   emote-invincible: false # If the player should not take damage while doing an emote
+  # If a player should be put into camera mode when looking at an emote. Highly recommend keeping it as true.
+  emote-camera: true
+  # If a player should be able to move in an emote. This option really only affects if "emote-camera" is false
+  emote-move: false
+  # This make it so it always sends the riding packets for the backpack. This sends more packets but is more reliable for servers which modify player passengers.
+  backpack-force-riding-packet: false
+  # This helps reduce the amount of packets sent for packet entities, but reduces accuracy of the entity. This is in milliseconds. -1 to disable.
+  # This is useful for servers with a lot of backpacks, as they are passengers, which means the client will update their position automatically within an area where the entity is located.
+  entity-cooldown-teleport-packet: 500
+  # This forces the offhand to always show the cosmetic. False means it will only show when the slot is empty.
+  # There is a small visual blip for a tick when you put a new item in the offhand slot, hence why its disabled by default.
+  offhand-always-show: false
 
   helmet-add-enchantments: false # If the plugin should keep enchants on helmets. This is useful as some enchantments are client side only.
   chest-add-enchantments: false # If the plugin should keep enchants on chestplate. This is useful as some enchantments are client side only.
@@ -47,6 +60,25 @@ cosmetic-settings:
     x: 0.5
     y: 3
     z: 0.5
+menu-settings:
+  shading:
+    # Below is the shading mechanism behind cosmetic items. This is a bit complicated, but it allows for a lot of customization.
+    # The shading is done through the title and by shifting textures around. This is done by offsets.
+    # Only Oraxen is support by default. Vanilla can't properly handle it without a lot of unicodes and ItemsAdder adds weird offsets and decolors it. (This is why it is disabled by default)
+    enabled: false # Default of menus having shading. This can be toggled individually in menus with "shading: true/false"
+    first-row-shift: "<s:-169>" # Oraxen: "<s:-169>"
+    sequent-row-shift: " <s:-169>" # Oraxen: " <s:-169>" (Space is important here!)
+    individual-column-shift: "<s:-3>" # Oraxen: "<s:-3>"
+    background: "<g:shade_row_<row>:colorable> " # Oraxen: "<g:shade_row_<row>:colorable> 
+    clear-background: "<g:clear_row_<row>:colorable> " # Oraxen: "<g:clear_row_<row>:colorable> "
+    #These use MiniMessage for color! https://docs.advntr.dev/minimessage/format.html#color
+    equipped-cosmetic-color: "<yellow>"
+    equipable-cosmetic-color: "<green>"
+    locked-cosmetic-color: "<red>"
+  cosmetic-type:
+    # This allows you to specify if it should require a special click type for the interaction to work.
+    equip-click: "ANY" # ANY or ClickType, https://jd.papermc.io/paper/1.20/org/bukkit/event/inventory/ClickType.html
+    unequip-click: "ANY" # ANY or ClickType, https://jd.papermc.io/paper/1.20/org/bukkit/event/inventory/ClickType.html
 dye-menu:
   # If you use ItemsAdder, set this to "§f:offset_-8::dye_menu:"
   # If you use Oraxen, set this to "<glyph:neg_shift_8><glyph:dye_menu>"
@@ -63,8 +95,6 @@ hook-settings:
     # Requires restart to apply changes.
     player-move-check: true
 wardrobe:
-  # spawn static wardrobe if in this radius of wardrobe-location
-  static-radius: 10
   # how much yaw should change per tick, set to 0 for none
   rotation-speed: 3
   # Applies a pumpkin for an overlay of the player while in the wardrobe.
@@ -73,6 +103,9 @@ wardrobe:
   return-last-location: false
   # If players in wardrobes should be able to equip any cosmetic, regardless of permission (Cosmetics they do not have access to will be removed when they leave the wardrobe)
   unchecked-wardrobe-cosmetics: false
+
+  menu-options:
+    enter-open-menu: false # If the menu should open when a player enters a wardrobe
 
   gamemode-options:
     exit-gamemode-enabled: false # Setting this to false will set the gamemode the player came in as. True sets to exit-gamemode gamemode
@@ -96,6 +129,8 @@ wardrobe:
     title-fade-out: 1000 # milliseconds
   wardrobes:
     default:
+      distance: -1 # Distance in blocks that a player can interact with the wardrobe. -1 to ignore.
+      permission: "hmccosmetics.wardrobe.default" # Permission required to use the wardrobe.
       npc-location:
         world: "world"
         x: 0

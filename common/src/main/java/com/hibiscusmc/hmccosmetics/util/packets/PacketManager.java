@@ -9,6 +9,7 @@ import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
+import com.hibiscusmc.hmccosmetics.util.InventoryUtils;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.PlayerUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.wrappers.WrapperPlayServerNamedEntitySpawn;
@@ -17,7 +18,6 @@ import com.hibiscusmc.hmccosmetics.util.packets.wrappers.WrapperPlayServerRelEnt
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
@@ -30,6 +30,15 @@ import java.util.List;
 import java.util.UUID;
 
 public class PacketManager extends BasePacket {
+
+    public static void sendEntitySpawnPacket(
+            final @NotNull Location location,
+            final int entityId,
+            final EntityType entityType,
+            final UUID uuid
+            ) {
+        sendEntitySpawnPacket(location, entityId, entityType, uuid, getViewers(location));
+    }
 
     public static void sendEntitySpawnPacket(
             final @NotNull Location location,
@@ -97,7 +106,7 @@ public class PacketManager extends BasePacket {
             CosmeticSlot cosmeticSlot,
             List<Player> sendTo
     ) {
-        equipmentSlotUpdate(user.getPlayer().getEntityId(), user, cosmeticSlot, sendTo);
+        equipmentSlotUpdate(user.getEntity().getEntityId(), user, cosmeticSlot, sendTo);
     }
 
     public static void equipmentSlotUpdate(
@@ -108,22 +117,28 @@ public class PacketManager extends BasePacket {
     ) {
         if (cosmeticSlot == CosmeticSlot.BACKPACK || cosmeticSlot == CosmeticSlot.BALLOON || cosmeticSlot == CosmeticSlot.EMOTE) return;
 
-        NMSHandlers.getHandler().equipmentSlotUpdate(entityId, user, cosmeticSlot, sendTo);
+        NMSHandlers.getHandler().equipmentSlotUpdate(entityId, InventoryUtils.getEquipmentSlot(cosmeticSlot), user.getUserCosmeticItem(cosmeticSlot), sendTo);
     }
 
-    public static void armorStandMetaPacket(
-            @NotNull Entity entity,
+    public static void sendArmorstandMetadata(
+            int entityId,
             List<Player> sendTo
     ) {
         PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
         packet.getModifier().writeDefaults();
-        packet.getIntegers().write(0, entity.getEntityId());
-        WrappedDataWatcher metadata = new WrappedDataWatcher();
-        if (metadata == null) return;
-        // 0x10 & 0x20
-        metadata.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(0, WrappedDataWatcher.Registry.get(Byte.class)), (byte) 0x20);
-        metadata.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(15, WrappedDataWatcher.Registry.get(Byte.class)), (byte) 0x10);
-        packet.getWatchableCollectionModifier().write(0, metadata.getWatchableObjects());
+        packet.getIntegers().write(0, entityId);
+        WrappedDataWatcher wrapper = new WrappedDataWatcher();
+
+        if (NMSHandlers.getVersion().contains("v1_18_R2") || NMSHandlers.getVersion().contains("v1_19_R1")) {
+            wrapper.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(0, WrappedDataWatcher.Registry.get(Byte.class)), (byte) 0x20);
+            wrapper.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(15, WrappedDataWatcher.Registry.get(Byte.class)), (byte) 0x10);
+            packet.getWatchableCollectionModifier().write(0, wrapper.getWatchableObjects());
+        } else {
+            final List<WrappedDataValue> wrappedDataValueList = Lists.newArrayList();
+            wrappedDataValueList.add(new WrappedDataValue(0, WrappedDataWatcher.Registry.get(Byte.class), (byte) 0x20));
+            wrappedDataValueList.add(new WrappedDataValue(15, WrappedDataWatcher.Registry.get(Byte.class), (byte) 0x10));
+            packet.getDataValueCollectionModifier().write(0, wrappedDataValueList);
+        }
         for (Player p : sendTo) sendPacket(p, packet);
     }
 
@@ -136,7 +151,7 @@ public class PacketManager extends BasePacket {
         packet.getIntegers().write(0, entityId);
         WrappedDataWatcher wrapper = new WrappedDataWatcher();
 
-        if (NMSHandlers.getVersion().contains("v1_17_R1") || NMSHandlers.getVersion().contains("v1_18_R2") || NMSHandlers.getVersion().contains("v1_19_R1")) {
+        if (NMSHandlers.getVersion().contains("v1_18_R2") || NMSHandlers.getVersion().contains("v1_19_R1")) {
             wrapper.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(0, WrappedDataWatcher.Registry.get(Byte.class)), (byte) 0x20);
             packet.getWatchableCollectionModifier().write(0, wrapper.getWatchableObjects());
         } else {
@@ -145,7 +160,29 @@ public class PacketManager extends BasePacket {
             packet.getDataValueCollectionModifier().write(0, wrappedDataValueList);
         }
         for (Player p : sendTo) sendPacket(p, packet);
+    }
 
+    public static void sendCloudEffect(
+            int entityId,
+            List<Player> sendTo
+    ) {
+        PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
+        packet.getModifier().writeDefaults();
+        packet.getIntegers().write(0, entityId);
+        WrappedDataWatcher wrapper = new WrappedDataWatcher();
+
+        if (NMSHandlers.getVersion().contains("v1_18_R2") || NMSHandlers.getVersion().contains("v1_19_R1")) {
+            wrapper.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(0, WrappedDataWatcher.Registry.get(Byte.class)), (byte) 0x20);
+            wrapper.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(8, WrappedDataWatcher.Registry.get(Float.class)), 0f);
+            packet.getWatchableCollectionModifier().write(0, wrapper.getWatchableObjects());
+        } else {
+            final List<WrappedDataValue> wrappedDataValueList = Lists.newArrayList();
+            wrappedDataValueList.add(new WrappedDataValue(0, WrappedDataWatcher.Registry.get(Byte.class), (byte) 0x20));
+            wrappedDataValueList.add(new WrappedDataValue(8, WrappedDataWatcher.Registry.get(Float.class), 0f));
+            //wrappedDataValueList.add(new WrappedDataValue(11, WrappedDataWatcher.Registry.get(Integer.class), 21));
+            packet.getDataValueCollectionModifier().write(0, wrappedDataValueList);
+        }
+        for (Player p : sendTo) sendPacket(p, packet);
     }
 
     public static void sendLookPacket(
@@ -221,6 +258,25 @@ public class PacketManager extends BasePacket {
     /**
      * Mostly to deal with backpacks, this deals with entities riding other entities.
      * @param mountId The entity that is the "mount", ex. a player
+     * @param passengerIds The entities that are riding the mount, ex. a armorstand for a backpack
+     * @param sendTo Whom to send the packet to
+     */
+    public static void sendRidingPacket(
+            final int mountId,
+            final int[] passengerIds,
+            final @NotNull List<Player> sendTo
+    ) {
+        PacketContainer packet = new PacketContainer(PacketType.Play.Server.MOUNT);
+        packet.getIntegers().write(0, mountId);
+        packet.getIntegerArrays().write(0, passengerIds);
+        for (final Player p : sendTo) {
+            sendPacket(p, packet);
+        }
+    }
+
+    /**
+     * Mostly to deal with backpacks, this deals with entities riding other entities.
+     * @param mountId The entity that is the "mount", ex. a player
      * @param passengerId The entity that is riding the mount, ex. a armorstand for a backpack
      * @param sendTo Whom to send the packet to
      */
@@ -229,12 +285,7 @@ public class PacketManager extends BasePacket {
             final int passengerId,
             final @NotNull List<Player> sendTo
     ) {
-        PacketContainer packet = new PacketContainer(PacketType.Play.Server.MOUNT);
-        packet.getIntegers().write(0, mountId);
-        packet.getIntegerArrays().write(0, new int[]{passengerId});
-        for (final Player p : sendTo) {
-            sendPacket(p, packet);
-        }
+        sendRidingPacket(mountId, new int[] {passengerId}, sendTo);
     }
 
     /**
@@ -245,6 +296,18 @@ public class PacketManager extends BasePacket {
     public static void sendEntityDestroyPacket(final int entityId, @NotNull List<Player> sendTo) {
         PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_DESTROY);
         packet.getModifier().write(0, new IntArrayList(new int[]{entityId}));
+        for (final Player p : sendTo) sendPacket(p, packet);
+    }
+
+    /**
+     * Destroys an entity from a player
+     * @param sendTo The players the packet should be sent to
+     */
+    public static void sendEntityDestroyPacket(final List<Integer> ids, @NotNull List<Player> sendTo) {
+        PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_DESTROY);
+        IntArrayList entities = new IntArrayList(new int[]{});
+        for (int id : ids) entities.add(id);
+        packet.getModifier().write(0, entities);
         for (final Player p : sendTo) sendPacket(p, packet);
     }
 
@@ -306,8 +369,8 @@ public class PacketManager extends BasePacket {
         WrappedGameProfile wrappedGameProfile = new WrappedGameProfile(uuid, name);
         WrappedSignedProperty skinData = PlayerUtils.getSkin(skinnedPlayer);
         if (skinData != null) wrappedGameProfile.getProperties().put("textures", skinData);
-        // For sor some reason 1.19.2 handles it on the 0 field index, every other verison handles it on the 1
-        if (NMSHandlers.getVersion().contains("v1_19_R1")) {
+        // For sor some reason <1.19.2 handles it on the 0 field index, newer versions handles it on the 1
+        if (NMSHandlers.getVersion().contains("v1_18_R2") || NMSHandlers.getVersion().contains("v1_19_R1")) {
             info.getHandle().getPlayerInfoDataLists().write(0, Collections.singletonList(new PlayerInfoData(
                     wrappedGameProfile,
                     0,
@@ -350,9 +413,16 @@ public class PacketManager extends BasePacket {
         packet.getModifier().writeDefaults();
         packet.getIntegers().write(0, playerId);
         WrappedDataWatcher wrapper = new WrappedDataWatcher();
-        wrapper.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(17, WrappedDataWatcher.Registry.get(Byte.class)), mask);
-        wrapper.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(15, WrappedDataWatcher.Registry.get(Byte.class)), (byte) 0x10);
-        packet.getWatchableCollectionModifier().write(0, wrapper.getWatchableObjects());
+
+        if (NMSHandlers.getVersion().contains("v1_18_R2") || NMSHandlers.getVersion().contains("v1_19_R1")) {
+            wrapper.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(17, WrappedDataWatcher.Registry.get(Byte.class)), mask);
+            packet.getWatchableCollectionModifier().write(0, wrapper.getWatchableObjects());
+        } else {
+            final List<WrappedDataValue> wrappedDataValueList = Lists.newArrayList();
+            wrappedDataValueList.add(new WrappedDataValue(17, WrappedDataWatcher.Registry.get(Byte.class), mask));
+            packet.getDataValueCollectionModifier().write(0, wrappedDataValueList);
+        }
+
         for (final Player p : sendTo) {
             sendPacket(p, packet);
         }
@@ -364,13 +434,15 @@ public class PacketManager extends BasePacket {
      * @param uuid What is the fake player UUID
      * @param sendTo Whom to send the packet to
      */
+    @SuppressWarnings("deprecation")
     public static void sendRemovePlayerPacket(
             final Player player,
             final UUID uuid,
             final List<Player> sendTo
     ) {
-        if (NMSHandlers.getVersion().contains("v1_17_R1") || NMSHandlers.getVersion().contains("v1_18_R2") || NMSHandlers.getVersion().contains("v1_19_R1")) {
+        if (NMSHandlers.getVersion().contains("v1_18_R2") || NMSHandlers.getVersion().contains("v1_19_R1")) {
             WrapperPlayServerPlayerInfo info = new WrapperPlayServerPlayerInfo();
+            // Remove player is deprecated on 1.19.3+, but we still need to support 1.18.2
             info.setAction(EnumWrappers.PlayerInfoAction.REMOVE_PLAYER);
 
             String name = "Mannequin-" + player.getEntityId();
@@ -468,18 +540,9 @@ public class PacketManager extends BasePacket {
         }
     }
 
-    public static void sendMovePacket(
-            final int entityId,
-            final Location from,
-            final Location to,
-            final boolean onGround
-    ) {
-        sendMovePacket(entityId, from, to, onGround, getViewers(to));
-    }
-
     @NotNull
     public static List<Player> getViewers(Location location) {
-        ArrayList<Player> viewers = new ArrayList();
+        ArrayList<Player> viewers = new ArrayList<>();
         if (Settings.getViewDistance() <= 0) {
             viewers.addAll(location.getWorld().getPlayers());
         } else {

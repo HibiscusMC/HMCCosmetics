@@ -1,10 +1,10 @@
 package com.hibiscusmc.hmccosmetics.config;
 
+import lombok.Getter;
 import org.spongepowered.configurate.ConfigurationNode;
 
 public class DatabaseSettings {
 
-    //private static final String DATABASE_SETTINGS_PATH = "cosmetic-settings";
     private static final String DATABASE_TYPE_PATH = "type";
     private static final String MYSQL_DATABASE_SETTINGS = "mysql";
 
@@ -17,18 +17,24 @@ public class DatabaseSettings {
     private static final String ENABLE_DELAY = "enabled";
     private static final String DELAY_LENGTH = "delay";
 
+    @Getter
     private static String databaseType;
+    @Getter
     private static String database;
+    @Getter
     private static String password;
+    @Getter
     private static String host;
+    @Getter
     private static String username;
+    @Getter
     private static int port;
+    @Getter
     private static boolean enabledDelay;
+    @Getter
     private static int delayLength;
 
     public static void load(ConfigurationNode source) {
-        //ConfigurationNode databaseSettings = source.node(DATABASE_SETTINGS_PATH);
-
         databaseType = source.node(DATABASE_TYPE_PATH).getString();
 
         ConfigurationNode mySql = source.node(MYSQL_DATABASE_SETTINGS);
@@ -43,37 +49,5 @@ public class DatabaseSettings {
 
         enabledDelay = delay.node(ENABLE_DELAY).getBoolean(false);
         delayLength = delay.node(DELAY_LENGTH).getInt(2);
-    }
-
-    public static String getDatabaseType() {
-        return databaseType;
-    }
-
-    public static String getDatabase() {
-        return database;
-    }
-
-    public static String getPassword() {
-        return password;
-    }
-
-    public static String getHost() {
-        return host;
-    }
-
-    public static String getUsername() {
-        return username;
-    }
-
-    public static int getPort() {
-        return port;
-    }
-
-    public static boolean isEnabledDelay() {
-        return enabledDelay;
-    }
-
-    public static int getDelayLength() {
-        return delayLength;
     }
 }

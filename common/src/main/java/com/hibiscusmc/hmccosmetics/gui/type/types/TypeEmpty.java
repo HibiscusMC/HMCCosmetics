@@ -4,7 +4,6 @@ import com.hibiscusmc.hmccosmetics.gui.action.Actions;
 import com.hibiscusmc.hmccosmetics.gui.type.Type;
 import com.hibiscusmc.hmccosmetics.hooks.Hooks;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
-import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -43,6 +42,12 @@ public class TypeEmpty extends Type {
                 if (clickType.isRightClick()) {
                     if (!actionConfig.node("right-click").virtual()) actionStrings.addAll(actionConfig.node("right-click").getList(String.class));
                 }
+                if (clickType.equals(ClickType.SHIFT_LEFT)) {
+                    if (!actionConfig.node("shift-left-click").virtual()) actionStrings.addAll(actionConfig.node("shift-left-click").getList(String.class));
+                }
+                if (clickType.equals(ClickType.SHIFT_RIGHT)) {
+                    if (!actionConfig.node("shift-right-click").virtual()) actionStrings.addAll(actionConfig.node("shift-right-click").getList(String.class));
+                }
             }
 
             // We run the actions once we got the raw strings from the config.
@@ -58,11 +63,13 @@ public class TypeEmpty extends Type {
         List<String> processedLore = new ArrayList<>();
         ItemMeta itemMeta = itemStack.getItemMeta();
 
+        if (itemMeta.hasDisplayName()) {
+            itemMeta.setDisplayName(Hooks.processPlaceholders(user.getPlayer(), itemMeta.getDisplayName()));
+        }
+
         if (itemMeta.hasLore()) {
             for (String loreLine : itemMeta.getLore()) {
-                if (Hooks.isActiveHook("PlaceholderAPI"))
-                    loreLine = PlaceholderAPI.setPlaceholders(user.getPlayer(), loreLine);
-                processedLore.add(loreLine);
+                processedLore.add(Hooks.processPlaceholders(user.getPlayer(), loreLine));
             }
         }
         itemStack.setItemMeta(itemMeta);

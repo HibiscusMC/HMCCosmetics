@@ -6,7 +6,10 @@ import org.bukkit.Bukkit;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.UUID;
 import java.util.logging.Level;
 
@@ -71,7 +74,7 @@ public class SQLiteData extends SQLData {
             Class.forName("org.sqlite.JDBC");
             connection = DriverManager.getConnection("jdbc:sqlite:" + dataFolder);
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -80,9 +83,7 @@ public class SQLiteData extends SQLData {
     @Override
     public PreparedStatement preparedStatement(String query) {
         PreparedStatement ps = null;
-        if (!isConnectionOpen()) {
-            HMCCosmeticsPlugin.getInstance().getLogger().info("Connection is not open");
-        }
+        if (!isConnectionOpen()) MessagesUtil.sendDebugMessages("Connection is not open");
 
         try {
             ps = connection.prepareStatement(query);

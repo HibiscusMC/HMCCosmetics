@@ -5,20 +5,21 @@ plugins {
 
 dependencies {
     compileOnly("com.mojang:authlib:1.5.25")
-    compileOnly("org.spigotmc:spigot-api:1.17.1-R0.1-SNAPSHOT")
+    compileOnly("org.spigotmc:spigot-api:1.18.2-R0.1-SNAPSHOT")
     compileOnly("org.jetbrains:annotations:23.0.0")
     compileOnly("com.comphenix.protocol:ProtocolLib:5.0.0")
-    compileOnly("me.clip:placeholderapi:2.11.1")
+    compileOnly("me.clip:placeholderapi:2.11.3")
     compileOnly("com.ticxo:modelengine:R3.0.1")
-    compileOnly("com.github.oraxen:oraxen:-SNAPSHOT")
+    compileOnly("com.github.oraxen:oraxen:1.160.0")
     compileOnly("com.github.LoneDev6:API-ItemsAdder:3.2.5")
     compileOnly("com.mineinabyss:geary-papermc:0.24-SNAPSHOT")
-    compileOnly("com.hibiscus:hmccolor:0.3-SNAPSHOT")
+    //compileOnly("com.hibiscus:hmccolor:0.3-SNAPSHOT") USE LIB PROVIDED FILE
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.1.0-SNAPSHOT")
     compileOnly("it.unimi.dsi:fastutil:8.5.11")
     compileOnly("io.lumine:Mythic-Dist:5.2.1")
     compileOnly("com.denizenscript:denizen:1.2.7-SNAPSHOT")
-    compileOnly("com.github.LeonMangler:SuperVanish:6.2.6-4")
+    compileOnly("com.github.LeonMangler:SuperVanish:6.2.17")
+    compileOnly("net.Indyuce:MMOItems-API:6.9.4-SNAPSHOT")
     compileOnlyApi("LibsDisguises:LibsDisguises:10.0.21") {
         exclude("org.spigotmc", "spigot")
     }
@@ -32,7 +33,7 @@ dependencies {
     implementation("org.bstats:bstats-bukkit:3.0.0")
     implementation("com.jeff_media:SpigotUpdateChecker:3.0.0")
     implementation("com.owen1212055:particlehelper:1.0.0-SNAPSHOT")
-    implementation("com.ticxo:PlayerAnimator:R1.2.6")
+    implementation("com.ticxo.playeranimator:PlayerAnimator:R1.2.7")
     implementation("com.github.BG-Software-LLC:CommentedConfiguration:-SNAPSHOT")
     //implementation("com.ticxo.playeranimator:PlayerAnimator:R1.2.5")
 }

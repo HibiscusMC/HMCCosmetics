@@ -2,11 +2,15 @@ package com.hibiscusmc.hmccosmetics.database.types;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.DatabaseSettings;
+import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Properties;
 import java.util.UUID;
 
@@ -123,9 +127,7 @@ public class MySQLData extends SQLData {
     public PreparedStatement preparedStatement(String query) {
         PreparedStatement ps = null;
 
-        if (!isConnectionOpen()) {
-            HMCCosmeticsPlugin.getInstance().getLogger().info("Connection is not open");
-        }
+        if (!isConnectionOpen()) MessagesUtil.sendDebugMessages("Connection is not open");
 
         try {
             if (connection == null) throw new NullPointerException("Connection is null");

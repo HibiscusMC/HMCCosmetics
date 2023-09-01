@@ -1,6 +1,7 @@
 package com.hibiscusmc.hmccosmetics.gui.type.types;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
+import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.config.serializer.ItemSerializer;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
@@ -11,9 +12,6 @@ import com.hibiscusmc.hmccosmetics.gui.type.Type;
 import com.hibiscusmc.hmccosmetics.hooks.Hooks;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
-import com.hibiscusmc.hmccosmetics.util.misc.StringUtils;
-import com.hibiscusmc.hmccosmetics.util.misc.Utils;
-import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -25,10 +23,8 @@ import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 
-import java.lang.invoke.TypeDescriptor;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class TypeCosmetic extends Type {
 
@@ -38,22 +34,44 @@ public class TypeCosmetic extends Type {
 
     @Override
     public void run(CosmeticUser user, @NotNull ConfigurationNode config, ClickType clickType) {
-        if (config.node("cosmetic").virtual()) return;
+        MessagesUtil.sendDebugMessages("Running Cosmetic Click Type");
+        if (config.node("cosmetic").virtual()) {
+            MessagesUtil.sendDebugMessages("Cosmetic Config Field Virtual");
+            return;
+        }
         String cosmeticName = config.node("cosmetic").getString();
         Cosmetic cosmetic = Cosmetics.getCosmetic(cosmeticName);
         Player player = user.getPlayer();
         if (cosmetic == null) {
+            MessagesUtil.sendDebugMessages("No Cosmetic Found");
             MessagesUtil.sendMessage(player, "invalid-cosmetic");
             return;
         }
 
         if (!user.canEquipCosmetic(cosmetic)) {
+            MessagesUtil.sendDebugMessages("No Cosmetic Permission");
             MessagesUtil.sendMessage(player, "no-cosmetic-permission");
+            return;
+        }
+
+        boolean isUnEquippingCosmetic = false;
+        if (user.getCosmetic(cosmetic.getSlot()) == cosmetic) isUnEquippingCosmetic = true;
+
+        String requiredClick;
+        if (isUnEquippingCosmetic) requiredClick = Settings.getCosmeticUnEquipClickType();
+        else requiredClick = Settings.getCosmeticEquipClickType();
+
+        MessagesUtil.sendDebugMessages("Required click type: " + requiredClick);
+        MessagesUtil.sendDebugMessages("Click type: " + clickType.name());
+        if (!requiredClick.equalsIgnoreCase("ANY") && !requiredClick.equalsIgnoreCase(clickType.name())) {
+            MessagesUtil.sendMessage(user.getPlayer(), "invalid-click-type");
             return;
         }
 
         List<String> actionStrings = new ArrayList<>();
         ConfigurationNode actionConfig = config.node("actions");
+
+        MessagesUtil.sendDebugMessages("Running Actions");
 
         try {
             if (!actionConfig.node("any").virtual()) actionStrings.addAll(actionConfig.node("any").getList(String.class));
@@ -65,9 +83,15 @@ public class TypeCosmetic extends Type {
                 if (clickType.isRightClick()) {
                     if (!actionConfig.node("right-click").virtual()) actionStrings.addAll(actionConfig.node("right-click").getList(String.class));
                 }
+                if (clickType.equals(ClickType.SHIFT_LEFT)) {
+                    if (!actionConfig.node("shift-left-click").virtual()) actionStrings.addAll(actionConfig.node("shift-left-click").getList(String.class));
+                }
+                if (clickType.equals(ClickType.SHIFT_RIGHT)) {
+                    if (!actionConfig.node("shift-right-click").virtual()) actionStrings.addAll(actionConfig.node("shift-right-click").getList(String.class));
+                }
             }
 
-            if (user.getCosmetic(cosmetic.getSlot()) == cosmetic) {
+            if (isUnEquippingCosmetic) {
                 if (!actionConfig.node("on-unequip").virtual()) actionStrings.addAll(actionConfig.node("on-unequip").getList(String.class));
                 MessagesUtil.sendDebugMessages("on-unequip");
                 user.removeCosmeticSlot(cosmetic);
@@ -85,7 +109,7 @@ public class TypeCosmetic extends Type {
             Actions.runActions(user, actionStrings);
 
         } catch (SerializationException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
         // Fixes issue with offhand cosmetics not appearing. Yes, I know this is dumb
         Runnable run = () -> user.updateCosmetic(cosmetic.getSlot());
@@ -95,6 +119,7 @@ public class TypeCosmetic extends Type {
             }
         }
         run.run();
+        MessagesUtil.sendDebugMessages("Finished Type Click Run");
     }
 
     @Override
@@ -152,10 +177,13 @@ public class TypeCosmetic extends Type {
     private ItemMeta processLoreLines(CosmeticUser user, @NotNull ItemMeta itemMeta) {
         List<String> processedLore = new ArrayList<>();
 
+        if (itemMeta.hasDisplayName()) {
+            itemMeta.setDisplayName(Hooks.processPlaceholders(user.getPlayer(), itemMeta.getDisplayName()));
+        }
+
         if (itemMeta.hasLore()) {
             for (String loreLine : itemMeta.getLore()) {
-                if (Hooks.isActiveHook("PlaceholderAPI")) loreLine = PlaceholderAPI.setPlaceholders(user.getPlayer(), loreLine);
-                processedLore.add(loreLine);
+                processedLore.add(Hooks.processPlaceholders(user.getPlayer(), loreLine));
             }
         }
         itemMeta.setLore(processedLore);

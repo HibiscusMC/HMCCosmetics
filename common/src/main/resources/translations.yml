@@ -1,3 +1,15 @@
-unlockedCosmetic:
-  true: "True"
+unlocked-cosmetic:
+  true: "true"
+  false: "false"
+equipped-cosmetic:
+  true: "true"
+  false: "false"
+in-wardrobe:
+  true: "true"
+  false: "false"
+using-cosmetic:
+  true: "true"
+  false: "false"
+current-cosmetic:
+  true: "true"
   false: "false"

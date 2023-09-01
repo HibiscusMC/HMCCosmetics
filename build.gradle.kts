@@ -2,13 +2,13 @@ import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
 
 plugins {
     id("java")
-    id("com.github.johnrengelman.shadow") version "7.1.2"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
     id("xyz.jpenilla.run-paper") version "2.0.0"
-    id("net.minecrell.plugin-yml.bukkit") version "0.5.2"
+    id("net.minecrell.plugin-yml.bukkit") version "0.6.0"
 }
 
 group = "com.hibiscusmc"
-version = "2.4.1-DEV"
+version = "2.6.4-DEV"
 
 allprojects {
     apply(plugin = "java")
@@ -63,32 +63,40 @@ allprojects {
 
         // md-5 Repo
         maven("https://repo.md-5.net/content/groups/public/")
+
+        // MMOItems
+        maven("https://nexus.phoenixdevt.fr/repository/maven-public/")
     }
 
     dependencies {
         compileOnly(fileTree("${project.rootDir}/lib") { include("*.jar") })
         compileOnly("com.mojang:authlib:1.5.25")
-        compileOnly("org.spigotmc:spigot-api:1.17.1-R0.1-SNAPSHOT")
+        compileOnly("org.spigotmc:spigot-api:1.18.2-R0.1-SNAPSHOT")
         compileOnly("org.jetbrains:annotations:23.0.0")
         compileOnly("com.comphenix.protocol:ProtocolLib:5.0.0")
-        compileOnly("me.clip:placeholderapi:2.11.1")
+        compileOnly("me.clip:placeholderapi:2.11.3")
         compileOnly("com.ticxo:modelengine:R3.0.1")
-        compileOnly("com.github.oraxen:oraxen:-SNAPSHOT")
+        compileOnly("com.github.oraxen:oraxen:1.160.0")
         compileOnly("com.github.LoneDev6:API-ItemsAdder:3.2.5")
-        compileOnly("com.mineinabyss:geary-papermc:0.24-SNAPSHOT")
+        compileOnly("com.mineinabyss:geary-papermc:0.24.1")
         compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.1.0-SNAPSHOT")
         compileOnly("it.unimi.dsi:fastutil:8.5.11")
-        compileOnly("com.github.LeonMangler:SuperVanish:6.2.6-4")
+        compileOnly("com.github.LeonMangler:SuperVanish:6.2.17")
+        compileOnly("org.projectlombok:lombok:1.18.2")
+
+        annotationProcessor("org.projectlombok:lombok:1.18.28")
+        testCompileOnly("org.projectlombok:lombok:1.18.28")
+        testAnnotationProcessor("org.projectlombok:lombok:1.18.28")
     }
 }
 
 dependencies {
     implementation(project(path = ":common"))
-    implementation(project(path = ":v1_17_R1", configuration = "reobf"))
     implementation(project(path = ":v1_18_R2", configuration = "reobf"))
     implementation(project(path = ":v1_19_R1", configuration = "reobf"))
     implementation(project(path = ":v1_19_R2", configuration = "reobf"))
     implementation(project(path = ":v1_19_R3", configuration = "reobf"))
+    implementation(project(path = ":v1_20_R1", configuration = "reobf"))
 
     //compileOnly("com.github.Fisher2911:FisherLib:master-SNAPSHOT")
     implementation("net.kyori:adventure-api:4.11.0")
@@ -99,7 +107,7 @@ dependencies {
     implementation("org.bstats:bstats-bukkit:3.0.0")
     implementation("com.jeff_media:SpigotUpdateChecker:3.0.0")
     implementation("com.owen1212055:particlehelper:1.0.0-SNAPSHOT")
-    implementation("com.ticxo:PlayerAnimator:R1.2.6")
+    implementation("com.ticxo.playeranimator:PlayerAnimator:R1.2.7")
     implementation("com.github.BG-Software-LLC:CommentedConfiguration:-SNAPSHOT")
     //implementation("com.ticxo.playeranimator:PlayerAnimator:R1.2.5")
 }
@@ -121,15 +129,15 @@ tasks {
     }
 
     runServer {
-        minecraftVersion("1.19.4")
+        minecraftVersion("1.20.1")
     }
 
     shadowJar {
-        dependsOn(":v1_17_R1:reobfJar")
         dependsOn(":v1_18_R2:reobfJar")
         dependsOn(":v1_19_R1:reobfJar")
         dependsOn(":v1_19_R2:reobfJar")
         dependsOn(":v1_19_R3:reobfJar")
+        dependsOn(":v1_20_R1:reobfJar")
         mergeServiceFiles()
 
         relocate("dev.triumphteam.gui", "com.hisbiscusmc.hmccosmetics.gui")
@@ -167,11 +175,14 @@ tasks {
 bukkit {
     load = BukkitPluginDescription.PluginLoadOrder.POSTWORLD
     main = "com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin"
-    apiVersion = "1.17"
+    apiVersion = "1.18"
     authors = listOf("LoJoSho")
     depend = listOf("ProtocolLib")
-    softDepend = listOf("ModelEngine", "Oraxen", "ItemsAdder", "Geary", "HMCColor", "WorldGuard", "MythicMobs", "PlaceholderAPI", "SuperVanish", "PremiumVanish", "LibsDisguises", "Denizen")
+    softDepend = listOf("ModelEngine", "Oraxen", "ItemsAdder", "Geary", "HMCColor", "WorldGuard", "MythicMobs", "PlaceholderAPI", "SuperVanish", "PremiumVanish", "LibsDisguises", "Denizen", "MMOItems")
     version = "${project.version}"
+    loadBefore = listOf(
+        "Cosmin" // Fixes an issue with Cosmin loading before and taking /cosmetic, when messing with what we do.
+    )
 
     commands {
         register("cosmetic") {

@@ -2,16 +2,14 @@ package com.hibiscusmc.hmccosmetics.config.serializer;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.hooks.Hooks;
+import com.hibiscusmc.hmccosmetics.util.InventoryUtils;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.ServerUtils;
 import com.hibiscusmc.hmccosmetics.util.builder.ColorBuilder;
 import com.hibiscusmc.hmccosmetics.util.misc.StringUtils;
 import com.hibiscusmc.hmccosmetics.util.misc.Utils;
 import org.apache.commons.lang3.EnumUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.Color;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
+import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -123,12 +121,25 @@ public class ItemSerializer implements TypeSerializer<ItemStack> {
         if (item.getType() == Material.PLAYER_HEAD) {
             SkullMeta skullMeta = (SkullMeta) itemMeta;
             if (!ownerNode.virtual()) {
-                skullMeta.setOwningPlayer(Bukkit.getOfflinePlayer(ownerNode.getString()));
+                String ownerString = ownerNode.getString();
+                if (ownerString.contains("%")) {
+                    // This means it has PAPI placeholders in it
+                    skullMeta.getPersistentDataContainer().set(InventoryUtils.getSkullOwner(), PersistentDataType.STRING, ownerString);
+                }
+                OfflinePlayer player = Bukkit.getOfflinePlayer(ownerString);
+                skullMeta.setOwningPlayer(player);
             }
 
             if (!textureNode.virtual()) {
+                String textureString = textureNode.getString();
+                if (textureString.contains("%")) {
+                    // This means it has PAPI placeholders in it
+                    skullMeta.getPersistentDataContainer().set(InventoryUtils.getSkullTexture(), PersistentDataType.STRING, textureString);
+                }
                 Bukkit.getUnsafe().modifyItemStack(item, "{SkullOwner:{Id:[I;0,0,0,0],Properties:{textures:[{Value:\""
-                        + textureNode.getString() + "\"}]}}}");
+                        + textureString + "\"}]}}}");
+
+
                 itemMeta = skullMeta;
             }
         }

@@ -2,23 +2,20 @@ package com.hibiscusmc.hmccosmetics.database;
 
 import com.hibiscusmc.hmccosmetics.config.DatabaseSettings;
 import com.hibiscusmc.hmccosmetics.database.types.Data;
-import com.hibiscusmc.hmccosmetics.database.types.InternalData;
 import com.hibiscusmc.hmccosmetics.database.types.MySQLData;
 import com.hibiscusmc.hmccosmetics.database.types.SQLiteData;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
+import lombok.Getter;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
 public class Database {
 
+    @Getter
     private static Data data;
-
-    @Deprecated
-    private static InternalData INTERNAL_DATA  = new InternalData();
-
     private static final MySQLData MYSQL_DATA = new MySQLData();
     private static final SQLiteData SQLITE_DATA = new SQLiteData();
 
@@ -52,10 +49,6 @@ public class Database {
 
     public static CosmeticUser get(UUID uniqueId) {
         return data.get(uniqueId);
-    }
-
-    public static Data getData() {
-        return data;
     }
 
     public static void clearData(UUID uniqueId) {

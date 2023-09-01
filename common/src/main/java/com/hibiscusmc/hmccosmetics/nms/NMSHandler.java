@@ -1,10 +1,9 @@
 package com.hibiscusmc.hmccosmetics.nms;
 
-import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBackpackType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
-import com.hibiscusmc.hmccosmetics.user.manager.UserBalloonManager;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
+import com.hibiscusmc.hmccosmetics.user.manager.UserBalloonManager;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -19,22 +18,11 @@ public interface NMSHandler {
 
     Entity getEntity(int entityId);
 
-    Entity getHMCArmorStand(Location loc);
-
     ArmorStand getMEGEntity(Location loc);
 
-    Entity spawnBackpack(CosmeticUser user, CosmeticBackpackType cosmeticBackpackType);
-
-    Entity spawnHMCParticleCloud(Location location);
+    Entity spawnDisplayEntity(Location location, String text);
 
     UserBalloonManager spawnBalloon(CosmeticUser user, CosmeticBalloonType cosmeticBalloonType);
-
-    void equipmentSlotUpdate(
-            int entityId,
-            CosmeticUser user,
-            CosmeticSlot cosmeticSlot,
-            List<Player> sendTo
-    );
 
     void slotUpdate(
             Player player,

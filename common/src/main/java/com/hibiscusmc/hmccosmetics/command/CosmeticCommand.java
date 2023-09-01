@@ -368,7 +368,7 @@ public class CosmeticCommand implements CommandExecutor {
                 }
                 player.sendMessage("Passengers -> " + player.getPassengers());
                 if (user.hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
-                    player.sendMessage("Backpack Location -> " + user.getUserBackpackManager().getArmorStand().getLocation());
+                    player.sendMessage("Backpack Location -> " + user.getUserBackpackManager().getEntityManager().getLocation());
                 }
                 player.sendMessage("Cosmetics -> " + user.getCosmetics());
                 player.sendMessage("EntityId -> " + player.getEntityId());
@@ -423,7 +423,7 @@ public class CosmeticCommand implements CommandExecutor {
                     return true;
                 }
 
-                if (Settings.getDebugMode()) {
+                if (Settings.isDebugMode()) {
                     Settings.setDebugMode(false);
                     if (!silent) MessagesUtil.sendMessage(sender, "debug-disabled");
                 } else {
@@ -480,7 +480,7 @@ public class CosmeticCommand implements CommandExecutor {
                     return true;
                 }
                 CosmeticUser user = CosmeticUsers.getUser(player);
-                user.getUserEmoteManager().playEmote(EmoteManager.get(args[1]));
+                user.getUserEmoteManager().playEmote(args[1]);
                 return true;
             }
         }

@@ -8,9 +8,8 @@ import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import com.hibiscusmc.hmccosmetics.user.manager.UserEmoteManager;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -18,10 +17,10 @@ import org.jetbrains.annotations.NotNull;
 
 public class PlayerConnectionListener implements Listener {
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerJoin(@NotNull PlayerJoinEvent event) {
         if (event.getPlayer().isOp() || event.getPlayer().hasPermission("hmccosmetics.notifyupdate")) {
-            if (!HMCCosmeticsPlugin.getLatestVersion().equalsIgnoreCase(HMCCosmeticsPlugin.getInstance().getDescription().getVersion()) && HMCCosmeticsPlugin.getLatestVersion() != null)
+            if (!HMCCosmeticsPlugin.getLatestVersion().equalsIgnoreCase(HMCCosmeticsPlugin.getInstance().getDescription().getVersion()) && HMCCosmeticsPlugin.getLatestVersion().isEmpty())
                 MessagesUtil.sendMessageNoKey(
                         event.getPlayer(),
                         "<br>" +
@@ -47,19 +46,10 @@ public class PlayerConnectionListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerQuit(@NotNull PlayerQuitEvent event) {
         CosmeticUser user = CosmeticUsers.getUser(event.getPlayer());
-        if (user == null) { // Remove any passengers if a user failed to initialize. Bugs can cause this to happen
-            if (!event.getPlayer().getPassengers().isEmpty()) {
-                for (Entity entity : event.getPlayer().getPassengers()) {
-                    if (entity.getType() == EntityType.ARMOR_STAND) {
-                        entity.remove();
-                    }
-                }
-            }
-            return;
-        }
+        if (user == null) return; // Player never initialized, don't do anything
         if (user.isInWardrobe()) user.leaveWardrobe();
         if (user.getUserEmoteManager().isPlayingEmote()) {
             user.getUserEmoteManager().stopEmote(UserEmoteManager.StopEmoteReason.CONNECTION);

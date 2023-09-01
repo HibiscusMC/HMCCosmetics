@@ -7,6 +7,7 @@ import de.myzelyam.api.vanish.PlayerHideEvent;
 import de.myzelyam.api.vanish.PlayerShowEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -19,7 +20,7 @@ public class HookPremiumVanish extends Hook {
         super("PremiumVanish");
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerVanish(@NotNull PlayerHideEvent event) {
         Player player = event.getPlayer();
         CosmeticUser user = CosmeticUsers.getUser(player);
@@ -27,7 +28,7 @@ public class HookPremiumVanish extends Hook {
         user.hideCosmetics(CosmeticUser.HiddenReason.PLUGIN);
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerShow(@NotNull PlayerShowEvent event) {
         Player player = event.getPlayer();
         CosmeticUser user = CosmeticUsers.getUser(player);

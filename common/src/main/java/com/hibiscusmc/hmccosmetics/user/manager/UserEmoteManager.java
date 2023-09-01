@@ -1,33 +1,41 @@
 package com.hibiscusmc.hmccosmetics.user.manager;
 
-import com.hibiscusmc.hmccosmetics.api.PlayerEmoteStartEvent;
-import com.hibiscusmc.hmccosmetics.api.PlayerEmoteStopEvent;
+import com.hibiscusmc.hmccosmetics.api.events.PlayerEmoteStartEvent;
+import com.hibiscusmc.hmccosmetics.api.events.PlayerEmoteStopEvent;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticEmoteType;
 import com.hibiscusmc.hmccosmetics.emotes.EmoteManager;
+import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
 public class UserEmoteManager {
 
-    CosmeticUser user;
+    private CosmeticUser user;
     private UserEmoteModel model;
+    private Entity textEntity;
 
     public UserEmoteManager(CosmeticUser user) {
         this.user = user;
     }
 
-    public void playEmote(@NotNull CosmeticEmoteType cosmeticEmoteType) {
-        MessagesUtil.sendDebugMessages("playEmote " + cosmeticEmoteType.getAnimationId());
-        playEmote(EmoteManager.get(cosmeticEmoteType.getAnimationId()));
+    public void playEmote(String animationId) {
+        MessagesUtil.sendDebugMessages("playEmote " + animationId);
+        playEmote(EmoteManager.get(animationId), null);
     }
 
-    public void playEmote(String animationId) {
+    public void playEmote(@NotNull CosmeticEmoteType cosmeticEmoteType) {
+        MessagesUtil.sendDebugMessages("playEmote " + cosmeticEmoteType.getAnimationId());
+        playEmote(EmoteManager.get(cosmeticEmoteType.getAnimationId()), cosmeticEmoteType.getText());
+    }
+
+    public void playEmote(String emoteAnimation, String text) {
         if (isPlayingEmote()) return;
         if (user.isInWardrobe()) return;
         // API
-        PlayerEmoteStartEvent event = new PlayerEmoteStartEvent(user, animationId);
+        PlayerEmoteStartEvent event = new PlayerEmoteStartEvent(user, emoteAnimation);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             return;
@@ -35,7 +43,14 @@ public class UserEmoteManager {
         // Internal
         try {
             model = new UserEmoteModel(user);
-            model.playAnimation(animationId);
+            // Play animation id
+            if (emoteAnimation != null) {
+                model.playAnimation(emoteAnimation);
+            }
+            // Show the text
+            if (text != null && textEntity == null) {
+                textEntity = NMSHandlers.getHandler().spawnDisplayEntity(user.getPlayer().getLocation().add(0, 3, 0), text);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -56,12 +71,24 @@ public class UserEmoteManager {
         }
         // Internal
         model.stopAnimation();
+        if (textEntity != null) {
+            textEntity.remove();
+            textEntity = null;
+        }
+    }
+
+    public void despawnTextEntity() {
+        if (textEntity != null) {
+            textEntity.remove();
+            textEntity = null;
+        }
     }
 
     public enum StopEmoteReason {
         SNEAK,
         DAMAGE,
         CONNECTION,
-        TELEPORT
+        TELEPORT,
+        UNEQUIP
     }
 }

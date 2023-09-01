@@ -1,14 +1,13 @@
 package com.hibiscusmc.hmccosmetics.gui.special;
 
 import com.hibiscusmc.hmccolor.HMCColorApi;
-import com.hibiscusmc.hmccolor.gui.guis.Gui;
-import com.hibiscusmc.hmccolor.gui.guis.GuiItem;
+import com.hibiscusmc.hmccolor.shaded.gui.guis.Gui;
+import com.hibiscusmc.hmccolor.shaded.gui.guis.GuiItem;
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.hooks.Hooks;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
-import com.hibiscusmc.hmccosmetics.util.misc.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -33,7 +32,7 @@ public class DyeMenu {
         if (originalItem == null || !cosmetic.isDyable()) return;
 
         Gui gui = HMCColorApi.INSTANCE.colorMenu();
-        gui.updateTitle(Placeholder.applyPapiPlaceholders(player, Settings.getDyeMenuName()));
+        gui.updateTitle(Hooks.processPlaceholders(player, Settings.getDyeMenuName()));
         gui.setItem(Settings.getDyeMenuInputSlot(), new GuiItem(originalItem));
         gui.setDefaultTopClickAction(event -> {
             if (event.getSlot() == Settings.getDyeMenuOutputSlot()) {

@@ -11,7 +11,6 @@ import com.ticxo.playeranimator.api.model.player.PlayerModel;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -36,9 +35,6 @@ public class UserEmoteModel extends PlayerModel {
 
     @Override
     public void playAnimation(@NotNull String id) {
-        if (id.contains(":")) id = id.split(":", 2)[1]; // A:B -> B -> B.B.B
-        if (!id.contains(".")) id = id + "." + id + "." + id; // Make into a format that playerAnimator works with. Requires 3 splits.
-
         super.playAnimation(id);
 
         emotePlaying = id;
@@ -47,43 +43,46 @@ public class UserEmoteModel extends PlayerModel {
         Player player = user.getPlayer();
         List<Player> viewer = Collections.singletonList(user.getPlayer());
         List<Player> outsideViewers = PacketManager.getViewers(player.getLocation());
-        outsideViewers.remove(player);
-
+        // Send equipment packet to the player as well (Fixes Optifine still rendering armor when emoting)
         PacketManager.equipmentSlotUpdate(player, true, outsideViewers);
-
-        Location newLocation = player.getLocation().clone();
-        newLocation.setPitch(0);
-
-        double DISTANCE = Settings.getEmoteDistance();
-
-        Location thirdPersonLocation = newLocation.add(newLocation.getDirection().normalize().multiply(DISTANCE));
-        if (DISTANCE > 0) {
-            MessagesUtil.sendDebugMessages("Yaw " + (int) thirdPersonLocation.getYaw());
-            MessagesUtil.sendDebugMessages("New Yaw " + ServerUtils.getNextYaw((int) thirdPersonLocation.getYaw(), 180));
-            thirdPersonLocation.setYaw(ServerUtils.getNextYaw((int) thirdPersonLocation.getYaw(), 180));
-        }
-        if (Settings.getCosmeticEmoteBlockCheck() && thirdPersonLocation.getBlock().getType().isOccluding()) {
-            stopAnimation();
-            MessagesUtil.sendMessage(player, "emote-blocked");
-            return;
-        }
-        // Check if block below player is an air block
-        if (Settings.getEmoteAirCheck() && newLocation.clone().subtract(0, 1, 0).getBlock().getType().isAir()) {
-            stopAnimation();
-            MessagesUtil.sendMessage(player, "emote-blocked");
-        }
+        outsideViewers.remove(player);
 
         user.getPlayer().setInvisible(true);
         user.hideCosmetics(CosmeticUser.HiddenReason.EMOTE);
 
         originalGamemode = player.getGameMode();
 
-        PacketManager.sendEntitySpawnPacket(thirdPersonLocation, armorStandId, EntityType.ARMOR_STAND, UUID.randomUUID(), viewer);
-        PacketManager.sendInvisibilityPacket(armorStandId, viewer);
-        PacketManager.sendLookPacket(armorStandId, thirdPersonLocation, viewer);
+        if (Settings.isEmoteCameraEnabled()) {
+            Location newLocation = player.getLocation().clone();
+            newLocation.setPitch(0);
 
-        PacketManager.gamemodeChangePacket(player, 3);
-        PacketManager.sendCameraPacket(armorStandId, viewer);
+            double DISTANCE = Settings.getEmoteDistance();
+
+            Location thirdPersonLocation = newLocation.add(newLocation.getDirection().normalize().multiply(DISTANCE));
+            if (DISTANCE > 0) {
+                MessagesUtil.sendDebugMessages("Yaw " + (int) thirdPersonLocation.getYaw());
+                MessagesUtil.sendDebugMessages("New Yaw " + ServerUtils.getNextYaw((int) thirdPersonLocation.getYaw(), 180));
+                thirdPersonLocation.setYaw(ServerUtils.getNextYaw((int) thirdPersonLocation.getYaw(), 180));
+            }
+            if (Settings.isCosmeticEmoteBlockCheck() && thirdPersonLocation.getBlock().getType().isOccluding()) {
+                stopAnimation();
+                MessagesUtil.sendMessage(player, "emote-blocked");
+                return;
+            }
+            // Check if block below player is an air block
+            if (Settings.isEmoteAirCheck() && newLocation.clone().subtract(0, 1, 0).getBlock().getType().isAir()) {
+                stopAnimation();
+                MessagesUtil.sendMessage(player, "emote-blocked");
+            }
+
+            PacketManager.sendEntitySpawnPacket(thirdPersonLocation, armorStandId, EntityType.ARMOR_STAND, UUID.randomUUID(), viewer);
+            PacketManager.sendInvisibilityPacket(armorStandId, viewer);
+            PacketManager.sendLookPacket(armorStandId, thirdPersonLocation, viewer);
+
+            PacketManager.gamemodeChangePacket(player, 3);
+            PacketManager.sendCameraPacket(armorStandId, viewer);
+        }
+
 
         MessagesUtil.sendDebugMessages("playAnimation run");
     }
@@ -110,6 +109,8 @@ public class UserEmoteModel extends PlayerModel {
 
             List<Player> viewer = Collections.singletonList(player);
             List<Player> outsideViewers = PacketManager.getViewers(player.getLocation());
+            // Send Equipment packet to all (Fixes Optifine Issue)
+            PacketManager.equipmentSlotUpdate(player, false, outsideViewers);
             outsideViewers.remove(player);
 
             int entityId = player.getEntityId();
@@ -121,7 +122,7 @@ public class UserEmoteModel extends PlayerModel {
             }
 
             if (user.getPlayer() != null) player.setInvisible(false);
-            PacketManager.equipmentSlotUpdate(player, false, outsideViewers);
+            user.getUserEmoteManager().despawnTextEntity();
             user.showPlayer();
             user.showCosmetics();
         });

@@ -4,23 +4,24 @@ import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.serializer.LocationSerializer;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.misc.Utils;
+import lombok.Getter;
 import net.kyori.adventure.bossbar.BossBar;
 import org.apache.commons.lang3.EnumUtils;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.spongepowered.configurate.ConfigurationNode;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Set;
 import java.util.logging.Level;
 
 public class WardrobeSettings {
 
-    private static final String WARDROBE_PATH = "wardrobe";
     private static final String DISABLE_ON_DAMAGE_PATH = "disable-on-damage";
     private static final String DISPLAY_RADIUS_PATH = "display-radius";
     private static final String PORTABLE_PATH = "portable";
     private static final String ALWAYS_DISPLAY_PATH = "always-display";
-    private static final String STATIC_RADIUS_PATH = "static-radius";
     private static final String ROTATION_SPEED_PATH = "rotation-speed";
     private static final String SPAWN_DELAY_PATH = "spawn-delay";
     private static final String DESPAWN_DELAY_PATH = "despawn-delay";
@@ -33,6 +34,10 @@ public class WardrobeSettings {
     private static final String EQUIP_PUMPKIN_WARDROBE = "equip-pumpkin";
     private static final String TRY_COSMETICS_WARDROBE = "unchecked-wardrobe-cosmetics";
     private static final String RETURN_LAST_LOCATION = "return-last-location";
+
+    private static final String WARDROBE_MENU_OPTIONS = "menu-options";
+    private static final String WARDROBE_ENTER_OPEN_MENU_PATH = "enter-open-menu";
+
     private static final String GAMEMODE_OPTIONS_PATH = "gamemode-options";
     private static final String FORCE_EXIT_GAMEMODE_PATH = "exit-gamemode-enabled";
     private static final String EXIT_GAMEMODE_PATH = "exit-gamemode";
@@ -54,31 +59,56 @@ public class WardrobeSettings {
     private static final String TRANSITION_FADE_OUT_PATH = "title-fade-out";
 
     private static ConfigurationNode configRoot;
+    @Getter
     private static boolean disableOnDamage;
+    @Getter
     private static int displayRadius;
+    @Getter
     private static boolean portable;
+    @Getter
     private static boolean alwaysDisplay;
-    private static int staticRadius;
+    @Getter
     private static int rotationSpeed;
+    @Getter
     private static int spawnDelay;
+    @Getter
     private static int despawnDelay;
+    @Getter
     private static float bossbarProgress;
+    @Getter
     private static boolean applyCosmeticsOnClose;
+    @Getter
     private static boolean tryCosmeticsInWardrobe;
+    @Getter
     private static boolean equipPumpkin;
+    @Getter
     private static boolean returnLastLocation;
+    @Getter
     private static boolean enabledBossbar;
+    @Getter
+    private static boolean enterOpenMenu;
+    @Getter
     private static boolean forceExitGamemode;
+    @Getter
     private static GameMode exitGamemode;
     private static HashMap<String, Wardrobe> wardrobes;
+    @Getter
     private static String bossbarMessage;
+    @Getter
     private static BossBar.Overlay bossbarOverlay;
+    @Getter
     private static BossBar.Color bossbarColor;
+    @Getter
     private static boolean enabledTransition;
+    @Getter
     private static String transitionText;
+    @Getter
     private static int transitionDelay;
+    @Getter
     private static int transitionFadeIn;
+    @Getter
     private static int transitionStay;
+    @Getter
     private static int transitionFadeOut;
 
     public static void load(ConfigurationNode source) {
@@ -87,7 +117,6 @@ public class WardrobeSettings {
         disableOnDamage = source.node(DISABLE_ON_DAMAGE_PATH).getBoolean();
         displayRadius = source.node(DISPLAY_RADIUS_PATH).getInt();
         portable = source.node(PORTABLE_PATH).getBoolean();
-        staticRadius = source.node(STATIC_RADIUS_PATH).getInt();
         alwaysDisplay = source.node(ALWAYS_DISPLAY_PATH).getBoolean();
         rotationSpeed = source.node(ROTATION_SPEED_PATH).getInt();
         spawnDelay = source.node(SPAWN_DELAY_PATH).getInt();
@@ -96,6 +125,9 @@ public class WardrobeSettings {
         equipPumpkin = source.node(EQUIP_PUMPKIN_WARDROBE).getBoolean();
         returnLastLocation = source.node(RETURN_LAST_LOCATION).getBoolean(false);
         tryCosmeticsInWardrobe = source.node(TRY_COSMETICS_WARDROBE).getBoolean(false);
+
+        ConfigurationNode menuOptionsNode = source.node(WARDROBE_MENU_OPTIONS);
+        enterOpenMenu = menuOptionsNode.node(WARDROBE_ENTER_OPEN_MENU_PATH).getBoolean(false);
 
         ConfigurationNode gamemodeNode = source.node(GAMEMODE_OPTIONS_PATH);
         forceExitGamemode = gamemodeNode.node(FORCE_EXIT_GAMEMODE_PATH).getBoolean(false);
@@ -148,54 +180,6 @@ public class WardrobeSettings {
                 MessagesUtil.sendDebugMessages("Unable to create wardrobe " + id, Level.SEVERE);
             }
         }
-
-        //throw new RuntimeException(e);
-    }
-
-    public static int getDefaultDistance() {
-        return staticRadius;
-    }
-
-    public static boolean getDisableOnDamage() {
-        return disableOnDamage;
-    }
-
-    public static int getDisplayRadius() {
-        return displayRadius;
-    }
-
-    public static boolean isPortable() {
-        return portable;
-    }
-
-    public static boolean isAlwaysDisplay() {
-        return alwaysDisplay;
-    }
-
-    public static int getStaticRadius() {
-        return staticRadius;
-    }
-
-    public static int getRotationSpeed() {
-        return rotationSpeed;
-    }
-
-    public static int getSpawnDelay() {
-        return spawnDelay;
-    }
-
-    public static int getDespawnDelay() {
-        return despawnDelay;
-    }
-
-    public static boolean isApplyCosmeticsOnClose() {
-        return applyCosmeticsOnClose;
-    }
-    public static boolean isEquipPumpkin() {
-        return equipPumpkin;
-    }
-    public static boolean isReturnLastLocation() {
-        return returnLastLocation;
     }
 
     public static Wardrobe getWardrobe(String key) {
@@ -218,80 +202,12 @@ public class WardrobeSettings {
         wardrobes.remove(id);
     }
 
-    @Deprecated
-    public static boolean inDistanceOfWardrobe(final Location wardrobeLocation, final Location playerLocation) {
-        if (displayRadius == -1) return true;
-        if (!wardrobeLocation.getWorld().equals(playerLocation.getWorld())) return false;
-        return playerLocation.distanceSquared(wardrobeLocation) <= displayRadius * displayRadius;
-    }
-
-    @Deprecated
-    public static boolean inDistanceOfStatic(Wardrobe wardrobe, final Location location) {
-        Location wardrobeLocation = wardrobe.getLocation().getNpcLocation();
-        if (wardrobeLocation == null) return false;
-        if (staticRadius == -1) return true;
-        if (!wardrobeLocation.getWorld().equals(location.getWorld())) return false;
-        return wardrobeLocation.distanceSquared(location) <= staticRadius * staticRadius;
-    }
-
-    public static boolean getEnabledBossbar() {
-        return enabledBossbar;
-    }
-
-    public static float getBossbarProgress() {
-        return bossbarProgress;
-    }
-
-    public static String getBossbarText() {
-        return bossbarMessage;
-    }
-
-    public static BossBar.Overlay getBossbarOverlay() {
-        return bossbarOverlay;
-    }
-
-    public static BossBar.Color getBossbarColor() {
-        return bossbarColor;
-    }
-    public static boolean isEnabledTransition() {
-        return enabledTransition;
-    }
-
-    public static String getTransitionText() {
-        return transitionText;
-    }
-
-    public static int getTransitionDelay() {
-        return transitionDelay;
-    }
-    public static int getTransitionFadeIn() {
-        return transitionFadeIn;
-    }
-    public static int getTransitionStay() {
-        return transitionStay;
-    }
-    public static int getTransitionFadeOut() {
-        return transitionFadeOut;
-    }
-
-    public static boolean isForceExitGamemode() {
-        return forceExitGamemode;
-    }
-
-    public static GameMode getExitGamemode() {
-        return exitGamemode;
-    }
-
-    public static boolean isTryCosmeticsInWardrobe() {
-        return tryCosmeticsInWardrobe;
-    }
-
     /**
      * Sets where the NPC/Mannequin will spawn in the wardrobe
      * @param newLocation
      */
     public static void setNPCLocation(Wardrobe wardrobe, Location newLocation) {
-        wardrobe.getLocation().setNPCLocation(newLocation);
+        wardrobe.getLocation().setNpcLocation(newLocation);
 
         HMCCosmeticsPlugin plugin = HMCCosmeticsPlugin.getInstance();
 

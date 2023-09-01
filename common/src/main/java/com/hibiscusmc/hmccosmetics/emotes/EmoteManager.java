@@ -18,7 +18,7 @@ import java.util.Set;
  */
 @SuppressWarnings("SpellCheckingInspection")
 public class EmoteManager {
-    private static final @NotNull Map<@NotNull String, @NotNull String> emotes = new HashMap<>();
+    private static final @NotNull Map<String, String> emotes = new HashMap<>();
 
     /**
      * Loads all BlockBench animations from the emotes folder and puts it into the animation manager registry and local registry

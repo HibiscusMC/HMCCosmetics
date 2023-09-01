@@ -9,11 +9,13 @@ import org.spongepowered.configurate.ConfigurationNode;
 public class CosmeticEmoteType extends Cosmetic {
 
     private final String animationId;
+    private final String text;
 
     public CosmeticEmoteType(String id, ConfigurationNode config) {
         super(id, config);
 
         animationId = config.node("animation").getString();
+        text = config.node("text").getString();
         MessagesUtil.sendDebugMessages("CosmeticEmoteType Animation id " + animationId);
     }
 
@@ -28,5 +30,9 @@ public class CosmeticEmoteType extends Cosmetic {
 
     public String getAnimationId() {
         return animationId;
+    }
+
+    public String getText() {
+        return text;
     }
 }

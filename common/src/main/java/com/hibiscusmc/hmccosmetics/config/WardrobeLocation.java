@@ -1,45 +1,36 @@
 package com.hibiscusmc.hmccosmetics.config;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Location;
+import org.jetbrains.annotations.Nullable;
 
 public class WardrobeLocation {
 
+    @Getter @Setter
     private Location npcLocation;
+    @Getter @Setter
     private Location viewerLocation;
+    @Getter @Setter
     private Location leaveLocation;
 
-    public WardrobeLocation(Location npcLocation, Location viewerLocation, Location leaveLocation) {
+    /**
+     * This creates a WardrobeLocation object with the 3 locations that are required for a wardrobe to work
+     * @param npcLocation The location of the NPC
+     * @param viewerLocation The location of the viewer
+     * @param leaveLocation The location that the player will be teleported to when they leave the wardrobe if return-last-location in the config is false
+     */
+    public WardrobeLocation(@Nullable Location npcLocation, @Nullable Location viewerLocation, @Nullable Location leaveLocation) {
         this.npcLocation = npcLocation;
         this.viewerLocation = viewerLocation;
         this.leaveLocation = leaveLocation;
     }
 
-    public Location getNpcLocation() {
-        return npcLocation.clone();
-    }
-
-    public Location getViewerLocation() {
-        return viewerLocation.clone();
-    }
-
-    public Location getLeaveLocation() {
-        return leaveLocation.clone();
-    }
-
+    /**
+     * Checks if any of the locations are null
+     * @return true if all locations are not null, else false
+     */
     public boolean hasAllLocations() {
-        if (npcLocation == null || viewerLocation == null || leaveLocation == null) return false;
-        return true;
-    }
-
-    public void setNPCLocation(Location wardrobeLocation) {
-        this.npcLocation = wardrobeLocation;
-    }
-
-    public void setViewerLocation(Location viewerLocation) {
-        this.viewerLocation = viewerLocation;
-    }
-
-    public void setLeaveLocation(Location leaveLocation) {
-        this.leaveLocation = leaveLocation;
+        return npcLocation != null && viewerLocation != null && leaveLocation != null;
     }
 }

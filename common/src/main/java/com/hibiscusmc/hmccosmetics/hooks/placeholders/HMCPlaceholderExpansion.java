@@ -69,9 +69,9 @@ public class HMCPlaceholderExpansion extends PlaceholderExpansion {
                     Cosmetic cosmetic = Cosmetics.getCosmetic(placeholderArgs.get(1));
                     if (cosmetic == null) return "INVALID_COSMETIC";
                     Cosmetic currentCosmetic = user.getCosmetic(cosmetic.getSlot());
-                    if (currentCosmetic == null) return "false";
-                    if (currentCosmetic.getId() == cosmetic.getId()) return "true";
-                    return "false";
+                    if (currentCosmetic == null) return TranslationUtil.getTranslation("using-cosmetic", String.valueOf(false)); // I hate this way of handling translations
+                    if (currentCosmetic.getId() == cosmetic.getId()) return TranslationUtil.getTranslation("using-cosmetic", String.valueOf(true));
+                    return TranslationUtil.getTranslation("using-cosmetic", String.valueOf(false));
                 }
             case "current":
                 if (placeholderArgs == null) {
@@ -82,26 +82,29 @@ public class HMCPlaceholderExpansion extends PlaceholderExpansion {
                     if (slot == null) return null;
                     if (user.getCosmetic(slot) == null) return null;
                     if (placeholderArgs.size() == 2) return user.getCosmetic(slot).getId();
+
+                    String output;
                     switch (placeholderArgs.get(2).toLowerCase()) {
                         case "material" -> {
-                            return getMaterialName(user.getCosmetic(slot));
+                            output = getMaterialName(user.getCosmetic(slot));
                         }
                         case "custommodeldata" -> {
-                            return getModelData(user.getCosmetic(slot));
+                            output = getModelData(user.getCosmetic(slot));
                         }
                         case "name" -> {
-                            return getItemName(user.getCosmetic(slot));
+                            output = getItemName(user.getCosmetic(slot));
                         }
                         case "lore" -> {
-                            return getItemLore(user.getCosmetic(slot));
+                            output = getItemLore(user.getCosmetic(slot));
                         }
                         case "permission" -> {
-                            return user.getCosmetic(slot).getPermission();
+                            output = user.getCosmetic(slot).getPermission();
                         }
                         default -> {
-                            return user.getCosmetic(slot).getId();
+                            output = user.getCosmetic(slot).getId();
                         }
                     }
+                    return TranslationUtil.getTranslation("current-cosmetic", String.valueOf(output));
                 }
             case "unlocked":
                 if (placeholderArgs == null) {
@@ -121,7 +124,7 @@ public class HMCPlaceholderExpansion extends PlaceholderExpansion {
                             return "INVALID_COSMETIC";
                         }
                     }
-                    return TranslationUtil.getTranslation("unlockedCosmetic", String.valueOf(user.canEquipCosmetic(cosmetic)));
+                    return TranslationUtil.getTranslation("unlocked-cosmetic", String.valueOf(user.canEquipCosmetic(cosmetic, true)));
                 }
             case "equipped":
                 if (placeholderArgs == null) {
@@ -131,11 +134,7 @@ public class HMCPlaceholderExpansion extends PlaceholderExpansion {
                     String args1 = placeholderArgs.get(1);
 
                     if (EnumUtils.isValidEnum(CosmeticSlot.class, args1.toUpperCase())) {
-                        if (user.getCosmetic(CosmeticSlot.valueOf(args1.toUpperCase())) != null) {
-                            return "true";
-                        } else {
-                            return "false";
-                        }
+                        return TranslationUtil.getTranslation("equipped-cosmetic", String.valueOf(user.getCosmetic(CosmeticSlot.valueOf(args1.toUpperCase())) != null));
                     }
 
                     MessagesUtil.sendDebugMessages(args1);
@@ -153,15 +152,12 @@ public class HMCPlaceholderExpansion extends PlaceholderExpansion {
                             return "INVALID_COSMETIC";
                         }
                     }
-                    if (user.getCosmetic(cosmetic.getSlot()) == null) return "false";
-                    if (cosmetic.getId() == user.getCosmetic(cosmetic.getSlot()).getId()) {
-                        return "true";
-                    } else {
-                        return "false";
-                    }
+                    Cosmetic equippedCosmetic = user.getCosmetic(cosmetic.getSlot());
+                    if (equippedCosmetic == null) return TranslationUtil.getTranslation("equipped-cosmetic", "false");
+                    return TranslationUtil.getTranslation("equipped-cosmetic", String.valueOf(cosmetic.getId().equals(equippedCosmetic.getId())));
                 }
             case "wardrobe-enabled":
-                return String.valueOf(user.isInWardrobe());
+                return TranslationUtil.getTranslation("in-wardrobe", String.valueOf(user.isInWardrobe()));
         }
         return null;
     }

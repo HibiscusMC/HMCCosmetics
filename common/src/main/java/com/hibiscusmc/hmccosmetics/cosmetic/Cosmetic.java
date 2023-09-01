@@ -3,6 +3,8 @@ package com.hibiscusmc.hmccosmetics.cosmetic;
 import com.hibiscusmc.hmccosmetics.config.serializer.ItemSerializer;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -14,11 +16,16 @@ import java.util.logging.Level;
 
 public abstract class Cosmetic {
 
+    @Getter @Setter
     private String id;
+    @Getter @Setter
     private String permission;
     private ItemStack item;
+    @Getter @Setter
     private String material;
+    @Getter @Setter
     private CosmeticSlot slot;
+    @Getter @Setter
     private boolean dyable;
 
     protected Cosmetic(String id, @NotNull ConfigurationNode config) {
@@ -44,44 +51,8 @@ public abstract class Cosmetic {
         Cosmetics.addCosmetic(this);
     }
 
-    public String getId() {
-        return this.id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public CosmeticSlot getSlot() {
-        return this.slot;
-    }
-
-    public void setSlot(CosmeticSlot slot) {
-        this.slot = slot;
-    }
-
-    public String getPermission() {
-        return this.permission;
-    }
-
-    public void setPermission(String permission) {
-        this.permission = permission;
-    }
-
     public boolean requiresPermission() {
         return permission != null;
-    }
-
-    public void setDyable(boolean dyable) {
-        this.dyable = dyable;
-    }
-
-    public boolean isDyable() {
-        return this.dyable;
-    }
-
-    public String getMaterial() {
-        return material;
     }
 
     public abstract void update(CosmeticUser user);

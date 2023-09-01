@@ -3,46 +3,60 @@ package com.hibiscusmc.hmccosmetics.user;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
-import com.hibiscusmc.hmccosmetics.api.*;
+import com.hibiscusmc.hmccosmetics.api.events.*;
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.config.Wardrobe;
 import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
-import com.hibiscusmc.hmccosmetics.cosmetic.types.*;
+import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticArmorType;
+import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBackpackType;
+import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
+import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticMainhandType;
+import com.hibiscusmc.hmccosmetics.hooks.Hooks;
+import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
 import com.hibiscusmc.hmccosmetics.user.manager.UserBackpackManager;
 import com.hibiscusmc.hmccosmetics.user.manager.UserBalloonManager;
-import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
 import com.hibiscusmc.hmccosmetics.user.manager.UserEmoteManager;
 import com.hibiscusmc.hmccosmetics.user.manager.UserWardrobeManager;
 import com.hibiscusmc.hmccosmetics.util.InventoryUtils;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.PlayerUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
-import org.bukkit.*;
+import lombok.Getter;
+import org.bukkit.Bukkit;
+import org.bukkit.Color;
+import org.bukkit.Material;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.*;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitTask;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.logging.Level;
 
 public class CosmeticUser {
 
+    @Getter
     private final UUID uniqueId;
     private int taskId;
-    private HashMap<CosmeticSlot, Cosmetic> playerCosmetics = new HashMap<>();
+    private final HashMap<CosmeticSlot, Cosmetic> playerCosmetics = new HashMap<>();
     private UserWardrobeManager userWardrobeManager;
     private UserBalloonManager userBalloonManager;
+    @Getter
     private UserBackpackManager userBackpackManager;
-    private UserEmoteManager userEmoteManager;
+    @Getter
+    private final UserEmoteManager userEmoteManager;
 
     // Cosmetic Settings/Toggles
     private boolean hideCosmetics;
+    @Getter
     private HiddenReason hiddenReason;
-    private HashMap<CosmeticSlot, Color> colors = new HashMap<>();
+    private final HashMap<CosmeticSlot, Color> colors = new HashMap<>();
 
     public CosmeticUser(UUID uuid) {
         this.uniqueId = uuid;
@@ -55,6 +69,7 @@ public class CosmeticUser {
         Runnable run = () -> {
             MessagesUtil.sendDebugMessages("Tick[uuid=" + uniqueId + "]", Level.INFO);
             updateCosmetic();
+            if (getHidden() && !getUserEmoteManager().isPlayingEmote()) MessagesUtil.sendActionBar(getPlayer(), "hidden-cosmetics");
         };
 
         int tickPeriod = Settings.getTickPeriod();
@@ -68,10 +83,6 @@ public class CosmeticUser {
         Bukkit.getScheduler().cancelTask(taskId);
         despawnBackpack();
         despawnBalloon();
-    }
-
-    public UUID getUniqueId() {
-        return this.uniqueId;
     }
 
     public Cosmetic getCosmetic(CosmeticSlot slot) {
@@ -116,6 +127,9 @@ public class CosmeticUser {
             CosmeticBalloonType balloonType = (CosmeticBalloonType) cosmetic;
             spawnBalloon(balloonType);
         }
+        // API
+        PlayerCosmeticPostEquipEvent postEquipEvent = new PlayerCosmeticPostEquipEvent(this, cosmetic);
+        Bukkit.getPluginManager().callEvent(postEquipEvent);
     }
 
     public void removeCosmetics() {
@@ -141,7 +155,7 @@ public class CosmeticUser {
             despawnBalloon();
         }
         if (slot == CosmeticSlot.EMOTE) {
-
+            if (getUserEmoteManager().isPlayingEmote()) getUserEmoteManager().stopEmote(UserEmoteManager.StopEmoteReason.UNEQUIP);
         }
         colors.remove(slot);
         playerCosmetics.remove(slot);
@@ -184,6 +198,10 @@ public class CosmeticUser {
         }
     }
 
+    public ItemStack getUserCosmeticItem(CosmeticSlot slot) {
+        return getUserCosmeticItem(getCosmetic(slot));
+    }
+
     public ItemStack getUserCosmeticItem(Cosmetic cosmetic) {
         ItemStack item = null;
         if (hideCosmetics) {
@@ -200,12 +218,54 @@ public class CosmeticUser {
                 item = cosmetic.getItem();
             }
         }
+        return getUserCosmeticItem(cosmetic, item);
+    }
+
+    @SuppressWarnings("deprecation")
+    public ItemStack getUserCosmeticItem(Cosmetic cosmetic, ItemStack item) {
         if (item == null) {
             MessagesUtil.sendDebugMessages("GetUserCosemticUser Item is null");
-            return null;
+            return new ItemStack(Material.AIR);
         }
         if (item.hasItemMeta()) {
             ItemMeta itemMeta = item.getItemMeta();
+
+            if (item.getType() == Material.PLAYER_HEAD) {
+                SkullMeta skullMeta = (SkullMeta) itemMeta;
+                if (skullMeta.getPersistentDataContainer().has(InventoryUtils.getSkullOwner(), PersistentDataType.STRING)) {
+                    String owner = skullMeta.getPersistentDataContainer().get(InventoryUtils.getSkullOwner(), PersistentDataType.STRING);
+
+                    owner = Hooks.processPlaceholders(getPlayer(), owner);
+
+                    skullMeta.setOwningPlayer(Bukkit.getOfflinePlayer(owner));
+                    //skullMeta.getPersistentDataContainer().remove(InventoryUtils.getSkullOwner()); // Don't really need this?
+                }
+                if (skullMeta.getPersistentDataContainer().has(InventoryUtils.getSkullTexture(), PersistentDataType.STRING)) {
+                    String texture = skullMeta.getPersistentDataContainer().get(InventoryUtils.getSkullTexture(), PersistentDataType.STRING);
+
+                    texture = Hooks.processPlaceholders(getPlayer(), texture);
+
+                    Bukkit.getUnsafe().modifyItemStack(item, "{SkullOwner:{Id:[I;0,0,0,0],Properties:{textures:[{Value:\""
+                            + texture + "\"}]}}}");
+                    //skullMeta.getPersistentDataContainer().remove(InventoryUtils.getSkullTexture()); // Don't really need this?
+                }
+
+                itemMeta = skullMeta;
+            }
+
+            List<String> processedLore = new ArrayList<>();
+
+            if (itemMeta.hasLore()) {
+                for (String loreLine : itemMeta.getLore()) {
+                    processedLore.add(Hooks.processPlaceholders(getPlayer(), loreLine));
+                }
+            }
+            if (itemMeta.hasDisplayName()) {
+                String displayName = itemMeta.getDisplayName();
+                itemMeta.setDisplayName(Hooks.processPlaceholders(getPlayer(), displayName));
+            }
+            itemMeta.setLore(processedLore);
+
             if (colors.containsKey(cosmetic.getSlot())) {
                 Color color = colors.get(cosmetic.getSlot());
                 if (itemMeta instanceof LeatherArmorMeta leatherMeta) {
@@ -217,15 +277,11 @@ public class CosmeticUser {
                 }
             }
             itemMeta.getPersistentDataContainer().set(InventoryUtils.getCosmeticKey(), PersistentDataType.STRING, cosmetic.getId());
-            itemMeta.getPersistentDataContainer().set(InventoryUtils.getOwnerKey(), PersistentDataType.STRING, getPlayer().getUniqueId().toString());
+            itemMeta.getPersistentDataContainer().set(InventoryUtils.getOwnerKey(), PersistentDataType.STRING, getEntity().getUniqueId().toString());
 
             item.setItemMeta(itemMeta);
         }
         return item;
-    }
-
-    public UserBackpackManager getUserBackpackManager() {
-        return userBackpackManager;
     }
 
     public UserBalloonManager getBalloonManager() {
@@ -234,10 +290,6 @@ public class CosmeticUser {
 
     public UserWardrobeManager getWardrobeManager() {
         return userWardrobeManager;
-    }
-
-    public UserEmoteManager getUserEmoteManager() {
-        return userEmoteManager;
     }
 
     public void enterWardrobe(boolean ignoreDistance, Wardrobe wardrobe) {
@@ -301,7 +353,7 @@ public class CosmeticUser {
 
     public void spawnBackpack(CosmeticBackpackType cosmeticBackpackType) {
         if (this.userBackpackManager != null) return;
-        this.userBackpackManager = new UserBackpackManager(this, cosmeticBackpackType.getBackpackType());
+        this.userBackpackManager = new UserBackpackManager(this);
         userBackpackManager.spawnBackpack(cosmeticBackpackType);
     }
 
@@ -316,19 +368,14 @@ public class CosmeticUser {
     }
 
     public void spawnBalloon(CosmeticBalloonType cosmeticBalloonType) {
-        Player player = Bukkit.getPlayer(getUniqueId());
-
         if (this.userBalloonManager != null) return;
-
         this.userBalloonManager = NMSHandlers.getHandler().spawnBalloon(this, cosmeticBalloonType);
-
-        List<Player> viewer = PlayerUtils.getNearbyPlayers(player);
-        viewer.add(player);
+        //updateCosmetic(cosmeticBalloonType);
     }
 
     public void despawnBalloon() {
         if (this.userBalloonManager == null) return;
-        List<Player> sentTo = PlayerUtils.getNearbyPlayers(getPlayer().getLocation());
+        List<Player> sentTo = PlayerUtils.getNearbyPlayers(getEntity().getLocation());
 
         PacketManager.sendEntityDestroyPacket(userBalloonManager.getPufferfishBalloonId(), sentTo);
 
@@ -351,11 +398,31 @@ public class CosmeticUser {
     }
 
     public void removeArmor(CosmeticSlot slot) {
-        PacketManager.equipmentSlotUpdate(getPlayer().getEntityId(), this, slot, PlayerUtils.getNearbyPlayers(getPlayer()));
+        EquipmentSlot equipmentSlot = InventoryUtils.getEquipmentSlot(slot);
+        if (equipmentSlot == null) return;
+        if (getPlayer() != null) {
+            NMSHandlers.getHandler().equipmentSlotUpdate(getEntity().getEntityId(), equipmentSlot, getPlayer().getInventory().getItem(equipmentSlot), PlayerUtils.getNearbyPlayers(getEntity().getLocation()));
+        } else {
+            PacketManager.equipmentSlotUpdate(getEntity().getEntityId(), this, slot, PlayerUtils.getNearbyPlayers(getEntity().getLocation()));
+        }
     }
 
+    /**
+     * This returns the player associated with the user. Some users may not have a player attached, ie, they are npcs
+     * wearing cosmetics through an addon. If you need to get locations, use getEntity instead.
+     * @return Player
+     */
+    @Nullable
     public Player getPlayer() {
         return Bukkit.getPlayer(uniqueId);
+    }
+
+    /**
+     * This gets the entity associated with the user.
+     * @return Entity
+     */
+    public Entity getEntity() {
+        return Bukkit.getEntity(uniqueId);
     }
 
     public Color getCosmeticColor(CosmeticSlot slot) {
@@ -373,8 +440,14 @@ public class CosmeticUser {
     }
 
     public boolean canEquipCosmetic(Cosmetic cosmetic) {
+        return canEquipCosmetic(cosmetic, false);
+    }
+
+    public boolean canEquipCosmetic(Cosmetic cosmetic, boolean ignoreWardrobe) {
         if (!cosmetic.requiresPermission()) return true;
-        if (isInWardrobe() && WardrobeSettings.isTryCosmeticsInWardrobe()) return true;
+        if (isInWardrobe() && !ignoreWardrobe) {
+            if (WardrobeSettings.isTryCosmeticsInWardrobe() && userWardrobeManager.getWardrobeStatus().equals(UserWardrobeManager.WardrobeStatus.RUNNING)) return true;
+        }
         return getPlayer().hasPermission(cosmetic.getPermission());
     }
 
@@ -418,7 +491,7 @@ public class CosmeticUser {
     }
 
     public void showCosmetics() {
-        if (hideCosmetics == false) return;
+        if (!hideCosmetics) return;
 
         PlayerCosmeticShowEvent event = new PlayerCosmeticShowEvent(this);
         Bukkit.getPluginManager().callEvent(event);
@@ -431,10 +504,10 @@ public class CosmeticUser {
         if (hasCosmeticInSlot(CosmeticSlot.BALLOON)) {
             CosmeticBalloonType balloonType = (CosmeticBalloonType) getCosmetic(CosmeticSlot.BALLOON);
             getBalloonManager().addPlayerToModel(this, balloonType);
-            List<Player> viewer = PlayerUtils.getNearbyPlayers(getPlayer());
+            List<Player> viewer = PlayerUtils.getNearbyPlayers(getEntity().getLocation());
             PacketManager.sendLeashPacket(getBalloonManager().getPufferfishBalloonId(), getPlayer().getEntityId(), viewer);
         }
-        if (hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
+        if (hasCosmeticInSlot(CosmeticSlot.BACKPACK) && isBackpackSpawned()) {
             CosmeticBackpackType cosmeticBackpackType = (CosmeticBackpackType) getCosmetic(CosmeticSlot.BACKPACK);
             ItemStack item = getUserCosmeticItem(cosmeticBackpackType);
             userBackpackManager.setItem(item);
@@ -445,10 +518,6 @@ public class CosmeticUser {
 
     public boolean getHidden() {
         return this.hideCosmetics;
-    }
-
-    public HiddenReason getHiddenReason() {
-        return hiddenReason;
     }
 
     public enum HiddenReason {

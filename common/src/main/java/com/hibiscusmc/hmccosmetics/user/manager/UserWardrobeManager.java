@@ -1,17 +1,20 @@
 package com.hibiscusmc.hmccosmetics.user.manager;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
-import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.config.Wardrobe;
 import com.hibiscusmc.hmccosmetics.config.WardrobeLocation;
 import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
+import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
+import com.hibiscusmc.hmccosmetics.gui.Menu;
+import com.hibiscusmc.hmccosmetics.gui.Menus;
 import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.ServerUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
+import lombok.Getter;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
@@ -34,19 +37,33 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class UserWardrobeManager {
 
+    @Getter
     private final int NPC_ID;
+    @Getter
     private final int ARMORSTAND_ID;
+    @Getter
     private final UUID WARDROBE_UUID;
+    @Getter
     private String npcName;
+    @Getter
     private GameMode originalGamemode;
+    @Getter
     private final CosmeticUser user;
+    @Getter
     private final Wardrobe wardrobe;
+    @Getter
     private final WardrobeLocation wardrobeLocation;
+    @Getter
     private final Location viewingLocation;
+    @Getter
     private final Location npcLocation;
+    @Getter
     private Location exitLocation;
+    @Getter
     private BossBar bossBar;
+    @Getter
     private boolean active;
+    @Getter
     private WardrobeStatus wardrobeStatus;
 
     public UserWardrobeManager(CosmeticUser user, Wardrobe wardrobe) {
@@ -84,7 +101,7 @@ public class UserWardrobeManager {
         Runnable run = () -> {
             // Armorstand
             PacketManager.sendEntitySpawnPacket(viewingLocation, ARMORSTAND_ID, EntityType.ARMOR_STAND, UUID.randomUUID(), viewer);
-            PacketManager.sendInvisibilityPacket(ARMORSTAND_ID, viewer);
+            PacketManager.sendArmorstandMetadata(ARMORSTAND_ID, viewer);
             PacketManager.sendLookPacket(ARMORSTAND_ID, viewingLocation, viewer);
 
             // Player
@@ -101,6 +118,7 @@ public class UserWardrobeManager {
             // NPC 2
             Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
                 PacketManager.sendFakePlayerSpawnPacket(npcLocation, WARDROBE_UUID, NPC_ID, viewer);
+                PacketManager.sendPlayerOverlayPacket(NPC_ID, viewer);
                 MessagesUtil.sendDebugMessages("Spawned Fake Player on " + npcLocation);
                 NMSHandlers.getHandler().hideNPCName(player, npcName);
             }, 4);
@@ -111,27 +129,37 @@ public class UserWardrobeManager {
 
             // Misc
             if (user.hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
-                user.getUserBackpackManager().getArmorStand().teleport(npcLocation.clone().add(0, 2, 0));
+                // Maybe null as backpack maybe despawned before entering
+                if (user.getUserBackpackManager() == null) user.respawnBackpack();
+                user.getUserBackpackManager().getEntityManager().teleport(npcLocation.clone().add(0, 2, 0));
+                NMSHandlers.getHandler().equipmentSlotUpdate(user.getUserBackpackManager().getFirstArmorStandId(), EquipmentSlot.HEAD, user.getUserCosmeticItem(user.getCosmetic(CosmeticSlot.BACKPACK)), viewer);
                 PacketManager.ridingMountPacket(NPC_ID, user.getUserBackpackManager().getFirstArmorStandId(), viewer);
             }
 
             if (user.hasCosmeticInSlot(CosmeticSlot.BALLOON)) {
+                CosmeticBalloonType cosmetic = (CosmeticBalloonType) user.getCosmetic(CosmeticSlot.BALLOON);
                 user.getBalloonManager().sendRemoveLeashPacket(viewer);
                 user.getBalloonManager().sendLeashPacket(NPC_ID);
                 //PacketManager.sendLeashPacket(VIEWER.getBalloonEntity().getModelId(), NPC_ID, viewer);
 
-                PacketManager.sendTeleportPacket(user.getBalloonManager().getPufferfishBalloonId(), npcLocation.clone().add(Settings.getBalloonOffset()), false, viewer);
-                user.getBalloonManager().getModelEntity().teleport(npcLocation.clone().add(Settings.getBalloonOffset()));
+                Location balloonLocation = npcLocation.clone().add(cosmetic.getBalloonOffset());
+                PacketManager.sendTeleportPacket(user.getBalloonManager().getPufferfishBalloonId(), balloonLocation , false, viewer);
+                user.getBalloonManager().getModelEntity().teleport(balloonLocation);
             }
 
-            if (WardrobeSettings.getEnabledBossbar()) {
+            if (WardrobeSettings.isEnabledBossbar()) {
                 float progress = WardrobeSettings.getBossbarProgress();
-                Component message = MessagesUtil.processStringNoKey(WardrobeSettings.getBossbarText());
+                Component message = MessagesUtil.processStringNoKey(WardrobeSettings.getBossbarMessage());
 
                 bossBar = BossBar.bossBar(message, progress, WardrobeSettings.getBossbarColor(), WardrobeSettings.getBossbarOverlay());
                 Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.getInstance()).player(player);
 
                 target.showBossBar(bossBar);
+            }
+
+            if (WardrobeSettings.isEnterOpenMenu()) {
+                Menu menu = Menus.getDefaultMenu();
+                if (menu != null) menu.openMenu(user);
             }
 
             this.active = true;
@@ -167,6 +195,15 @@ public class UserWardrobeManager {
 
         Runnable run = () -> {
             this.active = false;
+
+            // For Wardrobe Temp Cosmetics
+            for (Cosmetic cosmetic : user.getCosmetics()) {
+                MessagesUtil.sendDebugMessages("Checking... " + cosmetic.getId());
+                if (!user.canEquipCosmetic(cosmetic)) {
+                    MessagesUtil.sendDebugMessages("Unable to keep " + cosmetic.getId());
+                    user.removeCosmeticSlot(cosmetic.getSlot());
+                }
+            }
 
             // NPC
             if (user.hasCosmeticInSlot(CosmeticSlot.BALLOON)) user.getBalloonManager().sendRemoveLeashPacket();
@@ -207,15 +244,10 @@ public class UserWardrobeManager {
                 NMSHandlers.getHandler().equipmentSlotUpdate(user.getPlayer().getEntityId(), EquipmentSlot.HEAD, player.getInventory().getHelmet(), viewer);
             }
 
-            if (WardrobeSettings.getEnabledBossbar()) {
+            if (WardrobeSettings.isEnabledBossbar()) {
                 Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.getInstance()).player(player);
 
                 target.hideBossBar(bossBar);
-            }
-
-            // For Wardrobe Temp Cosmetics
-            for (Cosmetic cosmetic : user.getCosmetics()) {
-                if (!user.canEquipCosmetic(cosmetic)) user.removeCosmeticSlot(cosmetic.getSlot());
             }
 
             user.updateCosmetic();
@@ -259,13 +291,14 @@ public class UserWardrobeManager {
                 if (user.hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
                     PacketManager.sendTeleportPacket(user.getUserBackpackManager().getFirstArmorStandId(), location, false, viewer);
                     PacketManager.ridingMountPacket(NPC_ID, user.getUserBackpackManager().getFirstArmorStandId(), viewer);
-                    user.getUserBackpackManager().getArmorStand().setRotation(nextyaw, 0);
+                    user.getUserBackpackManager().getEntityManager().setRotation(nextyaw);
                     PacketManager.sendEntityDestroyPacket(user.getUserBackpackManager().getFirstArmorStandId(), outsideViewers);
                 }
 
                 if (user.hasCosmeticInSlot(CosmeticSlot.BALLOON)) {
-                    PacketManager.sendTeleportPacket(user.getBalloonManager().getPufferfishBalloonId(), npcLocation.add(Settings.getBalloonOffset()), false, viewer);
-                    user.getBalloonManager().getModelEntity().teleport(npcLocation.add(Settings.getBalloonOffset()));
+                    // The two lines below broke, solved by listening to PlayerCosmeticPostEquipEvent
+                    //PacketManager.sendTeleportPacket(user.getBalloonManager().getPufferfishBalloonId(), npcLocation.add(Settings.getBalloonOffset()), false, viewer);
+                    //user.getBalloonManager().getModelEntity().teleport(npcLocation.add(Settings.getBalloonOffset()));
                     user.getBalloonManager().sendRemoveLeashPacket(outsideViewers);
                     PacketManager.sendEntityDestroyPacket(user.getBalloonManager().getModelId(), outsideViewers);
                     user.getBalloonManager().sendLeashPacket(NPC_ID);
@@ -280,14 +313,6 @@ public class UserWardrobeManager {
         runnable.runTaskTimer(HMCCosmeticsPlugin.getInstance(), 0, 2);
     }
 
-    public int getCameraId() {
-        return ARMORSTAND_ID;
-    }
-
-    public WardrobeStatus getWardrobeStatus() {
-        return wardrobeStatus;
-    }
-
     public void setWardrobeStatus(WardrobeStatus status) {
         this.wardrobeStatus = status;
     }
@@ -298,4 +323,5 @@ public class UserWardrobeManager {
         RUNNING,
         STOPPING,
     }
+
 }

@@ -1,7 +1,7 @@
 package com.hibiscusmc.hmccosmetics;
 
 import com.bgsoftware.common.config.CommentedConfiguration;
-import com.hibiscusmc.hmccosmetics.api.HMCCosmeticSetupEvent;
+import com.hibiscusmc.hmccosmetics.api.events.HMCCosmeticSetupEvent;
 import com.hibiscusmc.hmccosmetics.command.CosmeticCommand;
 import com.hibiscusmc.hmccosmetics.command.CosmeticCommandTabComplete;
 import com.hibiscusmc.hmccosmetics.config.DatabaseSettings;
@@ -50,7 +50,6 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
     private static boolean disable = false;
     private static YamlConfigurationLoader configLoader;
     private static final int pluginId = 13873;
-    private static boolean hasModelEngine = false;
     private static boolean onLatestVersion = true;
     private static String latestVersion = "";
 
@@ -89,8 +88,8 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
         onLatestVersion = checker.isUsingLatestVersion();
         // File setup
         saveDefaultConfig();
-        //saveResource("translations.yml", false);
         if (!Path.of(getDataFolder().getPath(), "messages.yml").toFile().exists()) saveResource("messages.yml", false);
+        if (!Path.of(getDataFolder().getPath(), "translations.yml").toFile().exists()) saveResource("translations.yml", false);
         if (!Path.of(getDataFolder().getPath() + "/cosmetics/").toFile().exists()) saveResource("cosmetics/defaultcosmetics.yml", false);
         if (!Path.of(getDataFolder().getPath() + "/menus/").toFile().exists()) saveResource("menus/defaultmenu.yml", false);
 
@@ -104,11 +103,15 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
         // Configuration Sync
         final File configFile = Path.of(getInstance().getDataFolder().getPath(), "config.yml").toFile();
         final File messageFile = Path.of(getInstance().getDataFolder().getPath(), "messages.yml").toFile();
+        final File translationFile = Path.of(getInstance().getDataFolder().getPath(), "translations.yml").toFile();
         try {
             CommentedConfiguration.loadConfiguration(configFile).syncWithConfig(configFile, getInstance().getResource("config.yml"),
-                    "database-settings", "debug-mode", "wardrobe.viewer-location", "wardrobe.npc-location", "wardrobe.wardrobe-location", "wardrobe.leave-location");
+                    "database-settings", "wardrobe.wardrobes", "debug-mode", "wardrobe.viewer-location", "wardrobe.npc-location", "wardrobe.wardrobe-location", "wardrobe.leave-location");
             CommentedConfiguration.loadConfiguration(messageFile).syncWithConfig(messageFile, getInstance().getResource("messages.yml"));
-        } catch (Exception e) {}
+            CommentedConfiguration.loadConfiguration(translationFile).syncWithConfig(translationFile, getInstance().getResource("translations.yml"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         // Setup
         setup();
@@ -124,13 +127,8 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
         // Database
         new Database();
 
-        // ModelEngine
-        if (Bukkit.getPluginManager().getPlugin("ModelEngine") != null) {
-            hasModelEngine = true;
-        }
-
         // WorldGuard
-        if (Bukkit.getPluginManager().getPlugin("WorldGuard") != null && Settings.isWorldGuardMoveCheckEnabled()) {
+        if (Bukkit.getPluginManager().getPlugin("WorldGuard") != null && Settings.isWorldGuardMoveCheck()) {
             getServer().getPluginManager().registerEvents(new WGListener(), this);
         }
     }
@@ -282,9 +280,6 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
         }
     }
 
-    public static boolean hasModelEngine() {
-        return hasModelEngine;
-    }
     public static boolean isOnLatestVersion() {
         return onLatestVersion;
     }

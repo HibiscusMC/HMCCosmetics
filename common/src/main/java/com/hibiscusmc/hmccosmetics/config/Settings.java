@@ -1,8 +1,8 @@
 package com.hibiscusmc.hmccosmetics.config;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
-import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
+import lombok.Getter;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.util.Vector;
 import org.spongepowered.configurate.ConfigurationNode;
@@ -15,17 +15,8 @@ public class Settings {
     private static final String DEFAULT_MENU = "default-menu";
     private static final String CONFIG_VERSION = "config-version";
     private static final String COSMETIC_SETTINGS_PATH = "cosmetic-settings";
-    private static final String REQUIRE_EMPTY_HELMET_PATH = "require-empty-helmet";
-    private static final String REQUIRE_EMPTY_OFF_HAND_PATH = "require-empty-off-hand";
-    private static final String REQUIRE_EMPTY_CHEST_PLATE_PATH = "require-empty-chest-plate";
-    private static final String REQUIRE_EMPTY_PANTS_PATH = "require-empty-pants";
-    private static final String REQUIRE_EMPTY_BOOTS_PATH = "require-empty-boots";
     private static final String BALLOON_OFFSET = "balloon-offset";
-    private static final String FIRST_PERSON_BACKPACK_MODE = "first-person-backpack-mode";
-
-    private static final transient String LOOK_DOWN_PITCH_PATH = "look-down-backpack-remove";
     private static final String VIEW_DISTANCE_PATH = "view-distance";
-    private static final String PARTICLE_COUNT = "particle-count";
     private static final String DYE_MENU_PATH = "dye-menu";
     private static final String DYE_MENU_NAME = "title";
     private static final String DYE_MENU_INPUT_SLOT = "input-slot";
@@ -34,6 +25,7 @@ public class Settings {
     private static final String TICK_PERIOD_PATH = "tick-period";
     private static final String UNAPPLY_DEATH_PATH = "unapply-on-death";
     private static final String FORCE_PERMISSION_JOIN_PATH = "force-permission-join";
+    private static final String FORCE_SHOW_COSMETICS_PATH = "force-show-join";
     private static final String EMOTE_DISTANCE_PATH = "emote-distance";
     private static final String HOOK_SETTING_PATH = "hook-settings";
     private static final String HOOK_ITEMADDER_PATH = "itemsadder";
@@ -45,41 +37,112 @@ public class Settings {
     private static final String COSMETIC_EMOTE_AIR_CHECK_PATH = "emote-air-check";
     private static final String COSMETIC_EMOTE_DAMAGE_PATH = "emote-damage-leave";
     private static final String COSMETIC_EMOTE_INVINCIBLE_PATH = "emote-invincible";
+    private static final String COSMETIC_EMOTE_CAMERA_PATH = "emote-camera";
+    private static final String COSMETIC_EMOTE_MOVE_CHECK_PATH = "emote-move";
+    private static final String COSMETIC_PACKET_ENTITY_TELEPORT_COOLDOWN_PATH = "entity-cooldown-teleport-packet";
+    private static final String COSMETIC_BACKPACK_FORCE_RIDING_PACKET_PATH = "backpack-force-riding-packet";
+    private static final String COSMETIC_FORCE_OFFHAND_COSMETIC_SHOW_PATH = "offhand-always-show";
     private static final String COSMETIC_ADD_ENCHANTS_HELMET_PATH = "helmet-add-enchantments";
     private static final String COSMETIC_ADD_ENCHANTS_CHESTPLATE_PATH = "chest-add-enchantments";
     private static final String COSMETIC_ADD_ENCHANTS_LEGGINGS_PATH = "leggings-add-enchantments";
     private static final String COSMETIC_ADD_ENCHANTS_BOOTS_PATH = "boots-add-enchantments";
     private static final String COSMETIC_DESTROY_LOOSE_COSMETIC_PATH = "destroy-loose-cosmetics";
+    private static final String MENU_SETTINGS_PATH = "menu-settings";
+    private static final String COSMETIC_TYPE_SETTINGS_PATH = "cosmetic-type";
+    private static final String EQUIP_CLICK_TYPE = "equip-click";
+    private static final String UNEQUIP_CLICK_TYPE = "unequip-click";
+    private static final String SHADING_PATH = "shading";
+    private static final String FIRST_ROW_SHIFT_PATH = "first-row-shift";
+    private static final String SEQUENT_ROW_SHIFT_PATH = "sequent-row-shift";
+    private static final String INDIVIDUAL_COLUMN_SHIFT_PATH = "individual-column-shift";
+    private static final String BACKGROUND_PATH = "background";
+    private static final String CLEAR_BACKGROUND_PATH = "clear-background";
+    private static final String EQUIPPED_COSMETIC_COLOR_PATH = "equipped-cosmetic-color";
+    private static final String EQUIPABLE_COSMETIC_COLOR_PATH = "equipable-cosmetic-color";
+    private static final String LOCKED_COSMETIC_COLOR_PATH = "locked-cosmetic-color";
+    private static final String ENABLED_PATH = "enabled";
 
+    @Getter
     private static String defaultMenu;
+    @Getter
     private static String dyeMenuName;
+    @Getter
     private static int dyeMenuInputSlot;
+    @Getter
     private static int dyeMenuOutputSlot;
+    @Getter
     private static int configVersion;
-    private static boolean requireEmptyHelmet;
-    private static boolean requireEmptyOffHand;
-    private static boolean requireEmptyChestPlate;
-    private static boolean requireEmptyPants;
-    private static boolean requireEmptyBoots;
+    @Getter
     private static boolean debugMode;
+    @Getter
     private static boolean unapplyOnDeath;
+    @Getter
     private static boolean forcePermissionJoin;
+    @Getter
+    private static boolean forceShowOnJoin;
+    @Getter
     private static boolean itemsAdderChangeReload;
+    @Getter
     private static boolean worldGuardMoveCheck;
+    @Getter
     private static boolean cosmeticEmoteBlockCheck;
+    @Getter
     private static boolean addHelmetEnchants;
+    @Getter
     private static boolean addChestplateEnchants;
+    @Getter
     private static boolean addLeggingEnchants;
+    @Getter
     private static boolean addBootsEnchants;
+    @Getter
     private static boolean emoteAirCheck;
+    @Getter
     private static boolean emoteDamageLeave;
+    @Getter
     private static boolean emoteInvincible;
+    @Getter
     private static boolean destroyLooseCosmetics;
-    private static int lookDownPitch;
+    @Getter
+    private static boolean backpackForceRidingEnabled;
+    @Getter
+    private static boolean cosmeticForceOffhandCosmeticShow;
+    @Getter
     private static int viewDistance;
+    @Getter
     private static int tickPeriod;
+    @Getter
+    private static int packetEntityTeleportCooldown;
+    @Getter
     private static double emoteDistance;
+    @Getter
     private static Vector balloonOffset;
+    @Getter
+    private static String cosmeticEquipClickType;
+    @Getter
+    private static String cosmeticUnEquipClickType;
+    @Getter
+    private static boolean defaultShading;
+    @Getter
+    private static String firstRowShift;
+    @Getter
+    private static String sequentRowShift;
+    @Getter
+    private static String individualColumnShift;
+    @Getter
+    private static String background;
+    @Getter
+    private static String clearBackground;
+    @Getter
+    private static String equippedCosmeticColor;
+    @Getter
+    private static String equipableCosmeticColor;
+    @Getter
+    private static String lockedCosmeticColor;
+    @Getter
+    private static boolean emoteCameraEnabled;
+    @Getter
+    private static boolean emoteMoveCheck;
+
 
     public static void load(ConfigurationNode source) {
 
@@ -98,30 +161,45 @@ public class Settings {
 
         ConfigurationNode cosmeticSettings = source.node(COSMETIC_SETTINGS_PATH);
 
-        requireEmptyHelmet = cosmeticSettings.node(REQUIRE_EMPTY_HELMET_PATH).getBoolean();
-        requireEmptyOffHand = cosmeticSettings.node(REQUIRE_EMPTY_OFF_HAND_PATH).getBoolean();
-        requireEmptyChestPlate = cosmeticSettings.node(REQUIRE_EMPTY_CHEST_PLATE_PATH).getBoolean();
-        requireEmptyPants = cosmeticSettings.node(REQUIRE_EMPTY_PANTS_PATH).getBoolean();
-        requireEmptyBoots = cosmeticSettings.node(REQUIRE_EMPTY_BOOTS_PATH).getBoolean();
         unapplyOnDeath = cosmeticSettings.node(UNAPPLY_DEATH_PATH).getBoolean(false);
         forcePermissionJoin = cosmeticSettings.node(FORCE_PERMISSION_JOIN_PATH).getBoolean(false);
+        forceShowOnJoin = cosmeticSettings.node(FORCE_SHOW_COSMETICS_PATH).getBoolean(false);
         emoteDistance = cosmeticSettings.node(EMOTE_DISTANCE_PATH).getDouble(-3);
         cosmeticEmoteBlockCheck = cosmeticSettings.node(COSMETIC_EMOTE_CHECK_PATH).getBoolean(true);
         emoteAirCheck = cosmeticSettings.node(COSMETIC_EMOTE_AIR_CHECK_PATH).getBoolean(true);
         emoteDamageLeave = cosmeticSettings.node(COSMETIC_EMOTE_DAMAGE_PATH).getBoolean(false);
         emoteInvincible = cosmeticSettings.node(COSMETIC_EMOTE_INVINCIBLE_PATH).getBoolean(false);
         destroyLooseCosmetics = cosmeticSettings.node(COSMETIC_DESTROY_LOOSE_COSMETIC_PATH).getBoolean(false);
+        backpackForceRidingEnabled = cosmeticSettings.node(COSMETIC_BACKPACK_FORCE_RIDING_PACKET_PATH).getBoolean(false);
         addHelmetEnchants = cosmeticSettings.node(COSMETIC_ADD_ENCHANTS_HELMET_PATH).getBoolean(false);
         addChestplateEnchants = cosmeticSettings.node(COSMETIC_ADD_ENCHANTS_CHESTPLATE_PATH).getBoolean(false);
         addLeggingEnchants = cosmeticSettings.node(COSMETIC_ADD_ENCHANTS_LEGGINGS_PATH).getBoolean(false);
         addBootsEnchants = cosmeticSettings.node(COSMETIC_ADD_ENCHANTS_BOOTS_PATH).getBoolean(false);
-
         tickPeriod = cosmeticSettings.node(TICK_PERIOD_PATH).getInt(-1);
-        lookDownPitch = cosmeticSettings.node(LOOK_DOWN_PITCH_PATH).getInt();
-        viewDistance = cosmeticSettings.node(VIEW_DISTANCE_PATH).getInt();
+        viewDistance = cosmeticSettings.node(VIEW_DISTANCE_PATH).getInt(-3);
+        emoteCameraEnabled = cosmeticSettings.node(COSMETIC_EMOTE_CAMERA_PATH).getBoolean(true);
+        emoteMoveCheck = cosmeticSettings.node(COSMETIC_EMOTE_MOVE_CHECK_PATH).getBoolean(false);
+        packetEntityTeleportCooldown = cosmeticSettings.node(COSMETIC_PACKET_ENTITY_TELEPORT_COOLDOWN_PATH).getInt(-1);
+        cosmeticForceOffhandCosmeticShow = cosmeticSettings.node(COSMETIC_FORCE_OFFHAND_COSMETIC_SHOW_PATH).getBoolean(false);
+
+        ConfigurationNode menuSettings = source.node(MENU_SETTINGS_PATH);
+
+        ConfigurationNode shadingSettings = menuSettings.node(SHADING_PATH);
+        defaultShading = shadingSettings.node(ENABLED_PATH).getBoolean();
+        firstRowShift = shadingSettings.node(FIRST_ROW_SHIFT_PATH).getString();
+        sequentRowShift = shadingSettings.node(SEQUENT_ROW_SHIFT_PATH).getString();
+        individualColumnShift = shadingSettings.node(INDIVIDUAL_COLUMN_SHIFT_PATH).getString();
+        background = shadingSettings.node(BACKGROUND_PATH).getString();
+        clearBackground = shadingSettings.node(CLEAR_BACKGROUND_PATH).getString();
+        equippedCosmeticColor = shadingSettings.node(EQUIPPED_COSMETIC_COLOR_PATH).getString();
+        equipableCosmeticColor = shadingSettings.node(EQUIPABLE_COSMETIC_COLOR_PATH).getString();
+        lockedCosmeticColor = shadingSettings.node(LOCKED_COSMETIC_COLOR_PATH).getString();
+
+        ConfigurationNode cosmeticTypeSettings = menuSettings.node(COSMETIC_TYPE_SETTINGS_PATH);
+        cosmeticEquipClickType = cosmeticTypeSettings.node(EQUIP_CLICK_TYPE).getString("ALL");
+        cosmeticUnEquipClickType = cosmeticTypeSettings.node(UNEQUIP_CLICK_TYPE).getString("ALL");
 
         final var balloonSection = cosmeticSettings.node(BALLOON_OFFSET);
-
         balloonOffset = loadVector(balloonSection);
 
         ConfigurationNode dyeMenuSettings = source.node(DYE_MENU_PATH);
@@ -143,147 +221,8 @@ public class Settings {
         }
     }
 
-    private static Vector loadVector(final ConfigurationNode config) {
+    public static Vector loadVector(final ConfigurationNode config) {
         return new Vector(config.node("x").getDouble(), config.node("y").getDouble(), config.node("z").getDouble());
-    }
-
-    public static boolean isRequireEmptyHelmet() {
-        return requireEmptyHelmet;
-    }
-
-    public static boolean isRequireEmptyOffHand() {
-        return requireEmptyOffHand;
-    }
-
-
-    public static boolean isRequireEmptyChestPlate() {
-        return requireEmptyChestPlate;
-    }
-
-    public static boolean isRequireEmptyPants() {
-        return requireEmptyPants;
-    }
-
-    public static boolean isRequireEmptyBoots() {
-        return requireEmptyBoots;
-    }
-
-    public static boolean getRequireEmpty(CosmeticSlot slot) {
-        switch (slot) {
-            case HELMET -> {
-                return requireEmptyHelmet;
-            }
-            case CHESTPLATE -> {
-                return requireEmptyChestPlate;
-            }
-            case LEGGINGS -> {
-                return requireEmptyPants;
-            }
-            case BOOTS -> {
-                return requireEmptyBoots;
-            }
-            case OFFHAND -> {
-                return requireEmptyOffHand;
-            }
-        }
-        return false;
-    }
-
-    public static boolean getRequireEmpty(EquipmentSlot slot) {
-        switch (slot) {
-            case HEAD -> {
-                return requireEmptyHelmet;
-            }
-            case CHEST -> {
-                return requireEmptyChestPlate;
-            }
-            case LEGS -> {
-                return requireEmptyPants;
-            }
-            case FEET -> {
-                return requireEmptyBoots;
-            }
-            case OFF_HAND -> {
-                return requireEmptyOffHand;
-            }
-        }
-        return false;
-    }
-
-    public static Vector getBalloonOffset() {
-        if (balloonOffset == null) HMCCosmeticsPlugin.getInstance().getLogger().info("Shits null");
-        return balloonOffset;
-    }
-
-    public static int getLookDownPitch() {
-        return lookDownPitch;
-    }
-
-    public static int getViewDistance() {
-        return viewDistance;
-    }
-
-    public static String getDefaultMenu() {
-        return defaultMenu;
-    }
-
-    public static int getConfigVersion() {
-        return configVersion;
-    }
-
-    public static String getDyeMenuName() {
-        return dyeMenuName;
-    }
-    public static int getDyeMenuInputSlot() { return dyeMenuInputSlot; }
-    public static int getDyeMenuOutputSlot() { return dyeMenuOutputSlot; }
-
-    public static boolean isDebugEnabled() {
-        return debugMode;
-    }
-    public static boolean getItemsAdderReloadChange() {
-        return itemsAdderChangeReload;
-    }
-
-    public static int getTickPeriod() {
-        return tickPeriod;
-    }
-    public static boolean getUnapplyOnDeath() {
-        return unapplyOnDeath;
-    }
-    public static boolean getForcePermissionJoin() {
-        return forcePermissionJoin;
-    }
-
-    public static boolean getDebugMode() {
-        return debugMode;
-    }
-
-    public static double getEmoteDistance() {
-        return emoteDistance;
-    }
-
-    public static boolean getCosmeticEmoteBlockCheck() {
-        return cosmeticEmoteBlockCheck;
-    }
-
-    public static boolean getEmoteAirCheck() {
-        return emoteAirCheck;
-    }
-
-    public static boolean isEmoteDamageLeave() {
-        return emoteDamageLeave;
-    }
-
-    public static boolean isEmoteInvincible() {
-        return emoteInvincible;
-    }
-
-    public static boolean isWorldGuardMoveCheckEnabled() {
-        return worldGuardMoveCheck;
-    }
-
-    public static boolean isDestroyLooseCosmetics() {
-        return destroyLooseCosmetics;
     }
 
     public static boolean getShouldAddEnchants(EquipmentSlot slot) {
