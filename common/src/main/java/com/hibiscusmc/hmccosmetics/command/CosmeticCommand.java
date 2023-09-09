@@ -333,7 +333,7 @@ public class CosmeticCommand implements CommandExecutor {
                 }
 
                 if (args[2].equalsIgnoreCase("viewerlocation")) {
-                    WardrobeSettings.setViewerLocation(wardrobe, player.getLocation());
+                    WardrobeSettings.setViewerLocation(wardrobe, player.getEyeLocation());
                     if (!silent) MessagesUtil.sendMessage(player, "set-wardrobe-viewing");
                     return true;
                 }
