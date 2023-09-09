@@ -169,10 +169,8 @@ public class WardrobeSettings {
                 MessagesUtil.sendDebugMessages("Leave Location: " + leaveLocation);
                 WardrobeLocation wardrobeLocation = new WardrobeLocation(npcLocation, viewerLocation, leaveLocation);
 
-                String permission = null;
-                int distance = -1;
-                if (!wardrobesNode.node(PERMISSION_PATH).virtual()) permission = wardrobesNode.node(PERMISSION_PATH).getString();
-                if (!wardrobesNode.node(DISTANCE_PATH).virtual()) distance = wardrobesNode.node(DISTANCE_PATH).getInt();
+                String permission = wardrobesNode.node(PERMISSION_PATH).getString(null);
+                int distance = wardrobesNode.node(DISTANCE_PATH).getInt(-1);
 
                 Wardrobe wardrobe = new Wardrobe(id, wardrobeLocation, permission, distance);
                 addWardrobe(wardrobe);
