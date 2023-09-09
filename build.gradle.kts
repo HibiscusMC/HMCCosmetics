@@ -187,6 +187,7 @@ bukkit {
     commands {
         register("cosmetic") {
             description = "Base Cosmetic Command"
+            aliases = listOf("hmccosmetics", "cosmetics")
         }
     }
     permissions {
