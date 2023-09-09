@@ -351,7 +351,7 @@ public class CosmeticCommand implements CommandExecutor {
                         return true;
                     }
                     if (args[2].equalsIgnoreCase("distance")) {
-                        WardrobeSettings.setWardrobeDistance(wardrobe, Integer.valueOf(args[3]));
+                        WardrobeSettings.setWardrobeDistance(wardrobe, Integer.parseInt(args[3]));
                         if (!silent) MessagesUtil.sendMessage(player, "set-wardrobe-distance");
                         return true;
                     }
