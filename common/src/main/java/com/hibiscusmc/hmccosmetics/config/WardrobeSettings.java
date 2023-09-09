@@ -19,7 +19,6 @@ import java.util.logging.Level;
 public class WardrobeSettings {
 
     private static final String DISABLE_ON_DAMAGE_PATH = "disable-on-damage";
-    private static final String DISPLAY_RADIUS_PATH = "display-radius";
     private static final String PORTABLE_PATH = "portable";
     private static final String ALWAYS_DISPLAY_PATH = "always-display";
     private static final String ROTATION_SPEED_PATH = "rotation-speed";
@@ -61,8 +60,6 @@ public class WardrobeSettings {
     private static ConfigurationNode configRoot;
     @Getter
     private static boolean disableOnDamage;
-    @Getter
-    private static int displayRadius;
     @Getter
     private static boolean portable;
     @Getter
@@ -115,7 +112,6 @@ public class WardrobeSettings {
         configRoot = source;
 
         disableOnDamage = source.node(DISABLE_ON_DAMAGE_PATH).getBoolean();
-        displayRadius = source.node(DISPLAY_RADIUS_PATH).getInt();
         portable = source.node(PORTABLE_PATH).getBoolean();
         alwaysDisplay = source.node(ALWAYS_DISPLAY_PATH).getBoolean();
         rotationSpeed = source.node(ROTATION_SPEED_PATH).getInt();
@@ -169,7 +165,7 @@ public class WardrobeSettings {
                 MessagesUtil.sendDebugMessages("Leave Location: " + leaveLocation);
                 WardrobeLocation wardrobeLocation = new WardrobeLocation(npcLocation, viewerLocation, leaveLocation);
 
-                String permission = wardrobesNode.node(PERMISSION_PATH).getString(null);
+                String permission = wardrobesNode.node(PERMISSION_PATH).getString();
                 int distance = wardrobesNode.node(DISTANCE_PATH).getInt(-1);
 
                 Wardrobe wardrobe = new Wardrobe(id, wardrobeLocation, permission, distance);

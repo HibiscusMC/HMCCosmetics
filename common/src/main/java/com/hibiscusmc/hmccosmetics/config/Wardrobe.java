@@ -13,7 +13,7 @@ public class Wardrobe {
     @Getter
     private final String id;
     @Getter @Setter
-    private int distance = WardrobeSettings.getDisplayRadius();
+    private int distance;
     @Getter @Setter
     private String permission;
     @Getter @Setter
@@ -29,8 +29,8 @@ public class Wardrobe {
     public Wardrobe(@NotNull String id, @NotNull WardrobeLocation location, @Nullable String permission, int distance) {
         this.id = id;
         this.location = location;
+        this.distance = distance;
         if (permission != null) this.permission = permission;
-        if (distance != -1) this.distance = distance;
     }
 
     /**
