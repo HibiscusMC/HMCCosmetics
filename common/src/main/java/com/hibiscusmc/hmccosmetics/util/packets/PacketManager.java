@@ -1,6 +1,7 @@
 package com.hibiscusmc.hmccosmetics.util.packets;
 
 import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.*;
 import com.google.common.collect.Lists;
@@ -29,7 +30,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-public class PacketManager extends BasePacket {
+public class PacketManager {
 
     public static void sendEntitySpawnPacket(
             final @NotNull Location location,
@@ -549,5 +550,10 @@ public class PacketManager extends BasePacket {
             viewers.addAll(PlayerUtils.getNearbyPlayers(location));
         }
         return viewers;
+    }
+
+    public static void sendPacket(Player player, PacketContainer packet) {
+        if (player == null) return;
+        ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, null,false);
     }
 }
