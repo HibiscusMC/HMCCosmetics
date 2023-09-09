@@ -262,7 +262,6 @@ public class CosmeticCommand implements CommandExecutor {
             case ("dataclear") -> {
                 if (args.length == 1) return true;
                 OfflinePlayer selectedPlayer = Bukkit.getOfflinePlayer(args[1]);
-                if (selectedPlayer == null) return true;
                 if (!sender.hasPermission("hmccosmetics.cmd.dataclear") && !sender.isOp()) {
                     if (!silent) MessagesUtil.sendMessage(sender, "no-permission");
                     return true;
