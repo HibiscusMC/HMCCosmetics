@@ -67,7 +67,7 @@ jetpack:
     amount: 1
   firstperson-item:
     material: PAPER
-    model-data: 14
+    model-data: 15
     name: "<white>Jetpack"
     amount: 1
 hammer:
@@ -155,6 +155,6 @@ hibiscus_flower:
   permission: "hmccosmetics.hibiscus_flower"
   item:
     material: PAPER
-    model-data: 15
+    model-data: 16
     name: "<#d24c9f>Hibiscus Flower"
     amount: 1
