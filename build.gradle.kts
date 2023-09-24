@@ -97,6 +97,7 @@ dependencies {
     implementation(project(path = ":v1_19_R2", configuration = "reobf"))
     implementation(project(path = ":v1_19_R3", configuration = "reobf"))
     implementation(project(path = ":v1_20_R1", configuration = "reobf"))
+    implementation(project(path = ":v1_20_R2", configuration = "reobf"))
 
     //compileOnly("com.github.Fisher2911:FisherLib:master-SNAPSHOT")
     implementation("net.kyori:adventure-api:4.11.0")
@@ -129,7 +130,7 @@ tasks {
     }
 
     runServer {
-        minecraftVersion("1.20.1")
+        minecraftVersion("1.20.2")
     }
 
     shadowJar {
@@ -138,6 +139,7 @@ tasks {
         dependsOn(":v1_19_R2:reobfJar")
         dependsOn(":v1_19_R3:reobfJar")
         dependsOn(":v1_20_R1:reobfJar")
+        dependsOn(":v1_20_R2:reobfJar")
         mergeServiceFiles()
 
         relocate("dev.triumphteam.gui", "com.hisbiscusmc.hmccosmetics.gui")
