@@ -53,7 +53,7 @@ public class UserBalloonManager {
         if (balloonType == BalloonType.MODELENGINE) {
             String id = cosmeticBalloonType.getModelName();
             MessagesUtil.sendDebugMessages("Attempting Spawning for " + id);
-            if (ModelEngineAPI.api.getModelRegistry().getBlueprint(id) == null) {
+            if (ModelEngineAPI.getBlueprint(id) == null) {
                 MessagesUtil.sendDebugMessages("Invalid Model Engine Blueprint " + id, Level.SEVERE);
                 return;
             }
@@ -64,8 +64,8 @@ public class UserBalloonManager {
             if (color != null) {
                 modeledEntity.getModels().forEach((d, singleModel) -> {
                     if (cosmeticBalloonType.isDyablePart(d)) {
-                        singleModel.getRendererHandler().setColor(color);
-                        singleModel.getRendererHandler().update();
+                        singleModel.setDefaultTint(color);
+                        singleModel.getModelRenderer().sendToClient();
                     }
                 });
             }
@@ -78,13 +78,13 @@ public class UserBalloonManager {
 
     public void remove() {
         if (balloonType == BalloonType.MODELENGINE) {
-            final ModeledEntity entity = ModelEngineAPI.api.getModeledEntity(modelEntity.getUniqueId());
-
+            final ModeledEntity entity = ModelEngineAPI.getModeledEntity(modelEntity.getUniqueId());
             if (entity == null) return;
 
-            for (final Player player : entity.getRangeManager().getPlayerInRange()) {
-                entity.hideFromPlayer(player);
+            for (String model : entity.getModels().keySet()) {
+                entity.removeModel(model);
             }
+
             entity.destroy();
         }
 
@@ -98,14 +98,14 @@ public class UserBalloonManager {
 
     public void addPlayerToModel(final CosmeticUser user, final CosmeticBalloonType cosmeticBalloonType, Color color) {
         if (balloonType == BalloonType.MODELENGINE) {
-            final ModeledEntity model = ModelEngineAPI.api.getModeledEntity(modelEntity.getUniqueId());
+            final ModeledEntity model = ModelEngineAPI.getModeledEntity(modelEntity.getUniqueId());
             if (model == null) {
                 spawnModel(cosmeticBalloonType, color);
                 MessagesUtil.sendDebugMessages("model is null");
                 return;
             }
             //if (model.getRangeManager().getPlayerInRange().contains(player)) return;
-            model.showToPlayer(user.getPlayer());
+            //model.showToPlayer(user.getPlayer());
             MessagesUtil.sendDebugMessages("Show to player");
             return;
         }
@@ -115,11 +115,12 @@ public class UserBalloonManager {
     }
     public void removePlayerFromModel(final Player player) {
         if (balloonType == BalloonType.MODELENGINE) {
-            final ModeledEntity model = ModelEngineAPI.api.getModeledEntity(modelEntity.getUniqueId());
+            final ModeledEntity model = ModelEngineAPI.getModeledEntity(modelEntity.getUniqueId());
 
             if (model == null) return;
 
-            model.hideFromPlayer(player);
+            //model.hideFromPlayer(player);
+
             MessagesUtil.sendDebugMessages("Hidden from player");
             return;
         }

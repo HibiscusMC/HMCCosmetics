@@ -91,7 +91,7 @@ public class UserBackpackManager {
 
         // No one should be using ME because it barely works but some still use it, so it's here
         if (cosmeticBackpackType.getModelName() != null && Hooks.isActiveHook("ModelEngine")) {
-            if (ModelEngineAPI.api.getModelRegistry().getBlueprint(cosmeticBackpackType.getModelName()) == null) {
+            if (ModelEngineAPI.getBlueprint(cosmeticBackpackType.getModelName()) == null) {
                 MessagesUtil.sendDebugMessages("Invalid Model Engine Blueprint " + cosmeticBackpackType.getModelName(), Level.SEVERE);
                 return;
             }
