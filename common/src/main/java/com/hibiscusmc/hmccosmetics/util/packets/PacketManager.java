@@ -337,13 +337,17 @@ public class PacketManager {
             final int entityId,
             final @NotNull List<Player> sendTo
     ) {
-        WrapperPlayServerNamedEntitySpawn wrapper = new WrapperPlayServerNamedEntitySpawn();
-        wrapper.setEntityID(entityId);
-        wrapper.setPlayerUUID(uuid);
-        wrapper.setPosition(location.toVector());
-        wrapper.setPitch(location.getPitch());
-        wrapper.setYaw(location.getYaw());
-        for (final Player p : sendTo) sendPacket(p, wrapper.getHandle());
+        if (NMSHandlers.getVersion().contains("v1_18_R2") || NMSHandlers.getVersion().contains("v1_19_R1") || NMSHandlers.getVersion().contains("v1_19_R2") || NMSHandlers.getVersion().contains("v1_19_R3") || NMSHandlers.getVersion().contains("v1_20_R1")) {
+            WrapperPlayServerNamedEntitySpawn wrapper = new WrapperPlayServerNamedEntitySpawn();
+            wrapper.setEntityID(entityId);
+            wrapper.setPlayerUUID(uuid);
+            wrapper.setPosition(location.toVector());
+            wrapper.setPitch(location.getPitch());
+            wrapper.setYaw(location.getYaw());
+            for (final Player p : sendTo) sendPacket(p, wrapper.getHandle());
+            return;
+        }
+        sendEntitySpawnPacket(location, entityId, EntityType.PLAYER, uuid);
     }
 
     /**
