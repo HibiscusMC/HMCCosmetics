@@ -24,6 +24,8 @@ cosmetic-settings:
   force-permission-join: true # Checks a player permission if they can have a cosmetic when they join the server.
   force-show-join: false # If the plugin should force show a player's cosmetics when they join the server.
 
+  # This disables the entire internal emote system within the plugin. This option requires a restart.
+  emote-enable: true
   emote-distance: -3 # This shows how far away the camera should be while a player is doing an emote. Negative is behind player.
   emote-block-check: true # If the server should check if the block is open where the camera is placed (prevents players viewing through blocks)
   emote-air-check: true # Check if there is air under a player, if there is, don't play emote

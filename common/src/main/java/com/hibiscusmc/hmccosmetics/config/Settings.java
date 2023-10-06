@@ -33,6 +33,7 @@ public class Settings {
     private static final String HOOK_WORLDGUARD_PATH = "worldguard";
     private static final String HOOK_WG_MOVE_CHECK_PATH = "player-move-check";
     private static final String HOOK_WG_MOVE_CHECK_PATH_LEGACY = "player_move_check";
+    private static final String COSMETIC_EMOTE_ENABLE = "emote-enable";
     private static final String COSMETIC_EMOTE_CHECK_PATH = "emote-block-check";
     private static final String COSMETIC_EMOTE_AIR_CHECK_PATH = "emote-air-check";
     private static final String COSMETIC_EMOTE_DAMAGE_PATH = "emote-damage-leave";
@@ -107,6 +108,8 @@ public class Settings {
     @Getter
     private static boolean cosmeticForceOffhandCosmeticShow;
     @Getter
+    private static boolean emotesEnabled;
+    @Getter
     private static int viewDistance;
     @Getter
     private static int tickPeriod;
@@ -164,6 +167,7 @@ public class Settings {
         unapplyOnDeath = cosmeticSettings.node(UNAPPLY_DEATH_PATH).getBoolean(false);
         forcePermissionJoin = cosmeticSettings.node(FORCE_PERMISSION_JOIN_PATH).getBoolean(false);
         forceShowOnJoin = cosmeticSettings.node(FORCE_SHOW_COSMETICS_PATH).getBoolean(false);
+        emotesEnabled = cosmeticSettings.node(COSMETIC_EMOTE_ENABLE).getBoolean(true);
         emoteDistance = cosmeticSettings.node(EMOTE_DISTANCE_PATH).getDouble(-3);
         cosmeticEmoteBlockCheck = cosmeticSettings.node(COSMETIC_EMOTE_CHECK_PATH).getBoolean(true);
         emoteAirCheck = cosmeticSettings.node(COSMETIC_EMOTE_AIR_CHECK_PATH).getBoolean(true);
