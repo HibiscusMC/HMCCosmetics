@@ -8,6 +8,11 @@ import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
 import com.ticxo.modelengine.api.ModelEngineAPI;
+import com.ticxo.modelengine.api.entity.BaseEntity;
+import com.ticxo.modelengine.api.entity.BukkitEntity;
+import com.ticxo.modelengine.api.entity.Dummy;
+import com.ticxo.modelengine.api.entity.EntityDataTracker;
+import com.ticxo.modelengine.api.entity.data.BukkitEntityData;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
 import lombok.Getter;
@@ -30,7 +35,6 @@ public class UserBalloonManager {
     @Getter
     private UserBalloonPufferfish pufferfish;
     private final ArmorStand modelEntity;
-
     public UserBalloonManager(CosmeticUser user, @NotNull Location location) {
         this.pufferfish = new UserBalloonPufferfish(user.getUniqueId(), NMSHandlers.getHandler().getNextEntityId(), UUID.randomUUID());
         this.modelEntity = NMSHandlers.getHandler().getMEGEntity(location.add(Settings.getBalloonOffset()));
@@ -78,18 +82,23 @@ public class UserBalloonManager {
 
     public void remove() {
         if (balloonType == BalloonType.MODELENGINE) {
-            final ModeledEntity entity = ModelEngineAPI.getModeledEntity(modelEntity.getUniqueId());
-            if (entity == null) return;
-
-            for (String model : entity.getModels().keySet()) {
-                entity.removeModel(model);
+            final ModeledEntity entity = ModelEngineAPI.getModeledEntity(modelEntity);
+            if (entity == null) {
+                MessagesUtil.sendDebugMessages("Balloon Removal Failed - Model Entity is Null");
+                return;
             }
 
+            //for (String model : entity.getModels().keySet()) {
+            //    entity.removeModel(model);
+            //}
+
             entity.destroy();
+            MessagesUtil.sendDebugMessages("Balloon Model Engine Removal");
         }
 
         modelEntity.remove();
         cosmeticBalloonType = null;
+        MessagesUtil.sendDebugMessages("Balloon Entity Removed");
     }
 
     public void addPlayerToModel(final CosmeticUser user, final CosmeticBalloonType cosmeticBalloonType) {
@@ -98,14 +107,19 @@ public class UserBalloonManager {
 
     public void addPlayerToModel(final CosmeticUser user, final CosmeticBalloonType cosmeticBalloonType, Color color) {
         if (balloonType == BalloonType.MODELENGINE) {
-            final ModeledEntity model = ModelEngineAPI.getModeledEntity(modelEntity.getUniqueId());
+            final ModeledEntity model = ModelEngineAPI.getModeledEntity(modelEntity);
             if (model == null) {
                 spawnModel(cosmeticBalloonType, color);
                 MessagesUtil.sendDebugMessages("model is null");
                 return;
             }
-            //if (model.getRangeManager().getPlayerInRange().contains(player)) return;
-            //model.showToPlayer(user.getPlayer());
+            BukkitEntityData data = (BukkitEntityData) model.getBase().getData();
+            data.getTracked().setPlayerPredicate(player -> {
+                if (player == user.getPlayer()) {
+                    return true;
+                }
+                else return false;
+            });
             MessagesUtil.sendDebugMessages("Show to player");
             return;
         }
@@ -113,13 +127,18 @@ public class UserBalloonManager {
             modelEntity.getEquipment().setHelmet(user.getUserCosmeticItem(cosmeticBalloonType));
         }
     }
-    public void removePlayerFromModel(final Player player) {
+    public void removePlayerFromModel(final Player viewer) {
         if (balloonType == BalloonType.MODELENGINE) {
-            final ModeledEntity model = ModelEngineAPI.getModeledEntity(modelEntity.getUniqueId());
-
+            final ModeledEntity model = ModelEngineAPI.getModeledEntity(modelEntity);
             if (model == null) return;
-
-            //model.hideFromPlayer(player);
+            BukkitEntityData data = (BukkitEntityData) model.getBase().getData();
+            //data.getTracked().removeForcedPairing(viewer);
+            data.getTracked().setPlayerPredicate(player -> {
+                if (player.getUniqueId() == viewer.getUniqueId()) {
+                    return true;
+                }
+                else return false;
+            });
 
             MessagesUtil.sendDebugMessages("Hidden from player");
             return;

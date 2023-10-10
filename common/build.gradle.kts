@@ -7,7 +7,7 @@ dependencies {
     compileOnly("com.mojang:authlib:1.5.25")
     compileOnly("org.spigotmc:spigot-api:1.18.2-R0.1-SNAPSHOT")
     compileOnly("org.jetbrains:annotations:23.0.0")
-    compileOnly("com.comphenix.protocol:ProtocolLib:5.0.0")
+    compileOnly("com.comphenix.protocol:ProtocolLib:5.1.0")
     compileOnly("me.clip:placeholderapi:2.11.3")
     compileOnly("com.ticxo.modelengine:ModelEngine:R4.0.2")
     compileOnly("com.github.oraxen:oraxen:1.160.0")
