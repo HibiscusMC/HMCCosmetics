@@ -5,6 +5,7 @@ import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
 import com.hibiscusmc.hmccosmetics.hooks.Hooks;
 import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
+import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
 import com.ticxo.modelengine.api.ModelEngineAPI;
@@ -24,18 +25,23 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
 
 public class UserBalloonManager {
 
+    private CosmeticUser user;
+    @Getter
     private BalloonType balloonType;
     private CosmeticBalloonType cosmeticBalloonType;
     @Getter
     private UserBalloonPufferfish pufferfish;
     private final ArmorStand modelEntity;
     public UserBalloonManager(CosmeticUser user, @NotNull Location location) {
+        this.user = user;
         this.pufferfish = new UserBalloonPufferfish(user.getUniqueId(), NMSHandlers.getHandler().getNextEntityId(), UUID.randomUUID());
         this.modelEntity = NMSHandlers.getHandler().getMEGEntity(location.add(Settings.getBalloonOffset()));
     }
@@ -65,6 +71,7 @@ public class UserBalloonManager {
             ActiveModel model = ModelEngineAPI.createActiveModel(ModelEngineAPI.getBlueprint(id));
             model.setCanHurt(false);
             modeledEntity.addModel(model, false);
+
             if (color != null) {
                 modeledEntity.getModels().forEach((d, singleModel) -> {
                     if (cosmeticBalloonType.isDyablePart(d)) {
@@ -73,6 +80,10 @@ public class UserBalloonManager {
                     }
                 });
             }
+
+            BukkitEntityData data = (BukkitEntityData) modeledEntity.getBase().getData();
+            data.setBlockedCullIgnoreRadius((double) Settings.getViewDistance());
+            data.getTracked().setPlayerPredicate(this::playerCheck);
             return;
         }
         if (balloonType == BalloonType.ITEM) {
@@ -87,10 +98,6 @@ public class UserBalloonManager {
                 MessagesUtil.sendDebugMessages("Balloon Removal Failed - Model Entity is Null");
                 return;
             }
-
-            //for (String model : entity.getModels().keySet()) {
-            //    entity.removeModel(model);
-            //}
 
             entity.destroy();
             MessagesUtil.sendDebugMessages("Balloon Model Engine Removal");
@@ -113,13 +120,7 @@ public class UserBalloonManager {
                 MessagesUtil.sendDebugMessages("model is null");
                 return;
             }
-            BukkitEntityData data = (BukkitEntityData) model.getBase().getData();
-            data.getTracked().setPlayerPredicate(player -> {
-                if (player == user.getPlayer()) {
-                    return true;
-                }
-                else return false;
-            });
+
             MessagesUtil.sendDebugMessages("Show to player");
             return;
         }
@@ -131,14 +132,6 @@ public class UserBalloonManager {
         if (balloonType == BalloonType.MODELENGINE) {
             final ModeledEntity model = ModelEngineAPI.getModeledEntity(modelEntity);
             if (model == null) return;
-            BukkitEntityData data = (BukkitEntityData) model.getBase().getData();
-            //data.getTracked().removeForcedPairing(viewer);
-            data.getTracked().setPlayerPredicate(player -> {
-                if (player.getUniqueId() == viewer.getUniqueId()) {
-                    return true;
-                }
-                else return false;
-            });
 
             MessagesUtil.sendDebugMessages("Hidden from player");
             return;
@@ -190,7 +183,6 @@ public class UserBalloonManager {
     }
 
     public void sendLeashPacket(int entityId) {
-        if (cosmeticBalloonType == null) return;
         if (cosmeticBalloonType.isShowLead()) {
             PacketManager.sendLeashPacket(getPufferfishBalloonId(), entityId, getLocation());
         }
@@ -200,5 +192,22 @@ public class UserBalloonManager {
         MODELENGINE,
         ITEM,
         NONE
+    }
+
+    private boolean playerCheck(final Player player) {
+        MessagesUtil.sendDebugMessages("playerCheck");
+        CosmeticUser viewer = CosmeticUsers.getUser(player.getUniqueId());
+
+        if (user.getPlayer() == player) {
+            return true;
+        } else {
+            if (user.isInWardrobe()) return false;
+            MessagesUtil.sendDebugMessages("playerCheck - Not Same Player");
+            if (viewer != null && viewer.isInWardrobe()) {
+                MessagesUtil.sendDebugMessages("playerCheck - Viewer in Wardrobe");
+                return false;
+            }
+        }
+        return (!user.getHidden());
     }
 }

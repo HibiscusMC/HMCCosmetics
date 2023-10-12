@@ -1,10 +1,12 @@
 package com.hibiscusmc.hmccosmetics.user.manager;
 
+import com.comphenix.protocol.PacketType;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import com.hibiscusmc.hmccosmetics.util.PlayerUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
 import org.bukkit.Location;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -33,6 +35,11 @@ public class UserBalloonPufferfish extends UserEntity {
     public void hidePufferfish() {
         PacketManager.sendEntityDestroyPacket(pufferFishEntityId, getViewers());
         getViewers().clear();
+    }
+
+    public void spawnPufferfish(Location location, List<Player> sendTo) {
+        PacketManager.sendEntitySpawnPacket(location, pufferFishEntityId, EntityType.PUFFERFISH, uuid, sendTo);
+        PacketManager.sendInvisibilityPacket(pufferFishEntityId, sendTo);
     }
 
     @Override

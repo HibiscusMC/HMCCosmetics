@@ -349,11 +349,14 @@ public class PlayerGameListener implements Listener {
     public void onPlayerCosmeticEquip(PlayerCosmeticPostEquipEvent event) {
         CosmeticUser user = event.getUser();
         if (user.isInWardrobe() && event.getCosmetic().getSlot().equals(CosmeticSlot.BALLOON)) {
-            Location NPCLocation = user.getWardrobeManager().getNpcLocation();
             CosmeticBalloonType cosmetic = (CosmeticBalloonType) event.getCosmetic();
+            Location npclocation = user.getWardrobeManager().getNpcLocation().clone().add(cosmetic.getBalloonOffset());
             // We know that no other entity besides a regular player will be in the wardrobe
-            PacketManager.sendTeleportPacket(user.getBalloonManager().getPufferfishBalloonId(), NPCLocation.add(cosmetic.getBalloonOffset()), false, List.of(user.getPlayer()));
-            user.getBalloonManager().getModelEntity().teleport(NPCLocation.add(cosmetic.getBalloonOffset()));
+            List<Player> viewer = List.of(user.getPlayer());
+            user.getBalloonManager().getPufferfish().spawnPufferfish(npclocation.clone().add(cosmetic.getBalloonOffset()), viewer);
+            PacketManager.sendLeashPacket(user.getBalloonManager().getPufferfishBalloonId(), user.getWardrobeManager().getNPC_ID(), viewer);
+            PacketManager.sendTeleportPacket(user.getBalloonManager().getPufferfishBalloonId(), npclocation, false, viewer);
+            user.getBalloonManager().getModelEntity().teleport(npclocation);
         }
     }
 
