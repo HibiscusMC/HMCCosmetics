@@ -98,7 +98,7 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
         if (!emoteFile.exists()) emoteFile.mkdir();
 
         // Player Animator
-        if (Settings.isEmotesEnabled() && !NMSHandlers.getVersion().contains("v1_20_R2")) PlayerAnimatorImpl.initialize(this); // PlayerAnimator does not support 1.20.2 yet
+        if (!NMSHandlers.getVersion().contains("v1_20_R2")) PlayerAnimatorImpl.initialize(this); // PlayerAnimator does not support 1.20.2 yet
 
         // Configuration Sync
         final File configFile = Path.of(getInstance().getDataFolder().getPath(), "config.yml").toFile();
