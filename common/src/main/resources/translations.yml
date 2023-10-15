@@ -11,5 +11,4 @@ using-cosmetic:
   true: "true"
   false: "false"
 current-cosmetic:
-  true: "true"
-  false: "false"
+  none: "none"

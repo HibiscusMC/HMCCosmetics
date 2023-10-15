@@ -80,7 +80,7 @@ public class HMCPlaceholderExpansion extends PlaceholderExpansion {
                 if (placeholderArgs.get(1) != null) {
                     CosmeticSlot slot = CosmeticSlot.valueOf(placeholderArgs.get(1).toUpperCase());
                     if (slot == null) return null;
-                    if (user.getCosmetic(slot) == null) return null;
+                    if (user.getCosmetic(slot) == null) return "none";
                     if (placeholderArgs.size() == 2) return user.getCosmetic(slot).getId();
 
                     String output;
@@ -104,7 +104,7 @@ public class HMCPlaceholderExpansion extends PlaceholderExpansion {
                             output = user.getCosmetic(slot).getId();
                         }
                     }
-                    return TranslationUtil.getTranslation("current-cosmetic", String.valueOf(output));
+                    return TranslationUtil.getTranslation("current-cosmetic", output);
                 }
             case "unlocked":
                 if (placeholderArgs == null) {
@@ -216,6 +216,7 @@ public class HMCPlaceholderExpansion extends PlaceholderExpansion {
         if (!item.hasItemMeta()) return null;
         ItemMeta itemMeta = item.getItemMeta();
         if (itemMeta == null) return null;
+        if (!itemMeta.hasDisplayName()) return null;
         return itemMeta.getDisplayName();
     }
 
