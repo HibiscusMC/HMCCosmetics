@@ -1,3 +1,6 @@
+user-cosmetic:
+  offline: "Offline"
+  invalid-user: "Invalid User"
 unlocked-cosmetic:
   true: "true"
   false: "false"
