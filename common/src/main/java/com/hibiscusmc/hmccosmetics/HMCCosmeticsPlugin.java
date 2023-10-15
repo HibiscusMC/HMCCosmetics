@@ -61,7 +61,7 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
         Metrics metrics = new Metrics(this, pluginId);
 
         // NMS version check
-        if (!NMSHandlers.getHandler().getSupported()) {
+        if (NMSHandlers.isVersionSupported()) {
             getLogger().severe("This version is not supported! Consider switching versions?");
             getServer().getPluginManager().disablePlugin(this);
             return;
