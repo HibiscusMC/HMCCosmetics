@@ -72,6 +72,7 @@ public class TypeEmpty extends Type {
                 processedLore.add(Hooks.processPlaceholders(user.getPlayer(), loreLine));
             }
         }
+        itemMeta.setLore(processedLore);
         itemStack.setItemMeta(itemMeta);
         return itemStack;
     }
