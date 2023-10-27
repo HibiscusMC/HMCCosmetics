@@ -23,7 +23,7 @@ public class HookGeary extends Hook {
 
     @Override
     public void load() {
-        if (!enabled) GearyModuleKt.getGeary().getPipeline().intercept(GearyPhase.INIT_ENTITIES, () -> {
+        if (!enabled) GearyModuleKt.getGeary().getPipeline().runOnOrAfter(GearyPhase.INIT_ENTITIES, () -> {
             enabled = true;
             HMCCosmeticsPlugin.setup();
             return null;
