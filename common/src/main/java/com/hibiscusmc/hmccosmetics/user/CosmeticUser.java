@@ -527,6 +527,7 @@ public class CosmeticUser {
         POTION,
         ACTION,
         COMMAND,
-        EMOTE
+        EMOTE,
+        GAMEMODE
     }
 }

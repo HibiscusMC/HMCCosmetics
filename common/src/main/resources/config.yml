@@ -24,6 +24,12 @@ cosmetic-settings:
   force-permission-join: true # Checks a player permission if they can have a cosmetic when they join the server.
   force-show-join: false # If the plugin should force show a player's cosmetics when they join the server.
 
+  disabled-gamemode:
+    enabled: true
+    # Which gamemodes should cosmetics be disabled for. This is useful for servers that have a creative world. All options are here, https://hub.spigotmc.org/javadocs/spigot/org/bukkit/GameMode.html
+    gamemodes:
+      - "SPECTATOR"
+
   # This disables the entire internal emote system within the plugin. This option requires a restart.
   emote-enable: true
   emote-distance: -3 # This shows how far away the camera should be while a player is doing an emote. Negative is behind player.

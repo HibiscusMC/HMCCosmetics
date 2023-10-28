@@ -336,6 +336,16 @@ public class PlayerGameListener implements Listener {
         CosmeticUser user = CosmeticUsers.getUser(event.getPlayer());
         if (user == null) return;
 
+        if (Settings.isDisabledGamemodesEnabled()) {
+            if (Settings.getDisabledGamemodes().contains(event.getNewGameMode().toString())) {
+                user.hideCosmetics(CosmeticUser.HiddenReason.GAMEMODE);
+            } else {
+                if (user.getHiddenReason() != null && user.getHiddenReason().equals(CosmeticUser.HiddenReason.GAMEMODE)) {
+                    user.showCosmetics();
+                }
+            }
+        }
+
         if (Settings.isDestroyLooseCosmetics()) {
             ItemStack[] equippedArmor = event.getPlayer().getInventory().getArmorContents();
             if (equippedArmor.length == 0) return;
