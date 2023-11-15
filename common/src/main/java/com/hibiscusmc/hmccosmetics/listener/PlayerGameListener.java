@@ -163,7 +163,6 @@ public class PlayerGameListener implements Listener {
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerHit(EntityDamageByEntityEvent event) {
         Entity entity = event.getEntity();
-        if (event.getEntity().getEntityId() == event.getDamager().getEntityId()) event.setCancelled(true);
         if (!entity.getPersistentDataContainer().has(new NamespacedKey(HMCCosmeticsPlugin.getInstance(), "cosmeticMob"), PersistentDataType.SHORT))
             return;
         event.setCancelled(true);
@@ -335,6 +334,16 @@ public class PlayerGameListener implements Listener {
     public void onPlayerGamemodeSwitch(PlayerGameModeChangeEvent event) {
         CosmeticUser user = CosmeticUsers.getUser(event.getPlayer());
         if (user == null) return;
+
+        if (Settings.isDisabledGamemodesEnabled()) {
+            if (Settings.getDisabledGamemodes().contains(event.getNewGameMode().toString())) {
+                user.hideCosmetics(CosmeticUser.HiddenReason.GAMEMODE);
+            } else {
+                if (user.getHiddenReason() != null && user.getHiddenReason().equals(CosmeticUser.HiddenReason.GAMEMODE)) {
+                    user.showCosmetics();
+                }
+            }
+        }
 
         if (Settings.isDestroyLooseCosmetics()) {
             ItemStack[] equippedArmor = event.getPlayer().getInventory().getArmorContents();

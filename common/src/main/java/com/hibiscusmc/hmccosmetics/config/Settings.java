@@ -3,10 +3,13 @@ package com.hibiscusmc.hmccosmetics.config;
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import lombok.Getter;
+import org.bukkit.GameMode;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.util.Vector;
 import org.spongepowered.configurate.ConfigurationNode;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 
 public class Settings {
@@ -26,6 +29,8 @@ public class Settings {
     private static final String UNAPPLY_DEATH_PATH = "unapply-on-death";
     private static final String FORCE_PERMISSION_JOIN_PATH = "force-permission-join";
     private static final String FORCE_SHOW_COSMETICS_PATH = "force-show-join";
+    private static final String DISABLED_GAMEMODE_PATH = "disabled-gamemode";
+    private static final String DISABLED_GAMEMODE_GAMEMODES_PATH = "gamemodes";
     private static final String EMOTE_DISTANCE_PATH = "emote-distance";
     private static final String HOOK_SETTING_PATH = "hook-settings";
     private static final String HOOK_ITEMADDER_PATH = "itemsadder";
@@ -110,6 +115,10 @@ public class Settings {
     @Getter
     private static boolean emotesEnabled;
     @Getter
+    private static boolean disabledGamemodesEnabled;
+    @Getter
+    private static List<String> disabledGamemodes;
+    @Getter
     private static int viewDistance;
     @Getter
     private static int tickPeriod;
@@ -163,6 +172,14 @@ public class Settings {
         }
 
         ConfigurationNode cosmeticSettings = source.node(COSMETIC_SETTINGS_PATH);
+
+        ConfigurationNode disabledGamemodeSettings = cosmeticSettings.node(DISABLED_GAMEMODE_PATH);
+        disabledGamemodesEnabled = disabledGamemodeSettings.node(ENABLED_PATH).getBoolean(true);
+        try {
+            disabledGamemodes = disabledGamemodeSettings.node(DISABLED_GAMEMODE_GAMEMODES_PATH).getList(String.class);
+        } catch (Exception e) {
+            disabledGamemodes = new ArrayList<>();
+        }
 
         unapplyOnDeath = cosmeticSettings.node(UNAPPLY_DEATH_PATH).getBoolean(false);
         forcePermissionJoin = cosmeticSettings.node(FORCE_PERMISSION_JOIN_PATH).getBoolean(false);

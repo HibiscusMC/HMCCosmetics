@@ -32,9 +32,6 @@ allprojects {
         // PlaceholderAPI
         maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
 
-        //Hikari
-        maven("https://mvnrepository.com/artifact/com.zaxxer/HikariCP")
-
         // Citizens & Denizen
         maven("https://maven.citizensnpcs.co/repo")
 
@@ -78,7 +75,7 @@ allprojects {
         compileOnly("com.ticxo.modelengine:ModelEngine:R4.0.2")
         compileOnly("com.github.oraxen:oraxen:1.160.0")
         compileOnly("com.github.LoneDev6:API-ItemsAdder:3.2.5")
-        compileOnly("com.mineinabyss:geary-papermc:0.24.1")
+        compileOnly("com.mineinabyss:geary-papermc:0.27.0")
         compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.1.0-SNAPSHOT")
         compileOnly("it.unimi.dsi:fastutil:8.5.11")
         compileOnly("com.github.LeonMangler:SuperVanish:6.2.17")
@@ -109,7 +106,7 @@ dependencies {
     implementation("com.jeff_media:SpigotUpdateChecker:3.0.0")
     implementation("com.owen1212055:particlehelper:1.0.0-SNAPSHOT")
     implementation("com.ticxo.playeranimator:PlayerAnimator:R1.2.7")
-    implementation("com.github.BG-Software-LLC:CommentedConfiguration:-SNAPSHOT")
+    implementation("com.github.BG-Software-LLC:CommentedConfiguration:bed3c46369")
     //implementation("com.ticxo.playeranimator:PlayerAnimator:R1.2.5")
 }
 

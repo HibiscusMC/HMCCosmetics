@@ -18,6 +18,7 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.ConfigurationNode;
@@ -184,6 +185,12 @@ public class TypeCosmetic extends Type {
         if (itemMeta.hasLore()) {
             for (String loreLine : itemMeta.getLore()) {
                 processedLore.add(Hooks.processPlaceholders(user.getPlayer(), loreLine));
+            }
+        }
+
+        if (itemMeta instanceof SkullMeta skullMeta) {
+            if (skullMeta.hasOwner()) {
+                skullMeta.setOwner(Hooks.processPlaceholders(user.getPlayer(), skullMeta.getOwner()));
             }
         }
         itemMeta.setLore(processedLore);

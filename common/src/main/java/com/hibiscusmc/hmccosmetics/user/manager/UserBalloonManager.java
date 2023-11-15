@@ -199,7 +199,7 @@ public class UserBalloonManager {
         CosmeticUser viewer = CosmeticUsers.getUser(player.getUniqueId());
 
         if (user.getPlayer() == player) {
-            return true;
+            return (!user.getHidden());
         } else {
             if (user.isInWardrobe()) return false;
             MessagesUtil.sendDebugMessages("playerCheck - Not Same Player");
