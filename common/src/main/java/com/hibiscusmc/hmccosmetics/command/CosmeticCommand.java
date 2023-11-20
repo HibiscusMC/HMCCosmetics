@@ -1,5 +1,7 @@
 package com.hibiscusmc.hmccosmetics.command;
 
+import com.hibiscusmc.hmccolor.HMCColorConfig;
+import com.hibiscusmc.hmccolor.HMCColorContextKt;
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.config.Wardrobe;
@@ -14,6 +16,7 @@ import com.hibiscusmc.hmccosmetics.emotes.EmoteManager;
 import com.hibiscusmc.hmccosmetics.gui.Menu;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
 import com.hibiscusmc.hmccosmetics.gui.special.DyeMenu;
+import com.hibiscusmc.hmccosmetics.hooks.Hooks;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
@@ -104,7 +107,20 @@ public class CosmeticCommand implements CommandExecutor {
                 }
 
                 if (sender.hasPermission("hmccosmetics.cmd.apply.color")) {
-                    if (args.length >= 4) color = ServerUtils.hex2Rgb(args[3]);
+                    if (args.length >= 4) {
+                        // TODO: Add sub-color support somehow... (and make this neater)
+                        String textColor = args[3];
+                        if (!textColor.contains("#") && Hooks.isActiveHook("HMCColor")) {
+                            HMCColorConfig.Colors colors = HMCColorContextKt.getHmcColor().getConfig().getColors().get(textColor);
+                            if (colors != null) {
+                                String hmccolor = colors.getBaseColor().getColor();
+                                if (hmccolor.contains("#")) color = ServerUtils.hex2Rgb(hmccolor);
+                                else color = ServerUtils.rgbToRgb(hmccolor);
+                            }
+                        } else {
+                            color = ServerUtils.hex2Rgb(textColor);
+                        }
+                    }
                 }
 
                 if (args.length == 1) {

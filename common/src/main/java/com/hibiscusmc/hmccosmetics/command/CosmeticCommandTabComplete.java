@@ -1,5 +1,8 @@
 package com.hibiscusmc.hmccosmetics.command;
 
+import com.hibiscusmc.hmccolor.HMCColorConfig;
+import com.hibiscusmc.hmccolor.HMCColorContext;
+import com.hibiscusmc.hmccolor.HMCColorContextKt;
 import com.hibiscusmc.hmccosmetics.config.Wardrobe;
 import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
@@ -8,6 +11,7 @@ import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
 import com.hibiscusmc.hmccosmetics.emotes.EmoteManager;
 import com.hibiscusmc.hmccosmetics.gui.Menu;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
+import com.hibiscusmc.hmccosmetics.hooks.Hooks;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import org.bukkit.Bukkit;
@@ -122,6 +126,7 @@ public class CosmeticCommandTabComplete implements TabCompleter {
             String subcommand = args[0].toLowerCase();
             switch (subcommand) {
                 case "apply" -> {
+                    if (Hooks.isActiveHook("HMCColor")) completions.addAll(HMCColorContextKt.getHmcColor().getConfig().getColors().keySet());
                     completions.add("#FFFFFF");
                 }
             }

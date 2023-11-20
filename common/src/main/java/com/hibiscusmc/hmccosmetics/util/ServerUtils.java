@@ -36,6 +36,11 @@ public class ServerUtils {
         return NMSHandlers.getHandler().getEntity(entityId);
     }
 
+    /**
+     * This takes in a string like #FFFFFF to convert it into a Bukkit color
+     * @param colorStr
+     * @return
+     */
     public static Color hex2Rgb(String colorStr) {
         if (colorStr.startsWith("#")) return Color.fromRGB(Integer.valueOf(colorStr.substring(1), 16));
         if (colorStr.startsWith("0x")) return Color.fromRGB(Integer.valueOf(colorStr.substring(2), 16));
@@ -43,6 +48,22 @@ public class ServerUtils {
             String[] colorString = colorStr.replace(" ", "").split(",");
             for (String color : colorString) if (Integer.valueOf(color) == null) return Color.WHITE;
             Color.fromRGB(Integer.valueOf(colorString[0]), Integer.valueOf(colorString[1]), Integer.valueOf(colorString[2]));
+        }
+
+        return Color.WHITE;
+    }
+
+    /**
+     * This takes in a string like 55,49,181 to convert it into a Bukkit Color
+     * @param colorStr
+     * @return
+     */
+    public static Color rgbToRgb(String colorStr) {
+        if (colorStr.contains(",")) {
+            String[] colors = colorStr.split(",", 3);
+            if (colors.length == 3) {
+                return Color.fromRGB(Integer.parseInt(colors[0]), Integer.parseInt(colors[1]), Integer.parseInt(colors[2]));
+            }
         }
 
         return Color.WHITE;
