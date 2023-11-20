@@ -145,6 +145,28 @@ public class HMCPlaceholderExpansion extends PlaceholderExpansion {
                     if (equippedCosmetic == null) return TranslationUtil.getTranslation("equipped-cosmetic", "false");
                     return TranslationUtil.getTranslation("equipped-cosmetic", String.valueOf(cosmetic.getId().equals(equippedCosmetic.getId())));
                 }
+            // %hmccosmetics_amount_balloon_unlocked%
+            case "amount":
+                if (placeholderArgs.size() >= 2) {
+                    String args1 = placeholderArgs.get(1).toUpperCase(); // changes offhand to OFFHAND
+
+                    if (!EnumUtils.isValidEnum(CosmeticSlot.class, args1)) return null;
+
+                    CosmeticSlot slot = CosmeticSlot.valueOf(args1);
+                    int amount = 0;
+                    boolean checkUnlocked = false;
+                    if (placeholderArgs.size() >= 3) if (placeholderArgs.get(2).equalsIgnoreCase("unlocked")) checkUnlocked = true;
+
+                    for (Cosmetic cosmetic : Cosmetics.values()) {
+                        if (cosmetic.getSlot() != slot) continue;
+                        if (checkUnlocked && !user.canEquipCosmetic(cosmetic)) continue;
+                        amount += 1;
+                    }
+                    return TranslationUtil.getTranslation("amount-cosmetic", String.valueOf(amount));
+
+                } else {
+                    return TranslationUtil.getTranslation("amount-cosmetic", String.valueOf(Cosmetics.values().size()));
+                }
             case "wardrobe-enabled":
                 return TranslationUtil.getTranslation("in-wardrobe", String.valueOf(user.isInWardrobe()));
         }

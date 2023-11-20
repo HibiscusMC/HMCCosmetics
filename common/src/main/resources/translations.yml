@@ -16,3 +16,6 @@ using-cosmetic:
 current-cosmetic:
   no-cosmetic: "No Cosmetic"
   none: "none"
+amount-cosmetic:
+  1: "1"
+  10: "10"
