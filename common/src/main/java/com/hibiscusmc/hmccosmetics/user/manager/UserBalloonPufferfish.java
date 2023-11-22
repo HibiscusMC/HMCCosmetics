@@ -1,6 +1,5 @@
 package com.hibiscusmc.hmccosmetics.user.manager;
 
-import com.comphenix.protocol.PacketType;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import com.hibiscusmc.hmccosmetics.util.PlayerUtils;
