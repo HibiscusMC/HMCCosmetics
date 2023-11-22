@@ -70,8 +70,8 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
         // Update Checker
         UpdateChecker checker = new UpdateChecker(this, UpdateCheckSource.POLYMART, "1879")
                 .onSuccess((commandSenders, latestVersion) -> {
-                    this.latestVersion = (String) latestVersion;
-                    if (!this.latestVersion.equalsIgnoreCase(getDescription().getVersion())) {
+                    HMCCosmeticsPlugin.latestVersion = (String) latestVersion;
+                    if (!HMCCosmeticsPlugin.latestVersion.equalsIgnoreCase(getDescription().getVersion())) {
                         getLogger().info("+++++++++++++++++++++++++++++++++++");
                         getLogger().info("There is a new update for HMCCosmetics!");
                         getLogger().info("Please download it as soon as possible for possible fixes and new features.");
