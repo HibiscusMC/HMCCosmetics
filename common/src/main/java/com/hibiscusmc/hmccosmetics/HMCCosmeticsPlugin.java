@@ -98,7 +98,7 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
         if (!emoteFile.exists()) emoteFile.mkdir();
 
         // Player Animator
-        if (!NMSHandlers.getVersion().contains("v1_20_R2")) PlayerAnimatorImpl.initialize(this); // PlayerAnimator does not support 1.20.2 yet
+        if (!NMSHandlers.getVersion().contains("v1_20_R2") && !NMSHandlers.getVersion().contains("v1_20_R3")) PlayerAnimatorImpl.initialize(this); // PlayerAnimator does not support 1.20.2 yet
 
         // Configuration Sync
         final File configFile = Path.of(getInstance().getDataFolder().getPath(), "config.yml").toFile();
@@ -252,7 +252,7 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
             }
         }
 
-        if (Settings.isEmotesEnabled() && !NMSHandlers.getVersion().contains("v1_20_R2")) EmoteManager.loadEmotes(); // PlayerAnimator does not support 1.20.2 yet
+        if (Settings.isEmotesEnabled() && !NMSHandlers.getVersion().contains("v1_20_R2") && !NMSHandlers.getVersion().contains("v1_20_R3")) EmoteManager.loadEmotes(); // PlayerAnimator does not support 1.20.2 yet
 
         getInstance().getLogger().info("Successfully Enabled HMCCosmetics");
         getInstance().getLogger().info(Cosmetics.values().size() + " Cosmetics Successfully Setup");
