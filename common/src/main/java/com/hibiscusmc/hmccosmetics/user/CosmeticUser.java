@@ -193,9 +193,27 @@ public class CosmeticUser {
     }
 
     public void updateCosmetic() {
+        bulkUpdateCosmetic();
+    }
+
+    private void bulkUpdateCosmetic() {
+        MessagesUtil.sendDebugMessages("bulkUpdateCosmetic - start");
+        HashMap<EquipmentSlot, ItemStack> items = new HashMap<>();
+
         for (Cosmetic cosmetic : getCosmetics()) {
+            if (cosmetic instanceof CosmeticArmorType armorType) {
+                if (getUserEmoteManager().isPlayingEmote()) return;
+                if (!Settings.isCosmeticForceOffhandCosmeticShow()
+                        && armorType.getEquipSlot().equals(EquipmentSlot.OFF_HAND)
+                        && !getPlayer().getInventory().getItemInOffHand().getType().isAir()) continue;
+                items.put(InventoryUtils.getEquipmentSlot(armorType.getSlot()), armorType.getItem(this));
+                continue;
+            }
             updateCosmetic(cosmetic.getSlot());
         }
+        if (items.isEmpty()) return;
+        NMSHandlers.getHandler().equipmentSlotUpdate(getEntity().getEntityId(), items, PlayerUtils.getNearbyPlayers(getEntity().getLocation()));
+        MessagesUtil.sendDebugMessages("bulkUpdateCosmetic - end - " + items.size());
     }
 
     public ItemStack getUserCosmeticItem(CosmeticSlot slot) {

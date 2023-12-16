@@ -33,6 +33,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 public class NMSHandler implements com.hibiscusmc.hmccosmetics.nms.NMSHandler {
@@ -109,6 +110,27 @@ public class NMSHandler implements com.hibiscusmc.hmccosmetics.nms.NMSHandler {
         Pair<EquipmentSlot, net.minecraft.world.item.ItemStack> pair = new Pair<>(nmsSlot, nmsItem);
 
         List<Pair<EquipmentSlot, net.minecraft.world.item.ItemStack>> pairs = Collections.singletonList(pair);
+
+        ClientboundSetEquipmentPacket packet = new ClientboundSetEquipmentPacket(entityId, pairs);
+        for (Player p : sendTo) sendPacket(p, packet);
+    }
+
+    @Override
+    public void equipmentSlotUpdate(
+            int entityId,
+            HashMap<org.bukkit.inventory.EquipmentSlot, ItemStack> equipment,
+            List<Player> sendTo
+    ) {
+
+        List<Pair<EquipmentSlot, net.minecraft.world.item.ItemStack>> pairs = new ArrayList<>();
+
+        for (org.bukkit.inventory.EquipmentSlot slot : equipment.keySet()) {
+            EquipmentSlot nmsSlot = CraftEquipmentSlot.getNMS(slot);
+            net.minecraft.world.item.ItemStack nmsItem = CraftItemStack.asNMSCopy(equipment.get(slot));
+
+            Pair<EquipmentSlot, net.minecraft.world.item.ItemStack> pair = new Pair<>(nmsSlot, nmsItem);
+            pairs.add(pair);
+        }
 
         ClientboundSetEquipmentPacket packet = new ClientboundSetEquipmentPacket(entityId, pairs);
         for (Player p : sendTo) sendPacket(p, packet);
