@@ -89,11 +89,6 @@ public class CosmeticUser {
         return playerCosmetics.get(slot);
     }
 
-    @Deprecated
-    public Collection<Cosmetic> getCosmetic() {
-        return playerCosmetics.values();
-    }
-
     public ImmutableCollection<Cosmetic> getCosmetics() {
         return ImmutableList.copyOf(playerCosmetics.values());
     }
