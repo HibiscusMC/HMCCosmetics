@@ -27,9 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Menu {
@@ -44,7 +42,7 @@ public class Menu {
     private final ConfigurationNode config;
     @Getter
     private final String permissionNode;
-    private final HashMap<Integer, MenuItem> items;
+    private final HashMap<Integer, List<MenuItem>> items;
     @Getter
     private final int refreshRate;
     @Getter
@@ -99,6 +97,8 @@ public class Menu {
                 continue;
             }
 
+            int priority = config.node("priority").getInt(1);
+
             Type type = null;
 
             if (!config.node("type").virtual()) {
@@ -107,7 +107,15 @@ public class Menu {
             }
 
             for (Integer slot : slots) {
-                items.put(slot, new MenuItem(slots, item, type, config));
+                MenuItem menuItem = new MenuItem(slots, item, type, priority, config);
+                if (items.containsKey(slot)) {
+                    List<MenuItem> menuItems = items.get(slot);
+                    menuItems.add(menuItem);
+                    menuItems.sort(priorityCompare);
+                    items.put(slot, menuItems);
+                } else {
+                    items.put(slot, new ArrayList<>(Arrays.asList(menuItem)));
+                }
             }
         }
     }
@@ -188,8 +196,9 @@ public class Menu {
 
                 if (items.containsKey(i)) {
                     // Handles the items
-                    MenuItem item = items.get(i);
-                    updateItem(user, gui, item);
+                    List<MenuItem> menuItems = items.get(i);
+                    MenuItem item = menuItems.get(0);
+                    updateItem(user, gui, i);
 
                     if (item.type().getId().equalsIgnoreCase("cosmetic")) {
                         Cosmetic cosmetic = Cosmetics.getCosmetic(item.itemConfig().node("cosmetic").getString(""));
@@ -215,16 +224,23 @@ public class Menu {
             MessagesUtil.sendDebugMessages("Updated menu with title " + title);
             gui.updateTitle(StringUtils.parseStringToString(Hooks.processPlaceholders(user.getPlayer(), title.toString())));
         } else {
-            for (MenuItem item : items.values()) {
-                updateItem(user, gui, item);
+            for (int i = 0; i < gui.getInventory().getSize(); i++) {
+                if (items.containsKey(i)) {
+                    updateItem(user, gui, i);
+                }
             }
         }
     }
 
-    private void updateItem(CosmeticUser user, Gui gui, MenuItem item) {
-        Type type = item.type();
-        for (int slot : item.slots()) {
+    private void updateItem(CosmeticUser user, Gui gui, int slot) {
+        if (!items.containsKey(slot)) return;
+        List<MenuItem> menuItems = items.get(slot);
+        if (menuItems.isEmpty()) return;
+
+        for (MenuItem item : menuItems) {
+            Type type = item.type();
             ItemStack modifiedItem = getMenuItem(user, type, item.itemConfig(), item.item().clone(), slot);
+            if (modifiedItem.getType().isAir()) continue;
             GuiItem guiItem = ItemBuilder.from(modifiedItem).asGuiItem();
             guiItem.setAction(event -> {
                 MessagesUtil.sendDebugMessages("Selected slot " + slot);
@@ -235,6 +251,7 @@ public class Menu {
 
             MessagesUtil.sendDebugMessages("Added " + slot + " as " + guiItem + " in the menu");
             gui.updateItem(slot, guiItem);
+            break;
         }
     }
 
@@ -275,4 +292,7 @@ public class Menu {
         if (permissionNode.isEmpty()) return true;
         return player.isOp() || player.hasPermission(permissionNode);
     }
+
+    // Method
+    public static Comparator<MenuItem> priorityCompare = Comparator.comparingInt(MenuItem::priority);
 }

@@ -6,6 +6,6 @@ import org.spongepowered.configurate.ConfigurationNode;
 
 import java.util.List;
 
-public record MenuItem(List<Integer> slots, ItemStack item, Type type, ConfigurationNode itemConfig) {
+public record MenuItem(List<Integer> slots, ItemStack item, Type type, int priority, ConfigurationNode itemConfig) {
 
 }
