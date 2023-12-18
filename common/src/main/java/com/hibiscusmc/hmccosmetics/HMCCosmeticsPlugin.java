@@ -151,6 +151,9 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
             if (user.getUserEmoteManager().isPlayingEmote()) {
                 player.setInvisible(false);
             }
+            if (user.isInWardrobe()) {
+                user.leaveWardrobe(true);
+            }
             Database.save(user);
         }
     }
