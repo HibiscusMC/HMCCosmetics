@@ -107,6 +107,7 @@ public class UserWardrobeManager {
 
             // Player
             user.getPlayer().teleport(viewingLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
+            user.getPlayer().setInvisible(true);
             PacketManager.gamemodeChangePacket(player, 3);
             PacketManager.sendCameraPacket(ARMORSTAND_ID, viewer);
 
@@ -215,6 +216,7 @@ public class UserWardrobeManager {
 
             // Player
             PacketManager.sendCameraPacket(player.getEntityId(), viewer);
+            user.getPlayer().setInvisible(false);
 
             // Armorstand
             PacketManager.sendEntityDestroyPacket(ARMORSTAND_ID, viewer); // Sucess
@@ -291,7 +293,7 @@ public class UserWardrobeManager {
                     PacketManager.equipmentSlotUpdate(NPC_ID, user, slot, viewer);
                 }
 
-                if (user.hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
+                if (user.hasCosmeticInSlot(CosmeticSlot.BACKPACK) && user.getUserBackpackManager() != null) {
                     PacketManager.sendTeleportPacket(user.getUserBackpackManager().getFirstArmorStandId(), location, false, viewer);
                     PacketManager.ridingMountPacket(NPC_ID, user.getUserBackpackManager().getFirstArmorStandId(), viewer);
                     user.getUserBackpackManager().getEntityManager().setRotation(nextyaw);
