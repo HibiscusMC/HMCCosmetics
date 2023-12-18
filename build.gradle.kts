@@ -182,7 +182,7 @@ bukkit {
     apiVersion = "1.18"
     authors = listOf("LoJoSho")
     depend = listOf("ProtocolLib")
-    softDepend = listOf("ModelEngine", "Oraxen", "ItemsAdder", "Geary", "HMCColor", "WorldGuard", "MythicMobs", "PlaceholderAPI", "SuperVanish", "PremiumVanish", "LibsDisguises", "Denizen", "MMOItems")
+    softDepend = listOf("ModelEngine", "Oraxen", "ItemsAdder", "Geary", "HMCColor", "WorldGuard", "MythicMobs", "PlaceholderAPI", "SuperVanish", "PremiumVanish", "LibsDisguises", "Denizen", "MMOItems", "Eco")
     version = "${project.version}"
     loadBefore = listOf(
         "Cosmin" // Fixes an issue with Cosmin loading before and taking /cosmetic, when messing with what we do.
