@@ -1,14 +1,14 @@
 package com.hibiscusmc.hmccosmetics.hooks.items;
 
 import com.hibiscusmc.hmccosmetics.hooks.Hook;
+import com.hibiscusmc.hmccosmetics.hooks.HookFlag;
 import net.Indyuce.mmoitems.MMOItems;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 public class HookMMOItems extends Hook {
     public HookMMOItems() {
-        super("MMOItems");
-        setEnabledItemHook(true);
+        super("MMOItems", HookFlag.ITEM_SUPPORT);
     }
 
     @Override

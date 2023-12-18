@@ -13,8 +13,15 @@ public abstract class Hook implements Listener {
     private boolean active = false;
     private boolean itemHook = false;
 
-    public Hook(@NotNull String id) {
+    public Hook(@NotNull String id, HookFlag... flags) {
         this.id = id;
+        for (HookFlag flag : flags) {
+            switch (flag) {
+                case ITEM_SUPPORT:
+                    setEnabledItemHook(true);
+                    break;
+            }
+        }
         Hooks.addHook(this);
     }
 

@@ -1,6 +1,7 @@
 package com.hibiscusmc.hmccosmetics.hooks.items;
 
 import com.hibiscusmc.hmccosmetics.hooks.Hook;
+import com.hibiscusmc.hmccosmetics.hooks.HookFlag;
 import io.th0rgal.oraxen.api.OraxenItems;
 import io.th0rgal.oraxen.items.ItemBuilder;
 import org.bukkit.inventory.ItemStack;
@@ -12,8 +13,7 @@ import org.jetbrains.annotations.NotNull;
 @SuppressWarnings("SpellCheckingInspection")
 public class HookOraxen extends Hook {
     public HookOraxen() {
-        super("oraxen");
-        setEnabledItemHook(true);
+        super("oraxen", HookFlag.ITEM_SUPPORT);
     }
 
     /**

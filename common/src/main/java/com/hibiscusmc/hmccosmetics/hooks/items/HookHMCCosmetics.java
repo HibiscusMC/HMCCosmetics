@@ -3,6 +3,7 @@ package com.hibiscusmc.hmccosmetics.hooks.items;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
 import com.hibiscusmc.hmccosmetics.hooks.Hook;
+import com.hibiscusmc.hmccosmetics.hooks.HookFlag;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,8 +12,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class HookHMCCosmetics extends Hook {
     public HookHMCCosmetics() {
-        super("HMCCosmetics");
-        setEnabledItemHook(true);
+        super("HMCCosmetics", HookFlag.ITEM_SUPPORT);
     }
 
     /**

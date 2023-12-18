@@ -1,6 +1,7 @@
 package com.hibiscusmc.hmccosmetics.hooks.items;
 
 import com.hibiscusmc.hmccosmetics.hooks.Hook;
+import com.hibiscusmc.hmccosmetics.hooks.HookFlag;
 import com.mineinabyss.geary.papermc.tracking.items.ItemTrackingKt;
 import com.mineinabyss.geary.prefabs.PrefabKey;
 import org.bukkit.inventory.ItemStack;
@@ -12,8 +13,7 @@ import org.jetbrains.annotations.NotNull;
 public class HookGeary extends Hook {
 
     public HookGeary() {
-        super("geary");
-        setEnabledItemHook(true);
+        super("geary", HookFlag.ITEM_SUPPORT);
     }
 
     /**

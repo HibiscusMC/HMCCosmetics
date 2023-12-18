@@ -3,6 +3,7 @@ package com.hibiscusmc.hmccosmetics.hooks.items;
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.hooks.Hook;
+import com.hibiscusmc.hmccosmetics.hooks.HookFlag;
 import dev.lone.itemsadder.api.CustomStack;
 import dev.lone.itemsadder.api.Events.ItemsAdderLoadDataEvent;
 import org.bukkit.Material;
@@ -19,8 +20,7 @@ public class HookItemAdder extends Hook {
     private boolean enabled = false;
 
     public HookItemAdder() {
-        super("itemsadder");
-        setEnabledItemHook(true);
+        super("itemsadder", HookFlag.ITEM_SUPPORT);
     }
 
     /**
