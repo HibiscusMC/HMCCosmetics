@@ -23,6 +23,7 @@ dependencies {
     compileOnlyApi("LibsDisguises:LibsDisguises:10.0.21") {
         exclude("org.spigotmc", "spigot")
     }
+    compileOnly("com.willfp:eco:6.67.2")
 
     //compileOnly("com.github.Fisher2911:FisherLib:master-SNAPSHOT")
     implementation("net.kyori:adventure-api:4.12.0")

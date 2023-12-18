@@ -63,6 +63,9 @@ allprojects {
 
         // MMOItems
         maven("https://nexus.phoenixdevt.fr/repository/maven-public/")
+
+        // Eco-Suite/Auxilor Repo
+        maven("https://repo.auxilor.io/repository/maven-public/")
     }
 
     dependencies {

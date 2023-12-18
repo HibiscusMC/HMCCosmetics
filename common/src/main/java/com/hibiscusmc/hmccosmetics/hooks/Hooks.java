@@ -31,6 +31,7 @@ public class Hooks {
     private static final HookLibsDisguises LIBS_DISGUISES_HOOK = new HookLibsDisguises();
     private static final HookModelEngine MODEL_ENGINE_HOOK = new HookModelEngine();
     private static final HookMMOItems MMO_ITEMS_HOOK = new HookMMOItems();
+    private static final HookEco ECO_ITEMS_HOOK = new HookEco();
 
     public static Hook getHook(@NotNull String id) {
         return hooks.get(id.toLowerCase());
