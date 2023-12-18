@@ -293,6 +293,5 @@ public class Menu {
         return player.isOp() || player.hasPermission(permissionNode);
     }
 
-    // Method
-    public static Comparator<MenuItem> priorityCompare = Comparator.comparingInt(MenuItem::priority);
+    public static Comparator<MenuItem> priorityCompare = Comparator.comparing(MenuItem::priority).reversed();
 }
