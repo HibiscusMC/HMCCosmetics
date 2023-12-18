@@ -332,6 +332,10 @@ public class CosmeticUser {
     }
 
     public void leaveWardrobe() {
+        leaveWardrobe(false);
+    }
+
+    public void leaveWardrobe(boolean disconnecting) {
         PlayerWardrobeLeaveEvent event = new PlayerWardrobeLeaveEvent(this);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
@@ -342,7 +346,7 @@ public class CosmeticUser {
 
         getWardrobeManager().setWardrobeStatus(UserWardrobeManager.WardrobeStatus.STOPPING);
 
-        if (WardrobeSettings.isEnabledTransition()) {
+        if (WardrobeSettings.isEnabledTransition() && !disconnecting) {
             MessagesUtil.sendTitle(
                     getPlayer(),
                     WardrobeSettings.getTransitionText(),
