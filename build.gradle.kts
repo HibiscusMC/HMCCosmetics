@@ -145,12 +145,9 @@ tasks {
         mergeServiceFiles()
 
         relocate("dev.triumphteam.gui", "com.hisbiscusmc.hmccosmetics.gui")
-        relocate("me.mattstudios.mf", "com.hisbiscusmc.hmccosmetics.mf")
         relocate("net.kyori.adventure", "com.hisbiscusmc.hmccosmetics.adventure")
         relocate("org.spongepowered.configurate", "com.hisbiscusmc.hmccosmetics.configurate")
         relocate("org.bstats", "com.hisbiscusmc.hmccosmetics.bstats")
-        relocate("com.zaxxer.hikaricp", "com.hisbiscusmc.hmccosmetics.hikaricp")
-        relocate("com.j256.ormlite", "com.hisbiscusmc.hmccosmetics.ormlite")
         relocate("com.jeff_media.updatechecker", "com.hisbiscusmc.hmccosmetics.updatechecker")
         relocate("com.owen1212055.particlehelper", "com.hisbiscusmc.hmccosmetics.particlehelper")
         relocate("com.ticxo.playeranimator", "com.hisbiscusmc.hmccosmetics.playeranimator")
