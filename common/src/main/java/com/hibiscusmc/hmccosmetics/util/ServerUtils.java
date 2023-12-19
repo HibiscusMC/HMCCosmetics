@@ -157,4 +157,13 @@ public class ServerUtils {
         }
         return nextYaw;
     }
+
+    public static boolean hasClass(String className) {
+        try {
+            Class.forName(className);
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+    }
 }

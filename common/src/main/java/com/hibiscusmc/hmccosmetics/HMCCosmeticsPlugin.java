@@ -18,16 +18,19 @@ import com.hibiscusmc.hmccosmetics.gui.Menus;
 import com.hibiscusmc.hmccosmetics.hooks.Hooks;
 import com.hibiscusmc.hmccosmetics.hooks.worldguard.WGHook;
 import com.hibiscusmc.hmccosmetics.hooks.worldguard.WGListener;
+import com.hibiscusmc.hmccosmetics.listener.PaperPlayerGameListener;
 import com.hibiscusmc.hmccosmetics.listener.PlayerConnectionListener;
 import com.hibiscusmc.hmccosmetics.listener.PlayerGameListener;
 import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
+import com.hibiscusmc.hmccosmetics.util.ServerUtils;
 import com.hibiscusmc.hmccosmetics.util.TranslationUtil;
 import com.jeff_media.updatechecker.UpdateCheckSource;
 import com.jeff_media.updatechecker.UpdateChecker;
 import com.ticxo.playeranimator.PlayerAnimatorImpl;
+import lombok.Getter;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -52,6 +55,8 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
     private static final int pluginId = 13873;
     private static boolean onLatestVersion = true;
     private static String latestVersion = "";
+    @Getter
+    private static boolean onPaper = false;
 
     @Override
     public void onEnable() {
@@ -123,7 +128,12 @@ public final class HMCCosmeticsPlugin extends JavaPlugin {
         // Listener
         getServer().getPluginManager().registerEvents(new PlayerConnectionListener(), this);
         getServer().getPluginManager().registerEvents(new PlayerGameListener(), this);
-
+        // Taken from PaperLib
+        if (ServerUtils.hasClass("com.destroystokyo.paper.PaperConfig") || ServerUtils.hasClass("io.papermc.paper.configuration.Configuration")) {
+            onPaper = true;
+            getLogger().info("Detected Paper! Enabling Paper support...");
+            getServer().getPluginManager().registerEvents(new PaperPlayerGameListener(), this);
+        }
         // Database
         new Database();
 
