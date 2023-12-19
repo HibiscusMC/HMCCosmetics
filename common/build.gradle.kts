@@ -25,18 +25,12 @@ dependencies {
     }
     compileOnly("com.willfp:eco:6.67.2")
 
-    //compileOnly("com.github.Fisher2911:FisherLib:master-SNAPSHOT")
-    implementation("net.kyori:adventure-api:4.12.0")
-    implementation("net.kyori:adventure-text-minimessage:4.12.0")
-    implementation("net.kyori:adventure-platform-bukkit:4.2.0")
     implementation("dev.triumphteam:triumph-gui:3.1.3")
-    implementation("org.spongepowered:configurate-yaml:4.1.2")
     implementation("org.bstats:bstats-bukkit:3.0.0")
     implementation("com.jeff_media:SpigotUpdateChecker:3.0.0")
     implementation("com.owen1212055:particlehelper:1.0.0-SNAPSHOT")
     implementation("com.ticxo.playeranimator:PlayerAnimator:R1.2.7")
     implementation("com.github.BG-Software-LLC:CommentedConfiguration:bed3c46369")
-    //implementation("com.ticxo.playeranimator:PlayerAnimator:R1.2.5")
 }
 
 java {

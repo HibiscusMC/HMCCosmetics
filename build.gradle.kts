@@ -84,6 +84,12 @@ allprojects {
         compileOnly("com.github.LeonMangler:SuperVanish:6.2.17")
         compileOnly("org.projectlombok:lombok:1.18.2")
 
+        // Handled by Spigot Library Loader
+        compileOnly("net.kyori:adventure-api:4.11.0")
+        compileOnly("net.kyori:adventure-text-minimessage:4.11.0")
+        compileOnly("net.kyori:adventure-platform-bukkit:4.1.2")
+        compileOnly("org.spongepowered:configurate-yaml:4.2.0-SNAPSHOT")
+
         annotationProcessor("org.projectlombok:lombok:1.18.28")
         testCompileOnly("org.projectlombok:lombok:1.18.28")
         testAnnotationProcessor("org.projectlombok:lombok:1.18.28")
@@ -100,18 +106,12 @@ dependencies {
     implementation(project(path = ":v1_20_R2", configuration = "reobf"))
     implementation(project(path = ":v1_20_R3", configuration = "reobf"))
 
-    //compileOnly("com.github.Fisher2911:FisherLib:master-SNAPSHOT")
-    implementation("net.kyori:adventure-api:4.11.0")
-    implementation("net.kyori:adventure-text-minimessage:4.11.0")
-    implementation("net.kyori:adventure-platform-bukkit:4.1.2")
     implementation("dev.triumphteam:triumph-gui:3.1.3")
-    implementation("org.spongepowered:configurate-yaml:4.2.0-SNAPSHOT")
-    implementation("org.bstats:bstats-bukkit:3.0.0")
+    implementation("org.bstats:bstats-bukkit:3.0.2")
     implementation("com.jeff_media:SpigotUpdateChecker:3.0.0")
     implementation("com.owen1212055:particlehelper:1.0.0-SNAPSHOT")
     implementation("com.ticxo.playeranimator:PlayerAnimator:R1.2.7")
     implementation("com.github.BG-Software-LLC:CommentedConfiguration:bed3c46369")
-    //implementation("com.ticxo.playeranimator:PlayerAnimator:R1.2.5")
 }
 
 tasks {
@@ -145,8 +145,6 @@ tasks {
         mergeServiceFiles()
 
         relocate("dev.triumphteam.gui", "com.hisbiscusmc.hmccosmetics.gui")
-        relocate("net.kyori.adventure", "com.hisbiscusmc.hmccosmetics.adventure")
-        relocate("org.spongepowered.configurate", "com.hisbiscusmc.hmccosmetics.configurate")
         relocate("org.bstats", "com.hisbiscusmc.hmccosmetics.bstats")
         relocate("com.jeff_media.updatechecker", "com.hisbiscusmc.hmccosmetics.updatechecker")
         relocate("com.owen1212055.particlehelper", "com.hisbiscusmc.hmccosmetics.particlehelper")
@@ -183,6 +181,14 @@ bukkit {
     version = "${project.version}"
     loadBefore = listOf(
         "Cosmin" // Fixes an issue with Cosmin loading before and taking /cosmetic, when messing with what we do.
+    )
+
+    libraries = listOf(
+        "net.kyori:adventure-api:4.11.0",
+        "net.kyori:adventure-text-minimessage:4.11.0",
+        "net.kyori:adventure-platform-bukkit:4.1.2",
+        "org.spongepowered:configurate-yaml:4.2.0-SNAPSHOT",
+        "dev.triumphteam:triumph-gui:3.1.3"
     )
 
     commands {
