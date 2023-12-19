@@ -40,11 +40,13 @@ public class CosmeticArmorType extends Cosmetic {
     }
 
     public ItemStack getItem(@NotNull CosmeticUser user) {
-        ItemStack cosmeticItem = user.getUserCosmeticItem(this);
+        return getItem(user, user.getUserCosmeticItem(this));
+    }
+
+    public ItemStack getItem(@NotNull CosmeticUser user, ItemStack cosmeticItem) {
         if (!(user.getEntity() instanceof HumanEntity humanEntity)) return null;
         if (Settings.getShouldAddEnchants(equipSlot)) {
             ItemStack equippedItem = humanEntity.getInventory().getItem(equipSlot);
-            MessagesUtil.sendDebugMessages("CosmeticArmorType - " + equippedItem.getEnchantments().values().toString());
             cosmeticItem.addUnsafeEnchantments(equippedItem.getEnchantments());
         }
         // Basically, if force offhand is off AND there is no item in an offhand slot, then the equipment packet to add the cosmetic

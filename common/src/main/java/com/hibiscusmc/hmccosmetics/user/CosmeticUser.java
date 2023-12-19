@@ -221,7 +221,10 @@ public class CosmeticUser {
             if (cosmetic instanceof CosmeticBackpackType || cosmetic instanceof CosmeticBalloonType) return new ItemStack(Material.AIR);
             return getPlayer().getInventory().getItem(InventoryUtils.getEquipmentSlot(cosmetic.getSlot()));
         }
-        if (cosmetic instanceof CosmeticArmorType || cosmetic instanceof CosmeticMainhandType || cosmetic instanceof CosmeticBackpackType) {
+        if (cosmetic instanceof CosmeticArmorType armorType) {
+            item = armorType.getItem(this, cosmetic.getItem());
+        }
+        if (cosmetic instanceof CosmeticBackpackType || cosmetic instanceof CosmeticMainhandType) {
             item = cosmetic.getItem();
         }
         if (cosmetic instanceof CosmeticBalloonType) {
