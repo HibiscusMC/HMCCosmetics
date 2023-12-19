@@ -313,6 +313,8 @@ public class UserWardrobeManager {
 
                 if (WardrobeSettings.isEquipPumpkin()) {
                     NMSHandlers.getHandler().equipmentSlotUpdate(user.getPlayer().getEntityId(), EquipmentSlot.HEAD, new ItemStack(Material.CARVED_PUMPKIN), viewer);
+                } else {
+                    PacketManager.equipmentSlotUpdate(user.getPlayer(), true, viewer); // Optifine dumbassery
                 }
             }
         };

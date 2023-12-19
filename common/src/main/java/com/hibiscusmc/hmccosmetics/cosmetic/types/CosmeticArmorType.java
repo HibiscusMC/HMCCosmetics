@@ -5,6 +5,7 @@ import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.InventoryUtils;
+import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -43,6 +44,7 @@ public class CosmeticArmorType extends Cosmetic {
         if (!(user.getEntity() instanceof HumanEntity humanEntity)) return null;
         if (Settings.getShouldAddEnchants(equipSlot)) {
             ItemStack equippedItem = humanEntity.getInventory().getItem(equipSlot);
+            MessagesUtil.sendDebugMessages("CosmeticArmorType - " + equippedItem.getEnchantments().values().toString());
             cosmeticItem.addUnsafeEnchantments(equippedItem.getEnchantments());
         }
         // Basically, if force offhand is off AND there is no item in an offhand slot, then the equipment packet to add the cosmetic

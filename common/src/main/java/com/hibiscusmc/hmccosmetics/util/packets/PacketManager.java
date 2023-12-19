@@ -25,10 +25,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class PacketManager {
 
@@ -88,11 +85,13 @@ public class PacketManager {
             boolean empty,
             List<Player> sendTo
     ) {
+        HashMap<EquipmentSlot, ItemStack> items = new HashMap<>();
         for (EquipmentSlot slot : EquipmentSlot.values()) {
             ItemStack item = player.getInventory().getItem(slot);
             if (empty) item = new ItemStack(Material.AIR);
-            NMSHandlers.getHandler().equipmentSlotUpdate(player.getEntityId(), slot, item, sendTo);
+            items.put(slot, item);
         }
+        NMSHandlers.getHandler().equipmentSlotUpdate(player.getEntityId(), items, sendTo);
     }
     public static void equipmentSlotUpdate(
             @NotNull Player player,

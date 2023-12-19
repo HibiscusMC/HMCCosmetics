@@ -406,6 +406,7 @@ public class PlayerGameListener implements Listener {
 
                 CosmeticUser user = CosmeticUsers.getUser(player);
                 if (user == null) return;
+                if (user.isInWardrobe()) return;
                 CosmeticSlot cosmeticSlot = InventoryUtils.NMSCosmeticSlot(slotClicked);
                 if (cosmeticSlot == null) return;
                 if (!user.hasCosmeticInSlot(cosmeticSlot)) return;
@@ -432,9 +433,11 @@ public class PlayerGameListener implements Listener {
 
                 HashMap<Integer, ItemStack> items = new HashMap<>();
 
-                for (Cosmetic cosmetic : user.getCosmetics()) {
-                    if ((cosmetic instanceof CosmeticArmorType cosmeticArmorType)) {
-                        items.put(InventoryUtils.getPacketArmorSlot(cosmeticArmorType.getEquipSlot()), user.getUserCosmeticItem(cosmeticArmorType));
+                if (!user.isInWardrobe()) {
+                    for (Cosmetic cosmetic : user.getCosmetics()) {
+                        if ((cosmetic instanceof CosmeticArmorType cosmeticArmorType)) {
+                            items.put(InventoryUtils.getPacketArmorSlot(cosmeticArmorType.getEquipSlot()), user.getUserCosmeticItem(cosmeticArmorType));
+                        }
                     }
                 }
 
@@ -479,6 +482,7 @@ public class PlayerGameListener implements Listener {
 
                 CosmeticUser user = CosmeticUsers.getUser(player);
                 if (user == null) return;
+                if (user.isInWardrobe()) return;
 
                 int slot = event.getPacket().getIntegers().read(2);
                 MessagesUtil.sendDebugMessages("SetSlot Slot " + slot);
@@ -497,9 +501,9 @@ public class PlayerGameListener implements Listener {
                 int entityID = event.getPacket().getIntegers().read(0);
                 // User
                 CosmeticUser user = CosmeticUsers.getUser(entityID);
-                if (user == null) {
-                    return;
-                }
+                if (user == null) return;
+                if (user.isInWardrobe()) return;
+
                 List<com.comphenix.protocol.wrappers.Pair<EnumWrappers.ItemSlot, ItemStack>> armor = event.getPacket().getSlotStackPairLists().read(0);
 
                 for (int i = 0; i < armor.size(); i++) {
