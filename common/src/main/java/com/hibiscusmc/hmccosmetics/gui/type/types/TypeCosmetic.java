@@ -29,6 +29,10 @@ import java.util.List;
 
 public class TypeCosmetic extends Type {
 
+    public TypeCosmetic(String id) {
+        super(id);
+    }
+
     public TypeCosmetic() {
         super("cosmetic");
     }
