@@ -120,6 +120,7 @@ public class UserWardrobeManager {
 
             // NPC 2
             Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
+                if (!user.isInWardrobe()) return; // If a player exits the wardrobe right away, no need to spawn the NPC
                 PacketManager.sendFakePlayerSpawnPacket(npcLocation, WARDROBE_UUID, NPC_ID, viewer);
                 PacketManager.sendPlayerOverlayPacket(NPC_ID, viewer);
                 MessagesUtil.sendDebugMessages("Spawned Fake Player on " + npcLocation);
