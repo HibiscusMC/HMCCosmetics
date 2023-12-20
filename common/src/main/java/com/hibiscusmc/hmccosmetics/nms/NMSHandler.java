@@ -23,8 +23,6 @@ public interface NMSHandler {
 
     Entity spawnDisplayEntity(Location location, String text);
 
-    UserBalloonManager spawnBalloon(CosmeticUser user, CosmeticBalloonType cosmeticBalloonType);
-
     void slotUpdate(
             Player player,
             int slot

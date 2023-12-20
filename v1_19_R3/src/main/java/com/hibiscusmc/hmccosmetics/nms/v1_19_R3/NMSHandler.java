@@ -78,20 +78,6 @@ public class NMSHandler implements com.hibiscusmc.hmccosmetics.nms.NMSHandler {
     }
 
     @Override
-    public UserBalloonManager spawnBalloon(CosmeticUser user, CosmeticBalloonType cosmeticBalloonType) {
-        Entity entity = user.getEntity();
-
-        UserBalloonManager userBalloonManager1 = new UserBalloonManager(user, entity.getLocation());
-        userBalloonManager1.getModelEntity().teleport(entity.getLocation().add(cosmeticBalloonType.getBalloonOffset()));
-
-        userBalloonManager1.spawnModel(cosmeticBalloonType, user.getCosmeticColor(cosmeticBalloonType.getSlot()));
-        userBalloonManager1.addPlayerToModel(user, cosmeticBalloonType, user.getCosmeticColor(cosmeticBalloonType.getSlot()));
-
-        return userBalloonManager1;
-    }
-
-
-    @Override
     public void equipmentSlotUpdate(
             int entityId,
             org.bukkit.inventory.EquipmentSlot slot,
