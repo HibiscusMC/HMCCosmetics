@@ -112,6 +112,7 @@ dependencies {
     implementation("com.owen1212055:particlehelper:1.0.0-SNAPSHOT")
     implementation("com.ticxo.playeranimator:PlayerAnimator:R1.2.7")
     implementation("com.github.BG-Software-LLC:CommentedConfiguration:bed3c46369")
+    implementation("org.spongepowered:configurate-yaml:4.2.0-SNAPSHOT")
 }
 
 tasks {
@@ -150,6 +151,7 @@ tasks {
         relocate("com.owen1212055.particlehelper", "com.hisbiscusmc.hmccosmetics.particlehelper")
         relocate("com.ticxo.playeranimator", "com.hisbiscusmc.hmccosmetics.playeranimator")
         relocate("com.bgsoftware", "com.hisbiscusmc.hmccosmetics.configupdater")
+        relocate("org.spongepowered.configurate", "com.hisbiscusmc.hmccosmetics.configurate")
         archiveFileName.set("HMCCosmeticsRemapped-${project.version}.jar")
 
         dependencies {
@@ -186,8 +188,8 @@ bukkit {
     libraries = listOf(
         "net.kyori:adventure-api:4.11.0",
         "net.kyori:adventure-text-minimessage:4.11.0",
-        "net.kyori:adventure-platform-bukkit:4.1.2",
-        "org.spongepowered:configurate-yaml:4.2.0-SNAPSHOT"
+        "net.kyori:adventure-platform-bukkit:4.1.2"
+        //"org.spongepowered:configurate-yaml:4.2.0-SNAPSHOT" // Readd when 4.2.0 releases
     )
 
     commands {
