@@ -187,8 +187,7 @@ bukkit {
         "net.kyori:adventure-api:4.11.0",
         "net.kyori:adventure-text-minimessage:4.11.0",
         "net.kyori:adventure-platform-bukkit:4.1.2",
-        "org.spongepowered:configurate-yaml:4.2.0-SNAPSHOT",
-        "dev.triumphteam:triumph-gui:3.1.3"
+        "org.spongepowered:configurate-yaml:4.2.0-SNAPSHOT"
     )
 
     commands {
