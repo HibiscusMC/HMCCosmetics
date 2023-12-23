@@ -5,7 +5,6 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
 import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerPlayerConnection;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -13,13 +12,10 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.Team;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_19_R1.CraftEquipmentSlot;
-import org.bukkit.craftbukkit.v1_19_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.v1_19_R1.scoreboard.CraftScoreboard;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -29,17 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 
 public class HMCCNMSHandler implements com.hibiscusmc.hmccosmetics.nms.HMCCNMSHandler {
-
-    @Override
-    public ArmorStand getMEGEntity(Location loc) {
-        return (ArmorStand) new MEGEntity(loc).getBukkitEntity();
-    }
-
-    @Override
-    public org.bukkit.entity.Entity spawnDisplayEntity(Location location, String text) {
-        return null;
-    }
-
     @Override
     public void equipmentSlotUpdate(
             int entityId,

@@ -1,31 +1,22 @@
 package com.hibiscusmc.hmccosmetics.nms.v1_20_R3;
 
-import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
 import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerPlayerConnection;
-import net.minecraft.world.entity.Display;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.Team;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_20_R3.CraftEquipmentSlot;
-import org.bukkit.craftbukkit.v1_20_R3.CraftServer;
-import org.bukkit.craftbukkit.v1_20_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.v1_20_R3.scoreboard.CraftScoreboard;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -34,19 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 
 public class HMCCNMSHandler implements com.hibiscusmc.hmccosmetics.nms.HMCCNMSHandler {
-
-    @Override
-    public org.bukkit.entity.Entity spawnDisplayEntity(Location location, String text) {
-        Display.TextDisplay entity = new Display.TextDisplay(net.minecraft.world.entity.EntityType.TEXT_DISPLAY, ((CraftWorld) location.getWorld()).getHandle());
-        entity.setPos(location.getX(), location.getY(), location.getZ());
-        entity.persist = false;
-        //entity.setText(net.minecraft.network.chat.Component.literal("TEST!"));
-        entity.setCustomNameVisible(true);
-        entity.setCustomName(Component.literal(text));
-        MessagesUtil.sendDebugMessages("spawnDisplayEntity - " + entity);
-        ((CraftWorld) location.getWorld()).getHandle().addFreshEntity(entity, CreatureSpawnEvent.SpawnReason.CUSTOM);
-        return entity.getBukkitEntity();
-    }
 
     @Override
     public void equipmentSlotUpdate(

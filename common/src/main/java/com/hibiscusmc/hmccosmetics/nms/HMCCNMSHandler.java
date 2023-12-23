@@ -12,8 +12,6 @@ import java.util.List;
 
 public interface HMCCNMSHandler {
 
-    Entity spawnDisplayEntity(Location location, String text);
-
     void slotUpdate(
             Player player,
             int slot

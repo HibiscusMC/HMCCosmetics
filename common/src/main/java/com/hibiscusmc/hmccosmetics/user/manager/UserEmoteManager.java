@@ -49,7 +49,8 @@ public class UserEmoteManager {
             }
             // Show the text
             if (text != null && textEntity == null) {
-                textEntity = HMCCNMSHandlers.getHandler().spawnDisplayEntity(user.getPlayer().getLocation().add(0, 3, 0), text);
+                // removed in 2.7.0
+                //textEntity = HMCCNMSHandlers.getHandler().spawnDisplayEntity(user.getPlayer().getLocation().add(0, 3, 0), text);
             }
         } catch (Exception e) {
             e.printStackTrace();
