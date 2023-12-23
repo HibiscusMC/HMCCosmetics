@@ -15,7 +15,7 @@ import dev.triumphteam.gui.guis.GuiItem;
 import lombok.Getter;
 import me.lojosho.hibiscuscommons.config.serializer.ItemSerializer;
 import me.lojosho.hibiscuscommons.hooks.Hooks;
-import me.lojosho.hibiscuscommons.util.Adventure;
+import me.lojosho.hibiscuscommons.util.AdventureUtils;
 import me.lojosho.hibiscuscommons.util.StringUtils;
 import me.lojosho.shaded.configurate.ConfigurationNode;
 import me.lojosho.shaded.configurate.serialize.SerializationException;
@@ -133,7 +133,7 @@ public class Menu {
                 return;
             }
         }
-        final Component component = Adventure.MINI_MESSAGE.deserialize(Hooks.processPlaceholders(player, this.title));
+        final Component component = AdventureUtils.MINI_MESSAGE.deserialize(Hooks.processPlaceholders(player, this.title));
         Gui gui = Gui.gui()
                 .title(component)
                 .rows(this.rows)

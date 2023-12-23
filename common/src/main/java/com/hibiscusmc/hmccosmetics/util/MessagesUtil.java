@@ -4,7 +4,7 @@ import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import me.lojosho.hibiscuscommons.hooks.Hooks;
-import me.lojosho.hibiscuscommons.util.Adventure;
+import me.lojosho.hibiscuscommons.util.AdventureUtils;
 import me.lojosho.shaded.configurate.ConfigurationNode;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
@@ -105,9 +105,9 @@ public class MessagesUtil {
         if (player != null) message = Hooks.processPlaceholders(player, message);
         message = message.replaceAll("%prefix%", prefix);
         if (placeholders != null ) {
-            return Adventure.MINI_MESSAGE.deserialize(message, placeholders);
+            return AdventureUtils.MINI_MESSAGE.deserialize(message, placeholders);
         }
-        return Adventure.MINI_MESSAGE.deserialize(message);
+        return AdventureUtils.MINI_MESSAGE.deserialize(message);
     }
 
     @NotNull
@@ -125,9 +125,9 @@ public class MessagesUtil {
         message = message.replaceAll("%prefix%", prefix);
         if (player != null) message = Hooks.processPlaceholders(player, message);
         if (placeholders != null ) {
-            return Adventure.MINI_MESSAGE.deserialize(message, placeholders);
+            return AdventureUtils.MINI_MESSAGE.deserialize(message, placeholders);
         }
-        return Adventure.MINI_MESSAGE.deserialize(message);
+        return AdventureUtils.MINI_MESSAGE.deserialize(message);
     }
 
     public static String processStringNoKeyString(Player player, String message) {
