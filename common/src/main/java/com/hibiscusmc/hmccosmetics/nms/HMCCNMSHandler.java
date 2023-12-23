@@ -1,8 +1,5 @@
 package com.hibiscusmc.hmccosmetics.nms;
 
-import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
-import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
-import com.hibiscusmc.hmccosmetics.user.manager.UserBalloonManager;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -13,11 +10,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.HashMap;
 import java.util.List;
 
-public interface NMSHandler {
-
-    int getNextEntityId();
-
-    Entity getEntity(int entityId);
+public interface HMCCNMSHandler {
 
     ArmorStand getMEGEntity(Location loc);
 

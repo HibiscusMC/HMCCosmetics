@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class InventoryUtils {
+public class HMCCInventoryUtils {
 
     /**
      * Converts from the Bukkit item slots to ProtocolLib item slots. Will produce a null if an improper bukkit item slot is sent through
@@ -162,17 +162,5 @@ public class InventoryUtils {
 
     public static NamespacedKey getCosmeticKey() {
         return new NamespacedKey(HMCCosmeticsPlugin.getInstance(), "cosmetic");
-    }
-
-    public static NamespacedKey getOwnerKey() {
-        return new NamespacedKey(HMCCosmeticsPlugin.getInstance(), "owner");
-    }
-
-    public static NamespacedKey getSkullOwner() {
-        return new NamespacedKey(HMCCosmeticsPlugin.getInstance(), "skullowner");
-    }
-
-    public static NamespacedKey getSkullTexture() {
-        return new NamespacedKey(HMCCosmeticsPlugin.getInstance(), "skulltexture");
     }
 }

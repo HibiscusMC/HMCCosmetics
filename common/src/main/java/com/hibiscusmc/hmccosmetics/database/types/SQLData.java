@@ -57,7 +57,7 @@ public abstract class SQLData extends Data {
                 throw new RuntimeException(e);
             }
         };
-        if (!HMCCosmeticsPlugin.isDisable()) {
+        if (!HMCCosmeticsPlugin.getInstance().isDisabled()) {
             Bukkit.getScheduler().runTaskAsynchronously(HMCCosmeticsPlugin.getInstance(), run);
         } else {
             run.run();

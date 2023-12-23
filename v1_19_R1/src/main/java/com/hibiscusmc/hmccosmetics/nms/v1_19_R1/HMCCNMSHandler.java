@@ -1,8 +1,5 @@
-package com.hibiscusmc.hmccosmetics.nms.v1_19_R2;
+package com.hibiscusmc.hmccosmetics.nms.v1_19_R1;
 
-import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
-import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
-import com.hibiscusmc.hmccosmetics.user.manager.UserBalloonManager;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
@@ -17,11 +14,11 @@ import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.Team;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_19_R2.CraftEquipmentSlot;
-import org.bukkit.craftbukkit.v1_19_R2.CraftServer;
-import org.bukkit.craftbukkit.v1_19_R2.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_19_R2.inventory.CraftItemStack;
-import org.bukkit.craftbukkit.v1_19_R2.scoreboard.CraftScoreboard;
+import org.bukkit.craftbukkit.v1_19_R1.CraftEquipmentSlot;
+import org.bukkit.craftbukkit.v1_19_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_19_R1.scoreboard.CraftScoreboard;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -31,27 +28,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-public class NMSHandler implements com.hibiscusmc.hmccosmetics.nms.NMSHandler {
-    @Override
-    public int getNextEntityId() {
-        return net.minecraft.world.entity.Entity.nextEntityId();
-    }
-
-    @Override
-    public org.bukkit.entity.Entity getEntity(int entityId) {
-        net.minecraft.world.entity.Entity entity = getNMSEntity(entityId);
-        if (entity == null) return null;
-        return entity.getBukkitEntity();
-    }
-
-    private net.minecraft.world.entity.Entity getNMSEntity(int entityId) {
-        for (ServerLevel world : ((CraftServer) Bukkit.getServer()).getHandle().getServer().getAllLevels()) {
-            net.minecraft.world.entity.Entity entity = world.getEntity(entityId);
-            if (entity == null) continue;
-            return entity;
-        }
-        return null;
-    }
+public class HMCCNMSHandler implements com.hibiscusmc.hmccosmetics.nms.HMCCNMSHandler {
 
     @Override
     public ArmorStand getMEGEntity(Location loc) {

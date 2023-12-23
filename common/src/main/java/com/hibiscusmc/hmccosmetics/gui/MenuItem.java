@@ -1,8 +1,8 @@
 package com.hibiscusmc.hmccosmetics.gui;
 
 import com.hibiscusmc.hmccosmetics.gui.type.Type;
+import me.lojosho.shaded.configurate.ConfigurationNode;
 import org.bukkit.inventory.ItemStack;
-import org.spongepowered.configurate.ConfigurationNode;
 
 import java.util.List;
 

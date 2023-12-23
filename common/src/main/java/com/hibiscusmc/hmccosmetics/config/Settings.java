@@ -3,9 +3,9 @@ package com.hibiscusmc.hmccosmetics.config;
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import lombok.Getter;
+import me.lojosho.shaded.configurate.ConfigurationNode;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.util.Vector;
-import org.spongepowered.configurate.ConfigurationNode;
 
 import java.util.ArrayList;
 import java.util.List;

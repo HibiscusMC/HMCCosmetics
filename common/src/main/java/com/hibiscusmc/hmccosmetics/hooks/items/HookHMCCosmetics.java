@@ -2,8 +2,8 @@ package com.hibiscusmc.hmccosmetics.hooks.items;
 
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
-import com.hibiscusmc.hmccosmetics.hooks.Hook;
-import com.hibiscusmc.hmccosmetics.hooks.HookFlag;
+import me.lojosho.hibiscuscommons.hooks.Hook;
+import me.lojosho.hibiscuscommons.hooks.HookFlag;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 

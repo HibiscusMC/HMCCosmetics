@@ -1,7 +1,7 @@
 package com.hibiscusmc.hmccosmetics.config;
 
 import lombok.Getter;
-import org.spongepowered.configurate.ConfigurationNode;
+import me.lojosho.shaded.configurate.ConfigurationNode;
 
 public class DatabaseSettings {
 

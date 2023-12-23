@@ -1,11 +1,6 @@
-package com.hibiscusmc.hmccosmetics.nms.v1_20_R1;
+package com.hibiscusmc.hmccosmetics.nms.v1_18_R2;
 
-import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
-import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
-import com.hibiscusmc.hmccosmetics.user.manager.UserBalloonManager;
-import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
@@ -13,22 +8,19 @@ import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerPlayerConnection;
-import net.minecraft.world.entity.Display;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.Team;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_20_R1.CraftEquipmentSlot;
-import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_20_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
-import org.bukkit.craftbukkit.v1_20_R1.scoreboard.CraftScoreboard;
+import org.bukkit.craftbukkit.v1_18_R2.CraftEquipmentSlot;
+import org.bukkit.craftbukkit.v1_18_R2.CraftServer;
+import org.bukkit.craftbukkit.v1_18_R2.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_18_R2.scoreboard.CraftScoreboard;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -36,27 +28,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-public class NMSHandler implements com.hibiscusmc.hmccosmetics.nms.NMSHandler {
-    @Override
-    public int getNextEntityId() {
-        return net.minecraft.world.entity.Entity.nextEntityId();
-    }
-
-    @Override
-    public org.bukkit.entity.Entity getEntity(int entityId) {
-        net.minecraft.world.entity.Entity entity = getNMSEntity(entityId);
-        if (entity == null) return null;
-        return entity.getBukkitEntity();
-    }
-
-    private net.minecraft.world.entity.Entity getNMSEntity(int entityId) {
-        for (ServerLevel world : ((CraftServer) Bukkit.getServer()).getHandle().getServer().getAllLevels()) {
-            net.minecraft.world.entity.Entity entity = world.getEntity(entityId);
-            if (entity == null) continue;
-            return entity;
-        }
-        return null;
-    }
+public class HMCCNMSHandler implements com.hibiscusmc.hmccosmetics.nms.HMCCNMSHandler {
 
     @Override
     public ArmorStand getMEGEntity(Location loc) {
@@ -65,15 +37,7 @@ public class NMSHandler implements com.hibiscusmc.hmccosmetics.nms.NMSHandler {
 
     @Override
     public org.bukkit.entity.Entity spawnDisplayEntity(Location location, String text) {
-        Display.TextDisplay entity = new Display.TextDisplay(net.minecraft.world.entity.EntityType.TEXT_DISPLAY, ((CraftWorld) location.getWorld()).getHandle());
-        entity.setPos(location.getX(), location.getY(), location.getZ());
-        entity.persist = false;
-        //entity.setText(net.minecraft.network.chat.Component.literal("TEST!"));
-        entity.setCustomNameVisible(true);
-        entity.setCustomName(Component.literal(text));
-        MessagesUtil.sendDebugMessages("spawnDisplayEntity - " + entity);
-        ((CraftWorld) location.getWorld()).getHandle().addFreshEntity(entity, CreatureSpawnEvent.SpawnReason.CUSTOM);
-        return entity.getBukkitEntity();
+        return null;
     }
 
     @Override

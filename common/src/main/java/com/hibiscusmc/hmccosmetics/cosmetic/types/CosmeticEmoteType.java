@@ -3,8 +3,8 @@ package com.hibiscusmc.hmccosmetics.cosmetic.types;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
+import me.lojosho.shaded.configurate.ConfigurationNode;
 import org.jetbrains.annotations.NotNull;
-import org.spongepowered.configurate.ConfigurationNode;
 
 public class CosmeticEmoteType extends Cosmetic {
 

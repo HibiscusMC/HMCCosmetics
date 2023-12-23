@@ -2,15 +2,15 @@ package com.hibiscusmc.hmccosmetics.gui.type.types;
 
 import com.hibiscusmc.hmccosmetics.gui.action.Actions;
 import com.hibiscusmc.hmccosmetics.gui.type.Type;
-import com.hibiscusmc.hmccosmetics.hooks.Hooks;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
+import me.lojosho.hibiscuscommons.hooks.Hooks;
+import me.lojosho.shaded.configurate.ConfigurationNode;
+import me.lojosho.shaded.configurate.serialize.SerializationException;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.NotNull;
-import org.spongepowered.configurate.ConfigurationNode;
-import org.spongepowered.configurate.serialize.SerializationException;
 
 import java.util.ArrayList;
 import java.util.List;

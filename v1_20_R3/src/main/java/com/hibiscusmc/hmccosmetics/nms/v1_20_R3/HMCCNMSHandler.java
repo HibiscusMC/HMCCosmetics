@@ -1,8 +1,5 @@
 package com.hibiscusmc.hmccosmetics.nms.v1_20_R3;
 
-import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
-import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
-import com.hibiscusmc.hmccosmetics.user.manager.UserBalloonManager;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.network.chat.Component;
@@ -36,27 +33,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-public class NMSHandler implements com.hibiscusmc.hmccosmetics.nms.NMSHandler {
-    @Override
-    public int getNextEntityId() {
-        return net.minecraft.world.entity.Entity.nextEntityId();
-    }
-
-    @Override
-    public org.bukkit.entity.Entity getEntity(int entityId) {
-        net.minecraft.world.entity.Entity entity = getNMSEntity(entityId);
-        if (entity == null) return null;
-        return entity.getBukkitEntity();
-    }
-
-    private net.minecraft.world.entity.Entity getNMSEntity(int entityId) {
-        for (ServerLevel world : ((CraftServer) Bukkit.getServer()).getHandle().getServer().getAllLevels()) {
-            net.minecraft.world.entity.Entity entity = world.getEntity(entityId);
-            if (entity == null) continue;
-            return entity;
-        }
-        return null;
-    }
+public class HMCCNMSHandler implements com.hibiscusmc.hmccosmetics.nms.HMCCNMSHandler {
 
     @Override
     public ArmorStand getMEGEntity(Location loc) {

@@ -2,9 +2,10 @@ package com.hibiscusmc.hmccosmetics.util;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.Settings;
-import com.hibiscusmc.hmccosmetics.hooks.Hooks;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
-import com.hibiscusmc.hmccosmetics.util.misc.Adventure;
+import me.lojosho.hibiscuscommons.hooks.Hooks;
+import me.lojosho.hibiscuscommons.util.Adventure;
+import me.lojosho.shaded.configurate.ConfigurationNode;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
@@ -14,7 +15,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.spongepowered.configurate.ConfigurationNode;
 
 import java.time.Duration;
 import java.util.HashMap;

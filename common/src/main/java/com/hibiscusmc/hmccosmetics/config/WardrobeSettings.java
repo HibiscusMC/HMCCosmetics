@@ -1,15 +1,15 @@
 package com.hibiscusmc.hmccosmetics.config;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
-import com.hibiscusmc.hmccosmetics.config.serializer.LocationSerializer;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.misc.Utils;
 import lombok.Getter;
+import me.lojosho.hibiscuscommons.config.serializer.LocationSerializer;
+import me.lojosho.shaded.configurate.ConfigurationNode;
 import net.kyori.adventure.bossbar.BossBar;
 import org.apache.commons.lang3.EnumUtils;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.spongepowered.configurate.ConfigurationNode;
 
 import java.util.Collection;
 import java.util.HashMap;

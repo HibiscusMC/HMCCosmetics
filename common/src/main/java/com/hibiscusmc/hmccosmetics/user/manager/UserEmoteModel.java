@@ -2,12 +2,11 @@ package com.hibiscusmc.hmccosmetics.user.manager;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.Settings;
-import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
-import com.hibiscusmc.hmccosmetics.util.ServerUtils;
-import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
+import com.hibiscusmc.hmccosmetics.util.packets.HMCCPacketManager;
 import com.ticxo.playeranimator.api.model.player.PlayerModel;
+import me.lojosho.hibiscuscommons.util.ServerUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -29,7 +28,7 @@ public class UserEmoteModel extends PlayerModel {
     public UserEmoteModel(@NotNull CosmeticUser user) {
         super(user.getPlayer());
         this.user = user;
-        armorStandId = NMSHandlers.getHandler().getNextEntityId();
+        armorStandId = ServerUtils.getNextEntityId();
         getRangeManager().setRenderDistance(Settings.getViewDistance());
     }
 
@@ -42,9 +41,9 @@ public class UserEmoteModel extends PlayerModel {
         // Add config option that either allows player to move or forces them into a spot.
         Player player = user.getPlayer();
         List<Player> viewer = Collections.singletonList(user.getPlayer());
-        List<Player> outsideViewers = PacketManager.getViewers(player.getLocation());
+        List<Player> outsideViewers = HMCCPacketManager.getViewers(player.getLocation());
         // Send equipment packet to the player as well (Fixes Optifine still rendering armor when emoting)
-        PacketManager.equipmentSlotUpdate(player, true, outsideViewers);
+        HMCCPacketManager.equipmentSlotUpdate(player, true, outsideViewers);
         outsideViewers.remove(player);
 
         user.getPlayer().setInvisible(true);
@@ -75,12 +74,12 @@ public class UserEmoteModel extends PlayerModel {
                 MessagesUtil.sendMessage(player, "emote-blocked");
             }
 
-            PacketManager.sendEntitySpawnPacket(thirdPersonLocation, armorStandId, EntityType.ARMOR_STAND, UUID.randomUUID(), viewer);
-            PacketManager.sendInvisibilityPacket(armorStandId, viewer);
-            PacketManager.sendLookPacket(armorStandId, thirdPersonLocation, viewer);
+            HMCCPacketManager.sendEntitySpawnPacket(thirdPersonLocation, armorStandId, EntityType.ARMOR_STAND, UUID.randomUUID(), viewer);
+            HMCCPacketManager.sendInvisibilityPacket(armorStandId, viewer);
+            HMCCPacketManager.sendLookPacket(armorStandId, thirdPersonLocation, viewer);
 
-            PacketManager.gamemodeChangePacket(player, 3);
-            PacketManager.sendCameraPacket(armorStandId, viewer);
+            HMCCPacketManager.gamemodeChangePacket(player, 3);
+            HMCCPacketManager.sendCameraPacket(armorStandId, viewer);
         }
 
 
@@ -108,16 +107,16 @@ public class UserEmoteModel extends PlayerModel {
             if (player == null) return;
 
             List<Player> viewer = Collections.singletonList(player);
-            List<Player> outsideViewers = PacketManager.getViewers(player.getLocation());
+            List<Player> outsideViewers = HMCCPacketManager.getViewers(player.getLocation());
             // Send Equipment packet to all (Fixes Optifine Issue)
-            PacketManager.equipmentSlotUpdate(player, false, outsideViewers);
+            HMCCPacketManager.equipmentSlotUpdate(player, false, outsideViewers);
             outsideViewers.remove(player);
 
             int entityId = player.getEntityId();
-            PacketManager.sendCameraPacket(entityId, viewer);
-            PacketManager.sendEntityDestroyPacket(armorStandId, viewer);
+            HMCCPacketManager.sendCameraPacket(entityId, viewer);
+            HMCCPacketManager.sendEntityDestroyPacket(armorStandId, viewer);
             if (this.originalGamemode != null) {
-                PacketManager.gamemodeChangePacket(player, ServerUtils.convertGamemode(this.originalGamemode));
+                HMCCPacketManager.gamemodeChangePacket(player, com.hibiscusmc.hmccosmetics.util.ServerUtils.convertGamemode(this.originalGamemode));
                 player.setGameMode(this.originalGamemode);
             }
 

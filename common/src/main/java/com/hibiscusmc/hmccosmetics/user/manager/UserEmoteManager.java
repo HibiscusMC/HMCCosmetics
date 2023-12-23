@@ -4,7 +4,7 @@ import com.hibiscusmc.hmccosmetics.api.events.PlayerEmoteStartEvent;
 import com.hibiscusmc.hmccosmetics.api.events.PlayerEmoteStopEvent;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticEmoteType;
 import com.hibiscusmc.hmccosmetics.emotes.EmoteManager;
-import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
+import com.hibiscusmc.hmccosmetics.nms.HMCCNMSHandlers;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import org.bukkit.Bukkit;
@@ -49,7 +49,7 @@ public class UserEmoteManager {
             }
             // Show the text
             if (text != null && textEntity == null) {
-                textEntity = NMSHandlers.getHandler().spawnDisplayEntity(user.getPlayer().getLocation().add(0, 3, 0), text);
+                textEntity = HMCCNMSHandlers.getHandler().spawnDisplayEntity(user.getPlayer().getLocation().add(0, 3, 0), text);
             }
         } catch (Exception e) {
             e.printStackTrace();

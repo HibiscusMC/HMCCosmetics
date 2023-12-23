@@ -1,9 +1,9 @@
 package com.hibiscusmc.hmccosmetics.gui.action.actions;
 
 import com.hibiscusmc.hmccosmetics.gui.action.Action;
-import com.hibiscusmc.hmccosmetics.hooks.Hooks;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
+import me.lojosho.hibiscuscommons.hooks.Hooks;
 import org.jetbrains.annotations.NotNull;
 
 public class ActionPlayerCommand extends Action {

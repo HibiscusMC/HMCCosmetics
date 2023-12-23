@@ -8,15 +8,15 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
 
-public class NMSHandlers {
+public class HMCCNMSHandlers {
 
     private static final String[] SUPPORTED_VERSION = new String[]{"v1_18_R2", "v1_19_R1", "v1_19_R2", "v1_19_R3", "v1_20_R1", "v1_20_R2", "v1_20_R3"};
-    private static NMSHandler handler;
+    private static HMCCNMSHandler handler;
     @Getter
     private static String version;
 
     @Nullable
-    public static NMSHandler getHandler() {
+    public static HMCCNMSHandler getHandler() {
         if (handler != null) {
             return handler;
         } else {
@@ -42,7 +42,7 @@ public class NMSHandlers {
             MessagesUtil.sendDebugMessages(packageVersion + " has been detected.", Level.INFO);
             version = packageVersion;
             try {
-                handler = (NMSHandler) Class.forName("com.hibiscusmc.hmccosmetics.nms." + packageVersion + ".NMSHandler").getConstructor().newInstance();
+                handler = (HMCCNMSHandler) Class.forName("com.hibiscusmc.hmccosmetics.nms." + packageVersion + ".HMCCNMSHandler").getConstructor().newInstance();
                 return;
             } catch (ClassNotFoundException | InvocationTargetException | InstantiationException |
                      IllegalAccessException | NoSuchMethodException e) {
