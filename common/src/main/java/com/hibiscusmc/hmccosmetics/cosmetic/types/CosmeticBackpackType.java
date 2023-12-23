@@ -2,11 +2,11 @@ package com.hibiscusmc.hmccosmetics.cosmetic.types;
 
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
-import com.hibiscusmc.hmccosmetics.nms.HMCCNMSHandlers;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.packets.HMCCPacketManager;
 import lombok.Getter;
+import me.lojosho.hibiscuscommons.util.packets.PacketManager;
 import me.lojosho.shaded.configurate.ConfigurationNode;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -57,7 +57,7 @@ public class CosmeticBackpackType extends Cosmetic {
 
         HMCCPacketManager.sendEntitySpawnPacket(user.getEntity().getLocation(), user.getUserBackpackManager().getFirstArmorStandId(), EntityType.ARMOR_STAND, UUID.randomUUID(), outsideViewers);
         HMCCPacketManager.sendArmorstandMetadata(user.getUserBackpackManager().getFirstArmorStandId(), outsideViewers);
-        HMCCNMSHandlers.getHandler().equipmentSlotUpdate(user.getUserBackpackManager().getFirstArmorStandId(), EquipmentSlot.HEAD, user.getUserCosmeticItem(this, getItem()), outsideViewers);
+        PacketManager.equipmentSlotUpdate(user.getUserBackpackManager().getFirstArmorStandId(), EquipmentSlot.HEAD, user.getUserCosmeticItem(this, getItem()), outsideViewers);
         // If true, it will send the riding packet to all players. If false, it will send the riding packet only to new players
         if (Settings.isBackpackForceRidingEnabled()) HMCCPacketManager.sendRidingPacket(entity.getEntityId(), user.getUserBackpackManager().getFirstArmorStandId(), user.getUserBackpackManager().getEntityManager().getViewers());
         else HMCCPacketManager.sendRidingPacket(entity.getEntityId(), user.getUserBackpackManager().getFirstArmorStandId(), outsideViewers);
@@ -77,7 +77,7 @@ public class CosmeticBackpackType extends Cosmetic {
             if (!user.getHidden()) {
                 //if (loc.getPitch() < -70) NMSHandlers.getHandler().equipmentSlotUpdate(user.getUserBackpackManager().getFirstArmorStandId(), EquipmentSlot.HEAD, new ItemStack(Material.AIR), owner);
                 //else NMSHandlers.getHandler().equipmentSlotUpdate(user.getUserBackpackManager().getFirstArmorStandId(), EquipmentSlot.HEAD, firstPersonBackpack, owner);
-                HMCCNMSHandlers.getHandler().equipmentSlotUpdate(user.getUserBackpackManager().getFirstArmorStandId(), EquipmentSlot.HEAD, user.getUserCosmeticItem(this, firstPersonBackpack), owner);
+                PacketManager.equipmentSlotUpdate(user.getUserBackpackManager().getFirstArmorStandId(), EquipmentSlot.HEAD, user.getUserCosmeticItem(this, firstPersonBackpack), owner);
             }
             MessagesUtil.sendDebugMessages("First Person Backpack Update[owner=" + user.getUniqueId() + ",player_location=" + loc + "]!", Level.INFO);
         }

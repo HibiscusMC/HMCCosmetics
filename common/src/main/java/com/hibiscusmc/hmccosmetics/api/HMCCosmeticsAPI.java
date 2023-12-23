@@ -6,9 +6,9 @@ import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
 import com.hibiscusmc.hmccosmetics.gui.Menu;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
-import com.hibiscusmc.hmccosmetics.nms.HMCCNMSHandlers;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
+import me.lojosho.hibiscuscommons.nms.NMSHandlers;
 import org.bukkit.Color;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -103,7 +103,7 @@ public class HMCCosmeticsAPI {
      */
     @Nullable
     public static String getNMSVersion() {
-        return HMCCNMSHandlers.getVersion();
+        return NMSHandlers.getVersion();
     }
 
     /**

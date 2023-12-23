@@ -4,7 +4,6 @@ import com.hibiscusmc.hmccosmetics.api.events.PlayerEmoteStartEvent;
 import com.hibiscusmc.hmccosmetics.api.events.PlayerEmoteStopEvent;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticEmoteType;
 import com.hibiscusmc.hmccosmetics.emotes.EmoteManager;
-import com.hibiscusmc.hmccosmetics.nms.HMCCNMSHandlers;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import org.bukkit.Bukkit;

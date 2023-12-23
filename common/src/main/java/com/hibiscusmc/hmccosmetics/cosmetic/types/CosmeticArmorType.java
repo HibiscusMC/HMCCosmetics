@@ -2,10 +2,10 @@ package com.hibiscusmc.hmccosmetics.cosmetic.types;
 
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
-import com.hibiscusmc.hmccosmetics.nms.HMCCNMSHandlers;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.HMCCInventoryUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.HMCCPacketManager;
+import me.lojosho.hibiscuscommons.util.packets.PacketManager;
 import me.lojosho.shaded.configurate.ConfigurationNode;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -35,7 +35,7 @@ public class CosmeticArmorType extends Cosmetic {
                 && ((user.getEntity() instanceof Player) && !user.getPlayer().getInventory().getItemInOffHand().getType().isAir())) return;
         ItemStack item = getItem(user);
         if (item == null) return;
-        HMCCNMSHandlers.getHandler().equipmentSlotUpdate(entity.getEntityId(), equipSlot, item, HMCCPacketManager.getViewers(entity.getLocation()));
+        PacketManager.equipmentSlotUpdate(entity.getEntityId(), equipSlot, item, HMCCPacketManager.getViewers(entity.getLocation()));
     }
 
     public ItemStack getItem(@NotNull CosmeticUser user) {

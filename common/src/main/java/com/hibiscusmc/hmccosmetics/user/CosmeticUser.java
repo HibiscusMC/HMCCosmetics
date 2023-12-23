@@ -13,7 +13,6 @@ import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticArmorType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBackpackType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticMainhandType;
-import com.hibiscusmc.hmccosmetics.nms.HMCCNMSHandlers;
 import com.hibiscusmc.hmccosmetics.user.manager.UserBackpackManager;
 import com.hibiscusmc.hmccosmetics.user.manager.UserBalloonManager;
 import com.hibiscusmc.hmccosmetics.user.manager.UserEmoteManager;
@@ -25,6 +24,7 @@ import com.hibiscusmc.hmccosmetics.util.packets.HMCCPacketManager;
 import lombok.Getter;
 import me.lojosho.hibiscuscommons.hooks.Hooks;
 import me.lojosho.hibiscuscommons.util.InventoryUtils;
+import me.lojosho.hibiscuscommons.util.packets.PacketManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -204,7 +204,7 @@ public class CosmeticUser {
             updateCosmetic(cosmetic.getSlot());
         }
         if (items.isEmpty()) return;
-        HMCCNMSHandlers.getHandler().equipmentSlotUpdate(getEntity().getEntityId(), items, PlayerUtils.getNearbyPlayers(getEntity().getLocation()));
+        PacketManager.equipmentSlotUpdate(getEntity().getEntityId(), items, PlayerUtils.getNearbyPlayers(getEntity().getLocation()));
         MessagesUtil.sendDebugMessages("updateCosmetic (All) - end - " + items.size());
     }
 
@@ -427,7 +427,7 @@ public class CosmeticUser {
         EquipmentSlot equipmentSlot = HMCCInventoryUtils.getEquipmentSlot(slot);
         if (equipmentSlot == null) return;
         if (getPlayer() != null) {
-            HMCCNMSHandlers.getHandler().equipmentSlotUpdate(getEntity().getEntityId(), equipmentSlot, getPlayer().getInventory().getItem(equipmentSlot), PlayerUtils.getNearbyPlayers(getEntity().getLocation()));
+            PacketManager.equipmentSlotUpdate(getEntity().getEntityId(), equipmentSlot, getPlayer().getInventory().getItem(equipmentSlot), PlayerUtils.getNearbyPlayers(getEntity().getLocation()));
         } else {
             HMCCPacketManager.equipmentSlotUpdate(getEntity().getEntityId(), this, slot, PlayerUtils.getNearbyPlayers(getEntity().getLocation()));
         }

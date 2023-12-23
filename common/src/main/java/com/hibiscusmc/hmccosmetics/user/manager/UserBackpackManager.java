@@ -2,7 +2,6 @@ package com.hibiscusmc.hmccosmetics.user.manager;
 
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBackpackType;
-import com.hibiscusmc.hmccosmetics.nms.HMCCNMSHandlers;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.packets.HMCCPacketManager;
@@ -10,6 +9,7 @@ import com.ticxo.modelengine.api.ModelEngineAPI;
 import lombok.Getter;
 import me.lojosho.hibiscuscommons.hooks.Hooks;
 import me.lojosho.hibiscuscommons.util.ServerUtils;
+import me.lojosho.hibiscuscommons.util.packets.PacketManager;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -85,9 +85,9 @@ public class UserBackpackManager {
                 else HMCCPacketManager.sendRidingPacket(particleCloud.get(i - 1), particleCloud.get(i) , owner);
             }
             HMCCPacketManager.sendRidingPacket(particleCloud.get(particleCloud.size() - 1), user.getUserBackpackManager().getFirstArmorStandId(), owner);
-            if (!user.getHidden()) HMCCNMSHandlers.getHandler().equipmentSlotUpdate(user.getUserBackpackManager().getFirstArmorStandId(), EquipmentSlot.HEAD, user.getUserCosmeticItem(cosmeticBackpackType, cosmeticBackpackType.getFirstPersonBackpack()), owner);
+            if (!user.getHidden()) PacketManager.equipmentSlotUpdate(user.getUserBackpackManager().getFirstArmorStandId(), EquipmentSlot.HEAD, user.getUserCosmeticItem(cosmeticBackpackType, cosmeticBackpackType.getFirstPersonBackpack()), owner);
         }
-        HMCCNMSHandlers.getHandler().equipmentSlotUpdate(getFirstArmorStandId(), EquipmentSlot.HEAD, user.getUserCosmeticItem(cosmeticBackpackType), outsideViewers);
+        PacketManager.equipmentSlotUpdate(getFirstArmorStandId(), EquipmentSlot.HEAD, user.getUserCosmeticItem(cosmeticBackpackType), outsideViewers);
         HMCCPacketManager.sendRidingPacket(entity.getEntityId(), passengerIDs, outsideViewers);
 
         // No one should be using ME because it barely works but some still use it, so it's here
@@ -140,11 +140,11 @@ public class UserBackpackManager {
     }
 
     public void setItem(ItemStack item) {
-        HMCCNMSHandlers.getHandler().equipmentSlotUpdate(getFirstArmorStandId(), EquipmentSlot.HEAD, item, getEntityManager().getViewers());
+        PacketManager.equipmentSlotUpdate(getFirstArmorStandId(), EquipmentSlot.HEAD, item, getEntityManager().getViewers());
     }
 
     public void clearItems() {
         ItemStack item = new ItemStack(Material.AIR);
-        HMCCNMSHandlers.getHandler().equipmentSlotUpdate(getFirstArmorStandId(), EquipmentSlot.HEAD, item, getEntityManager().getViewers());
+        PacketManager.equipmentSlotUpdate(getFirstArmorStandId(), EquipmentSlot.HEAD, item, getEntityManager().getViewers());
     }
 }

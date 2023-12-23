@@ -9,12 +9,13 @@ import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
 import com.hibiscusmc.hmccosmetics.gui.Menu;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
-import com.hibiscusmc.hmccosmetics.nms.HMCCNMSHandlers;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.ServerUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.HMCCPacketManager;
 import lombok.Getter;
+import me.lojosho.hibiscuscommons.nms.NMSHandlers;
+import me.lojosho.hibiscuscommons.util.packets.PacketManager;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
@@ -124,7 +125,7 @@ public class UserWardrobeManager {
                 HMCCPacketManager.sendFakePlayerSpawnPacket(npcLocation, WARDROBE_UUID, NPC_ID, viewer);
                 HMCCPacketManager.sendPlayerOverlayPacket(NPC_ID, viewer);
                 MessagesUtil.sendDebugMessages("Spawned Fake Player on " + npcLocation);
-                HMCCNMSHandlers.getHandler().hideNPCName(player, npcName);
+                NMSHandlers.getHandler().hideNPCName(player, npcName);
             }, 4);
 
             // Location
@@ -136,7 +137,7 @@ public class UserWardrobeManager {
                 // Maybe null as backpack maybe despawned before entering
                 if (user.getUserBackpackManager() == null) user.respawnBackpack();
                 user.getUserBackpackManager().getEntityManager().teleport(npcLocation.clone().add(0, 2, 0));
-                HMCCNMSHandlers.getHandler().equipmentSlotUpdate(user.getUserBackpackManager().getFirstArmorStandId(), EquipmentSlot.HEAD, user.getUserCosmeticItem(user.getCosmetic(CosmeticSlot.BACKPACK)), viewer);
+                PacketManager.equipmentSlotUpdate(user.getUserBackpackManager().getFirstArmorStandId(), EquipmentSlot.HEAD, user.getUserCosmeticItem(user.getCosmetic(CosmeticSlot.BACKPACK)), viewer);
                 HMCCPacketManager.ridingMountPacket(NPC_ID, user.getUserBackpackManager().getFirstArmorStandId(), viewer);
             }
 
@@ -247,7 +248,7 @@ public class UserWardrobeManager {
             player.teleport(Objects.requireNonNullElseGet(exitLocation, () -> player.getWorld().getSpawnLocation()), PlayerTeleportEvent.TeleportCause.PLUGIN);
 
             if (WardrobeSettings.isEquipPumpkin()) {
-                HMCCNMSHandlers.getHandler().equipmentSlotUpdate(user.getPlayer().getEntityId(), EquipmentSlot.HEAD, player.getInventory().getHelmet(), viewer);
+                PacketManager.equipmentSlotUpdate(user.getPlayer().getEntityId(), EquipmentSlot.HEAD, player.getInventory().getHelmet(), viewer);
             }
 
             if (WardrobeSettings.isEnabledBossbar()) {
@@ -313,7 +314,7 @@ public class UserWardrobeManager {
                 }
 
                 if (WardrobeSettings.isEquipPumpkin()) {
-                    HMCCNMSHandlers.getHandler().equipmentSlotUpdate(user.getPlayer().getEntityId(), EquipmentSlot.HEAD, new ItemStack(Material.CARVED_PUMPKIN), viewer);
+                    PacketManager.equipmentSlotUpdate(user.getPlayer().getEntityId(), EquipmentSlot.HEAD, new ItemStack(Material.CARVED_PUMPKIN), viewer);
                 } else {
                     HMCCPacketManager.equipmentSlotUpdate(user.getPlayer(), true, viewer); // Optifine dumbassery
                 }

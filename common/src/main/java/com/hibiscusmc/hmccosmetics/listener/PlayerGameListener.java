@@ -19,7 +19,6 @@ import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticEmoteType;
 import com.hibiscusmc.hmccosmetics.gui.Menu;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
-import com.hibiscusmc.hmccosmetics.nms.HMCCNMSHandlers;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import com.hibiscusmc.hmccosmetics.user.manager.UserEmoteManager;
@@ -28,6 +27,7 @@ import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.packets.HMCCPacketManager;
 import me.lojosho.hibiscuscommons.api.events.HibiscusPlayerUnVanishEvent;
 import me.lojosho.hibiscuscommons.api.events.HibiscusPlayerVanishEvent;
+import me.lojosho.hibiscuscommons.util.packets.PacketManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -272,7 +272,7 @@ public class PlayerGameListener implements Listener {
             List<Player> viewers = HMCCPacketManager.getViewers(user.getEntity().getLocation());
             if (viewers.isEmpty()) return;
             viewers.remove(user.getPlayer());
-            HMCCNMSHandlers.getHandler().equipmentSlotUpdate(user.getEntity().getEntityId(), EquipmentSlot.HAND, event.getPlayer().getInventory().getItemInMainHand(), viewers);
+            PacketManager.equipmentSlotUpdate(user.getEntity().getEntityId(), EquipmentSlot.HAND, event.getPlayer().getInventory().getItemInMainHand(), viewers);
         }, 2);
     }
 

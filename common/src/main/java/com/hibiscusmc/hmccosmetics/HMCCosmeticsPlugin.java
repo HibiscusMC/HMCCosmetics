@@ -1,5 +1,6 @@
 package com.hibiscusmc.hmccosmetics;
 
+import com.hibiscusmc.hmccosmetics.api.HMCCosmeticsAPI;
 import com.hibiscusmc.hmccosmetics.api.events.HMCCosmeticSetupEvent;
 import com.hibiscusmc.hmccosmetics.command.CosmeticCommand;
 import com.hibiscusmc.hmccosmetics.command.CosmeticCommandTabComplete;
@@ -19,7 +20,6 @@ import com.hibiscusmc.hmccosmetics.hooks.worldguard.WGListener;
 import com.hibiscusmc.hmccosmetics.listener.PaperPlayerGameListener;
 import com.hibiscusmc.hmccosmetics.listener.PlayerConnectionListener;
 import com.hibiscusmc.hmccosmetics.listener.PlayerGameListener;
-import com.hibiscusmc.hmccosmetics.nms.HMCCNMSHandlers;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
@@ -31,7 +31,6 @@ import me.lojosho.hibiscuscommons.config.serializer.ItemSerializer;
 import me.lojosho.hibiscuscommons.config.serializer.LocationSerializer;
 import me.lojosho.shaded.configupdater.common.config.CommentedConfiguration;
 import me.lojosho.shaded.configurate.ConfigurateException;
-import me.lojosho.shaded.configurate.ConfigurationNode;
 import me.lojosho.shaded.configurate.ConfigurationOptions;
 import me.lojosho.shaded.configurate.yaml.NodeStyle;
 import me.lojosho.shaded.configurate.yaml.YamlConfigurationLoader;
@@ -59,13 +58,6 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
         // Plugin startup logic
         instance = this;
 
-        // NMS version check
-        if (!HMCCNMSHandlers.isVersionSupported()) {
-            getLogger().severe("This version is not supported! Consider switching versions?");
-            getServer().getPluginManager().disablePlugin(this);
-            return;
-        }
-
         // File setup
         saveDefaultConfig();
         if (!Path.of(getDataFolder().getPath(), "messages.yml").toFile().exists()) saveResource("messages.yml", false);
@@ -78,7 +70,7 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
         if (!emoteFile.exists()) emoteFile.mkdir();
 
         // Player Animator
-        if (!HMCCNMSHandlers.getVersion().contains("v1_20_R2") && !HMCCNMSHandlers.getVersion().contains("v1_20_R3")) PlayerAnimatorImpl.initialize(this); // PlayerAnimator does not support 1.20.2 yet
+        if (!HMCCosmeticsAPI.getNMSVersion().contains("v1_20_R2") && !HMCCosmeticsAPI.getNMSVersion().contains("v1_20_R3")) PlayerAnimatorImpl.initialize(this); // PlayerAnimator does not support 1.20.2 yet
 
         // Configuration Sync
         final File configFile = Path.of(getInstance().getDataFolder().getPath(), "config.yml").toFile();
@@ -237,7 +229,7 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
             }
         }
 
-        if (Settings.isEmotesEnabled() && !HMCCNMSHandlers.getVersion().contains("v1_20_R2") && !HMCCNMSHandlers.getVersion().contains("v1_20_R3")) EmoteManager.loadEmotes(); // PlayerAnimator does not support 1.20.2 yet
+        if (Settings.isEmotesEnabled() && !HMCCosmeticsAPI.getNMSVersion().contains("v1_20_R2") && !HMCCosmeticsAPI.getNMSVersion().contains("v1_20_R3")) EmoteManager.loadEmotes(); // PlayerAnimator does not support 1.20.2 yet
 
         getInstance().getLogger().info("Successfully Enabled HMCCosmetics");
         getInstance().getLogger().info(Cosmetics.values().size() + " Cosmetics Successfully Setup");
