@@ -12,8 +12,6 @@ import java.util.List;
 
 public interface HMCCNMSHandler {
 
-    ArmorStand getMEGEntity(Location loc);
-
     Entity spawnDisplayEntity(Location location, String text);
 
     void slotUpdate(

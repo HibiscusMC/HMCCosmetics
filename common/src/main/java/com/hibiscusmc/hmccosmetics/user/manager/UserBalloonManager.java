@@ -1,5 +1,6 @@
 package com.hibiscusmc.hmccosmetics.user.manager;
 
+import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
 import com.hibiscusmc.hmccosmetics.nms.HMCCNMSHandlers;
@@ -16,9 +17,12 @@ import me.lojosho.hibiscuscommons.hooks.Hooks;
 import me.lojosho.hibiscuscommons.nms.NMSHandlers;
 import org.bukkit.Color;
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
@@ -38,7 +42,16 @@ public class UserBalloonManager {
     public UserBalloonManager(CosmeticUser user, @NotNull Location location) {
         this.user = user;
         this.pufferfish = new UserBalloonPufferfish(user.getUniqueId(), NMSHandlers.getHandler().getNextEntityId(), UUID.randomUUID());
-        this.modelEntity = HMCCNMSHandlers.getHandler().getMEGEntity(location.add(Settings.getBalloonOffset()));
+        this.modelEntity = location.getWorld().spawn(location, ArmorStand.class, (e) -> {
+            e.setInvisible(true);
+            e.setGravity(false);
+            e.setSilent(true);
+            e.setInvulnerable(true);
+            e.setSmall(true);
+            e.setMarker(true);
+            e.setPersistent(false);
+            e.getPersistentDataContainer().set(new NamespacedKey(HMCCosmeticsPlugin.getInstance(), "cosmeticMob"), PersistentDataType.SHORT, Short.valueOf("1"));
+        });
     }
 
     public void spawnModel(@NotNull CosmeticBalloonType cosmeticBalloonType, Color color) {

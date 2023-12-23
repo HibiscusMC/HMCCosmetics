@@ -36,11 +36,6 @@ import java.util.List;
 public class HMCCNMSHandler implements com.hibiscusmc.hmccosmetics.nms.HMCCNMSHandler {
 
     @Override
-    public ArmorStand getMEGEntity(Location loc) {
-        return (ArmorStand) new MEGEntity(loc).getBukkitEntity();
-    }
-
-    @Override
     public org.bukkit.entity.Entity spawnDisplayEntity(Location location, String text) {
         Display.TextDisplay entity = new Display.TextDisplay(net.minecraft.world.entity.EntityType.TEXT_DISPLAY, ((CraftWorld) location.getWorld()).getHandle());
         entity.setPos(location.getX(), location.getY(), location.getZ());
