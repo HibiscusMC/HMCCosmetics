@@ -7,6 +7,7 @@ import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
 import com.hibiscusmc.hmccosmetics.gui.type.Type;
 import com.hibiscusmc.hmccosmetics.gui.type.Types;
+import com.hibiscusmc.hmccosmetics.gui.type.types.TypeCosmetic;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
@@ -200,7 +201,7 @@ public class Menu {
                     MenuItem item = menuItems.get(0);
                     updateItem(user, gui, i);
 
-                    if (item.type().getId().equalsIgnoreCase("cosmetic")) {
+                    if (item.type() instanceof TypeCosmetic) {
                         Cosmetic cosmetic = Cosmetics.getCosmetic(item.itemConfig().node("cosmetic").getString(""));
                         if (cosmetic == null) continue;
                         if (user.hasCosmeticInSlot(cosmetic)) {
