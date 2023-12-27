@@ -50,7 +50,10 @@ public class PlayerConnectionListener implements Listener {
     public void onPlayerQuit(@NotNull PlayerQuitEvent event) {
         CosmeticUser user = CosmeticUsers.getUser(event.getPlayer());
         if (user == null) return; // Player never initialized, don't do anything
-        if (user.isInWardrobe()) user.leaveWardrobe(true);
+        if (user.isInWardrobe()) {
+            user.leaveWardrobe(true);
+            user.getPlayer().setInvisible(false);
+        }
         if (user.getUserEmoteManager().isPlayingEmote()) {
             user.getUserEmoteManager().stopEmote(UserEmoteManager.StopEmoteReason.CONNECTION);
             event.getPlayer().setInvisible(false);
