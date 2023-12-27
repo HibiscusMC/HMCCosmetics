@@ -27,7 +27,7 @@ public class CosmeticArmorType extends Cosmetic {
 
     @Override
     public void update(@NotNull CosmeticUser user) {
-        if (user.getUserEmoteManager().isPlayingEmote()) return;
+        if (user.getUserEmoteManager().isPlayingEmote() || user.isInWardrobe()) return;
         Entity entity = Bukkit.getEntity(user.getUniqueId());
         if (entity == null) return;
         if (!Settings.isCosmeticForceOffhandCosmeticShow()
