@@ -2,11 +2,11 @@ package com.hibiscusmc.hmccosmetics.cosmetic.types;
 
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
-import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
-import com.hibiscusmc.hmccosmetics.util.InventoryUtils;
-import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
-import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
+import com.hibiscusmc.hmccosmetics.util.HMCCInventoryUtils;
+import com.hibiscusmc.hmccosmetics.util.packets.HMCCPacketManager;
+import me.lojosho.hibiscuscommons.util.packets.PacketManager;
+import me.lojosho.shaded.configurate.ConfigurationNode;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;
@@ -14,7 +14,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.spongepowered.configurate.ConfigurationNode;
 
 public class CosmeticArmorType extends Cosmetic {
 
@@ -23,12 +22,12 @@ public class CosmeticArmorType extends Cosmetic {
     public CosmeticArmorType(String id, ConfigurationNode config) {
         super(id, config);
 
-        this.equipSlot = InventoryUtils.getEquipmentSlot(getSlot());
+        this.equipSlot = HMCCInventoryUtils.getEquipmentSlot(getSlot());
     }
 
     @Override
     public void update(@NotNull CosmeticUser user) {
-        if (user.getUserEmoteManager().isPlayingEmote()) return;
+        if (user.getUserEmoteManager().isPlayingEmote() || user.isInWardrobe()) return;
         Entity entity = Bukkit.getEntity(user.getUniqueId());
         if (entity == null) return;
         if (!Settings.isCosmeticForceOffhandCosmeticShow()
@@ -36,7 +35,7 @@ public class CosmeticArmorType extends Cosmetic {
                 && ((user.getEntity() instanceof Player) && !user.getPlayer().getInventory().getItemInOffHand().getType().isAir())) return;
         ItemStack item = getItem(user);
         if (item == null) return;
-        NMSHandlers.getHandler().equipmentSlotUpdate(entity.getEntityId(), equipSlot, item, PacketManager.getViewers(entity.getLocation()));
+        PacketManager.equipmentSlotUpdate(entity.getEntityId(), equipSlot, item, HMCCPacketManager.getViewers(entity.getLocation()));
     }
 
     public ItemStack getItem(@NotNull CosmeticUser user) {

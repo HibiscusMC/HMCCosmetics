@@ -4,7 +4,7 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers.PlayerInfoAction;
 import com.comphenix.protocol.wrappers.PlayerInfoData;
-import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
+import com.hibiscusmc.hmccosmetics.api.HMCCosmeticsAPI;
 
 import java.util.List;
 import java.util.Set;
@@ -26,7 +26,7 @@ public class WrapperPlayServerPlayerInfo extends AbstractPacket {
     }
 
     public void setAction(PlayerInfoAction value) {
-        if (NMSHandlers.getVersion().contains("v1_17_R1") || NMSHandlers.getVersion().contains("v1_18_R2") || NMSHandlers.getVersion().contains("v1_19_R1")) {
+        if (HMCCosmeticsAPI.getNMSVersion().contains("v1_17_R1") || HMCCosmeticsAPI.getNMSVersion().contains("v1_18_R2") || HMCCosmeticsAPI.getNMSVersion().contains("v1_19_R1")) {
             handle.getPlayerInfoAction().write(0, value);
             return;
         }

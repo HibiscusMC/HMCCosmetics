@@ -1,9 +1,9 @@
 package com.hibiscusmc.hmccosmetics.gui.type;
 
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
+import me.lojosho.shaded.configurate.ConfigurationNode;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
-import org.spongepowered.configurate.ConfigurationNode;
 
 public abstract class Type {
 

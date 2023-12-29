@@ -19,13 +19,18 @@ import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticEmoteType;
 import com.hibiscusmc.hmccosmetics.gui.Menu;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
-import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import com.hibiscusmc.hmccosmetics.user.manager.UserEmoteManager;
-import com.hibiscusmc.hmccosmetics.util.InventoryUtils;
+import com.hibiscusmc.hmccosmetics.user.manager.UserWardrobeManager;
+import com.hibiscusmc.hmccosmetics.util.HMCCInventoryUtils;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
-import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
+import com.hibiscusmc.hmccosmetics.util.packets.HMCCPacketManager;
+import me.lojosho.hibiscuscommons.api.events.HibiscusHookReload;
+import me.lojosho.hibiscuscommons.api.events.HibiscusPlayerUnVanishEvent;
+import me.lojosho.hibiscuscommons.api.events.HibiscusPlayerVanishEvent;
+import me.lojosho.hibiscuscommons.hooks.items.HookItemAdder;
+import me.lojosho.hibiscuscommons.util.packets.PacketManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -79,14 +84,14 @@ public class PlayerGameListener implements Listener {
         ItemStack item = event.getCurrentItem();
         if (item == null) return;
 
-        if (Settings.isDestroyLooseCosmetics() && InventoryUtils.isCosmeticItem(event.getCurrentItem())) {
+        if (Settings.isDestroyLooseCosmetics() && HMCCInventoryUtils.isCosmeticItem(event.getCurrentItem())) {
             MessagesUtil.sendDebugMessages("remvoe item");
             event.getWhoClicked().getInventory().removeItem(event.getCurrentItem());
         }
 
         EquipmentSlot slot = getArmorSlot(item.getType());
         if (slot == null) return;
-        CosmeticSlot cosmeticSlot = InventoryUtils.BukkitCosmeticSlot(slot);
+        CosmeticSlot cosmeticSlot = HMCCInventoryUtils.BukkitCosmeticSlot(slot);
         if (cosmeticSlot == null) return;
         if (!user.hasCosmeticInSlot(cosmeticSlot)) return;
         Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
@@ -241,7 +246,7 @@ public class PlayerGameListener implements Listener {
 
         CosmeticUser user = CosmeticUsers.getUser(event.getPlayer().getUniqueId());
         if (user == null) return;
-        CosmeticSlot cosmeticSlot = InventoryUtils.BukkitCosmeticSlot(slot);
+        CosmeticSlot cosmeticSlot = HMCCInventoryUtils.BukkitCosmeticSlot(slot);
 
         if (!user.hasCosmeticInSlot(cosmeticSlot)) {
             MessagesUtil.sendDebugMessages("No cosmetic in " + cosmeticSlot);
@@ -267,10 +272,10 @@ public class PlayerGameListener implements Listener {
         }
         Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
             user.updateCosmetic(CosmeticSlot.OFFHAND);
-            List<Player> viewers = PacketManager.getViewers(user.getEntity().getLocation());
+            List<Player> viewers = HMCCPacketManager.getViewers(user.getEntity().getLocation());
             if (viewers.isEmpty()) return;
             viewers.remove(user.getPlayer());
-            NMSHandlers.getHandler().equipmentSlotUpdate(user.getEntity().getEntityId(), EquipmentSlot.HAND, event.getPlayer().getInventory().getItemInMainHand(), viewers);
+            PacketManager.equipmentSlotUpdate(user.getEntity().getEntityId(), EquipmentSlot.HAND, event.getPlayer().getInventory().getItemInMainHand(), viewers);
         }, 2);
     }
 
@@ -350,7 +355,7 @@ public class PlayerGameListener implements Listener {
             ItemStack[] equippedArmor = event.getPlayer().getInventory().getArmorContents();
             if (equippedArmor.length == 0) return;
             for (ItemStack armor : equippedArmor) {
-                if (InventoryUtils.isCosmeticItem(armor)) armor.setAmount(0);
+                if (HMCCInventoryUtils.isCosmeticItem(armor)) armor.setAmount(0);
             }
         }
     }
@@ -364,8 +369,8 @@ public class PlayerGameListener implements Listener {
             // We know that no other entity besides a regular player will be in the wardrobe
             List<Player> viewer = List.of(user.getPlayer());
             user.getBalloonManager().getPufferfish().spawnPufferfish(npclocation.clone().add(cosmetic.getBalloonOffset()), viewer);
-            PacketManager.sendLeashPacket(user.getBalloonManager().getPufferfishBalloonId(), user.getWardrobeManager().getNPC_ID(), viewer);
-            PacketManager.sendTeleportPacket(user.getBalloonManager().getPufferfishBalloonId(), npclocation, false, viewer);
+            HMCCPacketManager.sendLeashPacket(user.getBalloonManager().getPufferfishBalloonId(), user.getWardrobeManager().getNPC_ID(), viewer);
+            HMCCPacketManager.sendTeleportPacket(user.getBalloonManager().getPufferfishBalloonId(), npclocation, false, viewer);
             user.getBalloonManager().getModelEntity().teleport(npclocation);
         }
     }
@@ -390,6 +395,36 @@ public class PlayerGameListener implements Listener {
 		}
 	}
 
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onPlayerVanish(HibiscusPlayerVanishEvent event) {
+        CosmeticUser user = CosmeticUsers.getUser(event.getPlayer());
+        if (user == null) return;
+        user.hideCosmetics(CosmeticUser.HiddenReason.PLUGIN);
+    }
+
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onPlayerUnVanish(HibiscusPlayerUnVanishEvent event) {
+        CosmeticUser user = CosmeticUsers.getUser(event.getPlayer());
+        if (user == null) return;
+        if (!user.getHidden()) return;
+        if (user.getHiddenReason().equals(CosmeticUser.HiddenReason.PLUGIN)) user.showCosmetics();
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onHookReload(HibiscusHookReload event) {
+        if (event.getHook() instanceof HookItemAdder hook) {
+            switch (event.getReloadType()) {
+                case INITIAL -> {
+                    HMCCosmeticsPlugin.setup();
+                }
+                case RELOAD -> {
+                    if (!Settings.isItemsAdderChangeReload()) return;
+                    HMCCosmeticsPlugin.setup();
+                }
+            }
+        }
+    }
+
     private void registerInventoryClickListener() {
         ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(HMCCosmeticsPlugin.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Client.WINDOW_CLICK) {
             @Override
@@ -407,7 +442,7 @@ public class PlayerGameListener implements Listener {
                 CosmeticUser user = CosmeticUsers.getUser(player);
                 if (user == null) return;
                 if (user.isInWardrobe()) return;
-                CosmeticSlot cosmeticSlot = InventoryUtils.NMSCosmeticSlot(slotClicked);
+                CosmeticSlot cosmeticSlot = HMCCInventoryUtils.NMSCosmeticSlot(slotClicked);
                 if (cosmeticSlot == null) return;
                 if (!user.hasCosmeticInSlot(cosmeticSlot)) return;
                 Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> user.updateCosmetic(cosmeticSlot), 1);
@@ -436,7 +471,7 @@ public class PlayerGameListener implements Listener {
                 if (!user.isInWardrobe()) {
                     for (Cosmetic cosmetic : user.getCosmetics()) {
                         if ((cosmetic instanceof CosmeticArmorType cosmeticArmorType)) {
-                            items.put(InventoryUtils.getPacketArmorSlot(cosmeticArmorType.getEquipSlot()), user.getUserCosmeticItem(cosmeticArmorType));
+                            items.put(HMCCInventoryUtils.getPacketArmorSlot(cosmeticArmorType.getEquipSlot()), user.getUserCosmeticItem(cosmeticArmorType));
                         }
                     }
                 }
@@ -522,11 +557,11 @@ public class PlayerGameListener implements Listener {
                             }
                         }
                         default -> {
-                            CosmeticArmorType cosmeticArmor = (CosmeticArmorType) user.getCosmetic(InventoryUtils.getItemSlotToCosmeticSlot(pair.getFirst()));
+                            CosmeticArmorType cosmeticArmor = (CosmeticArmorType) user.getCosmetic(HMCCInventoryUtils.getItemSlotToCosmeticSlot(pair.getFirst()));
                             if (cosmeticArmor == null) continue;
                             ItemStack item = user.getUserCosmeticItem(cosmeticArmor);
                             if (item == null) continue;
-                            Pair<EnumWrappers.ItemSlot, ItemStack> armorPair = new Pair<>(InventoryUtils.itemBukkitSlot(cosmeticArmor.getEquipSlot()), item);
+                            Pair<EnumWrappers.ItemSlot, ItemStack> armorPair = new Pair<>(HMCCInventoryUtils.itemBukkitSlot(cosmeticArmor.getEquipSlot()), item);
                             armor.set(i, armorPair);
                         }
                     }
@@ -572,6 +607,7 @@ public class PlayerGameListener implements Listener {
                     return;
                 }
                 if (!user.isInWardrobe()) return;
+                if (!user.getWardrobeManager().getWardrobeStatus().equals(UserWardrobeManager.WardrobeStatus.RUNNING)) return;
                 Menu menu = Menus.getDefaultMenu();
                 if (menu == null) return;
                 menu.openMenu(user);

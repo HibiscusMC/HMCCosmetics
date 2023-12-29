@@ -1,11 +1,11 @@
 package com.hibiscusmc.hmccosmetics.util;
 
-import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
 import com.owen1212055.particlehelper.api.particle.MultiParticle;
 import com.owen1212055.particlehelper.api.particle.Particle;
 import com.owen1212055.particlehelper.api.particle.types.*;
 import com.owen1212055.particlehelper.api.particle.types.dust.transition.TransitionDustParticle;
 import com.owen1212055.particlehelper.api.particle.types.note.MultiNoteParticle;
+import me.lojosho.hibiscuscommons.nms.NMSHandlers;
 import org.bukkit.Color;
 import org.bukkit.GameMode;
 import org.bukkit.Material;

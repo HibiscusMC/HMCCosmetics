@@ -1,7 +1,7 @@
 package com.hibiscusmc.hmccosmetics.util;
 
-import com.hibiscusmc.hmccosmetics.util.misc.StringUtils;
-import org.spongepowered.configurate.ConfigurationNode;
+import me.lojosho.hibiscuscommons.util.StringUtils;
+import me.lojosho.shaded.configurate.ConfigurationNode;
 
 import java.util.ArrayList;
 import java.util.HashMap;

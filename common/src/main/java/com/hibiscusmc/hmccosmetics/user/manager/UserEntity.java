@@ -4,7 +4,7 @@ import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import com.hibiscusmc.hmccosmetics.util.PlayerUtils;
-import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
+import com.hibiscusmc.hmccosmetics.util.packets.HMCCPacketManager;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Location;
@@ -47,7 +47,7 @@ public class UserEntity {
             CosmeticUser user = CosmeticUsers.getUser(player);
             if (user != null && owner != user.getUniqueId() && user.isInWardrobe()) { // Fixes issue where players in wardrobe would see other players cosmetics if they were not in wardrobe
                 removePlayers.add(player);
-                PacketManager.sendEntityDestroyPacket(ids, List.of(player));
+                HMCCPacketManager.sendEntityDestroyPacket(ids, List.of(player));
                 continue;
             }
             if (!viewers.contains(player)) {
@@ -59,7 +59,7 @@ public class UserEntity {
             for (Player viewerPlayer : viewers) {
                 if (!players.contains(viewerPlayer)) {
                     removePlayers.add(viewerPlayer);
-                    PacketManager.sendEntityDestroyPacket(ids, List.of(viewerPlayer));
+                    HMCCPacketManager.sendEntityDestroyPacket(ids, List.of(viewerPlayer));
                 }
             }
         }
@@ -76,7 +76,7 @@ public class UserEntity {
         }
         this.location = location;
         for (Integer entity : ids) {
-            PacketManager.sendTeleportPacket(entity, location, false, getViewers());
+            HMCCPacketManager.sendTeleportPacket(entity, location, false, getViewers());
         }
         setLastPositionUpdate(System.currentTimeMillis());
     }
@@ -90,8 +90,8 @@ public class UserEntity {
         for (Integer entity : ids) {
             // First person backpacks need both packets to rotate properly, otherwise they look off
             // Regular backpacks just need the look packet
-            if (additonalPacket) PacketManager.sendRotationPacket(entity, yaw, false, getViewers());
-            PacketManager.sendLookPacket(entity, location, getViewers());
+            if (additonalPacket) HMCCPacketManager.sendRotationPacket(entity, yaw, false, getViewers());
+            HMCCPacketManager.sendLookPacket(entity, location, getViewers());
         }
     }
 }

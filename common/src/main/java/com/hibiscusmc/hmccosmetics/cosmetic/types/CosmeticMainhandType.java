@@ -3,10 +3,10 @@ package com.hibiscusmc.hmccosmetics.cosmetic.types;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.PlayerUtils;
-import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
+import com.hibiscusmc.hmccosmetics.util.packets.HMCCPacketManager;
+import me.lojosho.shaded.configurate.ConfigurationNode;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.spongepowered.configurate.ConfigurationNode;
 
 public class CosmeticMainhandType extends Cosmetic {
 
@@ -18,6 +18,6 @@ public class CosmeticMainhandType extends Cosmetic {
     public void update(@NotNull CosmeticUser user) {
         Player player = user.getPlayer();
 
-        PacketManager.equipmentSlotUpdate(player.getEntityId(), user, getSlot(), PlayerUtils.getNearbyPlayers(player));
+        HMCCPacketManager.equipmentSlotUpdate(player.getEntityId(), user, getSlot(), PlayerUtils.getNearbyPlayers(player));
     }
 }

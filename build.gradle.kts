@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "com.hibiscusmc"
-version = "2.6.7-DEV"
+version = "2.7.0-DEV"
 
 allprojects {
     apply(plugin = "java")
@@ -66,53 +66,44 @@ allprojects {
 
         // Eco-Suite/Auxilor Repo
         maven("https://repo.auxilor.io/repository/maven-public/")
+
+        // Hibiscus Commons
+        maven("https://repo.hibiscusmc.com/releases")
     }
 
     dependencies {
         compileOnly(fileTree("${project.rootDir}/lib") { include("*.jar") })
         compileOnly("com.mojang:authlib:1.5.25")
-        compileOnly("org.spigotmc:spigot-api:1.18.2-R0.1-SNAPSHOT")
+        //compileOnly("org.spigotmc:spigot-api:1.18.2-R0.1-SNAPSHOT")
+        compileOnly("io.papermc.paper:paper-api:1.18.2-R0.1-SNAPSHOT")
         compileOnly("org.jetbrains:annotations:23.0.0")
         compileOnly("com.comphenix.protocol:ProtocolLib:5.1.0")
         compileOnly("me.clip:placeholderapi:2.11.3")
         compileOnly("com.ticxo.modelengine:ModelEngine:R4.0.2")
-        compileOnly("com.github.oraxen:oraxen:1.160.0")
-        compileOnly("com.github.LoneDev6:API-ItemsAdder:3.2.5")
-        compileOnly("com.mineinabyss:geary-papermc:0.27.0")
         compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.1.0-SNAPSHOT")
         compileOnly("it.unimi.dsi:fastutil:8.5.11")
-        compileOnly("com.github.LeonMangler:SuperVanish:6.2.17")
         compileOnly("org.projectlombok:lombok:1.18.2")
+        compileOnly("me.lojosho:HibiscusCommons:0.2.2")
 
         // Handled by Spigot Library Loader
-        compileOnly("net.kyori:adventure-api:4.11.0")
-        compileOnly("net.kyori:adventure-text-minimessage:4.11.0")
-        compileOnly("net.kyori:adventure-platform-bukkit:4.1.2")
-        compileOnly("org.spongepowered:configurate-yaml:4.2.0-SNAPSHOT")
+        compileOnly("net.kyori:adventure-api:4.15.0")
+        compileOnly("net.kyori:adventure-text-minimessage:4.15.0")
+        compileOnly("net.kyori:adventure-platform-bukkit:4.3.2")
 
         annotationProcessor("org.projectlombok:lombok:1.18.28")
         testCompileOnly("org.projectlombok:lombok:1.18.28")
         testAnnotationProcessor("org.projectlombok:lombok:1.18.28")
+
+        implementation("dev.triumphteam:triumph-gui:3.1.7") {
+            exclude("net.kyori") // Already have adventure API
+        }
+        implementation("com.owen1212055:particlehelper:1.0.0-SNAPSHOT")
+        implementation("com.ticxo.playeranimator:PlayerAnimator:R1.2.7")
     }
 }
 
 dependencies {
     implementation(project(path = ":common"))
-    implementation(project(path = ":v1_18_R2", configuration = "reobf"))
-    implementation(project(path = ":v1_19_R1", configuration = "reobf"))
-    implementation(project(path = ":v1_19_R2", configuration = "reobf"))
-    implementation(project(path = ":v1_19_R3", configuration = "reobf"))
-    implementation(project(path = ":v1_20_R1", configuration = "reobf"))
-    implementation(project(path = ":v1_20_R2", configuration = "reobf"))
-    implementation(project(path = ":v1_20_R3", configuration = "reobf"))
-
-    implementation("dev.triumphteam:triumph-gui:3.1.3")
-    implementation("org.bstats:bstats-bukkit:3.0.2")
-    implementation("com.jeff_media:SpigotUpdateChecker:3.0.0")
-    implementation("com.owen1212055:particlehelper:1.0.0-SNAPSHOT")
-    implementation("com.ticxo.playeranimator:PlayerAnimator:R1.2.7")
-    implementation("com.github.BG-Software-LLC:CommentedConfiguration:bed3c46369")
-    implementation("org.spongepowered:configurate-yaml:4.2.0-SNAPSHOT")
 }
 
 tasks {
@@ -136,22 +127,11 @@ tasks {
     }
 
     shadowJar {
-        dependsOn(":v1_18_R2:reobfJar")
-        dependsOn(":v1_19_R1:reobfJar")
-        dependsOn(":v1_19_R2:reobfJar")
-        dependsOn(":v1_19_R3:reobfJar")
-        dependsOn(":v1_20_R1:reobfJar")
-        dependsOn(":v1_20_R2:reobfJar")
-        dependsOn(":v1_20_R3:reobfJar")
         mergeServiceFiles()
 
         relocate("dev.triumphteam.gui", "com.hisbiscusmc.hmccosmetics.gui")
-        relocate("org.bstats", "com.hisbiscusmc.hmccosmetics.bstats")
-        relocate("com.jeff_media.updatechecker", "com.hisbiscusmc.hmccosmetics.updatechecker")
         relocate("com.owen1212055.particlehelper", "com.hisbiscusmc.hmccosmetics.particlehelper")
         relocate("com.ticxo.playeranimator", "com.hisbiscusmc.hmccosmetics.playeranimator")
-        relocate("com.bgsoftware", "com.hisbiscusmc.hmccosmetics.configupdater")
-        relocate("org.spongepowered.configurate", "com.hisbiscusmc.hmccosmetics.configurate")
         archiveFileName.set("HMCCosmeticsRemapped-${project.version}.jar")
 
         dependencies {
@@ -178,18 +158,11 @@ bukkit {
     main = "com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin"
     apiVersion = "1.18"
     authors = listOf("LoJoSho")
-    depend = listOf("ProtocolLib")
+    depend = listOf("HibiscusCommons", "ProtocolLib")
     softDepend = listOf("ModelEngine", "Oraxen", "ItemsAdder", "Geary", "HMCColor", "WorldGuard", "MythicMobs", "PlaceholderAPI", "SuperVanish", "PremiumVanish", "LibsDisguises", "Denizen", "MMOItems", "Eco")
     version = "${project.version}"
     loadBefore = listOf(
         "Cosmin" // Fixes an issue with Cosmin loading before and taking /cosmetic, when messing with what we do.
-    )
-
-    libraries = listOf(
-        "net.kyori:adventure-api:4.11.0",
-        "net.kyori:adventure-text-minimessage:4.11.0",
-        "net.kyori:adventure-platform-bukkit:4.1.2"
-        //"org.spongepowered:configurate-yaml:4.2.0-SNAPSHOT" // Readd when 4.2.0 releases
     )
 
     commands {

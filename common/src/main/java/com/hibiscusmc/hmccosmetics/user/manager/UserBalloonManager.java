@@ -1,23 +1,26 @@
 package com.hibiscusmc.hmccosmetics.user.manager;
 
+import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
-import com.hibiscusmc.hmccosmetics.hooks.Hooks;
-import com.hibiscusmc.hmccosmetics.nms.NMSHandlers;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
-import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
+import com.hibiscusmc.hmccosmetics.util.packets.HMCCPacketManager;
 import com.ticxo.modelengine.api.ModelEngineAPI;
 import com.ticxo.modelengine.api.entity.data.BukkitEntityData;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
 import lombok.Getter;
+import me.lojosho.hibiscuscommons.hooks.Hooks;
+import me.lojosho.hibiscuscommons.nms.NMSHandlers;
 import org.bukkit.Color;
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,7 +40,16 @@ public class UserBalloonManager {
     public UserBalloonManager(CosmeticUser user, @NotNull Location location) {
         this.user = user;
         this.pufferfish = new UserBalloonPufferfish(user.getUniqueId(), NMSHandlers.getHandler().getNextEntityId(), UUID.randomUUID());
-        this.modelEntity = NMSHandlers.getHandler().getMEGEntity(location.add(Settings.getBalloonOffset()));
+        this.modelEntity = location.getWorld().spawn(location, ArmorStand.class, (e) -> {
+            e.setInvisible(true);
+            e.setGravity(false);
+            e.setSilent(true);
+            e.setInvulnerable(true);
+            e.setSmall(true);
+            e.setMarker(true);
+            e.setPersistent(false);
+            e.getPersistentDataContainer().set(new NamespacedKey(HMCCosmeticsPlugin.getInstance(), "cosmeticMob"), PersistentDataType.SHORT, Short.valueOf("1"));
+        });
     }
 
     public void spawnModel(@NotNull CosmeticBalloonType cosmeticBalloonType, Color color) {
@@ -169,16 +181,16 @@ public class UserBalloonManager {
     }
 
     public void sendRemoveLeashPacket(List<Player> viewer) {
-        PacketManager.sendLeashPacket(getPufferfishBalloonId(), -1, viewer);
+        HMCCPacketManager.sendLeashPacket(getPufferfishBalloonId(), -1, viewer);
     }
 
     public void sendRemoveLeashPacket() {
-        PacketManager.sendLeashPacket(getPufferfishBalloonId(), -1, getLocation());
+        HMCCPacketManager.sendLeashPacket(getPufferfishBalloonId(), -1, getLocation());
     }
 
     public void sendLeashPacket(int entityId) {
         if (cosmeticBalloonType.isShowLead()) {
-            PacketManager.sendLeashPacket(getPufferfishBalloonId(), entityId, getLocation());
+            HMCCPacketManager.sendLeashPacket(getPufferfishBalloonId(), entityId, getLocation());
         }
     }
 

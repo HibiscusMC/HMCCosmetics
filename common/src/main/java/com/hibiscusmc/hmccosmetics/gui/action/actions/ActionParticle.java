@@ -4,7 +4,7 @@ import com.hibiscusmc.hmccosmetics.gui.action.Action;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.ServerUtils;
-import com.hibiscusmc.hmccosmetics.util.packets.PacketManager;
+import com.hibiscusmc.hmccosmetics.util.packets.HMCCPacketManager;
 import com.owen1212055.particlehelper.api.particle.types.BlockDataParticle;
 import com.owen1212055.particlehelper.api.particle.types.DestinationParticle;
 import com.owen1212055.particlehelper.api.particle.types.velocity.VelocityParticle;
@@ -44,7 +44,7 @@ public class ActionParticle extends Action {
 
         particle = ServerUtils.addParticleValues(particle, rawString);
         Location location = user.getPlayer().getLocation();
-        for (Player player : PacketManager.getViewers(location)) {
+        for (Player player : HMCCPacketManager.getViewers(location)) {
             particle.compile().send(player, location);
         }
     }

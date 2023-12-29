@@ -1,16 +1,16 @@
 package com.hibiscusmc.hmccosmetics.cosmetic;
 
-import com.hibiscusmc.hmccosmetics.config.serializer.ItemSerializer;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import lombok.Getter;
 import lombok.Setter;
+import me.lojosho.hibiscuscommons.config.serializer.ItemSerializer;
+import me.lojosho.shaded.configurate.ConfigurationNode;
+import me.lojosho.shaded.configurate.serialize.SerializationException;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.spongepowered.configurate.ConfigurationNode;
-import org.spongepowered.configurate.serialize.SerializationException;
 
 import java.util.logging.Level;
 
