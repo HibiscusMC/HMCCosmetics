@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class PlayerUtils {
+public class HMCCPlayerUtils {
 
     @Nullable
     public static WrappedSignedProperty getSkin(Player player) {

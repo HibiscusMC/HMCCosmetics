@@ -11,7 +11,7 @@ import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import com.hibiscusmc.hmccosmetics.util.HMCCInventoryUtils;
-import com.hibiscusmc.hmccosmetics.util.PlayerUtils;
+import com.hibiscusmc.hmccosmetics.util.HMCCPlayerUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.wrappers.WrapperPlayServerNamedEntitySpawn;
 import com.hibiscusmc.hmccosmetics.util.packets.wrappers.WrapperPlayServerPlayerInfo;
 import com.hibiscusmc.hmccosmetics.util.packets.wrappers.WrapperPlayServerRelEntityMove;
@@ -301,7 +301,7 @@ public class HMCCPacketManager extends PacketManager {
         }
 
         WrappedGameProfile wrappedGameProfile = new WrappedGameProfile(uuid, name);
-        WrappedSignedProperty skinData = PlayerUtils.getSkin(skinnedPlayer);
+        WrappedSignedProperty skinData = HMCCPlayerUtils.getSkin(skinnedPlayer);
         if (skinData != null) wrappedGameProfile.getProperties().put("textures", skinData);
         // For sor some reason <1.19.2 handles it on the 0 field index, newer versions handles it on the 1
         if (HMCCosmeticsAPI.getNMSVersion().contains("v1_18_R2") || HMCCosmeticsAPI.getNMSVersion().contains("v1_19_R1")) {
@@ -435,7 +435,7 @@ public class HMCCPacketManager extends PacketManager {
         if (Settings.getViewDistance() <= 0) {
             viewers.addAll(location.getWorld().getPlayers());
         } else {
-            viewers.addAll(PlayerUtils.getNearbyPlayers(location));
+            viewers.addAll(HMCCPlayerUtils.getNearbyPlayers(location));
         }
         return viewers;
     }

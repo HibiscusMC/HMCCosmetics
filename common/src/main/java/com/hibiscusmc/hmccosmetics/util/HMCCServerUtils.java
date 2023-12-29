@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 import java.math.BigInteger;
 import java.util.Arrays;
 
-public class ServerUtils {
+public class HMCCServerUtils {
 
     private static String COLOR_CHAR = "&";
 

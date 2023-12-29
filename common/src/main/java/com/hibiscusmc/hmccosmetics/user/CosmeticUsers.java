@@ -1,7 +1,7 @@
 package com.hibiscusmc.hmccosmetics.user;
 
 import com.google.common.collect.HashBiMap;
-import com.hibiscusmc.hmccosmetics.util.ServerUtils;
+import com.hibiscusmc.hmccosmetics.util.HMCCServerUtils;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
@@ -38,7 +38,7 @@ public class CosmeticUsers {
 
     @Nullable
     public static CosmeticUser getUser(int entityId) {
-        Entity entity = ServerUtils.getEntity(entityId);
+        Entity entity = HMCCServerUtils.getEntity(entityId);
         if (entity == null) return null;
         if (!(entity instanceof Player player)) return null;
         return COSMETIC_USERS.get(player.getUniqueId());

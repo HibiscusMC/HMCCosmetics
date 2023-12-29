@@ -19,7 +19,7 @@ import com.hibiscusmc.hmccosmetics.gui.special.DyeMenu;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
-import com.hibiscusmc.hmccosmetics.util.ServerUtils;
+import com.hibiscusmc.hmccosmetics.util.HMCCServerUtils;
 import me.lojosho.hibiscuscommons.hooks.Hooks;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
@@ -114,11 +114,11 @@ public class CosmeticCommand implements CommandExecutor {
                             HMCColorConfig.Colors colors = HMCColorContextKt.getHmcColor().getConfig().getColors().get(textColor);
                             if (colors != null) {
                                 String hmccolor = colors.getBaseColor().getColor();
-                                if (hmccolor.contains("#")) color = ServerUtils.hex2Rgb(hmccolor);
-                                else color = ServerUtils.rgbToRgb(hmccolor);
+                                if (hmccolor.contains("#")) color = HMCCServerUtils.hex2Rgb(hmccolor);
+                                else color = HMCCServerUtils.rgbToRgb(hmccolor);
                             }
                         } else {
-                            color = ServerUtils.hex2Rgb(textColor);
+                            color = HMCCServerUtils.hex2Rgb(textColor);
                         }
                     }
                 }
@@ -312,7 +312,7 @@ public class CosmeticCommand implements CommandExecutor {
                         if (!silent) MessagesUtil.sendMessage(player, "invalid-color");
                         return true;
                     }
-                    Color color = ServerUtils.hex2Rgb(args[2]);
+                    Color color = HMCCServerUtils.hex2Rgb(args[2]);
                     if (color == null) {
                         if (!silent) MessagesUtil.sendMessage(player, "invalid-color");
                         return true;

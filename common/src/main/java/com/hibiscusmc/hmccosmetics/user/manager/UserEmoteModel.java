@@ -3,6 +3,7 @@ package com.hibiscusmc.hmccosmetics.user.manager;
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
+import com.hibiscusmc.hmccosmetics.util.HMCCServerUtils;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.packets.HMCCPacketManager;
 import com.ticxo.playeranimator.api.model.player.PlayerModel;
@@ -116,7 +117,7 @@ public class UserEmoteModel extends PlayerModel {
             HMCCPacketManager.sendCameraPacket(entityId, viewer);
             HMCCPacketManager.sendEntityDestroyPacket(armorStandId, viewer);
             if (this.originalGamemode != null) {
-                HMCCPacketManager.gamemodeChangePacket(player, com.hibiscusmc.hmccosmetics.util.ServerUtils.convertGamemode(this.originalGamemode));
+                HMCCPacketManager.gamemodeChangePacket(player, HMCCServerUtils.convertGamemode(this.originalGamemode));
                 player.setGameMode(this.originalGamemode);
             }
 

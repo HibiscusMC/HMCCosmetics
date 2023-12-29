@@ -11,7 +11,7 @@ import com.hibiscusmc.hmccosmetics.gui.Menu;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
-import com.hibiscusmc.hmccosmetics.util.ServerUtils;
+import com.hibiscusmc.hmccosmetics.util.HMCCServerUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.HMCCPacketManager;
 import lombok.Getter;
 import me.lojosho.hibiscuscommons.nms.NMSHandlers;
@@ -227,11 +227,11 @@ public class UserWardrobeManager {
             if (WardrobeSettings.isForceExitGamemode()) {
                 MessagesUtil.sendDebugMessages("Force Exit Gamemode " + WardrobeSettings.getExitGamemode());
                 player.setGameMode(WardrobeSettings.getExitGamemode());
-                HMCCPacketManager.gamemodeChangePacket(player, ServerUtils.convertGamemode(WardrobeSettings.getExitGamemode())); // Success
+                HMCCPacketManager.gamemodeChangePacket(player, HMCCServerUtils.convertGamemode(WardrobeSettings.getExitGamemode())); // Success
             } else {
                 MessagesUtil.sendDebugMessages("Original Gamemode " + this.originalGamemode);
                 player.setGameMode(this.originalGamemode);
-                HMCCPacketManager.gamemodeChangePacket(player, ServerUtils.convertGamemode(this.originalGamemode)); // Success
+                HMCCPacketManager.gamemodeChangePacket(player, HMCCServerUtils.convertGamemode(this.originalGamemode)); // Success
             }
             user.showPlayer();
 
@@ -286,9 +286,9 @@ public class UserWardrobeManager {
                 HMCCPacketManager.sendLookPacket(NPC_ID, location, viewer);
                 user.hidePlayer();
                 int rotationSpeed = WardrobeSettings.getRotationSpeed();
-                location.setYaw(ServerUtils.getNextYaw(yaw - 30, rotationSpeed));
+                location.setYaw(HMCCServerUtils.getNextYaw(yaw - 30, rotationSpeed));
                 HMCCPacketManager.sendRotationPacket(NPC_ID, location, true, viewer);
-                int nextyaw = ServerUtils.getNextYaw(yaw, rotationSpeed);
+                int nextyaw = HMCCServerUtils.getNextYaw(yaw, rotationSpeed);
                 data.set(nextyaw);
 
                 for (CosmeticSlot slot : CosmeticSlot.values()) {
