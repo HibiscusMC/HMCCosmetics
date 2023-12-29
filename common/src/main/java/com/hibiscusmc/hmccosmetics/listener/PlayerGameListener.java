@@ -413,8 +413,15 @@ public class PlayerGameListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onHookReload(HibiscusHookReload event) {
         if (event.getHook() instanceof HookItemAdder hook) {
-            if (hook.getIAEnabled() && !Settings.isItemsAdderChangeReload()) return;
-            HMCCosmeticsPlugin.setup();
+            switch (event.getReloadType()) {
+                case INITIAL -> {
+                    HMCCosmeticsPlugin.setup();
+                }
+                case RELOAD -> {
+                    if (!Settings.isItemsAdderChangeReload()) return;
+                    HMCCosmeticsPlugin.setup();
+                }
+            }
         }
     }
 
