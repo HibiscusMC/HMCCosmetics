@@ -26,8 +26,10 @@ import com.hibiscusmc.hmccosmetics.user.manager.UserWardrobeManager;
 import com.hibiscusmc.hmccosmetics.util.HMCCInventoryUtils;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.packets.HMCCPacketManager;
+import me.lojosho.hibiscuscommons.api.events.HibiscusHookReload;
 import me.lojosho.hibiscuscommons.api.events.HibiscusPlayerUnVanishEvent;
 import me.lojosho.hibiscuscommons.api.events.HibiscusPlayerVanishEvent;
+import me.lojosho.hibiscuscommons.hooks.items.HookItemAdder;
 import me.lojosho.hibiscuscommons.util.packets.PacketManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -406,6 +408,14 @@ public class PlayerGameListener implements Listener {
         if (user == null) return;
         if (!user.getHidden()) return;
         if (user.getHiddenReason().equals(CosmeticUser.HiddenReason.PLUGIN)) user.showCosmetics();
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onHookReload(HibiscusHookReload event) {
+        if (event.getHook() instanceof HookItemAdder hook) {
+            if (hook.getIAEnabled() && !Settings.isItemsAdderChangeReload()) return;
+            HMCCosmeticsPlugin.setup();
+        }
     }
 
     private void registerInventoryClickListener() {
