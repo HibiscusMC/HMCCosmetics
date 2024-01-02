@@ -237,7 +237,7 @@ public class CosmeticUser {
     @SuppressWarnings("deprecation")
     public ItemStack getUserCosmeticItem(Cosmetic cosmetic, ItemStack item) {
         if (item == null) {
-            MessagesUtil.sendDebugMessages("GetUserCosemticUser Item is null");
+            //MessagesUtil.sendDebugMessages("GetUserCosemticUser Item is null");
             return new ItemStack(Material.AIR);
         }
         if (item.hasItemMeta()) {
@@ -414,6 +414,7 @@ public class CosmeticUser {
         final Cosmetic cosmetic = getCosmetic(CosmeticSlot.BACKPACK);
         despawnBackpack();
         spawnBackpack((CosmeticBackpackType) cosmetic);
+        MessagesUtil.sendDebugMessages("Respawned Backpack for " + getEntity().getName());
     }
 
     public void respawnBalloon() {
@@ -421,6 +422,7 @@ public class CosmeticUser {
         final Cosmetic cosmetic = getCosmetic(CosmeticSlot.BALLOON);
         despawnBalloon();
         spawnBalloon((CosmeticBalloonType) cosmetic);
+        MessagesUtil.sendDebugMessages("Respawned Balloon for " + getEntity().getName());
     }
 
     public void removeArmor(CosmeticSlot slot) {
