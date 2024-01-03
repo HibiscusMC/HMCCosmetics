@@ -340,6 +340,7 @@ public class PlayerGameListener implements Listener {
     public void onPlayerGamemodeSwitch(PlayerGameModeChangeEvent event) {
         CosmeticUser user = CosmeticUsers.getUser(event.getPlayer());
         if (user == null) return;
+        if (user.isInWardrobe()) user.leaveWardrobe(true);
 
         if (Settings.isDisabledGamemodesEnabled()) {
             if (Settings.getDisabledGamemodes().contains(event.getNewGameMode().toString())) {

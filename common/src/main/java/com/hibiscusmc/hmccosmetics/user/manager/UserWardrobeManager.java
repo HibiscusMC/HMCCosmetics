@@ -136,9 +136,11 @@ public class UserWardrobeManager {
             if (user.hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
                 // Maybe null as backpack maybe despawned before entering
                 if (user.getUserBackpackManager() == null) user.respawnBackpack();
-                user.getUserBackpackManager().getEntityManager().teleport(npcLocation.clone().add(0, 2, 0));
-                PacketManager.equipmentSlotUpdate(user.getUserBackpackManager().getFirstArmorStandId(), EquipmentSlot.HEAD, user.getUserCosmeticItem(user.getCosmetic(CosmeticSlot.BACKPACK)), viewer);
-                HMCCPacketManager.ridingMountPacket(NPC_ID, user.getUserBackpackManager().getFirstArmorStandId(), viewer);
+                if (user.isBackpackSpawned()) {
+                    user.getUserBackpackManager().getEntityManager().teleport(npcLocation.clone().add(0, 2, 0));
+                    PacketManager.equipmentSlotUpdate(user.getUserBackpackManager().getFirstArmorStandId(), EquipmentSlot.HEAD, user.getUserCosmeticItem(user.getCosmetic(CosmeticSlot.BACKPACK)), viewer);
+                    HMCCPacketManager.ridingMountPacket(NPC_ID, user.getUserBackpackManager().getFirstArmorStandId(), viewer);
+                }
             }
 
             if (user.hasCosmeticInSlot(CosmeticSlot.BALLOON)) {

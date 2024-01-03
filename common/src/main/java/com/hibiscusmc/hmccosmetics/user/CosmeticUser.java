@@ -209,7 +209,9 @@ public class CosmeticUser {
     }
 
     public ItemStack getUserCosmeticItem(CosmeticSlot slot) {
-        return getUserCosmeticItem(getCosmetic(slot));
+        Cosmetic cosmetic = getCosmetic(slot);
+        if (cosmetic == null) return new ItemStack(Material.AIR);
+        return getUserCosmeticItem(cosmetic);
     }
 
     public ItemStack getUserCosmeticItem(Cosmetic cosmetic) {
@@ -335,7 +337,7 @@ public class CosmeticUser {
         leaveWardrobe(false);
     }
 
-    public void leaveWardrobe(boolean disconnecting) {
+    public void leaveWardrobe(boolean ejected) {
         PlayerWardrobeLeaveEvent event = new PlayerWardrobeLeaveEvent(this);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
@@ -346,7 +348,7 @@ public class CosmeticUser {
 
         getWardrobeManager().setWardrobeStatus(UserWardrobeManager.WardrobeStatus.STOPPING);
 
-        if (WardrobeSettings.isEnabledTransition() && !disconnecting) {
+        if (WardrobeSettings.isEnabledTransition() && !ejected) {
             MessagesUtil.sendTitle(
                     getPlayer(),
                     WardrobeSettings.getTransitionText(),
@@ -413,6 +415,7 @@ public class CosmeticUser {
         if (!hasCosmeticInSlot(CosmeticSlot.BACKPACK)) return;
         final Cosmetic cosmetic = getCosmetic(CosmeticSlot.BACKPACK);
         despawnBackpack();
+        if (hideCosmetics) return;
         spawnBackpack((CosmeticBackpackType) cosmetic);
         MessagesUtil.sendDebugMessages("Respawned Backpack for " + getEntity().getName());
     }
@@ -512,7 +515,7 @@ public class CosmeticUser {
             getBalloonManager().sendRemoveLeashPacket();
         }
         if (hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
-            userBackpackManager.clearItems();
+            despawnBackpack();
         }
         updateCosmetic();
         MessagesUtil.sendDebugMessages("HideCosmetics");
@@ -535,7 +538,8 @@ public class CosmeticUser {
             List<Player> viewer = HMCCPlayerUtils.getNearbyPlayers(getEntity().getLocation());
             HMCCPacketManager.sendLeashPacket(getBalloonManager().getPufferfishBalloonId(), getPlayer().getEntityId(), viewer);
         }
-        if (hasCosmeticInSlot(CosmeticSlot.BACKPACK) && isBackpackSpawned()) {
+        if (hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
+            if (!isBackpackSpawned()) respawnBackpack();
             CosmeticBackpackType cosmeticBackpackType = (CosmeticBackpackType) getCosmetic(CosmeticSlot.BACKPACK);
             ItemStack item = getUserCosmeticItem(cosmeticBackpackType);
             userBackpackManager.setItem(item);
