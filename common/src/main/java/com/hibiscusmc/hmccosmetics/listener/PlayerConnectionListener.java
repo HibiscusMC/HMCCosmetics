@@ -2,6 +2,7 @@ package com.hibiscusmc.hmccosmetics.listener;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.DatabaseSettings;
+import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.database.Database;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
@@ -35,7 +36,28 @@ public class PlayerConnectionListener implements Listener {
             CosmeticUser user = Database.get(event.getPlayer().getUniqueId());
             CosmeticUsers.addUser(user);
             MessagesUtil.sendDebugMessages("Run User Join");
-            Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> user.updateCosmetic(), 4);
+
+            // Handle gamemode check
+            if (Settings.getDisabledGamemodes().contains(user.getPlayer().getGameMode().toString())) {
+                user.hideCosmetics(CosmeticUser.HiddenReason.GAMEMODE);
+            } else {
+                if (user.getHiddenReason() != null && user.getHiddenReason().equals(CosmeticUser.HiddenReason.GAMEMODE)) {
+                    user.showCosmetics();
+                }
+            }
+            // Handle world check
+            if (Settings.getDisabledWorlds().contains(user.getPlayer().getWorld().getName())) {
+                user.hideCosmetics(CosmeticUser.HiddenReason.WORLD);
+            } else {
+                if (user.getHiddenReason() != null && user.getHiddenReason().equals(CosmeticUser.HiddenReason.WORLD)) {
+                    user.showCosmetics();
+                }
+            }
+            // And finally, launch an update for the cosmetics they have.
+            Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
+                if (user.getPlayer() == null) return;
+                user.updateCosmetic();
+            }, 4);
         };
 
         if (DatabaseSettings.isEnabledDelay()) {

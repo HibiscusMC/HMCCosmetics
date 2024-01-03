@@ -103,7 +103,7 @@ public abstract class Data {
 
     private boolean shouldHiddenSave(CosmeticUser.HiddenReason reason) {
         switch (reason) {
-            case EMOTE, NONE -> {
+            case EMOTE, NONE, GAMEMODE, WORLD -> {
                 return false;
             }
             default -> {
