@@ -212,11 +212,11 @@ public class PlayerGameListener implements Listener {
         user.updateCosmetic(CosmeticSlot.BALLOON);
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerPoseChange(EntityPoseChangeEvent event) {
         if (!(event.getEntity() instanceof Player player)) return;
         CosmeticUser user = CosmeticUsers.getUser(player);
-        if (user == null) return;
+        if (user == null || user.isInWardrobe()) return;
         if (!user.hasCosmeticInSlot(CosmeticSlot.BACKPACK)) return;
         Pose pose = event.getPose();
         if (pose.equals(Pose.STANDING)) {
