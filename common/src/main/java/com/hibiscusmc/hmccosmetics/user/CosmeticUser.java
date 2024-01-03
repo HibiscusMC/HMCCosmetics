@@ -386,6 +386,10 @@ public class CosmeticUser {
         return this.userBackpackManager != null;
     }
 
+    public boolean isBalloonSpawned() {
+        return this.userBalloonManager != null;
+    }
+
     public void spawnBalloon(CosmeticBalloonType cosmeticBalloonType) {
         if (this.userBalloonManager != null) return;
 
@@ -424,6 +428,7 @@ public class CosmeticUser {
         if (!hasCosmeticInSlot(CosmeticSlot.BALLOON)) return;
         final Cosmetic cosmetic = getCosmetic(CosmeticSlot.BALLOON);
         despawnBalloon();
+        if (hideCosmetics) return;
         spawnBalloon((CosmeticBalloonType) cosmetic);
         MessagesUtil.sendDebugMessages("Respawned Balloon for " + getEntity().getName());
     }
@@ -511,8 +516,9 @@ public class CosmeticUser {
         hideCosmetics = true;
         hiddenReason = reason;
         if (hasCosmeticInSlot(CosmeticSlot.BALLOON)) {
-            getBalloonManager().removePlayerFromModel(getPlayer());
-            getBalloonManager().sendRemoveLeashPacket();
+            despawnBalloon();
+            //getBalloonManager().removePlayerFromModel(getPlayer());
+            //getBalloonManager().sendRemoveLeashPacket();
         }
         if (hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
             despawnBackpack();
@@ -533,6 +539,7 @@ public class CosmeticUser {
         hideCosmetics = false;
         hiddenReason = HiddenReason.NONE;
         if (hasCosmeticInSlot(CosmeticSlot.BALLOON)) {
+            if (!isBalloonSpawned()) respawnBalloon();
             CosmeticBalloonType balloonType = (CosmeticBalloonType) getCosmetic(CosmeticSlot.BALLOON);
             getBalloonManager().addPlayerToModel(this, balloonType);
             List<Player> viewer = HMCCPlayerUtils.getNearbyPlayers(getEntity().getLocation());
