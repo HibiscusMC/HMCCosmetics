@@ -560,6 +560,7 @@ public class CosmeticUser {
         ACTION,
         COMMAND,
         EMOTE,
-        GAMEMODE
+        GAMEMODE,
+        WORLD
     }
 }

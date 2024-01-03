@@ -44,6 +44,7 @@ public class Settings {
     private static final String COSMETIC_EMOTE_INVINCIBLE_PATH = "emote-invincible";
     private static final String COSMETIC_EMOTE_CAMERA_PATH = "emote-camera";
     private static final String COSMETIC_EMOTE_MOVE_CHECK_PATH = "emote-move";
+    private static final String COSMETIC_DISABLED_WORLDS_PATH = "disabled-worlds";
     private static final String COSMETIC_PACKET_ENTITY_TELEPORT_COOLDOWN_PATH = "entity-cooldown-teleport-packet";
     private static final String COSMETIC_BACKPACK_FORCE_RIDING_PACKET_PATH = "backpack-force-riding-packet";
     private static final String COSMETIC_FORCE_OFFHAND_COSMETIC_SHOW_PATH = "offhand-always-show";
@@ -118,6 +119,8 @@ public class Settings {
     @Getter
     private static List<String> disabledGamemodes;
     @Getter
+    private static List<String> disabledWorlds;
+    @Getter
     private static int viewDistance;
     @Getter
     private static int tickPeriod;
@@ -176,8 +179,10 @@ public class Settings {
         disabledGamemodesEnabled = disabledGamemodeSettings.node(ENABLED_PATH).getBoolean(true);
         try {
             disabledGamemodes = disabledGamemodeSettings.node(DISABLED_GAMEMODE_GAMEMODES_PATH).getList(String.class);
+            disabledWorlds = cosmeticSettings.node(COSMETIC_DISABLED_WORLDS_PATH).getList(String.class);
         } catch (Exception e) {
             disabledGamemodes = new ArrayList<>();
+            disabledWorlds = new ArrayList<>();
         }
 
         unapplyOnDeath = cosmeticSettings.node(UNAPPLY_DEATH_PATH).getBoolean(false);

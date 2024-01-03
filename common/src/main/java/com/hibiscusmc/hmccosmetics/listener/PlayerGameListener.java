@@ -131,6 +131,13 @@ public class PlayerGameListener implements Listener {
 
         Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
             if (user.getEntity() == null || user.isInWardrobe()) return; // fixes disconnecting when in wardrobe (the entity stuff)
+            if (Settings.getDisabledWorlds().contains(user.getEntity().getLocation().getWorld().getName())) {
+                user.hideCosmetics(CosmeticUser.HiddenReason.WORLD);
+            } else {
+                if (user.getHiddenReason() != null && user.getHiddenReason().equals(CosmeticUser.HiddenReason.WORLD)) {
+                    user.showCosmetics();
+                }
+            }
             if (user.hasCosmeticInSlot(CosmeticSlot.BACKPACK) && user.getUserBackpackManager() != null) {
                 user.respawnBackpack();
             }
