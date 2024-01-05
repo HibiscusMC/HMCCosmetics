@@ -33,6 +33,7 @@ public class PlayerConnectionListener implements Listener {
         }
 
         Runnable run = () -> {
+            if (!event.getPlayer().isOnline()) return; // If a player is no longer online, don't run this.
             CosmeticUser user = Database.get(event.getPlayer().getUniqueId());
             CosmeticUsers.addUser(user);
             MessagesUtil.sendDebugMessages("Run User Join");
