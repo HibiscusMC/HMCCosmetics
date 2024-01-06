@@ -203,7 +203,7 @@ public class CosmeticUser {
             }
             updateCosmetic(cosmetic.getSlot());
         }
-        if (items.isEmpty()) return;
+        if (items.isEmpty() || getEntity() == null) return;
         PacketManager.equipmentSlotUpdate(getEntity().getEntityId(), items, HMCCPlayerUtils.getNearbyPlayers(getEntity().getLocation()));
         MessagesUtil.sendDebugMessages("updateCosmetic (All) - end - " + items.size());
     }
