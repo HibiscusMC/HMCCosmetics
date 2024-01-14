@@ -113,9 +113,7 @@ public class CosmeticCommand implements CommandExecutor {
                         if (!textColor.contains("#") && Hooks.isActiveHook("HMCColor")) {
                             HMCColorConfig.Colors colors = HMCColorContextKt.getHmcColor().getConfig().getColors().get(textColor);
                             if (colors != null) {
-                                String hmccolor = colors.getBaseColor().getColor();
-                                if (hmccolor.contains("#")) color = HMCCServerUtils.hex2Rgb(hmccolor);
-                                else color = HMCCServerUtils.rgbToRgb(hmccolor);
+                                color = colors.getBaseColor().getColor();
                             }
                         } else {
                             color = HMCCServerUtils.hex2Rgb(textColor);

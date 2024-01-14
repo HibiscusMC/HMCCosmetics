@@ -31,7 +31,7 @@ public class DyeMenu {
         ItemStack originalItem = user.getUserCosmeticItem(cosmetic);
         if (originalItem == null || !cosmetic.isDyable()) return;
 
-        Gui gui = HMCColorApi.INSTANCE.colorMenu(player);
+        Gui gui = HMCColorApi.createColorMenu(player);
         gui.updateTitle(Hooks.processPlaceholders(player, Settings.getDyeMenuName()));
         gui.setItem(Settings.getDyeMenuInputSlot(), new GuiItem(originalItem));
         gui.setDefaultTopClickAction(event -> {
