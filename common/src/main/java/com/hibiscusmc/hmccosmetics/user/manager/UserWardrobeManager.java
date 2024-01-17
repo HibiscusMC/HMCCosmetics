@@ -202,7 +202,8 @@ public class UserWardrobeManager {
         List<Player> outsideViewers = HMCCPacketManager.getViewers(viewingLocation);
         outsideViewers.remove(player);
 
-        if (player != null) MessagesUtil.sendMessage(player, "closed-wardrobe");
+        if (player == null) return;
+        MessagesUtil.sendMessage(player, "closed-wardrobe");
 
         Runnable run = () -> {
             this.active = false;
