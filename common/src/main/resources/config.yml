@@ -115,6 +115,10 @@ wardrobe:
   return-last-location: false
   # If players in wardrobes should be able to equip any cosmetic, regardless of permission (Cosmetics they do not have access to will be removed when they leave the wardrobe)
   unchecked-wardrobe-cosmetics: false
+  # If HMCC should prevent a player from being damaged while being in the wardrobe
+  prevent-damage: true
+  # If a player is damaged in a wardrobe, and if it's set to true, it'll kick them from the wardrobe (prevent-damage must be false)
+  damage-kicked: false
 
   menu-options:
     enter-open-menu: false # If the menu should open when a player enters a wardrobe

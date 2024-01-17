@@ -11,6 +11,7 @@ import com.comphenix.protocol.wrappers.Pair;
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.api.events.PlayerCosmeticPostEquipEvent;
 import com.hibiscusmc.hmccosmetics.config.Settings;
+import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticArmorType;
@@ -195,7 +196,11 @@ public class PlayerGameListener implements Listener {
             }
         }
         if (user.isInWardrobe()) {
-            user.leaveWardrobe();
+            if (WardrobeSettings.isPreventDamage()) {
+                event.setCancelled(true);
+                return;
+            }
+            if (WardrobeSettings.isDamagedKicked()) user.leaveWardrobe();
         }
     }
 
