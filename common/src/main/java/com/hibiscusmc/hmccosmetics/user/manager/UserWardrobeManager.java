@@ -31,10 +31,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class UserWardrobeManager {
@@ -202,7 +199,8 @@ public class UserWardrobeManager {
         List<Player> outsideViewers = HMCCPacketManager.getViewers(viewingLocation);
         outsideViewers.remove(player);
 
-        if (player != null) MessagesUtil.sendMessage(player, "closed-wardrobe");
+        if (player == null) return;
+        MessagesUtil.sendMessage(player, "closed-wardrobe");
 
         Runnable run = () -> {
             this.active = false;
@@ -252,9 +250,17 @@ public class UserWardrobeManager {
 
             player.teleport(Objects.requireNonNullElseGet(exitLocation, () -> player.getWorld().getSpawnLocation()), PlayerTeleportEvent.TeleportCause.PLUGIN);
 
-            if (WardrobeSettings.isEquipPumpkin()) {
-                PacketManager.equipmentSlotUpdate(user.getPlayer().getEntityId(), EquipmentSlot.HEAD, player.getInventory().getHelmet(), viewer);
+            HashMap<EquipmentSlot, ItemStack> items = new HashMap<>();
+            for (EquipmentSlot slot : EquipmentSlot.values()) {
+                ItemStack item = player.getInventory().getItem(slot);
+                items.put(slot, item);
             }
+            /*
+            if (WardrobeSettings.isEquipPumpkin()) {
+                items.put(EquipmentSlot.HEAD, player.getInventory().getHelmet());
+            }
+             */
+            HMCCPacketManager.equipmentSlotUpdate(player.getEntityId(), items, viewer);
 
             if (WardrobeSettings.isEnabledBossbar()) {
                 Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.getInstance()).player(player);
