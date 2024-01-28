@@ -53,6 +53,7 @@ public class Settings {
     private static final String COSMETIC_ADD_ENCHANTS_LEGGINGS_PATH = "leggings-add-enchantments";
     private static final String COSMETIC_ADD_ENCHANTS_BOOTS_PATH = "boots-add-enchantments";
     private static final String COSMETIC_DESTROY_LOOSE_COSMETIC_PATH = "destroy-loose-cosmetics";
+    private static final String COSMETIC_BALLOON_HEAD_FORWARD_PATH = "balloon-head-forward";
     private static final String MENU_SETTINGS_PATH = "menu-settings";
     private static final String COSMETIC_TYPE_SETTINGS_PATH = "cosmetic-type";
     private static final String EQUIP_CLICK_TYPE = "equip-click";
@@ -116,6 +117,8 @@ public class Settings {
     private static boolean emotesEnabled;
     @Getter
     private static boolean disabledGamemodesEnabled;
+    @Getter
+    private static boolean balloonHeadForward;
     @Getter
     private static List<String> disabledGamemodes;
     @Getter
@@ -206,6 +209,7 @@ public class Settings {
         emoteMoveCheck = cosmeticSettings.node(COSMETIC_EMOTE_MOVE_CHECK_PATH).getBoolean(false);
         packetEntityTeleportCooldown = cosmeticSettings.node(COSMETIC_PACKET_ENTITY_TELEPORT_COOLDOWN_PATH).getInt(-1);
         cosmeticForceOffhandCosmeticShow = cosmeticSettings.node(COSMETIC_FORCE_OFFHAND_COSMETIC_SHOW_PATH).getBoolean(false);
+        balloonHeadForward = cosmeticSettings.node(COSMETIC_BALLOON_HEAD_FORWARD_PATH).getBoolean(false);
 
         ConfigurationNode menuSettings = source.node(MENU_SETTINGS_PATH);
 

@@ -67,6 +67,9 @@ cosmetic-settings:
   # setting this to lower than the server player view distance should fix the
   # bug where players see random backpacks. Put -1 to ignore and send packets to everyone.
   view-distance: 32
+  # If the plugin should set the pitch of balloons to always be 0, to prevent players looking up affecting the balloon.
+  # This only applies to models that have a "head" section to them. THIS DOES NOT IMPACT THE REST OF THE ENTITY.
+  balloon-head-unmoving: false
   # how the balloon should be positioned relative to the player
   balloon-offset:
     x: 0.5
