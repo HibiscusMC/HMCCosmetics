@@ -52,6 +52,7 @@ public class CosmeticCommandTabComplete implements TabCompleter {
 
         if (!(sender instanceof Player)) return completions;
         CosmeticUser user = CosmeticUsers.getUser(((Player) sender).getUniqueId());
+        if (user == null) return completions; // User hasn't loaded in yet, can't do proper checks
 
         if (args.length == 2) {
             String subcommand = args[0].toLowerCase();
