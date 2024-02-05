@@ -114,14 +114,16 @@ public class CosmeticUser {
         playerCosmetics.put(cosmetic.getSlot(), cosmetic);
         if (color != null) colors.put(cosmetic.getSlot(), color);
         MessagesUtil.sendDebugMessages("addPlayerCosmetic[id=" + cosmetic.getId() + "]");
-        if (cosmetic.getSlot() == CosmeticSlot.BACKPACK) {
-            CosmeticBackpackType backpackType = (CosmeticBackpackType) cosmetic;
-            spawnBackpack(backpackType);
-            MessagesUtil.sendDebugMessages("addPlayerCosmetic[spawnBackpack,id=" + cosmetic.getId() + "]");
-        }
-        if (cosmetic.getSlot() == CosmeticSlot.BALLOON) {
-            CosmeticBalloonType balloonType = (CosmeticBalloonType) cosmetic;
-            spawnBalloon(balloonType);
+        if (!getHidden()) {
+            if (cosmetic.getSlot() == CosmeticSlot.BACKPACK) {
+                CosmeticBackpackType backpackType = (CosmeticBackpackType) cosmetic;
+                spawnBackpack(backpackType);
+                MessagesUtil.sendDebugMessages("addPlayerCosmetic[spawnBackpack,id=" + cosmetic.getId() + "]");
+            }
+            if (cosmetic.getSlot() == CosmeticSlot.BALLOON) {
+                CosmeticBalloonType balloonType = (CosmeticBalloonType) cosmetic;
+                spawnBalloon(balloonType);
+            }
         }
         // API
         PlayerCosmeticPostEquipEvent postEquipEvent = new PlayerCosmeticPostEquipEvent(this, cosmetic);

@@ -59,6 +59,7 @@ public abstract class Data {
         Map<CosmeticSlot, Map<Cosmetic, Color>> cosmetics = new HashMap<>();
 
         String[] rawData = raw.split(",");
+        CosmeticUser.HiddenReason hiddenReason = null;
         for (String a : rawData) {
             if (a == null || a.isEmpty()) continue;
             String[] splitData = a.split("=");
@@ -68,9 +69,7 @@ public abstract class Data {
             if (splitData[0].equalsIgnoreCase("HIDDEN")) {
                 if (EnumUtils.isValidEnum(CosmeticUser.HiddenReason.class, splitData[1])) {
                     if (Settings.isForceShowOnJoin()) continue;
-                    Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> {
-                        user.hideCosmetics(CosmeticUser.HiddenReason.valueOf(splitData[1]));
-                    });
+                    hiddenReason = CosmeticUser.HiddenReason.valueOf(splitData[1]);
                 }
                 continue;
             }
@@ -97,6 +96,37 @@ public abstract class Data {
                 cosmeticColorHashMap.put(cosmetic, null);
                 cosmetics.put(slot, cosmeticColorHashMap);
             }
+        }
+
+        MessagesUtil.sendDebugMessages("Hidden Reason: " + hiddenReason);
+        // if else this, if else that, if else I got to deal with this anymore i'll lose my mind
+        if (hiddenReason != null) {
+            user.hideCosmetics(hiddenReason);
+        } else {
+            Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> {
+                // Handle gamemode check
+                if (user.getPlayer() != null && Settings.getDisabledGamemodes().contains(user.getPlayer().getGameMode().toString())) {
+                    MessagesUtil.sendDebugMessages("Hiding Cosmetics due to gamemode");
+                    user.hideCosmetics(CosmeticUser.HiddenReason.GAMEMODE);
+                    return;
+                } else {
+                    if (user.getHiddenReason() != null && user.getHiddenReason().equals(CosmeticUser.HiddenReason.GAMEMODE)) {
+                        MessagesUtil.sendDebugMessages("Join Gamemode Check: Showing Cosmetics");
+                        user.showCosmetics();
+                        return;
+                    }
+                }
+                // Handle world check
+                if (Settings.getDisabledWorlds().contains(user.getPlayer().getWorld().getName())) {
+                    MessagesUtil.sendDebugMessages("Hiding Cosmetics due to world");
+                    user.hideCosmetics(CosmeticUser.HiddenReason.WORLD);
+                } else {
+                    if (user.getHiddenReason() != null && user.getHiddenReason().equals(CosmeticUser.HiddenReason.WORLD)) {
+                        MessagesUtil.sendDebugMessages("Join World Check: Showing Cosmetics");
+                        user.showCosmetics();
+                    }
+                }
+            });
         }
         return cosmetics;
     }

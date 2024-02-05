@@ -38,22 +38,6 @@ public class PlayerConnectionListener implements Listener {
             CosmeticUsers.addUser(user);
             MessagesUtil.sendDebugMessages("Run User Join");
 
-            // Handle gamemode check
-            if (Settings.getDisabledGamemodes().contains(user.getPlayer().getGameMode().toString())) {
-                user.hideCosmetics(CosmeticUser.HiddenReason.GAMEMODE);
-            } else {
-                if (user.getHiddenReason() != null && user.getHiddenReason().equals(CosmeticUser.HiddenReason.GAMEMODE)) {
-                    user.showCosmetics();
-                }
-            }
-            // Handle world check
-            if (Settings.getDisabledWorlds().contains(user.getPlayer().getWorld().getName())) {
-                user.hideCosmetics(CosmeticUser.HiddenReason.WORLD);
-            } else {
-                if (user.getHiddenReason() != null && user.getHiddenReason().equals(CosmeticUser.HiddenReason.WORLD)) {
-                    user.showCosmetics();
-                }
-            }
             // And finally, launch an update for the cosmetics they have.
             Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
                 if (user.getPlayer() == null) return;
