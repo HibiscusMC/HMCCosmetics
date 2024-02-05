@@ -30,7 +30,7 @@ public class WGListener implements Listener {
         if (user == null) return;
         Location location = event.getPlayer().getLocation();
         ApplicableRegionSet set = getRegions(location);
-        if (user.getHidden()) {
+        if (user.isHidden()) {
             if (user.getHiddenReason() == CosmeticUser.HiddenReason.WORLDGUARD && set.getRegions().isEmpty()) {
                 user.showCosmetics();
             }
@@ -58,7 +58,7 @@ public class WGListener implements Listener {
         if (user == null) return;
         Location location = event.getTo();
         ApplicableRegionSet set = getRegions(location);
-        if (user.getHidden()) {
+        if (user.isHidden()) {
             if (user.getHiddenReason() == CosmeticUser.HiddenReason.WORLDGUARD && set.getRegions().isEmpty()) {
                 user.showCosmetics();
             }

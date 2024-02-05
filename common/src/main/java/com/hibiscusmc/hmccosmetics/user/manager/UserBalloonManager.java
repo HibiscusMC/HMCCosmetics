@@ -205,7 +205,7 @@ public class UserBalloonManager {
         CosmeticUser viewer = CosmeticUsers.getUser(player.getUniqueId());
 
         if (user.getPlayer() == player) {
-            return (!user.getHidden());
+            return (!user.isHidden());
         } else {
             if (user.isInWardrobe()) return false;
             MessagesUtil.sendDebugMessages("playerCheck - Not Same Player");
@@ -214,6 +214,6 @@ public class UserBalloonManager {
                 return false;
             }
         }
-        return (!user.getHidden());
+        return (!user.isHidden());
     }
 }

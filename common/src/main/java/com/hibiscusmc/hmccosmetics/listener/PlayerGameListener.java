@@ -419,7 +419,7 @@ public class PlayerGameListener implements Listener {
     public void onPlayerUnVanish(HibiscusPlayerUnVanishEvent event) {
         CosmeticUser user = CosmeticUsers.getUser(event.getPlayer());
         if (user == null) return;
-        if (!user.getHidden()) return;
+        if (!user.isHidden()) return;
         if (user.getHiddenReason().equals(CosmeticUser.HiddenReason.PLUGIN)) user.showCosmetics();
     }
 

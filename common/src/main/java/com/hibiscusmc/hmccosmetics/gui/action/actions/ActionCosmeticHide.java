@@ -12,7 +12,7 @@ public class ActionCosmeticHide extends Action {
 
     @Override
     public void run(@NotNull CosmeticUser user, String raw) {
-        if (user.getHidden()) return;
+        if (user.isHidden()) return;
         user.hideCosmetics(CosmeticUser.HiddenReason.ACTION);
     }
 }

@@ -70,7 +70,7 @@ public class CosmeticUser {
         Runnable run = () -> {
             MessagesUtil.sendDebugMessages("Tick[uuid=" + uniqueId + "]", Level.INFO);
             updateCosmetic();
-            if (getHidden() && !getUserEmoteManager().isPlayingEmote()) MessagesUtil.sendActionBar(getPlayer(), "hidden-cosmetics");
+            if (isHidden() && !getUserEmoteManager().isPlayingEmote()) MessagesUtil.sendActionBar(getPlayer(), "hidden-cosmetics");
         };
 
         int tickPeriod = Settings.getTickPeriod();
@@ -114,7 +114,7 @@ public class CosmeticUser {
         playerCosmetics.put(cosmetic.getSlot(), cosmetic);
         if (color != null) colors.put(cosmetic.getSlot(), color);
         MessagesUtil.sendDebugMessages("addPlayerCosmetic[id=" + cosmetic.getId() + "]");
-        if (!getHidden()) {
+        if (!isHidden()) {
             if (cosmetic.getSlot() == CosmeticSlot.BACKPACK) {
                 CosmeticBackpackType backpackType = (CosmeticBackpackType) cosmetic;
                 spawnBackpack(backpackType);
@@ -557,7 +557,17 @@ public class CosmeticUser {
         MessagesUtil.sendDebugMessages("ShowCosmetics");
     }
 
+
+    /**
+     * This method is deprecated and will be removed in the future. Use {@link #isHidden()} instead.
+     * @return
+     */
+    @Deprecated(since = "2.7.2-DEV", forRemoval = true)
     public boolean getHidden() {
+        return this.hideCosmetics;
+    }
+
+    public boolean isHidden() {
         return this.hideCosmetics;
     }
 

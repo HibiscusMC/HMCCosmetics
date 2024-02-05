@@ -32,7 +32,7 @@ public abstract class Data {
     @NotNull
     public final String serializeData(@NotNull CosmeticUser user) {
         StringBuilder data = new StringBuilder();
-        if (user.getHidden()) {
+        if (user.isHidden()) {
             if (shouldHiddenSave(user.getHiddenReason())) {
                 data.append("HIDDEN=").append(user.getHiddenReason());
             }

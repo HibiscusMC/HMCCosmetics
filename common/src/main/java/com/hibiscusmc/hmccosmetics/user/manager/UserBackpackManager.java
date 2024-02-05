@@ -85,7 +85,7 @@ public class UserBackpackManager {
                 else HMCCPacketManager.sendRidingPacket(particleCloud.get(i - 1), particleCloud.get(i) , owner);
             }
             HMCCPacketManager.sendRidingPacket(particleCloud.get(particleCloud.size() - 1), user.getUserBackpackManager().getFirstArmorStandId(), owner);
-            if (!user.getHidden()) PacketManager.equipmentSlotUpdate(user.getUserBackpackManager().getFirstArmorStandId(), EquipmentSlot.HEAD, user.getUserCosmeticItem(cosmeticBackpackType, cosmeticBackpackType.getFirstPersonBackpack()), owner);
+            if (!user.isHidden()) PacketManager.equipmentSlotUpdate(user.getUserBackpackManager().getFirstArmorStandId(), EquipmentSlot.HEAD, user.getUserCosmeticItem(cosmeticBackpackType, cosmeticBackpackType.getFirstPersonBackpack()), owner);
         }
         PacketManager.equipmentSlotUpdate(getFirstArmorStandId(), EquipmentSlot.HEAD, user.getUserCosmeticItem(cosmeticBackpackType), outsideViewers);
         HMCCPacketManager.sendRidingPacket(entity.getEntityId(), passengerIDs, outsideViewers);
@@ -118,7 +118,7 @@ public class UserBackpackManager {
     }
 
     public void hideBackpack() {
-        if (user.getHidden()) return;
+        if (user.isHidden()) return;
         //getArmorStand().getEquipment().clear();
         backpackHidden = true;
     }

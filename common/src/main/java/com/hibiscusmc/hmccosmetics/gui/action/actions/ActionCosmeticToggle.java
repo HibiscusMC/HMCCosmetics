@@ -12,7 +12,7 @@ public class ActionCosmeticToggle extends Action {
 
     @Override
     public void run(@NotNull CosmeticUser user, String raw) {
-        if (user.getHidden()) {
+        if (user.isHidden()) {
             if (user.getHiddenReason() != CosmeticUser.HiddenReason.ACTION && user.getHiddenReason() != CosmeticUser.HiddenReason.COMMAND) return;
             user.showCosmetics();
             return;
