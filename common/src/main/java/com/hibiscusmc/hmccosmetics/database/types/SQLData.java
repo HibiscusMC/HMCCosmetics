@@ -20,8 +20,9 @@ public abstract class SQLData extends Data {
         CosmeticUser user = new CosmeticUser(uniqueId);
 
         Bukkit.getScheduler().runTaskAsynchronously(HMCCosmeticsPlugin.getInstance(), () -> {
+            PreparedStatement preparedStatement = null;
             try {
-                PreparedStatement preparedStatement = preparedStatement("SELECT * FROM COSMETICDATABASE WHERE UUID = ?;");
+                preparedStatement = preparedStatement("SELECT * FROM COSMETICDATABASE WHERE UUID = ?;");
                 preparedStatement.setString(1, uniqueId.toString());
                 ResultSet rs = preparedStatement.executeQuery();
                 if (rs.next()) {
@@ -38,6 +39,10 @@ public abstract class SQLData extends Data {
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
+            } finally {
+                try {
+                    if (preparedStatement != null) preparedStatement.close();
+                } catch (SQLException e) {}
             }
         });
 
@@ -48,13 +53,18 @@ public abstract class SQLData extends Data {
     @SuppressWarnings("resource")
     public void save(CosmeticUser user) {
         Runnable run = () -> {
+            PreparedStatement preparedSt = null;
             try {
-                PreparedStatement preparedSt = preparedStatement("REPLACE INTO COSMETICDATABASE(UUID,COSMETICS) VALUES(?,?);");
+                preparedSt = preparedStatement("REPLACE INTO COSMETICDATABASE(UUID,COSMETICS) VALUES(?,?);");
                 preparedSt.setString(1, user.getUniqueId().toString());
                 preparedSt.setString(2, serializeData(user));
                 preparedSt.executeUpdate();
             } catch (SQLException e) {
                 throw new RuntimeException(e);
+            } finally {
+                try {
+                    if (preparedSt != null) preparedSt.close();
+                } catch (SQLException e) {}
             }
         };
         if (!HMCCosmeticsPlugin.getInstance().isDisabled()) {

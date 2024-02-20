@@ -59,12 +59,17 @@ public class MySQLData extends SQLData {
     @Override
     public void clear(UUID uniqueId) {
         Bukkit.getScheduler().runTaskAsynchronously(HMCCosmeticsPlugin.getInstance(), () -> {
+            PreparedStatement preparedSt = null;
             try {
-                PreparedStatement preparedSt = preparedStatement("DELETE FROM COSMETICDATABASE WHERE UUID=?;");
+                preparedSt = preparedStatement("DELETE FROM COSMETICDATABASE WHERE UUID=?;");
                 preparedSt.setString(1, uniqueId.toString());
                 preparedSt.executeUpdate();
             } catch (SQLException e) {
                 e.printStackTrace();
+            } finally {
+                try {
+                    if (preparedSt != null) preparedSt.close();
+                } catch (SQLException e) {}
             }
         });
     }
