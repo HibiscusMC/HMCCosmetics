@@ -244,6 +244,15 @@ bukkit {
         register("hmccosmetics.unapplydeath.bypass") {
             default = BukkitPluginDescription.Permission.Default.OP
         }
+        register("hmccosmetics.cmd.disableall") {
+            default = BukkitPluginDescription.Permission.Default.OP
+        }
+        register("hmccosmetics.cmd.hiddenreasons") {
+            default = BukkitPluginDescription.Permission.Default.OP
+        }
+        register("hmccosmetics.cmd.clearhiddenreasons") {
+            default = BukkitPluginDescription.Permission.Default.OP
+        }
     }
 }
 

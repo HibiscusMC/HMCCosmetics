@@ -124,7 +124,7 @@ public class UserEmoteModel extends PlayerModel {
             if (user.getPlayer() != null) player.setInvisible(false);
             user.getUserEmoteManager().despawnTextEntity();
             user.showPlayer();
-            user.showCosmetics();
+            user.showCosmetics(CosmeticUser.HiddenReason.EMOTE);
         });
     }
 

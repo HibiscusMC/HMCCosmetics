@@ -427,7 +427,7 @@ public class CosmeticCommand implements CommandExecutor {
                 CosmeticUser user = CosmeticUsers.getUser(player);
 
                 if (!silent) MessagesUtil.sendMessage(sender, "show-cosmetic");
-                user.showCosmetics();
+                user.showCosmetics(CosmeticUser.HiddenReason.COMMAND);
                 return true;
             }
             case ("debug") -> {
@@ -494,6 +494,63 @@ public class CosmeticCommand implements CommandExecutor {
                 }
                 CosmeticUser user = CosmeticUsers.getUser(player);
                 user.getUserEmoteManager().playEmote(args[1]);
+                return true;
+            }
+
+            case "disableall" -> {
+                if (!sender.hasPermission("hmccosmetics.cmd.disableall")) {
+                    if (!silent) MessagesUtil.sendMessage(sender, "no-permission");
+                    return true;
+                }
+                if (args.length == 1) {
+                    if (!silent) MessagesUtil.sendMessage(player, "not-enough-args");
+                    return true;
+                }
+                if (args[1].equalsIgnoreCase("true")) {
+                    Settings.setAllPlayersHidden(true);
+                    for (CosmeticUser user : CosmeticUsers.values()) user.hideCosmetics(CosmeticUser.HiddenReason.DISABLED);
+                    if (!silent) MessagesUtil.sendMessage(sender, "disabled-all");
+                } else if (args[1].equalsIgnoreCase("false")) {
+                    Settings.setAllPlayersHidden(false);
+                    for (CosmeticUser user : CosmeticUsers.values()) user.showCosmetics(CosmeticUser.HiddenReason.DISABLED);
+                    if (!silent) MessagesUtil.sendMessage(sender, "enabled-all");
+                } else {
+                    if (!silent) MessagesUtil.sendMessage(sender, "invalid-args");
+                }
+                return true;
+            }
+
+            case "hiddenreasons" -> {
+                if (!sender.hasPermission("hmccosmetics.cmd.hiddenreasons")) {
+                    if (!silent) MessagesUtil.sendMessage(sender, "no-permission");
+                    return true;
+                }
+                if (args.length >= 2) {
+                    player = Bukkit.getPlayer(args[1]);
+                }
+                if (player == null) {
+                    if (!silent) MessagesUtil.sendMessage(sender, "invalid-player");
+                    return true;
+                }
+                CosmeticUser user = CosmeticUsers.getUser(player);
+                sender.sendMessage(user.getHiddenReasons().toString());
+                return true;
+            }
+
+            case "clearhiddenreasons" -> {
+                if (!sender.hasPermission("hmccosmetics.cmd.clearhiddenreasons")) {
+                    if (!silent) MessagesUtil.sendMessage(sender, "no-permission");
+                    return true;
+                }
+                if (args.length >= 2) {
+                    player = Bukkit.getPlayer(args[1]);
+                }
+                if (player == null) {
+                    if (!silent) MessagesUtil.sendMessage(sender, "invalid-player");
+                    return true;
+                }
+                CosmeticUser user = CosmeticUsers.getUser(player);
+                user.clearHiddenReasons();
                 return true;
             }
         }

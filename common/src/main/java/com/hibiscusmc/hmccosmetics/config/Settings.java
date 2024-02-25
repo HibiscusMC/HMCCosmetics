@@ -3,6 +3,7 @@ package com.hibiscusmc.hmccosmetics.config;
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import lombok.Getter;
+import lombok.Setter;
 import me.lojosho.shaded.configurate.ConfigurationNode;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.util.Vector;
@@ -159,6 +160,8 @@ public class Settings {
     private static boolean emoteCameraEnabled;
     @Getter
     private static boolean emoteMoveCheck;
+    @Getter @Setter
+    private static boolean allPlayersHidden;
 
 
     public static void load(ConfigurationNode source) {

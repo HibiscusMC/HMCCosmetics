@@ -31,14 +31,14 @@ public class WGListener implements Listener {
         Location location = event.getPlayer().getLocation();
         ApplicableRegionSet set = getRegions(location);
         if (user.isHidden()) {
-            if (user.getHiddenReason() == CosmeticUser.HiddenReason.WORLDGUARD && set.getRegions().isEmpty()) {
-                user.showCosmetics();
+            if (set.getRegions().isEmpty()) {
+                user.showCosmetics(CosmeticUser.HiddenReason.WORLDGUARD);
             }
         }
         for (ProtectedRegion protectedRegion : set.getRegions()) {
             if (protectedRegion.getFlags().containsKey(WGHook.getCosmeticEnableFlag())) {
                 if (protectedRegion.getFlags().get(WGHook.getCosmeticEnableFlag()).toString().equalsIgnoreCase("ALLOW")) {
-                    if (user.getHiddenReason() == CosmeticUser.HiddenReason.WORLDGUARD) user.showCosmetics();
+                    user.showCosmetics(CosmeticUser.HiddenReason.WORLDGUARD);
                     return;
                 }
                 user.hideCosmetics(CosmeticUser.HiddenReason.WORLDGUARD);
@@ -59,14 +59,14 @@ public class WGListener implements Listener {
         Location location = event.getTo();
         ApplicableRegionSet set = getRegions(location);
         if (user.isHidden()) {
-            if (user.getHiddenReason() == CosmeticUser.HiddenReason.WORLDGUARD && set.getRegions().isEmpty()) {
-                user.showCosmetics();
+            if (set.getRegions().isEmpty()) {
+                user.showCosmetics(CosmeticUser.HiddenReason.WORLDGUARD);
             }
         }
         for (ProtectedRegion protectedRegion : set.getRegions()) {
             if (protectedRegion.getFlags().containsKey(WGHook.getCosmeticEnableFlag())) {
                 if (protectedRegion.getFlags().get(WGHook.getCosmeticEnableFlag()).toString().equalsIgnoreCase("ALLOW")) {
-                    if (user.getHiddenReason() == CosmeticUser.HiddenReason.WORLDGUARD) user.showCosmetics();
+                    user.showCosmetics(CosmeticUser.HiddenReason.WORLDGUARD);
                     return;
                 }
                 user.hideCosmetics(CosmeticUser.HiddenReason.WORLDGUARD);

@@ -15,7 +15,7 @@ public class ActionCosmeticShow extends Action {
         if (!user.isHidden()) return;
 
         // Do not hide if it's already off for WG
-        if (user.getHiddenReason() != CosmeticUser.HiddenReason.ACTION && user.getHiddenReason() != CosmeticUser.HiddenReason.COMMAND) return;
-        user.showCosmetics();
+        if (!user.isHidden(CosmeticUser.HiddenReason.ACTION) && !user.isHidden(CosmeticUser.HiddenReason.COMMAND)) return;
+        user.showCosmetics(CosmeticUser.HiddenReason.ACTION);
     }
 }

@@ -54,9 +54,7 @@ public class CosmeticUser {
     private final UserEmoteManager userEmoteManager;
 
     // Cosmetic Settings/Toggles
-    private boolean hideCosmetics;
-    @Getter
-    private HiddenReason hiddenReason;
+    private final ArrayList<HiddenReason> hiddenReason = new ArrayList<>();
     private final HashMap<CosmeticSlot, Color> colors = new HashMap<>();
 
     public CosmeticUser(UUID uuid) {
@@ -218,7 +216,7 @@ public class CosmeticUser {
 
     public ItemStack getUserCosmeticItem(Cosmetic cosmetic) {
         ItemStack item = null;
-        if (hideCosmetics) {
+        if (!hiddenReason.isEmpty()) {
             if (cosmetic instanceof CosmeticBackpackType || cosmetic instanceof CosmeticBalloonType) return new ItemStack(Material.AIR);
             return getPlayer().getInventory().getItem(HMCCInventoryUtils.getEquipmentSlot(cosmetic.getSlot()));
         }
@@ -421,7 +419,7 @@ public class CosmeticUser {
         if (!hasCosmeticInSlot(CosmeticSlot.BACKPACK)) return;
         final Cosmetic cosmetic = getCosmetic(CosmeticSlot.BACKPACK);
         despawnBackpack();
-        if (hideCosmetics) return;
+        if (!hiddenReason.isEmpty()) return;
         spawnBackpack((CosmeticBackpackType) cosmetic);
         MessagesUtil.sendDebugMessages("Respawned Backpack for " + getEntity().getName());
     }
@@ -430,7 +428,7 @@ public class CosmeticUser {
         if (!hasCosmeticInSlot(CosmeticSlot.BALLOON)) return;
         final Cosmetic cosmetic = getCosmetic(CosmeticSlot.BALLOON);
         despawnBalloon();
-        if (hideCosmetics) return;
+        if (!hiddenReason.isEmpty()) return;
         spawnBalloon((CosmeticBalloonType) cosmetic);
         MessagesUtil.sendDebugMessages("Respawned Balloon for " + getEntity().getName());
     }
@@ -508,15 +506,13 @@ public class CosmeticUser {
     }
 
     public void hideCosmetics(HiddenReason reason) {
-        if (hideCosmetics) return;
         PlayerCosmeticHideEvent event = new PlayerCosmeticHideEvent(this, reason);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             return;
         }
 
-        hideCosmetics = true;
-        hiddenReason = reason;
+        if (!hiddenReason.contains(reason)) hiddenReason.add(reason);
         if (hasCosmeticInSlot(CosmeticSlot.BALLOON)) {
             despawnBalloon();
             //getBalloonManager().removePlayerFromModel(getPlayer());
@@ -529,8 +525,8 @@ public class CosmeticUser {
         MessagesUtil.sendDebugMessages("HideCosmetics");
     }
 
-    public void showCosmetics() {
-        if (!hideCosmetics) return;
+    public void showCosmetics(HiddenReason reason) {
+        if (hiddenReason.isEmpty()) return;
 
         PlayerCosmeticShowEvent event = new PlayerCosmeticShowEvent(this);
         Bukkit.getPluginManager().callEvent(event);
@@ -538,8 +534,8 @@ public class CosmeticUser {
             return;
         }
 
-        hideCosmetics = false;
-        hiddenReason = HiddenReason.NONE;
+        hiddenReason.remove(reason);
+        if (isHidden()) return;
         if (hasCosmeticInSlot(CosmeticSlot.BALLOON)) {
             if (!isBalloonSpawned()) respawnBalloon();
             CosmeticBalloonType balloonType = (CosmeticBalloonType) getCosmetic(CosmeticSlot.BALLOON);
@@ -564,11 +560,23 @@ public class CosmeticUser {
      */
     @Deprecated(since = "2.7.2-DEV", forRemoval = true)
     public boolean getHidden() {
-        return this.hideCosmetics;
+        return !hiddenReason.isEmpty();
     }
 
     public boolean isHidden() {
-        return this.hideCosmetics;
+        return !hiddenReason.isEmpty();
+    }
+
+    public boolean isHidden(HiddenReason reason) {
+        return hiddenReason.contains(reason);
+    }
+
+    public List<HiddenReason> getHiddenReasons() {
+        return hiddenReason;
+    }
+
+    public void clearHiddenReasons() {
+        hiddenReason.clear();
     }
 
     public enum HiddenReason {
@@ -580,6 +588,7 @@ public class CosmeticUser {
         COMMAND,
         EMOTE,
         GAMEMODE,
-        WORLD
+        WORLD,
+        DISABLED
     }
 }

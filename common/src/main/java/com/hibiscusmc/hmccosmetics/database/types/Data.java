@@ -13,9 +13,7 @@ import org.bukkit.Color;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public abstract class Data {
 
@@ -33,8 +31,8 @@ public abstract class Data {
     public final String serializeData(@NotNull CosmeticUser user) {
         StringBuilder data = new StringBuilder();
         if (user.isHidden()) {
-            if (shouldHiddenSave(user.getHiddenReason())) {
-                data.append("HIDDEN=").append(user.getHiddenReason());
+            for (CosmeticUser.HiddenReason reason :  user.getHiddenReasons()) {
+                if (shouldHiddenSave(reason)) data.append("HIDDEN=").append(reason);
             }
         }
         for (Cosmetic cosmetic : user.getCosmetics()) {
@@ -59,7 +57,7 @@ public abstract class Data {
         Map<CosmeticSlot, Map<Cosmetic, Color>> cosmetics = new HashMap<>();
 
         String[] rawData = raw.split(",");
-        CosmeticUser.HiddenReason hiddenReason = null;
+        ArrayList<CosmeticUser.HiddenReason> hiddenReason = new ArrayList<>();
         for (String a : rawData) {
             if (a == null || a.isEmpty()) continue;
             String[] splitData = a.split("=");
@@ -69,7 +67,7 @@ public abstract class Data {
             if (splitData[0].equalsIgnoreCase("HIDDEN")) {
                 if (EnumUtils.isValidEnum(CosmeticUser.HiddenReason.class, splitData[1])) {
                     if (Settings.isForceShowOnJoin()) continue;
-                    hiddenReason = CosmeticUser.HiddenReason.valueOf(splitData[1]);
+                    hiddenReason.add(CosmeticUser.HiddenReason.valueOf(splitData[1]));
                 }
                 continue;
             }
@@ -100,8 +98,8 @@ public abstract class Data {
 
         MessagesUtil.sendDebugMessages("Hidden Reason: " + hiddenReason);
         // if else this, if else that, if else I got to deal with this anymore i'll lose my mind
-        if (hiddenReason != null) {
-            user.hideCosmetics(hiddenReason);
+        if (!hiddenReason.isEmpty()) {
+            for (CosmeticUser.HiddenReason reason : hiddenReason) user.hideCosmetics(reason);
         } else {
             Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> {
                 // Handle gamemode check
@@ -110,9 +108,9 @@ public abstract class Data {
                     user.hideCosmetics(CosmeticUser.HiddenReason.GAMEMODE);
                     return;
                 } else {
-                    if (user.getHiddenReason() != null && user.getHiddenReason().equals(CosmeticUser.HiddenReason.GAMEMODE)) {
+                    if (user.isHidden(CosmeticUser.HiddenReason.GAMEMODE)) {
                         MessagesUtil.sendDebugMessages("Join Gamemode Check: Showing Cosmetics");
-                        user.showCosmetics();
+                        user.showCosmetics(CosmeticUser.HiddenReason.GAMEMODE);
                         return;
                     }
                 }
@@ -121,10 +119,13 @@ public abstract class Data {
                     MessagesUtil.sendDebugMessages("Hiding Cosmetics due to world");
                     user.hideCosmetics(CosmeticUser.HiddenReason.WORLD);
                 } else {
-                    if (user.getHiddenReason() != null && user.getHiddenReason().equals(CosmeticUser.HiddenReason.WORLD)) {
+                    if (user.isHidden(CosmeticUser.HiddenReason.WORLD)) {
                         MessagesUtil.sendDebugMessages("Join World Check: Showing Cosmetics");
-                        user.showCosmetics();
+                        user.showCosmetics(CosmeticUser.HiddenReason.WORLD);
                     }
+                }
+                if (Settings.isAllPlayersHidden()) {
+                    user.hideCosmetics(CosmeticUser.HiddenReason.DISABLED);
                 }
             });
         }
@@ -133,7 +134,7 @@ public abstract class Data {
 
     private boolean shouldHiddenSave(CosmeticUser.HiddenReason reason) {
         switch (reason) {
-            case EMOTE, NONE, GAMEMODE, WORLD -> {
+            case EMOTE, NONE, GAMEMODE, WORLD, DISABLED -> {
                 return false;
             }
             default -> {

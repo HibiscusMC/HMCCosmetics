@@ -135,9 +135,7 @@ public class PlayerGameListener implements Listener {
             if (Settings.getDisabledWorlds().contains(user.getEntity().getLocation().getWorld().getName())) {
                 user.hideCosmetics(CosmeticUser.HiddenReason.WORLD);
             } else {
-                if (user.getHiddenReason() != null && user.getHiddenReason().equals(CosmeticUser.HiddenReason.WORLD)) {
-                    user.showCosmetics();
-                }
+                    user.showCosmetics(CosmeticUser.HiddenReason.WORLD);
             }
             if (user.hasCosmeticInSlot(CosmeticSlot.BACKPACK) && user.getUserBackpackManager() != null) {
                 user.respawnBackpack();
@@ -311,7 +309,7 @@ public class PlayerGameListener implements Listener {
             return;
         }
         if (event.getAction().equals(EntityPotionEffectEvent.Action.CLEARED) || event.getAction().equals(EntityPotionEffectEvent.Action.REMOVED)) {
-            user.showCosmetics();
+            user.showCosmetics(CosmeticUser.HiddenReason.POTION);
             return;
         }
     }
@@ -358,9 +356,7 @@ public class PlayerGameListener implements Listener {
             if (Settings.getDisabledGamemodes().contains(event.getNewGameMode().toString())) {
                 user.hideCosmetics(CosmeticUser.HiddenReason.GAMEMODE);
             } else {
-                if (user.getHiddenReason() != null && user.getHiddenReason().equals(CosmeticUser.HiddenReason.GAMEMODE)) {
-                    user.showCosmetics();
-                }
+                user.showCosmetics(CosmeticUser.HiddenReason.GAMEMODE);
             }
         }
 
@@ -420,7 +416,7 @@ public class PlayerGameListener implements Listener {
         CosmeticUser user = CosmeticUsers.getUser(event.getPlayer());
         if (user == null) return;
         if (!user.isHidden()) return;
-        if (user.getHiddenReason().equals(CosmeticUser.HiddenReason.PLUGIN)) user.showCosmetics();
+        user.showCosmetics(CosmeticUser.HiddenReason.PLUGIN);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
