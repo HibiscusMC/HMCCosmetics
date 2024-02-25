@@ -99,7 +99,7 @@ public abstract class Data {
         MessagesUtil.sendDebugMessages("Hidden Reason: " + hiddenReason);
         // if else this, if else that, if else I got to deal with this anymore i'll lose my mind
         if (!hiddenReason.isEmpty()) {
-            for (CosmeticUser.HiddenReason reason : hiddenReason) user.hideCosmetics(reason);
+            for (CosmeticUser.HiddenReason reason : hiddenReason) user.silentlyAddHideFlag(reason);
         } else {
             Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> {
                 // Handle gamemode check

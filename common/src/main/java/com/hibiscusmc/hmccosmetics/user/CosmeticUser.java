@@ -525,6 +525,14 @@ public class CosmeticUser {
         MessagesUtil.sendDebugMessages("HideCosmetics");
     }
 
+    /**
+     * This is used to silently add a hidden flag to the user. This will not trigger any events or checks, nor do anything else
+     * @param reason
+     */
+    public void silentlyAddHideFlag(HiddenReason reason) {
+        if (!hiddenReason.contains(reason)) hiddenReason.add(reason);
+    }
+
     public void showCosmetics(HiddenReason reason) {
         if (hiddenReason.isEmpty()) return;
 
