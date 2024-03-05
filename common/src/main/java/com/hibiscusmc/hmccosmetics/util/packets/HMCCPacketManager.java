@@ -106,12 +106,13 @@ public class HMCCPacketManager extends PacketManager {
         WrappedDataWatcher wrapper = new WrappedDataWatcher();
 
         if (HMCCosmeticsAPI.getNMSVersion().contains("v1_18_R2") || HMCCosmeticsAPI.getNMSVersion().contains("v1_19_R1")) {
-            wrapper.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(0, WrappedDataWatcher.Registry.get(Byte.class)), (byte) 0x20);
+            wrapper.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(0, WrappedDataWatcher.Registry.get(Byte.class)), (byte) 0x21);
             wrapper.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(15, WrappedDataWatcher.Registry.get(Byte.class)), (byte) 0x10);
             packet.getWatchableCollectionModifier().write(0, wrapper.getWatchableObjects());
         } else {
             final List<WrappedDataValue> wrappedDataValueList = Lists.newArrayList();
-            wrappedDataValueList.add(new WrappedDataValue(0, WrappedDataWatcher.Registry.get(Byte.class), (byte) 0x20));
+            // 0x21 = Invisible + Fire (Aka, burns to make it not take the light of the block its in, avoiding turning it black)
+            wrappedDataValueList.add(new WrappedDataValue(0, WrappedDataWatcher.Registry.get(Byte.class), (byte) 0x21));
             wrappedDataValueList.add(new WrappedDataValue(15, WrappedDataWatcher.Registry.get(Byte.class), (byte) 0x10));
             packet.getDataValueCollectionModifier().write(0, wrappedDataValueList);
         }
