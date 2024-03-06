@@ -135,7 +135,7 @@ public class PlayerGameListener implements Listener {
             if (Settings.getDisabledWorlds().contains(user.getEntity().getLocation().getWorld().getName())) {
                 user.hideCosmetics(CosmeticUser.HiddenReason.WORLD);
             } else {
-                    user.showCosmetics(CosmeticUser.HiddenReason.WORLD);
+                user.showCosmetics(CosmeticUser.HiddenReason.WORLD);
             }
             if (user.hasCosmeticInSlot(CosmeticSlot.BACKPACK) && user.getUserBackpackManager() != null) {
                 user.respawnBackpack();
@@ -144,7 +144,7 @@ public class PlayerGameListener implements Listener {
                 user.respawnBalloon();
             }
             user.updateCosmetic();
-        }, 1);
+        }, 2);
 
         if (event.getCause().equals(PlayerTeleportEvent.TeleportCause.NETHER_PORTAL) || event.getCause().equals(PlayerTeleportEvent.TeleportCause.END_PORTAL)) return;
         if (user.getUserEmoteManager().isPlayingEmote()) {
