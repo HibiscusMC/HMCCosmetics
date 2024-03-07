@@ -91,7 +91,7 @@ public class HMCCPacketManager extends PacketManager {
             CosmeticSlot cosmeticSlot,
             List<Player> sendTo
     ) {
-        if (cosmeticSlot == CosmeticSlot.BACKPACK || cosmeticSlot == CosmeticSlot.BALLOON || cosmeticSlot == CosmeticSlot.EMOTE) return;
+        if (cosmeticSlot == CosmeticSlot.BACKPACK || cosmeticSlot == CosmeticSlot.CUSTOM || cosmeticSlot == CosmeticSlot.BALLOON || cosmeticSlot == CosmeticSlot.EMOTE) return;
 
         equipmentSlotUpdate(entityId, HMCCInventoryUtils.getEquipmentSlot(cosmeticSlot), user.getUserCosmeticItem(cosmeticSlot), sendTo);
     }
