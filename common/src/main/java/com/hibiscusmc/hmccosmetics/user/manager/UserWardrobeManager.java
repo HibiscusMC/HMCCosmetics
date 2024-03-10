@@ -14,6 +14,7 @@ import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.HMCCServerUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.HMCCPacketManager;
 import lombok.Getter;
+import lombok.Setter;
 import me.lojosho.hibiscuscommons.nms.NMSHandlers;
 import me.lojosho.hibiscuscommons.util.packets.PacketManager;
 import net.kyori.adventure.audience.Audience;
@@ -64,6 +65,9 @@ public class UserWardrobeManager {
     private boolean active;
     @Getter
     private WardrobeStatus wardrobeStatus;
+    @Getter
+    @Setter
+    private Menu lastOpenMenu;
 
     public UserWardrobeManager(CosmeticUser user, Wardrobe wardrobe) {
         NPC_ID = me.lojosho.hibiscuscommons.util.ServerUtils.getNextEntityId();
@@ -79,6 +83,7 @@ public class UserWardrobeManager {
         this.npcLocation = wardrobeLocation.getNpcLocation();
 
         wardrobeStatus = WardrobeStatus.SETUP;
+        this.lastOpenMenu = Menus.getDefaultMenu();
     }
 
     public void start() {
