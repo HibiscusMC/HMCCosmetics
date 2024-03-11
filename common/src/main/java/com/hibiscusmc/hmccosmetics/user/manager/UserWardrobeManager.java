@@ -91,6 +91,7 @@ public class UserWardrobeManager {
         }
 
         user.hidePlayer();
+        if (!Bukkit.getServer().getAllowFlight()) player.setAllowFlight(true);
         List<Player> viewer = Collections.singletonList(player);
         List<Player> outsideViewers = HMCCPacketManager.getViewers(viewingLocation);
         outsideViewers.remove(player);
@@ -200,6 +201,7 @@ public class UserWardrobeManager {
         outsideViewers.remove(player);
 
         if (player == null) return;
+        if (!Bukkit.getServer().getAllowFlight()) player.setAllowFlight(false);
         MessagesUtil.sendMessage(player, "closed-wardrobe");
 
         Runnable run = () -> {
