@@ -39,7 +39,7 @@ public class UserBackpackManager {
         this.backpackHidden = false;
         this.invisibleArmorStand = ServerUtils.getNextEntityId();
         this.entityManager = new UserEntity(user.getUniqueId());
-        this.entityManager.refreshViewers(user.getEntity().getLocation());
+        if (user.getEntity() != null) this.entityManager.refreshViewers(user.getEntity().getLocation()); // Fixes an issue where a player, who somehow removes their potions, but doesn't have an entity produces an NPE (it's dumb)
     }
 
     public int getFirstArmorStandId() {
