@@ -162,6 +162,12 @@ public class PlayerGameListener implements Listener {
             return;
         }
 
+        if (Settings.getDisabledWorlds().contains(user.getEntity().getLocation().getWorld().getName())) {
+            user.hideCosmetics(CosmeticUser.HiddenReason.WORLD);
+        } else {
+            user.showCosmetics(CosmeticUser.HiddenReason.WORLD);
+        }
+
         if (user.hasCosmeticInSlot(CosmeticSlot.BALLOON)) {
             user.despawnBalloon();
 
