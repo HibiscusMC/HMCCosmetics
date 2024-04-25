@@ -134,33 +134,34 @@ items:
         - "<gray>Allowed: <#6D9DC5>%HMCCosmetics_unlocked_kite%" 
     type: cosmetic
     cosmetic: kite
-  handstand:
-    slots:
-      - 12
-    item:
-      material: PAPER
-      name: "<blue>Handstand Emote"
-    type: cosmetic
-    cosmetic: handstand
-  meditate:
-    slots:
-      - 13
-    item:
-      material: PAPER
-      name: "<blue>Meditate Emote"
-    type: cosmetic
-    cosmetic: meditate
-  thinking:
-    slots:
-      - 14
-    item:
-      material: PAPER
-      name: "<blue>Thinking Emote"
-    type: cosmetic
-    cosmetic: thinking
+  # EMOTES DO NOT WORK IN RECENT HMCCOSMETICS VERSIONS.
+  # handstand:
+  #   slots:
+  #     - 12
+  #   item:
+  #     material: PAPER
+  #     name: "<blue>Handstand Emote"
+  #   type: cosmetic
+  #   cosmetic: handstand
+  # meditate:
+  #   slots:
+  #     - 13
+  #   item:
+  #     material: PAPER
+  #     name: "<blue>Meditate Emote"
+  #   type: cosmetic
+  #   cosmetic: meditate
+  # thinking:
+  #   slots:
+  #     - 14
+  #   item:
+  #     material: PAPER
+  #     name: "<blue>Thinking Emote"
+  #   type: cosmetic
+  #   cosmetic: thinking
   explorer_backpack:
     slots:
-      - 15
+      - 12
     item:
       material: hmccosmetics:explorer_backpack
       lore:
@@ -171,7 +172,7 @@ items:
     cosmetic: explorer_backpack
   garbage_truck_balloon:
     slots:
-      - 16
+      - 13
     item:
       material: hmccosmetics:garbage_truck_balloon
       lore:
@@ -182,7 +183,7 @@ items:
     cosmetic: garbage_truck_balloon
   earth_day_grabber:
     slots:
-      - 17
+      - 14
     item:
       material: hmccosmetics:earth_day_grabber
       lore:
@@ -193,7 +194,7 @@ items:
     cosmetic: earth_day_grabber
   hibiscus_flower:
     slots:
-      - 18
+      - 15
     item:
       material: hmccosmetics:hibiscus_flower
       lore:
