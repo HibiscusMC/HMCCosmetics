@@ -95,11 +95,11 @@ menu-settings:
     equip-click: "ANY" # ANY or ClickType, https://jd.papermc.io/paper/1.20/org/bukkit/event/inventory/ClickType.html
     unequip-click: "ANY" # ANY or ClickType, https://jd.papermc.io/paper/1.20/org/bukkit/event/inventory/ClickType.html
 dye-menu:
-  # If you use ItemsAdder, set this to "§f:offset_-8::dye_menu:"
-  # If you use Oraxen, set this to "<glyph:neg_shift_8><glyph:dye_menu>"
-  title: "§f"
-  input-slot: 19
-  output-slot: 25
+  # If you use ItemsAdder, set this to "<white>:img_offset_-8::img_dye_menu:"
+  # If you use Oraxen, set this to "<white><s:-8><g:dye_menu>"
+  title: "<white>"
+  input-slot: 10
+  output-slot: 16
 hook-settings:
   itemsadder:
     # This causes the plugin to reload itself after any ItemsAdder change. This keeps the plugin fully up to date with IA, but
