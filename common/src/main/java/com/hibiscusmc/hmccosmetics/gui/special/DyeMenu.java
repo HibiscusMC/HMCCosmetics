@@ -8,6 +8,7 @@ import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import me.lojosho.hibiscuscommons.hooks.Hooks;
+import me.lojosho.hibiscuscommons.util.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -32,7 +33,7 @@ public class DyeMenu {
         if (originalItem == null || !cosmetic.isDyable()) return;
 
         Gui gui = HMCColorApi.createColorMenu(player);
-        gui.updateTitle(Hooks.processPlaceholders(player, Settings.getDyeMenuName()));
+        gui.updateTitle(Hooks.processPlaceholders(player, StringUtils.parseStringToString(Settings.getDyeMenuName())));
         gui.setItem(Settings.getDyeMenuInputSlot(), new GuiItem(originalItem));
         gui.setDefaultTopClickAction(event -> {
             if (event.getSlot() == Settings.getDyeMenuOutputSlot()) {
