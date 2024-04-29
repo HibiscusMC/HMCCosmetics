@@ -158,7 +158,7 @@ public class UserWardrobeManager {
 
             if (WardrobeSettings.isEnabledBossbar()) {
                 float progress = WardrobeSettings.getBossbarProgress();
-                Component message = MessagesUtil.processStringNoKey(WardrobeSettings.getBossbarMessage());
+                Component message = MessagesUtil.processStringNoKey(player, WardrobeSettings.getBossbarMessage());
 
                 bossBar = BossBar.bossBar(message, progress, WardrobeSettings.getBossbarColor(), WardrobeSettings.getBossbarOverlay());
                 Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.getInstance()).player(player);
