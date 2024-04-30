@@ -115,7 +115,7 @@ public abstract class Data {
                     }
                 }
                 // Handle world check
-                if (Settings.getDisabledWorlds().contains(user.getPlayer().getWorld().getName())) {
+                if (user.getPlayer() != null && Settings.getDisabledWorlds().contains(user.getPlayer().getWorld().getName())) {
                     MessagesUtil.sendDebugMessages("Hiding Cosmetics due to world");
                     user.hideCosmetics(CosmeticUser.HiddenReason.WORLD);
                 } else {
