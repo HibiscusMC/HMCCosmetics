@@ -51,13 +51,26 @@ cosmetic-settings:
   # This is useful for servers with a lot of backpacks, as they are passengers, which means the client will update their position automatically within an area where the entity is located.
   entity-cooldown-teleport-packet: 500
   # This forces the offhand to always show the cosmetic. False means it will only show when the slot is empty.
-  # There is a small visual blip for a tick when you put a new item in the offhand slot, hence why its disabled by default.
-  offhand-always-show: false
 
-  helmet-add-enchantments: false # If the plugin should keep enchants on helmets. This is useful as some enchantments are client side only.
-  chest-add-enchantments: false # If the plugin should keep enchants on chestplate. This is useful as some enchantments are client side only.
-  leggings-add-enchantments: false # If the plugin should keep enchants on leggings. This is useful as some enchantments are client side only.
-  boots-add-enchantments: false # If the plugin should keep enchants on boots. This is useful as some enchantments are client side only.
+  slot-options:
+    helmet:
+      # If the plugin should keep enchants on helmets. This is useful as some enchantments are client side only.
+      add-enchantments: false
+      # Should the player slot be empty for the cosmetic to be applied? A cosmetic will be "hidden" if a player has an item equipped in the slot
+      require-empty: true
+    chestplate:
+      add-enchantments: false
+      require-empty: false
+    leggings:
+      add-enchantments: false
+      require-empty: false
+    boots:
+      add-enchantments: false
+      require-empty: false
+    offhand:
+      add-enchantments: false
+      # There is a small visual blip for a tick when you put a new item in the offhand slot, hence why its enabled by default.
+      require-empty: true
 
   # This attempts to destroy cosmetics that get loose in the wild, such as through a player entering creative mode.
   # Most servers who don't use creative mode and have properly set up the plugin should have no need for this and can leave it disabled.

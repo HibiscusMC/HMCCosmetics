@@ -30,9 +30,9 @@ public class CosmeticArmorType extends Cosmetic {
         if (user.getUserEmoteManager().isPlayingEmote() || user.isInWardrobe()) return;
         Entity entity = Bukkit.getEntity(user.getUniqueId());
         if (entity == null) return;
-        if (!Settings.isCosmeticForceOffhandCosmeticShow()
-                && equipSlot.equals(EquipmentSlot.OFF_HAND)
-                && ((user.getEntity() instanceof Player) && !user.getPlayer().getInventory().getItemInOffHand().getType().isAir())) return;
+        if (Settings.getSlotOption(equipSlot).isRequireEmpty() && entity instanceof HumanEntity humanEntity) {
+            if (!humanEntity.getInventory().getItem(equipSlot).getType().isAir()) return;
+        }
         ItemStack item = getItem(user);
         if (item == null) return;
         PacketManager.equipmentSlotUpdate(entity.getEntityId(), equipSlot, item, HMCCPacketManager.getViewers(entity.getLocation()));
@@ -44,7 +44,7 @@ public class CosmeticArmorType extends Cosmetic {
 
     public ItemStack getItem(@NotNull CosmeticUser user, ItemStack cosmeticItem) {
         if (!(user.getEntity() instanceof HumanEntity humanEntity)) return null;
-        if (Settings.getShouldAddEnchants(equipSlot)) {
+        if (Settings.getSlotOption(equipSlot).isAddEnchantments()) {
             ItemStack equippedItem = humanEntity.getInventory().getItem(equipSlot);
             cosmeticItem.addUnsafeEnchantments(equippedItem.getEnchantments());
         }

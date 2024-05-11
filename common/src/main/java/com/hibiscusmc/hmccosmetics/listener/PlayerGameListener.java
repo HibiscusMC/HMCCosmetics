@@ -327,9 +327,11 @@ public class PlayerGameListener implements Listener {
 
         event.getPlayer().getInventory().setItem(event.getPreviousSlot(), event.getPlayer().getInventory().getItem(event.getPreviousSlot()));
         //NMSHandlers.getHandler().slotUpdate(event.getPlayer(), event.getPreviousSlot());
-        Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
-            user.updateCosmetic(CosmeticSlot.MAINHAND);
-        }, 2);
+        if (user.hasCosmeticInSlot(CosmeticSlot.MAINHAND)) {
+            Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
+                user.updateCosmetic(CosmeticSlot.MAINHAND);
+            }, 2);
+        }
 
         // #84, Riptides mess with backpacks
         ItemStack currentItem = event.getPlayer().getInventory().getItem(event.getNewSlot());
@@ -486,6 +488,10 @@ public class PlayerGameListener implements Listener {
                 if (!user.isInWardrobe()) {
                     for (Cosmetic cosmetic : user.getCosmetics()) {
                         if ((cosmetic instanceof CosmeticArmorType cosmeticArmorType)) {
+                            boolean requireEmpty = Settings.getSlotOption(cosmeticArmorType.getEquipSlot()).isRequireEmpty();
+                            boolean isAir = user.getPlayer().getInventory().getItem(cosmeticArmorType.getEquipSlot()).getType().isAir();
+                            MessagesUtil.sendDebugMessages("Menu Fired (Checks) - " + cosmeticArmorType.getId() + " - " + requireEmpty + " - " + isAir);
+                            if (requireEmpty && !isAir) continue;
                             items.put(HMCCInventoryUtils.getPacketArmorSlot(cosmeticArmorType.getEquipSlot()), user.getUserCosmeticItem(cosmeticArmorType));
                         }
                     }
@@ -536,9 +542,14 @@ public class PlayerGameListener implements Listener {
 
                 int slot = event.getPacket().getIntegers().read(2);
                 MessagesUtil.sendDebugMessages("SetSlot Slot " + slot);
-                if (slot == 45 && user.hasCosmeticInSlot(CosmeticSlot.OFFHAND) && player.getInventory().getItemInOffHand().getType().isAir()) {
-                    event.getPacket().getItemModifier().write(0, user.getUserCosmeticItem(CosmeticSlot.OFFHAND));
+                CosmeticSlot cosmeticSlot = HMCCInventoryUtils.NMSCosmeticSlot(slot);
+                EquipmentSlot equipmentSlot = HMCCInventoryUtils.getPacketArmorSlot(slot);
+                if (cosmeticSlot == null || equipmentSlot == null) return;
+                if (!user.hasCosmeticInSlot(cosmeticSlot)) return;
+                if (Settings.getSlotOption(equipmentSlot).isRequireEmpty()) {
+                    if (!player.getInventory().getItem(equipmentSlot).getType().isAir()) return;
                 }
+                event.getPacket().getItemModifier().write(0, user.getUserCosmeticItem(cosmeticSlot));
             }
         });
     }
@@ -563,20 +574,17 @@ public class PlayerGameListener implements Listener {
                             if (user.getPlayer() == event.getPlayer()) continue; // When a player scrolls real fast, it messes up the mainhand. This fixes it
                             armor.set(i, new Pair<>(pair.getFirst(), user.getPlayer().getInventory().getItemInMainHand()));
                         }
-                        case OFFHAND -> {
-                            if (Settings.isCosmeticForceOffhandCosmeticShow() && user.hasCosmeticInSlot(CosmeticSlot.OFFHAND)) {
-                                ItemStack item = user.getUserCosmeticItem(CosmeticSlot.OFFHAND);
-                                if (item == null) continue;
-                                Pair<EnumWrappers.ItemSlot, ItemStack> offhandPair = new Pair<>(EnumWrappers.ItemSlot.OFFHAND, item);
-                                armor.set(i, offhandPair);
-                            }
-                        }
                         default -> {
-                            CosmeticArmorType cosmeticArmor = (CosmeticArmorType) user.getCosmetic(HMCCInventoryUtils.getItemSlotToCosmeticSlot(pair.getFirst()));
+                            EquipmentSlot slot = HMCCInventoryUtils.getEquipmentSlot(pair.getFirst());
+                            CosmeticSlot cosmeticSlot = HMCCInventoryUtils.getItemSlotToCosmeticSlot(pair.getFirst());
+                            if (slot == null || cosmeticSlot == null) continue;
+                            if (Settings.getSlotOption(slot).isRequireEmpty()
+                                    && !user.getPlayer().getInventory().getItem(slot).getType().isAir()) continue;
+                            CosmeticArmorType cosmeticArmor = (CosmeticArmorType) user.getCosmetic(cosmeticSlot);
                             if (cosmeticArmor == null) continue;
                             ItemStack item = user.getUserCosmeticItem(cosmeticArmor);
                             if (item == null) continue;
-                            Pair<EnumWrappers.ItemSlot, ItemStack> armorPair = new Pair<>(HMCCInventoryUtils.itemBukkitSlot(cosmeticArmor.getEquipSlot()), item);
+                            Pair<EnumWrappers.ItemSlot, ItemStack> armorPair = new Pair<>(HMCCInventoryUtils.itemBukkitSlot(slot), item);
                             armor.set(i, armorPair);
                         }
                     }

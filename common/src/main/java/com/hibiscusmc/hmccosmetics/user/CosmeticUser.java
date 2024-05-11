@@ -29,6 +29,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -195,13 +196,17 @@ public class CosmeticUser {
         for (Cosmetic cosmetic : getCosmetics()) {
             if (cosmetic instanceof CosmeticArmorType armorType) {
                 if (getUserEmoteManager().isPlayingEmote() || isInWardrobe()) return;
-                if (!Settings.isCosmeticForceOffhandCosmeticShow()
-                        && armorType.getEquipSlot().equals(EquipmentSlot.OFF_HAND)
-                        && !getPlayer().getInventory().getItemInOffHand().getType().isAir()) continue;
+                if (!(getEntity() instanceof HumanEntity humanEntity)) return;
+
+                boolean requireEmpty = Settings.getSlotOption(armorType.getEquipSlot()).isRequireEmpty();
+                boolean isAir = humanEntity.getInventory().getItem(armorType.getEquipSlot()).getType().isAir();
+                MessagesUtil.sendDebugMessages("updateCosmetic (All) - " + armorType.getId() + " - " + requireEmpty + " - " + isAir);
+                if (requireEmpty && !isAir) continue;
+
                 items.put(HMCCInventoryUtils.getEquipmentSlot(armorType.getSlot()), armorType.getItem(this));
-                continue;
+            } else {
+                updateCosmetic(cosmetic.getSlot());
             }
-            updateCosmetic(cosmetic.getSlot());
         }
         if (items.isEmpty() || getEntity() == null) return;
         PacketManager.equipmentSlotUpdate(getEntity().getEntityId(), items, HMCCPlayerUtils.getNearbyPlayers(getEntity().getLocation()));

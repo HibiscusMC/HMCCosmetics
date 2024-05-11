@@ -153,6 +153,32 @@ public class HMCCInventoryUtils {
         }
     }
 
+    public static EquipmentSlot getEquipmentSlot(@NotNull EnumWrappers.ItemSlot slot) {
+        switch (slot) {
+            case HEAD -> {
+                return EquipmentSlot.HEAD;
+            }
+            case CHEST -> {
+                return EquipmentSlot.CHEST;
+            }
+            case LEGS -> {
+                return EquipmentSlot.LEGS;
+            }
+            case FEET -> {
+                return EquipmentSlot.FEET;
+            }
+            case OFFHAND -> {
+                return EquipmentSlot.OFF_HAND;
+            }
+            case MAINHAND -> {
+                return EquipmentSlot.HAND;
+            }
+            default -> {
+                return null;
+            }
+        }
+    }
+
     public static boolean isCosmeticItem(ItemStack itemStack) {
         if (itemStack == null) return false;
         itemStack = itemStack.clone();
