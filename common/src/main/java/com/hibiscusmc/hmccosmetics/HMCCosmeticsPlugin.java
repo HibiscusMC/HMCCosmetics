@@ -70,7 +70,7 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
         if (!emoteFile.exists()) emoteFile.mkdir();
 
         // Player Animator
-        if (!HMCCosmeticsAPI.getNMSVersion().contains("v1_20_R2") && !HMCCosmeticsAPI.getNMSVersion().contains("v1_20_R3")) PlayerAnimatorImpl.initialize(this); // PlayerAnimator does not support 1.20.2 yet
+        if (!HMCCosmeticsAPI.getNMSVersion().contains("v1_20_R2") && !HMCCosmeticsAPI.getNMSVersion().contains("v1_20_R3") && !HMCCosmeticsAPI.getNMSVersion().contains("v1_20_R4")) PlayerAnimatorImpl.initialize(this); // PlayerAnimator does not support 1.20.2 yet
 
         // Configuration Sync
         final File configFile = Path.of(getInstance().getDataFolder().getPath(), "config.yml").toFile();
