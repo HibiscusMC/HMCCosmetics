@@ -49,7 +49,11 @@ public class CosmeticBackpackType extends Cosmetic {
         Location loc = entity.getLocation().clone().add(0, 2, 0);
 
         if (user.isInWardrobe() || !user.isBackpackSpawned()) return;
-        // This needs to be moved to purely packet based, there are far to many plugin doing dumb stuff that prevents spawning armorstands ignoring our spawn reason.
+        if (user.isHidden()) {
+            // Sometimes the backpack is not despawned when the player is hidden (weird ass logic happening somewhere)
+            user.despawnBackpack();
+            return;
+        }
         List<Player> outsideViewers = user.getUserBackpackManager().getEntityManager().refreshViewers(loc);
 
         user.getUserBackpackManager().getEntityManager().teleport(loc);
