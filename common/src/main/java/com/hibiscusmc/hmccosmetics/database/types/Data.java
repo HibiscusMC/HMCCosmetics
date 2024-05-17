@@ -103,7 +103,7 @@ public abstract class Data {
         } else {
             Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> {
                 // Handle gamemode check
-                if (user.getPlayer() != null && Settings.getDisabledGamemodes().contains(user.getPlayer().getGameMode().toString())) {
+                if (user.getPlayer() != null && Settings.isDisabledGamemodesEnabled() && Settings.getDisabledGamemodes().contains(user.getPlayer().getGameMode().toString())) {
                     MessagesUtil.sendDebugMessages("Hiding Cosmetics due to gamemode");
                     user.hideCosmetics(CosmeticUser.HiddenReason.GAMEMODE);
                     return;
