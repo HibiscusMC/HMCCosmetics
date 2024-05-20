@@ -27,6 +27,7 @@ import me.lojosho.hibiscuscommons.util.InventoryUtils;
 import me.lojosho.hibiscuscommons.util.packets.PacketManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
+import org.bukkit.FireworkEffect;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;
@@ -294,6 +295,15 @@ public class CosmeticUser {
                     potionMeta.setColor(color);
                 } else if (itemMeta instanceof MapMeta mapMeta) {
                     mapMeta.setColor(color);
+                } else if (itemMeta instanceof FireworkEffectMeta fireworkMeta) {
+                    fireworkMeta.setEffect(
+                            FireworkEffect.builder()
+                            .with(FireworkEffect.Type.BALL)
+                            .withColor(color)
+                            .trail(false)
+                            .flicker(false)
+                            .build()
+                    );
                 }
             }
             itemMeta.getPersistentDataContainer().set(HMCCInventoryUtils.getCosmeticKey(), PersistentDataType.STRING, cosmetic.getId());
