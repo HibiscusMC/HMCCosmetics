@@ -287,6 +287,7 @@ public class PlayerGameListener implements Listener {
             return;
         }
         Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
+            if (user.getEntity() == null) return; // Player has likely logged off
             user.updateCosmetic(CosmeticSlot.OFFHAND);
             List<Player> viewers = HMCCPacketManager.getViewers(user.getEntity().getLocation());
             if (viewers.isEmpty()) return;
