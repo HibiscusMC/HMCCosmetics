@@ -8,17 +8,15 @@ import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import me.lojosho.hibiscuscommons.hooks.Hooks;
+import me.lojosho.hibiscuscommons.util.ColorBuilder;
 import me.lojosho.hibiscuscommons.util.StringUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.Color;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.LeatherArmorMeta;
-import org.bukkit.inventory.meta.MapMeta;
-import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.inventory.meta.*;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 public class DyeMenu {
 
@@ -42,9 +40,19 @@ public class DyeMenu {
                 ItemMeta meta = item.getItemMeta();
                 if (meta == null) return;
 
-                Color color = meta instanceof LeatherArmorMeta leatherMeta ? leatherMeta.getColor() :
-                        meta instanceof PotionMeta potionMeta ? potionMeta.getColor() :
-                                meta instanceof MapMeta mapMeta ? mapMeta.getColor() : null;
+                Color color = null;
+                if (meta instanceof LeatherArmorMeta leatherMeta) {
+                    color = leatherMeta.getColor();
+                } else if (meta instanceof PotionMeta potionMeta) {
+                    color = potionMeta.getColor();
+                } else if (meta instanceof MapMeta mapMeta) {
+                    color = mapMeta.getColor();
+                } else if (meta instanceof FireworkEffectMeta fireworkEffectMeta) {
+                    FireworkEffect effect = fireworkEffectMeta.getEffect();
+                    if (effect != null) {
+                        color = effect.getColors().stream().findFirst().isPresent() ? effect.getColors().stream().findFirst().get() : null;
+                    }
+                }
                 if (color == null) return;
 
                 addCosmetic(user, cosmetic, color);
