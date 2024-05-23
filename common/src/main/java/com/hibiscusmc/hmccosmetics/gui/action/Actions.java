@@ -3,7 +3,7 @@ package com.hibiscusmc.hmccosmetics.gui.action;
 import com.hibiscusmc.hmccosmetics.gui.action.actions.*;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
