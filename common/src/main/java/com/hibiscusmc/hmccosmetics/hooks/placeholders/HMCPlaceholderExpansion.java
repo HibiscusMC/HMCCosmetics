@@ -167,6 +167,8 @@ public class HMCPlaceholderExpansion extends PlaceholderExpansion {
                 } else {
                     return TranslationUtil.getTranslation("amount-cosmetic", String.valueOf(Cosmetics.values().size()));
                 }
+            case "hidden":
+                return TranslationUtil.getTranslation("hidden", String.valueOf(user.isHidden()));
             case "wardrobe-enabled":
                 return TranslationUtil.getTranslation("in-wardrobe", String.valueOf(user.isInWardrobe()));
         }
