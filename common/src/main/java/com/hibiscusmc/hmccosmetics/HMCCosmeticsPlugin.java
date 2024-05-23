@@ -70,7 +70,7 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
         if (!emoteFile.exists()) emoteFile.mkdir();
 
         // Player Animator
-        if (!HMCCosmeticsAPI.getNMSVersion().contains("v1_20_R2") && !HMCCosmeticsAPI.getNMSVersion().contains("v1_20_R3") && !HMCCosmeticsAPI.getNMSVersion().contains("v1_20_R4")) PlayerAnimatorImpl.initialize(this); // PlayerAnimator does not support 1.20.2 yet
+        if (HMCCosmeticsAPI.getNMSVersion().contains("v1_19_R3") || HMCCosmeticsAPI.getNMSVersion().contains("v1_20_R1")) PlayerAnimatorImpl.initialize(this); // PlayerAnimator does not support 1.20.2 yet
 
         // Configuration Sync
         final File configFile = Path.of(getInstance().getDataFolder().getPath(), "config.yml").toFile();
@@ -229,7 +229,7 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
             }
         }
 
-        if (Settings.isEmotesEnabled() && !HMCCosmeticsAPI.getNMSVersion().contains("v1_20_R2") && !HMCCosmeticsAPI.getNMSVersion().contains("v1_20_R3")) EmoteManager.loadEmotes(); // PlayerAnimator does not support 1.20.2 yet
+        if (Settings.isEmotesEnabled() && (HMCCosmeticsAPI.getNMSVersion().contains("v1_19_R3") || HMCCosmeticsAPI.getNMSVersion().contains("v1_20_R1"))) EmoteManager.loadEmotes(); // PlayerAnimator does not support 1.20.2 yet
 
         getInstance().getLogger().info("Successfully Enabled HMCCosmetics");
         getInstance().getLogger().info(Cosmetics.values().size() + " Cosmetics Successfully Setup");
