@@ -250,7 +250,7 @@ public class Menu {
                 updateMenu(user, gui);
             });
 
-            MessagesUtil.sendDebugMessages("Added " + slot + " as " + guiItem + " in the menu");
+            MessagesUtil.sendDebugMessages("Set an item in slot " + slot + " in the menu of " + getId());
             gui.updateItem(slot, guiItem);
             break;
         }
