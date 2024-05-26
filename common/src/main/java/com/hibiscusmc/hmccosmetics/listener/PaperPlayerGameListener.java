@@ -1,6 +1,7 @@
 package com.hibiscusmc.hmccosmetics.listener;
 
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
+import com.destroystokyo.paper.event.player.PlayerPostRespawnEvent;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
@@ -15,6 +16,14 @@ public class PaperPlayerGameListener implements Listener {
         if (user == null) return;
         if (user.isInWardrobe()) return;
         user.updateCosmetic(slotTypeToCosmeticType(event.getSlotType()));
+    }
+
+    @EventHandler
+    public void onPlayerRespawn(PlayerPostRespawnEvent event) {
+        CosmeticUser user = CosmeticUsers.getUser(event.getPlayer());
+        if (user == null) return;
+        if (user.isInWardrobe()) return;
+        if (user.hasCosmeticInSlot(CosmeticSlot.BACKPACK)) user.respawnBackpack();
     }
 
     private CosmeticSlot slotTypeToCosmeticType(PlayerArmorChangeEvent.SlotType slotType) {
