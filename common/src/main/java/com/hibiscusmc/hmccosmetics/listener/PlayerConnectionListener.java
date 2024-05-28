@@ -4,6 +4,7 @@ import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.DatabaseSettings;
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.database.Database;
+import com.hibiscusmc.hmccosmetics.gui.Menus;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import com.hibiscusmc.hmccosmetics.user.manager.UserEmoteManager;
@@ -65,6 +66,7 @@ public class PlayerConnectionListener implements Listener {
             user.getUserEmoteManager().stopEmote(UserEmoteManager.StopEmoteReason.CONNECTION);
             event.getPlayer().setInvisible(false);
         }
+        Menus.removeCooldown(event.getPlayer().getUniqueId()); // Removes any menu cooldowns a player might have
         Database.save(user);
         user.destroy();
         CosmeticUsers.removeUser(user.getUniqueId());

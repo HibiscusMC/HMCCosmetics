@@ -13,16 +13,14 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Stream;
 
 public class Menus {
 
     private static final HashMap<String, Menu> MENUS = new HashMap<>();
+    private static final HashMap<UUID, Long> COOLDOWNS = new HashMap<>();
 
     public static void addMenu(Menu menu) {
         MENUS.put(menu.getId().toUpperCase(), menu);
@@ -63,8 +61,21 @@ public class Menus {
         return MENUS.values();
     }
 
+    public static void addCooldown(UUID uuid, long time) {
+        COOLDOWNS.put(uuid, time);
+    }
+
+    public static Long getCooldown(UUID uuid) {
+        return COOLDOWNS.getOrDefault(uuid, 0L);
+    }
+
+    public static void removeCooldown(UUID uuid) {
+        COOLDOWNS.remove(uuid);
+    }
+
     public static void setup() {
         MENUS.clear();
+        COOLDOWNS.clear();
 
         File cosmeticFolder = new File(HMCCosmeticsPlugin.getInstance().getDataFolder() + "/menus");
         if (!cosmeticFolder.exists()) cosmeticFolder.mkdir();

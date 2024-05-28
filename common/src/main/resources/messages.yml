@@ -9,6 +9,7 @@ not-enough-args: "%prefix% <red>Improper amount of arguments"
 no-permission: "%prefix% <red>No Permission!"
 no-cosmetic-permission: "%prefix% <red>You do not have permission for this cosmetic!"
 no-cosmetic-slot: "%prefix% <red>There are no cosmetics in that slot!"
+on-click-cooldown: "%prefix% <red>You are on cooldown!"
 
 opened-wardrobe: "%prefix% <gradient:#6D9DC5:#45CDE9>Opened wardrobe!"
 closed-wardrobe: "%prefix% <gradient:#6D9DC5:#45CDE9>Closed wardrobe!"

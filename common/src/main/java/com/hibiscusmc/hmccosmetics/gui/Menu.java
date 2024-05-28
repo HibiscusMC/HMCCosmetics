@@ -40,6 +40,8 @@ public class Menu {
     @Getter
     private final int rows;
     @Getter
+    private final Long cooldown;
+    @Getter
     private final ConfigurationNode config;
     @Getter
     private final String permissionNode;
@@ -55,6 +57,7 @@ public class Menu {
 
         title = config.node("title").getString("chest");
         rows = config.node("rows").getInt(1);
+        cooldown = config.node("click-cooldown").getLong(Settings.getDefaultMenuCooldown());
         permissionNode = config.node("permission").getString("");
         refreshRate = config.node("refresh-rate").getInt(-1);
         shading = config.node("shading").getBoolean(Settings.isDefaultShading());
@@ -90,7 +93,8 @@ public class Menu {
             try {
                 item = ItemSerializer.INSTANCE.deserialize(ItemStack.class, config.node("item"));
             } catch (SerializationException e) {
-                throw new RuntimeException(e);
+                MessagesUtil.sendDebugMessages("Unable to get valid item for " + config.key().toString() + " " + e.getMessage());
+                continue;
             }
 
             if (item == null) {
@@ -244,7 +248,18 @@ public class Menu {
             if (modifiedItem.getType().isAir()) continue;
             GuiItem guiItem = ItemBuilder.from(modifiedItem).asGuiItem();
             guiItem.setAction(event -> {
-                MessagesUtil.sendDebugMessages("Selected slot " + slot);
+                UUID uuid = user.getUniqueId();
+                if (Settings.isMenuClickCooldown()) {
+                    Long userCooldown = Menus.getCooldown(uuid);
+                    if (userCooldown != 0 && (System.currentTimeMillis() - Menus.getCooldown(uuid) <= getCooldown())) {
+                        MessagesUtil.sendDebugMessages("Cooldown for " + user.getUniqueId() + " System time: " + System.currentTimeMillis() + " Cooldown: " + Menus.getCooldown(user.getUniqueId()) + " Difference: " + (System.currentTimeMillis() - Menus.getCooldown(user.getUniqueId())));
+                        MessagesUtil.sendMessage(user.getPlayer(), "on-click-cooldown");
+                        return;
+                    } else {
+                        Menus.addCooldown(user.getUniqueId(), System.currentTimeMillis());
+                    }
+                }
+                MessagesUtil.sendDebugMessages("Updated Menu Item in slot number " + slot);
                 final ClickType clickType = event.getClick();
                 if (type != null) type.run(user, item.itemConfig(), clickType);
                 updateMenu(user, gui);

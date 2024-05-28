@@ -1,12 +1,10 @@
 package com.hibiscusmc.hmccosmetics.config;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
-import com.hibiscusmc.hmccosmetics.util.HMCCInventoryUtils;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import lombok.Getter;
 import lombok.Setter;
 import me.lojosho.shaded.configurate.ConfigurationNode;
-import org.apache.commons.lang3.EnumUtils;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.util.Vector;
 
@@ -54,6 +52,8 @@ public class Settings {
     private static final String COSMETIC_DESTROY_LOOSE_COSMETIC_PATH = "destroy-loose-cosmetics";
     private static final String COSMETIC_BALLOON_HEAD_FORWARD_PATH = "balloon-head-forward";
     private static final String MENU_SETTINGS_PATH = "menu-settings";
+    private static final String MENU_CLICK_COOLDOWN_PATH = "click-cooldown";
+    private static final String MENU_CLICK_COOLDOWN_TIME_PATH = "time";
     private static final String COSMETIC_TYPE_SETTINGS_PATH = "cosmetic-type";
     private static final String EQUIP_CLICK_TYPE = "equip-click";
     private static final String UNEQUIP_CLICK_TYPE = "unequip-click";
@@ -120,6 +120,10 @@ public class Settings {
     private static int tickPeriod;
     @Getter
     private static int packetEntityTeleportCooldown;
+    @Getter
+    private static Long defaultMenuCooldown;
+    @Getter
+    private static boolean menuClickCooldown;
     @Getter
     private static double emoteDistance;
     @Getter
@@ -212,6 +216,10 @@ public class Settings {
         balloonHeadForward = cosmeticSettings.node(COSMETIC_BALLOON_HEAD_FORWARD_PATH).getBoolean(false);
 
         ConfigurationNode menuSettings = source.node(MENU_SETTINGS_PATH);
+
+        ConfigurationNode clickCooldownSettings = menuSettings.node(MENU_CLICK_COOLDOWN_PATH);
+        menuClickCooldown = clickCooldownSettings.node(ENABLED_PATH).getBoolean(true);
+        defaultMenuCooldown = clickCooldownSettings.node(MENU_CLICK_COOLDOWN_TIME_PATH).getLong(1000L);
 
         ConfigurationNode shadingSettings = menuSettings.node(SHADING_PATH);
         defaultShading = shadingSettings.node(ENABLED_PATH).getBoolean();
