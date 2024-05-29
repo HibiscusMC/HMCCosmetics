@@ -27,9 +27,7 @@ import com.hibiscusmc.hmccosmetics.user.manager.UserWardrobeManager;
 import com.hibiscusmc.hmccosmetics.util.HMCCInventoryUtils;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.packets.HMCCPacketManager;
-import me.lojosho.hibiscuscommons.api.events.HibiscusHookReload;
-import me.lojosho.hibiscuscommons.api.events.HibiscusPlayerUnVanishEvent;
-import me.lojosho.hibiscuscommons.api.events.HibiscusPlayerVanishEvent;
+import me.lojosho.hibiscuscommons.api.events.*;
 import me.lojosho.hibiscuscommons.hooks.items.HookItemAdder;
 import me.lojosho.hibiscuscommons.util.packets.PacketManager;
 import org.bukkit.Bukkit;
@@ -441,6 +439,21 @@ public class PlayerGameListener implements Listener {
                 }
             }
         }
+    }
+
+    // These emote mostly handles emotes from other plugins, such as ItemsAdder
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onPlayerPlayEmote(HibiscusPlayerEmotePlayEvent event) {
+        CosmeticUser user = CosmeticUsers.getUser(event.getPlayer());
+        if (user == null) return;
+        user.hideCosmetics(CosmeticUser.HiddenReason.EMOTE);
+    }
+
+    @EventHandler(priority = EventPriority.LOW)
+    public void onPlayerEndEmote(HibiscusPlayerEmoteEndEvent event) {
+        CosmeticUser user = CosmeticUsers.getUser(event.getPlayer());
+        if (user == null) return;
+        user.showCosmetics(CosmeticUser.HiddenReason.EMOTE);
     }
 
     private void registerInventoryClickListener() {
