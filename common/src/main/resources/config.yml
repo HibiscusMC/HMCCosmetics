@@ -57,7 +57,7 @@ cosmetic-settings:
       # If the plugin should keep enchants on helmets. This is useful as some enchantments are client side only.
       add-enchantments: false
       # Should the player slot be empty for the cosmetic to be applied? A cosmetic will be "hidden" if a player has an item equipped in the slot
-      require-empty: true
+      require-empty: false
     chestplate:
       add-enchantments: false
       require-empty: false
