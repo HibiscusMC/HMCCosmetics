@@ -13,6 +13,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Properties;
 import java.util.UUID;
+import java.util.logging.Level;
 
 public class MySQLData extends SQLData {
 
@@ -132,7 +133,14 @@ public class MySQLData extends SQLData {
     public PreparedStatement preparedStatement(String query) {
         PreparedStatement ps = null;
 
-        if (!isConnectionOpen()) MessagesUtil.sendDebugMessages("Connection is not open");
+        if (!isConnectionOpen()) {
+            MessagesUtil.sendDebugMessages("The MySQL database connection is not open (Could the database been idle for to long?). Reconnecting...", Level.WARNING);
+            try {
+                openConnection();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
 
         try {
             if (connection == null) throw new NullPointerException("Connection is null");
