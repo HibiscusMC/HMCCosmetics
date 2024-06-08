@@ -94,7 +94,7 @@ allprojects {
         testCompileOnly("org.projectlombok:lombok:1.18.28")
         testAnnotationProcessor("org.projectlombok:lombok:1.18.28")
 
-        implementation("dev.triumphteam:triumph-gui:3.1.7") {
+        implementation("dev.triumphteam:triumph-gui:3.1.8") {
             exclude("net.kyori") // Already have adventure API
         }
         implementation("com.owen1212055:particlehelper:1.0.0-SNAPSHOT")
