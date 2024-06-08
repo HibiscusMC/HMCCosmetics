@@ -2,6 +2,7 @@ package com.hibiscusmc.hmccosmetics.cosmetic;
 
 import com.google.common.collect.HashBiMap;
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
+import com.hibiscusmc.hmccosmetics.api.events.CosmeticTypeRegisterEvent;
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.*;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
@@ -105,12 +106,13 @@ public class Cosmetics {
                     MessagesUtil.sendDebugMessages("Unable to create " + id + " because " + slotNode.getString() + " is not a valid slot!", Level.WARNING);
                     continue;
                 }
-                switch (CosmeticSlot.valueOf(cosmeticConfig.node("slot").getString())) {
+                switch (CosmeticSlot.valueOf(slotNode.getString())) {
                     case BALLOON -> new CosmeticBalloonType(id, cosmeticConfig);
                     case BACKPACK -> new CosmeticBackpackType(id, cosmeticConfig);
                     case MAINHAND -> new CosmeticMainhandType(id, cosmeticConfig);
                     case EMOTE -> new CosmeticEmoteType(id, cosmeticConfig);
-                    default -> new CosmeticArmorType(id, cosmeticConfig);
+                    case HELMET, CHESTPLATE, LEGGINGS, BOOTS, OFFHAND -> new CosmeticArmorType(id, cosmeticConfig);
+                    default -> new CosmeticTypeRegisterEvent(id, cosmeticConfig).callEvent();
                 }
             } catch (Exception e) {
                 if (Settings.isDebugMode()) e.printStackTrace();

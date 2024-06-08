@@ -645,7 +645,8 @@ public class PlayerGameListener implements Listener {
                 }
                 if (!user.isInWardrobe()) return;
                 if (!user.getWardrobeManager().getWardrobeStatus().equals(UserWardrobeManager.WardrobeStatus.RUNNING)) return;
-                Menu menu = Menus.getDefaultMenu();
+
+                Menu menu = user.getWardrobeManager().getLastOpenMenu();
                 if (menu == null) return;
                 menu.openMenu(user);
                 event.setCancelled(true);
