@@ -207,7 +207,7 @@ public class PlayerGameListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onPlayerLook(PlayerMoveEvent event) {
+    public void onPlayerMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
         CosmeticUser user = CosmeticUsers.getUser(player);
         if (user == null) return;
