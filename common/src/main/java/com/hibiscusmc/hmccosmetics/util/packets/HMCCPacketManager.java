@@ -103,19 +103,12 @@ public class HMCCPacketManager extends PacketManager {
         PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
         packet.getModifier().writeDefaults();
         packet.getIntegers().write(0, entityId);
-        WrappedDataWatcher wrapper = new WrappedDataWatcher();
+        final List<WrappedDataValue> wrappedDataValueList = Lists.newArrayList();
 
-        if (HMCCosmeticsAPI.getNMSVersion().contains("v1_18_R2") || HMCCosmeticsAPI.getNMSVersion().contains("v1_19_R1")) {
-            wrapper.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(0, WrappedDataWatcher.Registry.get(Byte.class)), (byte) 0x21);
-            wrapper.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(15, WrappedDataWatcher.Registry.get(Byte.class)), (byte) 0x10);
-            packet.getWatchableCollectionModifier().write(0, wrapper.getWatchableObjects());
-        } else {
-            final List<WrappedDataValue> wrappedDataValueList = Lists.newArrayList();
-            // 0x21 = Invisible + Fire (Aka, burns to make it not take the light of the block its in, avoiding turning it black)
-            wrappedDataValueList.add(new WrappedDataValue(0, WrappedDataWatcher.Registry.get(Byte.class), (byte) 0x21));
-            wrappedDataValueList.add(new WrappedDataValue(15, WrappedDataWatcher.Registry.get(Byte.class), (byte) 0x10));
-            packet.getDataValueCollectionModifier().write(0, wrappedDataValueList);
-        }
+        // 0x21 = Invisible + Fire (Aka, burns to make it not take the light of the block its in, avoiding turning it black)
+        wrappedDataValueList.add(new WrappedDataValue(0, WrappedDataWatcher.Registry.get(Byte.class), (byte) 0x21));
+        wrappedDataValueList.add(new WrappedDataValue(15, WrappedDataWatcher.Registry.get(Byte.class), (byte) 0x10));
+        packet.getDataValueCollectionModifier().write(0, wrappedDataValueList);
         for (Player p : sendTo) sendPacket(p, packet);
     }
 
@@ -126,16 +119,10 @@ public class HMCCPacketManager extends PacketManager {
         PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
         packet.getModifier().writeDefaults();
         packet.getIntegers().write(0, entityId);
-        WrappedDataWatcher wrapper = new WrappedDataWatcher();
 
-        if (HMCCosmeticsAPI.getNMSVersion().contains("v1_18_R2") || HMCCosmeticsAPI.getNMSVersion().contains("v1_19_R1")) {
-            wrapper.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(0, WrappedDataWatcher.Registry.get(Byte.class)), (byte) 0x20);
-            packet.getWatchableCollectionModifier().write(0, wrapper.getWatchableObjects());
-        } else {
-            final List<WrappedDataValue> wrappedDataValueList = Lists.newArrayList();
-            wrappedDataValueList.add(new WrappedDataValue(0, WrappedDataWatcher.Registry.get(Byte.class), (byte) 0x20));
-            packet.getDataValueCollectionModifier().write(0, wrappedDataValueList);
-        }
+        final List<WrappedDataValue> wrappedDataValueList = Lists.newArrayList();
+        wrappedDataValueList.add(new WrappedDataValue(0, WrappedDataWatcher.Registry.get(Byte.class), (byte) 0x20));
+        packet.getDataValueCollectionModifier().write(0, wrappedDataValueList);
         for (Player p : sendTo) sendPacket(p, packet);
     }
 
@@ -146,19 +133,13 @@ public class HMCCPacketManager extends PacketManager {
         PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
         packet.getModifier().writeDefaults();
         packet.getIntegers().write(0, entityId);
-        WrappedDataWatcher wrapper = new WrappedDataWatcher();
 
-        if (HMCCosmeticsAPI.getNMSVersion().contains("v1_18_R2") || HMCCosmeticsAPI.getNMSVersion().contains("v1_19_R1")) {
-            wrapper.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(0, WrappedDataWatcher.Registry.get(Byte.class)), (byte) 0x20);
-            wrapper.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(8, WrappedDataWatcher.Registry.get(Float.class)), 0f);
-            packet.getWatchableCollectionModifier().write(0, wrapper.getWatchableObjects());
-        } else {
-            final List<WrappedDataValue> wrappedDataValueList = Lists.newArrayList();
-            wrappedDataValueList.add(new WrappedDataValue(0, WrappedDataWatcher.Registry.get(Byte.class), (byte) 0x20));
-            wrappedDataValueList.add(new WrappedDataValue(8, WrappedDataWatcher.Registry.get(Float.class), 0f));
-            //wrappedDataValueList.add(new WrappedDataValue(11, WrappedDataWatcher.Registry.get(Integer.class), 21));
-            packet.getDataValueCollectionModifier().write(0, wrappedDataValueList);
-        }
+        final List<WrappedDataValue> wrappedDataValueList = Lists.newArrayList();
+        wrappedDataValueList.add(new WrappedDataValue(0, WrappedDataWatcher.Registry.get(Byte.class), (byte) 0x20));
+        wrappedDataValueList.add(new WrappedDataValue(8, WrappedDataWatcher.Registry.get(Float.class), 0f));
+        //wrappedDataValueList.add(new WrappedDataValue(11, WrappedDataWatcher.Registry.get(Integer.class), 21));
+        packet.getDataValueCollectionModifier().write(0, wrappedDataValueList);
+
         for (Player p : sendTo) sendPacket(p, packet);
     }
 
@@ -267,7 +248,7 @@ public class HMCCPacketManager extends PacketManager {
             final int entityId,
             final @NotNull List<Player> sendTo
     ) {
-        if (HMCCosmeticsAPI.getNMSVersion().contains("v1_18_R2") || HMCCosmeticsAPI.getNMSVersion().contains("v1_19_R1") || HMCCosmeticsAPI.getNMSVersion().contains("v1_19_R2") || HMCCosmeticsAPI.getNMSVersion().contains("v1_19_R3") || HMCCosmeticsAPI.getNMSVersion().contains("v1_20_R1")) {
+        if (HMCCosmeticsAPI.getNMSVersion().contains("v1_19_R3") || HMCCosmeticsAPI.getNMSVersion().contains("v1_20_R1")) {
             WrapperPlayServerNamedEntitySpawn wrapper = new WrapperPlayServerNamedEntitySpawn();
             wrapper.setEntityID(entityId);
             wrapper.setPlayerUUID(uuid);
@@ -304,22 +285,13 @@ public class HMCCPacketManager extends PacketManager {
         WrappedGameProfile wrappedGameProfile = new WrappedGameProfile(uuid, name);
         WrappedSignedProperty skinData = HMCCPlayerUtils.getSkin(skinnedPlayer);
         if (skinData != null) wrappedGameProfile.getProperties().put("textures", skinData);
-        // For sor some reason <1.19.2 handles it on the 0 field index, newer versions handles it on the 1
-        if (HMCCosmeticsAPI.getNMSVersion().contains("v1_18_R2") || HMCCosmeticsAPI.getNMSVersion().contains("v1_19_R1")) {
-            info.getHandle().getPlayerInfoDataLists().write(0, Collections.singletonList(new PlayerInfoData(
-                    wrappedGameProfile,
-                    0,
-                    EnumWrappers.NativeGameMode.CREATIVE,
-                    WrappedChatComponent.fromText(name)
-            )));
-        } else {
-            info.getHandle().getPlayerInfoDataLists().write(1, Collections.singletonList(new PlayerInfoData(
-                    wrappedGameProfile,
-                    0,
-                    EnumWrappers.NativeGameMode.CREATIVE,
-                    WrappedChatComponent.fromText(name)
-            )));
-        }
+
+        info.getHandle().getPlayerInfoDataLists().write(1, Collections.singletonList(new PlayerInfoData(
+                wrappedGameProfile,
+                0,
+                EnumWrappers.NativeGameMode.CREATIVE,
+                WrappedChatComponent.fromText(name)
+        )));
         for (final Player p : sendTo) sendPacket(p, info.getHandle());
     }
 
@@ -347,20 +319,12 @@ public class HMCCPacketManager extends PacketManager {
         PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
         packet.getModifier().writeDefaults();
         packet.getIntegers().write(0, playerId);
-        WrappedDataWatcher wrapper = new WrappedDataWatcher();
 
-        if (HMCCosmeticsAPI.getNMSVersion().contains("v1_18_R2") || HMCCosmeticsAPI.getNMSVersion().contains("v1_19_R1")) {
-            wrapper.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(17, WrappedDataWatcher.Registry.get(Byte.class)), mask);
-            packet.getWatchableCollectionModifier().write(0, wrapper.getWatchableObjects());
-        } else {
-            final List<WrappedDataValue> wrappedDataValueList = Lists.newArrayList();
-            wrappedDataValueList.add(new WrappedDataValue(17, WrappedDataWatcher.Registry.get(Byte.class), mask));
-            packet.getDataValueCollectionModifier().write(0, wrappedDataValueList);
-        }
+        final List<WrappedDataValue> wrappedDataValueList = Lists.newArrayList();
+        wrappedDataValueList.add(new WrappedDataValue(17, WrappedDataWatcher.Registry.get(Byte.class), mask));
+        packet.getDataValueCollectionModifier().write(0, wrappedDataValueList);
 
-        for (final Player p : sendTo) {
-            sendPacket(p, packet);
-        }
+        for (final Player p : sendTo) sendPacket(p, packet);
     }
 
     /**
@@ -375,21 +339,6 @@ public class HMCCPacketManager extends PacketManager {
             final UUID uuid,
             final List<Player> sendTo
     ) {
-        if (HMCCosmeticsAPI.getNMSVersion().contains("v1_18_R2") || HMCCosmeticsAPI.getNMSVersion().contains("v1_19_R1")) {
-            WrapperPlayServerPlayerInfo info = new WrapperPlayServerPlayerInfo();
-            // Remove player is deprecated on 1.19.3+, but we still need to support 1.18.2
-            info.setAction(EnumWrappers.PlayerInfoAction.REMOVE_PLAYER);
-
-            String name = "Mannequin-" + player.getEntityId();
-            while (name.length() > 16) {
-                name = name.substring(16);
-            }
-
-            info.setData(List.of(new PlayerInfoData(new WrappedGameProfile(uuid, player.getName()), 0, EnumWrappers.NativeGameMode.CREATIVE, WrappedChatComponent.fromText(name))));
-            for (final Player p : sendTo) sendPacket(p, info.getHandle());
-            return;
-        }
-
         PacketContainer packet = new PacketContainer(PacketType.Play.Server.PLAYER_INFO_REMOVE);
         packet.getUUIDLists().write(0, List.of(uuid));
         for (final Player p : sendTo) sendPacket(p, packet);
