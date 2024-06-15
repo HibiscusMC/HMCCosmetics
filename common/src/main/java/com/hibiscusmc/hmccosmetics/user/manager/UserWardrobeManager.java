@@ -10,6 +10,7 @@ import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
 import com.hibiscusmc.hmccosmetics.gui.Menu;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
+import com.hibiscusmc.hmccosmetics.util.HMCCInventoryUtils;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.HMCCServerUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.HMCCPacketManager;
@@ -258,7 +259,7 @@ public class UserWardrobeManager {
             player.teleport(Objects.requireNonNullElseGet(exitLocation, () -> player.getWorld().getSpawnLocation()), PlayerTeleportEvent.TeleportCause.PLUGIN);
 
             HashMap<EquipmentSlot, ItemStack> items = new HashMap<>();
-            for (EquipmentSlot slot : EquipmentSlot.values()) {
+            for (EquipmentSlot slot : HMCCInventoryUtils.getPlayerArmorSlots()) {
                 ItemStack item = player.getInventory().getItem(slot);
                 items.put(slot, item);
             }
