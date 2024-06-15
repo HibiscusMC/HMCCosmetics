@@ -62,7 +62,7 @@ public class HMCCPacketManager extends PacketManager {
             List<Player> sendTo
     ) {
         HashMap<EquipmentSlot, ItemStack> items = new HashMap<>();
-        for (EquipmentSlot slot : EquipmentSlot.values()) {
+        for (EquipmentSlot slot : HMCCInventoryUtils.getPlayerArmorSlots()) {
             ItemStack item = player.getInventory().getItem(slot);
             if (empty) item = new ItemStack(Material.AIR);
             items.put(slot, item);
