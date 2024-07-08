@@ -49,6 +49,8 @@ public class Settings {
     private static final String COSMETIC_DISABLED_WORLDS_PATH = "disabled-worlds";
     private static final String COSMETIC_PACKET_ENTITY_TELEPORT_COOLDOWN_PATH = "entity-cooldown-teleport-packet";
     private static final String COSMETIC_BACKPACK_FORCE_RIDING_PACKET_PATH = "backpack-force-riding-packet";
+    private static final String COSMETIC_BACKPACK_LIGHT_EMINATION_PATH = "backpack-light-emination";
+    private static final String COSMETIC_BACKPACK_LIGHT_BLOCK_DETECTION = "backpack-block-detection";
     private static final String COSMETIC_DESTROY_LOOSE_COSMETIC_PATH = "destroy-loose-cosmetics";
     private static final String COSMETIC_BALLOON_HEAD_FORWARD_PATH = "balloon-head-forward";
     private static final String MENU_SETTINGS_PATH = "menu-settings";
@@ -104,6 +106,10 @@ public class Settings {
     private static boolean destroyLooseCosmetics;
     @Getter
     private static boolean backpackForceRidingEnabled;
+    @Getter
+    private static boolean backpackLightEmination;
+    @Getter
+    private static boolean backpackBlockDetection;
     @Getter
     private static boolean emotesEnabled;
     @Getter
@@ -196,6 +202,8 @@ public class Settings {
         emoteInvincible = cosmeticSettings.node(COSMETIC_EMOTE_INVINCIBLE_PATH).getBoolean(false);
         destroyLooseCosmetics = cosmeticSettings.node(COSMETIC_DESTROY_LOOSE_COSMETIC_PATH).getBoolean(false);
         backpackForceRidingEnabled = cosmeticSettings.node(COSMETIC_BACKPACK_FORCE_RIDING_PACKET_PATH).getBoolean(false);
+        backpackLightEmination = cosmeticSettings.node(COSMETIC_BACKPACK_LIGHT_EMINATION_PATH).getBoolean(true);
+        backpackBlockDetection = cosmeticSettings.node(COSMETIC_BACKPACK_LIGHT_BLOCK_DETECTION).getBoolean(true);
 
         cosmeticSettings.node(SLOT_OPTIONS_PATH).childrenMap().forEach((key, value) -> {
             EquipmentSlot slot = convertConfigToEquipment(key.toString().toLowerCase());
