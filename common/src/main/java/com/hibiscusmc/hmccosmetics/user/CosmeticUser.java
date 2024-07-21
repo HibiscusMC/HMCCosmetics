@@ -58,6 +58,7 @@ public class CosmeticUser {
 
     // Cosmetic Settings/Toggles
     private final ArrayList<HiddenReason> hiddenReason = new ArrayList<>();
+    private final HashMap<CosmeticSlot, ItemStack> cachedCosmeticItems = new HashMap<>();
     private final HashMap<CosmeticSlot, Color> colors = new HashMap<>();
 
     public CosmeticUser(UUID uuid) {
@@ -156,6 +157,7 @@ public class CosmeticUser {
         if (slot == CosmeticSlot.EMOTE) {
             if (getUserEmoteManager().isPlayingEmote()) getUserEmoteManager().stopEmote(UserEmoteManager.StopEmoteReason.UNEQUIP);
         }
+        cachedCosmeticItems.remove(slot);
         colors.remove(slot);
         playerCosmetics.remove(slot);
         removeArmor(slot);
@@ -227,6 +229,10 @@ public class CosmeticUser {
             if (cosmetic instanceof CosmeticBackpackType || cosmetic instanceof CosmeticBalloonType) return new ItemStack(Material.AIR);
             return getPlayer().getInventory().getItem(HMCCInventoryUtils.getEquipmentSlot(cosmetic.getSlot()));
         }
+        // Check if the item is cached. This helps with performance as we don't need to keep recreating the item
+        if (cachedCosmeticItems.containsKey(cosmetic.getSlot())) {
+            return cachedCosmeticItems.get(cosmetic.getSlot());
+        }
         if (cosmetic instanceof CosmeticArmorType armorType) {
             item = armorType.getItem(this, cosmetic.getItem());
         }
@@ -248,6 +254,10 @@ public class CosmeticUser {
         if (item == null) {
             //MessagesUtil.sendDebugMessages("GetUserCosemticUser Item is null");
             return new ItemStack(Material.AIR);
+        }
+        // Check if the item is cached. This helps with performance as we don't need to keep recreating the item
+        if (cachedCosmeticItems.containsKey(cosmetic.getSlot())) {
+            return cachedCosmeticItems.get(cosmetic.getSlot());
         }
         if (item.hasItemMeta()) {
             ItemMeta itemMeta = item.getItemMeta();
@@ -312,6 +322,7 @@ public class CosmeticUser {
 
             item.setItemMeta(itemMeta);
         }
+        cachedCosmeticItems.put(cosmetic.getSlot(), item);
         return item;
     }
 
