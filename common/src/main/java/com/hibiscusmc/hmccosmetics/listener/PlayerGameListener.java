@@ -324,7 +324,6 @@ public class PlayerGameListener implements Listener {
         CosmeticUser user = CosmeticUsers.getUser(event.getPlayer());
         if (user == null) return;
 
-        event.getPlayer().getInventory().setItem(event.getPreviousSlot(), event.getPlayer().getInventory().getItem(event.getPreviousSlot()));
         //NMSHandlers.getHandler().slotUpdate(event.getPlayer(), event.getPreviousSlot());
         if (user.hasCosmeticInSlot(CosmeticSlot.MAINHAND)) {
             Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
