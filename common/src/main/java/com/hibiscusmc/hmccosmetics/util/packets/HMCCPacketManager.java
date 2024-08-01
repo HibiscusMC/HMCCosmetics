@@ -18,12 +18,15 @@ import com.hibiscusmc.hmccosmetics.util.packets.wrappers.WrapperPlayServerRelEnt
 import me.lojosho.hibiscuscommons.util.packets.PacketManager;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Display;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 import java.util.*;
 
@@ -93,7 +96,7 @@ public class HMCCPacketManager extends PacketManager {
             ItemStack itemStack,
             List<Player> sendTo
     ) {
-        PacketManager.sendItemDisplayMetadataPacket(entityId, 1f, 1f, 32, 15, 15, ItemDisplay.ItemDisplayTransform.NONE, itemStack, sendTo);
+        PacketManager.sendItemDisplayMetadataPacket(entityId, new Vector3f(0.0f, -3.2f, -0.5f), new Vector3f(1f,1f,1f), new Quaternionf(0f,0f,0f,1f), new Quaternionf(0f,0f,0f,1f), Display.Billboard.VERTICAL, 0, 15, 32, 1f, 1f, ItemDisplay.ItemDisplayTransform.NONE, itemStack, sendTo);
     }
 
     public static void sendInvisibilityPacket(
