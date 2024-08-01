@@ -23,13 +23,13 @@ public class UserEmoteModel extends PlayerModel {
 
     private final CosmeticUser user;
     private String emotePlaying;
-    private final int armorStandId;
+    private final int itemDisplayId;
     private GameMode originalGamemode;
 
     public UserEmoteModel(@NotNull CosmeticUser user) {
         super(user.getPlayer());
         this.user = user;
-        armorStandId = ServerUtils.getNextEntityId();
+        itemDisplayId = ServerUtils.getNextEntityId();
         getRangeManager().setRenderDistance(Settings.getViewDistance());
     }
 
@@ -75,12 +75,12 @@ public class UserEmoteModel extends PlayerModel {
                 MessagesUtil.sendMessage(player, "emote-blocked");
             }
 
-            HMCCPacketManager.sendEntitySpawnPacket(thirdPersonLocation, armorStandId, EntityType.ARMOR_STAND, UUID.randomUUID(), viewer);
-            HMCCPacketManager.sendInvisibilityPacket(armorStandId, viewer);
-            HMCCPacketManager.sendLookPacket(armorStandId, thirdPersonLocation, viewer);
+            HMCCPacketManager.sendEntitySpawnPacket(thirdPersonLocation, itemDisplayId, EntityType.ITEM_DISPLAY, UUID.randomUUID(), viewer);
+            //HMCCPacketManager.sendInvisibilityPacket(itemDisplayId, viewer);
+            HMCCPacketManager.sendLookPacket(itemDisplayId, thirdPersonLocation, viewer);
 
             HMCCPacketManager.gamemodeChangePacket(player, 3);
-            HMCCPacketManager.sendCameraPacket(armorStandId, viewer);
+            HMCCPacketManager.sendCameraPacket(itemDisplayId, viewer);
         }
 
 
@@ -115,7 +115,7 @@ public class UserEmoteModel extends PlayerModel {
 
             int entityId = player.getEntityId();
             HMCCPacketManager.sendCameraPacket(entityId, viewer);
-            HMCCPacketManager.sendEntityDestroyPacket(armorStandId, viewer);
+            HMCCPacketManager.sendEntityDestroyPacket(itemDisplayId, viewer);
             if (this.originalGamemode != null) {
                 HMCCPacketManager.gamemodeChangePacket(player, HMCCServerUtils.convertGamemode(this.originalGamemode));
                 player.setGameMode(this.originalGamemode);

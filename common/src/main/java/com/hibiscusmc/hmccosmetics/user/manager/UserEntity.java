@@ -5,6 +5,8 @@ import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import com.hibiscusmc.hmccosmetics.util.HMCCPlayerUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.HMCCPacketManager;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Location;
@@ -45,6 +47,7 @@ public class UserEntity {
 
         for (Player player : players) {
             CosmeticUser user = CosmeticUsers.getUser(player);
+            IntList ids = new IntArrayList(this.ids);
             if (user != null && owner != user.getUniqueId() && user.isInWardrobe()) { // Fixes issue where players in wardrobe would see other players cosmetics if they were not in wardrobe
                 removePlayers.add(player);
                 HMCCPacketManager.sendEntityDestroyPacket(ids, List.of(player));

@@ -19,6 +19,7 @@ import me.lojosho.hibiscuscommons.util.packets.PacketManager;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -33,7 +34,7 @@ public class HMCCPacketManager extends PacketManager {
             final int entityId,
             final EntityType entityType,
             final UUID uuid
-            ) {
+    ) {
         sendEntitySpawnPacket(location, entityId, entityType, uuid, getViewers(location));
     }
 
@@ -44,16 +45,7 @@ public class HMCCPacketManager extends PacketManager {
             final UUID uuid,
             final @NotNull List<Player> sendTo
     ) {
-        PacketContainer packet = new PacketContainer(PacketType.Play.Server.SPAWN_ENTITY);
-        packet.getModifier().writeDefaults();
-        packet.getUUIDs().write(0, uuid);
-        packet.getIntegers().write(0, entityId);
-        packet.getEntityTypeModifier().write(0, entityType);
-        packet.getDoubles().
-                write(0, location.getX()).
-                write(1, location.getY()).
-                write(2, location.getZ());
-        for (Player p : sendTo) sendPacket(p, packet);
+        PacketManager.sendEntitySpawnPacket(location, entityId, entityType, uuid, sendTo);
     }
 
     public static void equipmentSlotUpdate(
@@ -96,33 +88,12 @@ public class HMCCPacketManager extends PacketManager {
         equipmentSlotUpdate(entityId, HMCCInventoryUtils.getEquipmentSlot(cosmeticSlot), user.getUserCosmeticItem(cosmeticSlot), sendTo);
     }
 
-    public static void sendArmorstandMetadata(
+    public static void sendItemDisplayMetadata(
             int entityId,
+            ItemStack itemStack,
             List<Player> sendTo
     ) {
-        sendArmorstandMetadata(entityId, false, sendTo);
-    }
-
-    public static void sendArmorstandMetadata(
-            int entityId,
-            boolean onFire,
-            List<Player> sendTo
-    ) {
-        byte mask = 0x20;
-        if (onFire) {
-            // 0x21 = Invisible + Fire (Aka, burns to make it not take the light of the block its in, avoiding turning it black)
-            mask = 0x21;
-        }
-
-        PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
-        packet.getModifier().writeDefaults();
-        packet.getIntegers().write(0, entityId);
-        final List<WrappedDataValue> wrappedDataValueList = Lists.newArrayList();
-
-        wrappedDataValueList.add(new WrappedDataValue(0, WrappedDataWatcher.Registry.get(Byte.class), mask));
-        wrappedDataValueList.add(new WrappedDataValue(15, WrappedDataWatcher.Registry.get(Byte.class), (byte) 0x10));
-        packet.getDataValueCollectionModifier().write(0, wrappedDataValueList);
-        for (Player p : sendTo) sendPacket(p, packet);
+        PacketManager.sendItemDisplayMetadataPacket(entityId, 1f, 1f, 32, 15, 15, ItemDisplay.ItemDisplayTransform.NONE, itemStack, sendTo);
     }
 
     public static void sendInvisibilityPacket(

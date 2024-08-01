@@ -69,6 +69,7 @@ allprojects {
 
         // Hibiscus Commons
         maven("https://repo.hibiscusmc.com/releases")
+        mavenLocal()
     }
 
     dependencies {
@@ -83,7 +84,7 @@ allprojects {
         compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.1.0-SNAPSHOT")
         compileOnly("it.unimi.dsi:fastutil:8.5.13")
         compileOnly("org.projectlombok:lombok:1.18.34")
-        compileOnly("me.lojosho:HibiscusCommons:0.4.1")
+        compileOnly("me.lojosho:HibiscusCommons:0.4.7")
 
         // Handled by Spigot Library Loader
         compileOnly("net.kyori:adventure-api:4.17.0")
@@ -139,7 +140,7 @@ tasks {
         }
 
         doLast {
-            archiveFile.get().asFile.copyTo(layout.projectDirectory.file("run/plugins/HMCCosmeticsRemapped.jar").asFile, true)
+            archiveFile.get().asFile.copyTo(File("D:\\Server\\Paper1_21\\plugins\\${project.name}-${project.version}.jar"), true)
             println("If you use the plugin, consider buying it for: ")
             println("The custom resource pack, Oraxen + ItemAdder configurations, and Discord support!")
             println("Polymart: https://polymart.org/resource/1879")

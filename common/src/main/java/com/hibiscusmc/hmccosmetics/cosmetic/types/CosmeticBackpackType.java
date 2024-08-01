@@ -11,7 +11,6 @@ import me.lojosho.hibiscuscommons.util.packets.PacketManager;
 import me.lojosho.shaded.configurate.ConfigurationNode;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -62,12 +61,12 @@ public class CosmeticBackpackType extends Cosmetic {
         backpackManager.getEntityManager().teleport(loc);
         backpackManager.getEntityManager().setRotation((int) loc.getYaw(), isFirstPersonCompadible());
 
-        HMCCPacketManager.sendEntitySpawnPacket(user.getEntity().getLocation(), backpackManager.getFirstArmorStandId(), EntityType.ARMOR_STAND, UUID.randomUUID(), outsideViewers);
+        HMCCPacketManager.sendEntitySpawnPacket(user.getEntity().getLocation(), backpackManager.getFirstItemDisplayId(), EntityType.ITEM_DISPLAY, UUID.randomUUID(), outsideViewers);
         //HMCCPacketManager.sendArmorstandMetadata(backpackManager.getFirstArmorStandId(), outsideViewers);
-        PacketManager.equipmentSlotUpdate(backpackManager.getFirstArmorStandId(), EquipmentSlot.HEAD, user.getUserCosmeticItem(this, getItem()), outsideViewers);
+        PacketManager.equipmentSlotUpdate(backpackManager.getFirstItemDisplayId(), EquipmentSlot.HEAD, user.getUserCosmeticItem(this, getItem()), outsideViewers);
         // If true, it will send the riding packet to all players. If false, it will send the riding packet only to new players
-        if (Settings.isBackpackForceRidingEnabled()) HMCCPacketManager.sendRidingPacket(entity.getEntityId(), backpackManager.getFirstArmorStandId(), backpackManager.getEntityManager().getViewers());
-        else HMCCPacketManager.sendRidingPacket(entity.getEntityId(), user.getUserBackpackManager().getFirstArmorStandId(), outsideViewers);
+        if (Settings.isBackpackForceRidingEnabled()) HMCCPacketManager.sendRidingPacket(entity.getEntityId(), backpackManager.getFirstItemDisplayId(), backpackManager.getEntityManager().getViewers());
+        else HMCCPacketManager.sendRidingPacket(entity.getEntityId(), user.getUserBackpackManager().getFirstItemDisplayId(), outsideViewers);
 
         if (!user.isInWardrobe() && isFirstPersonCompadible() && user.getPlayer() != null) {
             List<Player> owner = List.of(user.getPlayer());
@@ -80,16 +79,16 @@ public class CosmeticBackpackType extends Cosmetic {
                     HMCCPacketManager.sendRidingPacket(particleCloud.get(i - 1), particleCloud.get(i) , owner);
                 }
             }
-            HMCCPacketManager.sendRidingPacket(particleCloud.get(particleCloud.size() - 1), backpackManager.getFirstArmorStandId(), owner);
+            HMCCPacketManager.sendRidingPacket(particleCloud.get(particleCloud.size() - 1), backpackManager.getFirstItemDisplayId(), owner);
             if (!user.isHidden()) {
                 //if (loc.getPitch() < -70) NMSHandlers.getHandler().equipmentSlotUpdate(user.getUserBackpackManager().getFirstArmorStandId(), EquipmentSlot.HEAD, new ItemStack(Material.AIR), owner);
                 //else NMSHandlers.getHandler().equipmentSlotUpdate(user.getUserBackpackManager().getFirstArmorStandId(), EquipmentSlot.HEAD, firstPersonBackpack, owner);
-                PacketManager.equipmentSlotUpdate(backpackManager.getFirstArmorStandId(), EquipmentSlot.HEAD, user.getUserCosmeticItem(this, firstPersonBackpack), owner);
+                PacketManager.equipmentSlotUpdate(backpackManager.getFirstItemDisplayId(), EquipmentSlot.HEAD, user.getUserCosmeticItem(this, firstPersonBackpack), owner);
             }
             MessagesUtil.sendDebugMessages("First Person Backpack Update[owner=" + user.getUniqueId() + ",player_location=" + loc + "]!", Level.INFO);
         }
 
-        MessagesUtil.sendDebugMessages("TTTTTTT " + backpackManager.refreshBlock(backpackManager.getEntityManager().getViewers()));
+        //MessagesUtil.sendDebugMessages("TTTTTTT " + backpackManager.refreshBlock(backpackManager.getEntityManager().getViewers()));
         backpackManager.showBackpack();
     }
 
