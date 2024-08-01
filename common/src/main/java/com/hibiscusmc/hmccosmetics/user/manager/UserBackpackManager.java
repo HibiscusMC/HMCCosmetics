@@ -1,6 +1,5 @@
 package com.hibiscusmc.hmccosmetics.user.manager;
 
-import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBackpackType;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
@@ -8,12 +7,10 @@ import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.packets.HMCCPacketManager;
 import com.ticxo.modelengine.api.ModelEngineAPI;
 import lombok.Getter;
-import lombok.Setter;
 import me.lojosho.hibiscuscommons.hooks.Hooks;
 import me.lojosho.hibiscuscommons.util.ServerUtils;
 import me.lojosho.hibiscuscommons.util.packets.PacketManager;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -36,13 +33,10 @@ public class UserBackpackManager {
     private final CosmeticUser user;
     @Getter
     private UserEntity entityManager;
-    @Getter @Setter
-    private boolean inBlock;
 
     public UserBackpackManager(CosmeticUser user) {
         this.user = user;
         this.backpackHidden = false;
-        this.inBlock = false;
         this.invisibleArmorStand = ServerUtils.getNextEntityId();
         this.entityManager = new UserEntity(user.getUniqueId());
         if (user.getEntity() != null) this.entityManager.refreshViewers(user.getEntity().getLocation()); // Fixes an issue where a player, who somehow removes their potions, but doesn't have an entity produces an NPE (it's dumb)
@@ -63,17 +57,7 @@ public class UserBackpackManager {
         getEntityManager().teleport(user.getEntity().getLocation());
         List<Player> outsideViewers = getEntityManager().getViewers();
         HMCCPacketManager.sendEntitySpawnPacket(user.getEntity().getLocation(), getFirstArmorStandId(), EntityType.ARMOR_STAND, UUID.randomUUID(), getEntityManager().getViewers());
-        if (Settings.isBackpackBlockDetection()) {
-            if (checkBlock()) {
-                setInBlock(true);
-                HMCCPacketManager.sendArmorstandMetadata(getFirstArmorStandId(), isInBlock(), outsideViewers);
-            } else {
-                HMCCPacketManager.sendArmorstandMetadata(getFirstArmorStandId(), isInBlock(), outsideViewers);
-            }
-            //refreshBlock(outsideViewers);
-        } else {
-            HMCCPacketManager.sendArmorstandMetadata(getFirstArmorStandId(), Settings.isBackpackLightEmination(), outsideViewers);
-        }
+        HMCCPacketManager.sendArmorstandMetadata(getFirstArmorStandId(), outsideViewers);
 
         Entity entity = user.getEntity();
 
@@ -162,34 +146,5 @@ public class UserBackpackManager {
     public void clearItems() {
         ItemStack item = new ItemStack(Material.AIR);
         PacketManager.equipmentSlotUpdate(getFirstArmorStandId(), EquipmentSlot.HEAD, item, getEntityManager().getViewers());
-    }
-
-    /**
-     * Refreshes the block detection for the backpack
-     * @param outsideViewers
-     * @return true if the entity was updated, false if not
-     */
-    public boolean refreshBlock(List<Player> outsideViewers) {
-        if (Settings.isBackpackBlockDetection()) {
-            if (isInBlock() && checkBlock()) {
-                HMCCPacketManager.sendArmorstandMetadata(getFirstArmorStandId(), false, outsideViewers);
-                setInBlock(false);
-                return true;
-            }
-            if (!isInBlock() && !checkBlock()) {
-                HMCCPacketManager.sendArmorstandMetadata(getFirstArmorStandId(), true, outsideViewers);
-                setInBlock(true);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean checkBlock() {
-        if (Settings.isBackpackBlockDetection()) {
-            Block block = getEntityManager().getLocation().clone().add(0, 1.5, 0).getBlock();
-            return block.getType().isAir();
-        }
-        return false;
     }
 }

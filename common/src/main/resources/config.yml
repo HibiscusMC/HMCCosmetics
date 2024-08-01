@@ -45,17 +45,8 @@ cosmetic-settings:
   emote-camera: true
   # If a player should be able to move in an emote. This option really only affects if "emote-camera" is false
   emote-move: false
-
-
   # This make it so it always sends the riding packets for the backpack. This sends more packets but is more reliable for servers which modify player passengers.
   backpack-force-riding-packet: false
-  # This makes the plugin either (true) always have the backpack eminate light to avoid the black backpack bug or (false) turns it off.
-  backpack-light-emination: true
-  # This activates the block detection for the backpack. This allows backpacks to not appear completely black when in a block.
-  # Requires backpack-light-emination to be true.
-  backpack-block-detection: true
-
-
   # This helps reduce the amount of packets sent for packet entities, but reduces accuracy of the entity. This is in milliseconds. -1 to disable.
   # This is useful for servers with a lot of backpacks, as they are passengers, which means the client will update their position automatically within an area where the entity is located.
   entity-cooldown-teleport-packet: 500

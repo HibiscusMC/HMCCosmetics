@@ -100,26 +100,13 @@ public class HMCCPacketManager extends PacketManager {
             int entityId,
             List<Player> sendTo
     ) {
-        sendArmorstandMetadata(entityId, false, sendTo);
-    }
-
-    public static void sendArmorstandMetadata(
-            int entityId,
-            boolean onFire,
-            List<Player> sendTo
-    ) {
-        byte mask = 0x20;
-        if (onFire) {
-            // 0x21 = Invisible + Fire (Aka, burns to make it not take the light of the block its in, avoiding turning it black)
-            mask = 0x21;
-        }
-
         PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
         packet.getModifier().writeDefaults();
         packet.getIntegers().write(0, entityId);
         final List<WrappedDataValue> wrappedDataValueList = Lists.newArrayList();
 
-        wrappedDataValueList.add(new WrappedDataValue(0, WrappedDataWatcher.Registry.get(Byte.class), mask));
+        // 0x21 = Invisible + Fire (Aka, burns to make it not take the light of the block its in, avoiding turning it black)
+        wrappedDataValueList.add(new WrappedDataValue(0, WrappedDataWatcher.Registry.get(Byte.class), (byte) 0x21));
         wrappedDataValueList.add(new WrappedDataValue(15, WrappedDataWatcher.Registry.get(Byte.class), (byte) 0x10));
         packet.getDataValueCollectionModifier().write(0, wrappedDataValueList);
         for (Player p : sendTo) sendPacket(p, packet);
