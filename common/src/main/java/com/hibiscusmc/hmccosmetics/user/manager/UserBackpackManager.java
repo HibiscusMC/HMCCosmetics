@@ -93,7 +93,7 @@ public class UserBackpackManager {
                 else HMCCPacketManager.sendRidingPacket(particleCloud.get(i - 1), particleCloud.get(i) , owner);
             }
             HMCCPacketManager.sendRidingPacket(particleCloud.get(particleCloud.size() - 1),getFirstItemDisplayId(), owner);
-            if (!user.isHidden()) HMCCPacketManager.sendItemDisplayMetadata(getFirstItemDisplayId(), cosmeticBackpackType.getMetadata(), user.getUserCosmeticItem(cosmeticBackpackType, cosmeticBackpackType.getFirstPersonBackpack()), outsideViewers);
+            if (!user.isHidden()) HMCCPacketManager.sendItemDisplayMetadata(getFirstItemDisplayId(), cosmeticBackpackType.getFirstPersonMetadata(), user.getUserCosmeticItem(cosmeticBackpackType, cosmeticBackpackType.getFirstPersonBackpack()), outsideViewers);
         }
 
         HMCCPacketManager.sendItemDisplayMetadata(getFirstItemDisplayId(), cosmeticBackpackType.getMetadata(), user.getUserCosmeticItem(cosmeticBackpackType), outsideViewers);

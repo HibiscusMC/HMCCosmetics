@@ -32,20 +32,22 @@ public class CosmeticBackpackType extends Cosmetic {
     private ItemStack firstPersonBackpack;
     @Getter @Setter
     private ItemDisplayMetadata metadata;
+    @Getter @Setter
+    private ItemDisplayMetadata firstPersonMetadata;
 
     public CosmeticBackpackType(String id, ConfigurationNode config) {
         super(id, config);
 
         modelName = config.node("model").getString();
 
-        if (!config.node("firstperson-item").virtual()) {
-            this.firstPersonBackpack = generateItemStack(config.node("firstperson-item"));
+        ConfigurationNode firstPersonNode = config.node("firstperson-item");
+        if (!firstPersonNode.virtual()) {
+            this.firstPersonBackpack = generateItemStack(firstPersonNode);
             this.height = config.node("height").getInt(5);
         }
 
-        if (!config.node("metadata").virtual()) {
-            this.metadata = generateItemDisplayMetadata(config.node("metadata"));
-        } else this.metadata = new ItemDisplayMetadata();
+        this.firstPersonMetadata = generateItemDisplayMetadata(config.node("firstperson-metadata"));
+        this.metadata = generateItemDisplayMetadata(config.node("metadata"));
     }
 
     @Override
@@ -53,7 +55,7 @@ public class CosmeticBackpackType extends Cosmetic {
         Entity entity = Bukkit.getEntity(user.getUniqueId());
         if (entity == null) return;
 
-        Location loc = entity.getLocation().clone().add(0, 2, 0);
+        Location loc = entity.getLocation();
 
         if (user.isInWardrobe() || !user.isBackpackSpawned()) return;
         if (user.isHidden()) {
@@ -64,7 +66,7 @@ public class CosmeticBackpackType extends Cosmetic {
         List<Player> outsideViewers = user.getUserBackpackManager().getEntityManager().refreshViewers(loc);
 
         UserBackpackManager backpackManager = user.getUserBackpackManager();
-        //backpackManager.getEntityManager().setRotation((int) loc.getYaw(), isFirstPersonCompadible());
+        //backpackManager.getEntityManager().setRotation((int) loc.getYaw(), false);
 
         HMCCPacketManager.sendEntitySpawnPacket(user.getEntity().getLocation(), backpackManager.getFirstItemDisplayId(), EntityType.ITEM_DISPLAY, UUID.randomUUID(), outsideViewers);
         //metadata.rotationLeft.rotateY((float) Math.toRadians(loc.getYaw()));
@@ -86,7 +88,7 @@ public class CosmeticBackpackType extends Cosmetic {
             }
             HMCCPacketManager.sendRidingPacket(particleCloud.get(particleCloud.size() - 1), backpackManager.getFirstItemDisplayId(), owner);
             if (!user.isHidden()) {
-                HMCCPacketManager.sendItemDisplayMetadata(backpackManager.getFirstItemDisplayId(), metadata, user.getUserCosmeticItem(this, firstPersonBackpack), owner);
+                HMCCPacketManager.sendItemDisplayMetadata(backpackManager.getFirstItemDisplayId(), firstPersonMetadata, user.getUserCosmeticItem(this, firstPersonBackpack), owner);
             }
             MessagesUtil.sendDebugMessages("First Person Backpack Update[owner=" + user.getUniqueId() + ",player_location=" + loc + "]!", Level.INFO);
         }

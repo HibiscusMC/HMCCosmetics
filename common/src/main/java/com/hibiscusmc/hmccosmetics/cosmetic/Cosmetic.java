@@ -86,37 +86,39 @@ public abstract class Cosmetic {
 
     protected ItemDisplayMetadata generateItemDisplayMetadata(ConfigurationNode config) {
         ItemDisplayMetadata metadata = new ItemDisplayMetadata();
-        ConfigurationNode translationNode = config.node("translation");
-        ConfigurationNode scaleNode = config.node("scale");
-        ConfigurationNode rotationLeftNode = config.node("rotation-left");
-        ConfigurationNode rotationRightNode = config.node("rotation-right");
-        ConfigurationNode billboardNode = config.node("billboard");
-        ConfigurationNode blockLightNode = config.node("block-light");
-        ConfigurationNode skyLightNode = config.node("sky-light");
-        ConfigurationNode viewRangeNode = config.node("viewrange");
-        ConfigurationNode widthNode = config.node("width");
-        ConfigurationNode heightNode = config.node("height");
-        ConfigurationNode displayTransformNode = config.node("display-transform");
-        ConfigurationNode itemstackNode = config.node("item");
+        if (!config.virtual()) {
+            ConfigurationNode translationNode = config.node("translation");
+            ConfigurationNode scaleNode = config.node("scale");
+            ConfigurationNode rotationLeftNode = config.node("rotation-left");
+            ConfigurationNode rotationRightNode = config.node("rotation-right");
+            ConfigurationNode billboardNode = config.node("billboard");
+            ConfigurationNode blockLightNode = config.node("block-light");
+            ConfigurationNode skyLightNode = config.node("sky-light");
+            ConfigurationNode viewRangeNode = config.node("viewrange");
+            ConfigurationNode widthNode = config.node("width");
+            ConfigurationNode heightNode = config.node("height");
+            ConfigurationNode displayTransformNode = config.node("display-transform");
+            ConfigurationNode itemstackNode = config.node("item");
 
-        if (!translationNode.virtual()) metadata.translation = stringToVector(translationNode.getString("0,0,0"));
-        if (!scaleNode.virtual()) metadata.scale = stringToVector(scaleNode.getString("1,1,1"));
-        if (!rotationLeftNode.virtual()) metadata.rotationLeft = stringToQuaternion(rotationLeftNode.getString("0,0,0,1"));
-        if (!rotationRightNode.virtual()) metadata.rotationRight = stringToQuaternion(rotationRightNode.getString("0,0,0,1"));
-        if (!billboardNode.virtual()) try {
-            metadata.billboard = Display.Billboard.valueOf(billboardNode.getString("VERTICAL"));
-        } catch (Exception ignored) {}
-        if (!blockLightNode.virtual()) metadata.blockLight = blockLightNode.getInt(0);
-        if (!skyLightNode.virtual()) metadata.skyLight = skyLightNode.getInt(15);
-        if (!viewRangeNode.virtual()) metadata.viewRange = viewRangeNode.getFloat(1);
-        if (!widthNode.virtual()) metadata.width = widthNode.getFloat(0);
-        if (!heightNode.virtual()) metadata.height = heightNode.getFloat(0);
-        if (!displayTransformNode.virtual()) try {
-            metadata.displayTransform = ItemDisplay.ItemDisplayTransform.valueOf(displayTransformNode.getString());
-        } catch (Exception ignored) {}
-        if (!itemstackNode.virtual()) try {
-            metadata.itemStack = ItemSerializer.INSTANCE.deserialize(ItemStack.class, itemstackNode);
-        } catch (Exception ignored) {}
+            if (!translationNode.virtual()) metadata.translation = stringToVector(translationNode.getString("0,0,0"));
+            if (!scaleNode.virtual()) metadata.scale = stringToVector(scaleNode.getString("1,1,1"));
+            if (!rotationLeftNode.virtual()) metadata.rotationLeft = stringToQuaternion(rotationLeftNode.getString("0,0,0,1"));
+            if (!rotationRightNode.virtual()) metadata.rotationRight = stringToQuaternion(rotationRightNode.getString("0,0,0,1"));
+            if (!billboardNode.virtual()) try {
+                metadata.billboard = Display.Billboard.valueOf(billboardNode.getString("VERTICAL"));
+            } catch (Exception ignored) {}
+            if (!blockLightNode.virtual()) metadata.blockLight = blockLightNode.getInt(0);
+            if (!skyLightNode.virtual()) metadata.skyLight = skyLightNode.getInt(15);
+            if (!viewRangeNode.virtual()) metadata.viewRange = viewRangeNode.getFloat(1);
+            if (!widthNode.virtual()) metadata.width = widthNode.getFloat(0);
+            if (!heightNode.virtual()) metadata.height = heightNode.getFloat(0);
+            if (!displayTransformNode.virtual()) try {
+                metadata.displayTransform = ItemDisplay.ItemDisplayTransform.valueOf(displayTransformNode.getString());
+            } catch (Exception ignored) {}
+            if (!itemstackNode.virtual()) try {
+                metadata.itemStack = ItemSerializer.INSTANCE.deserialize(ItemStack.class, itemstackNode);
+            } catch (Exception ignored) {}
+        }
 
         return metadata;
     }
