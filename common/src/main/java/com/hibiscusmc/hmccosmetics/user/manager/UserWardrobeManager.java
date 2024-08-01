@@ -6,6 +6,7 @@ import com.hibiscusmc.hmccosmetics.config.WardrobeLocation;
 import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
+import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBackpackType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
 import com.hibiscusmc.hmccosmetics.gui.Menu;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
@@ -13,6 +14,7 @@ import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.HMCCInventoryUtils;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.HMCCServerUtils;
+import com.hibiscusmc.hmccosmetics.util.misc.ItemDisplayMetadata;
 import com.hibiscusmc.hmccosmetics.util.packets.HMCCPacketManager;
 import lombok.Getter;
 import lombok.Setter;
@@ -139,12 +141,13 @@ public class UserWardrobeManager {
             // Misc
             if (user.hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
                 // Maybe null as backpack maybe despawned before entering
-                if (user.getUserBackpackManager() == null) user.respawnBackpack();
+                UserBackpackManager userBackpackManager = user.getUserBackpackManager();
+                if (userBackpackManager == null) user.respawnBackpack();
                 if (user.isBackpackSpawned()) {
-                    user.getUserBackpackManager().getEntityManager().teleport(npcLocation.clone().add(0, 2, 0));
-                    //PacketManager.equipmentSlotUpdate(user.getUserBackpackManager().getFirstItemDisplayId(), EquipmentSlot.HEAD, user.getUserCosmeticItem(user.getCosmetic(CosmeticSlot.BACKPACK)), viewer);
-                    HMCCPacketManager.sendItemDisplayMetadata(ITEM_DISPLAY_ID, user.getUserCosmeticItem(user.getCosmetic(CosmeticSlot.BACKPACK)), viewer);
-                    HMCCPacketManager.ridingMountPacket(NPC_ID, user.getUserBackpackManager().getFirstItemDisplayId(), viewer);
+                    userBackpackManager.getEntityManager().teleport(npcLocation.clone());
+                    CosmeticBackpackType backpackCosmetic = (CosmeticBackpackType) user.getCosmetic(CosmeticSlot.BACKPACK);
+                    HMCCPacketManager.sendItemDisplayMetadata(ITEM_DISPLAY_ID, backpackCosmetic.getMetadata(), user.getUserCosmeticItem(backpackCosmetic), viewer);
+                    HMCCPacketManager.ridingMountPacket(NPC_ID, userBackpackManager.getFirstItemDisplayId(), viewer);
                 }
             }
 

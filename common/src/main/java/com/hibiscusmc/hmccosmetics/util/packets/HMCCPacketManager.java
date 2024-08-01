@@ -12,6 +12,7 @@ import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import com.hibiscusmc.hmccosmetics.util.HMCCInventoryUtils;
 import com.hibiscusmc.hmccosmetics.util.HMCCPlayerUtils;
+import com.hibiscusmc.hmccosmetics.util.misc.ItemDisplayMetadata;
 import com.hibiscusmc.hmccosmetics.util.packets.wrappers.WrapperPlayServerNamedEntitySpawn;
 import com.hibiscusmc.hmccosmetics.util.packets.wrappers.WrapperPlayServerPlayerInfo;
 import com.hibiscusmc.hmccosmetics.util.packets.wrappers.WrapperPlayServerRelEntityMove;
@@ -91,12 +92,19 @@ public class HMCCPacketManager extends PacketManager {
         equipmentSlotUpdate(entityId, HMCCInventoryUtils.getEquipmentSlot(cosmeticSlot), user.getUserCosmeticItem(cosmeticSlot), sendTo);
     }
 
-    public static void sendItemDisplayMetadata(
-            int entityId,
-            ItemStack itemStack,
-            List<Player> sendTo
-    ) {
-        PacketManager.sendItemDisplayMetadataPacket(entityId, new Vector3f(0.0f, -3.2f, -0.5f), new Vector3f(1f,1f,1f), new Quaternionf(0f,0f,0f,1f), new Quaternionf(0f,0f,0f,1f), Display.Billboard.VERTICAL, 0, 15, 32, 1f, 1f, ItemDisplay.ItemDisplayTransform.NONE, itemStack, sendTo);
+    public static void sendItemDisplayMetadata(int entityId, ItemStack itemStack, List<Player> sendTo) {
+        ItemDisplayMetadata metadata = new ItemDisplayMetadata();
+        metadata.itemStack = itemStack;
+        PacketManager.sendItemDisplayMetadataPacket(entityId, metadata.translation, metadata.scale, metadata.rotationLeft, metadata.rotationRight, metadata.billboard, metadata.blockLight, metadata.skyLight, metadata.viewRange, metadata.width, metadata.height, metadata.displayTransform, itemStack, sendTo);
+    }
+
+    public static void sendItemDisplayMetadata(int entityId, ItemDisplayMetadata metadata, List<Player> sendTo) {
+        ItemDisplayMetadata.metadataCache.put(entityId, metadata);
+        PacketManager.sendItemDisplayMetadataPacket(entityId, metadata.translation, metadata.scale, metadata.rotationLeft, metadata.rotationRight, metadata.billboard, metadata.blockLight, metadata.skyLight, metadata.viewRange, metadata.width, metadata.height, metadata.displayTransform, metadata.itemStack, sendTo);
+    }
+
+    public static void sendItemDisplayMetadata(int entityId, ItemDisplayMetadata metadata, ItemStack itemStack, List<Player> sendTo) {
+        PacketManager.sendItemDisplayMetadataPacket(entityId, metadata.translation, metadata.scale, metadata.rotationLeft, metadata.rotationRight, metadata.billboard, metadata.blockLight, metadata.skyLight, metadata.viewRange, metadata.width, metadata.height, metadata.displayTransform, itemStack, sendTo);
     }
 
     public static void sendInvisibilityPacket(

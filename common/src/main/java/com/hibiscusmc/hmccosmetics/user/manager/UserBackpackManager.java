@@ -1,30 +1,28 @@
 package com.hibiscusmc.hmccosmetics.user.manager;
 
-import com.hibiscusmc.hmccosmetics.config.Settings;
+import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBackpackType;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
+import com.hibiscusmc.hmccosmetics.util.misc.ItemDisplayMetadata;
 import com.hibiscusmc.hmccosmetics.util.packets.HMCCPacketManager;
 import com.ticxo.modelengine.api.ModelEngineAPI;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import lombok.Getter;
-import lombok.Setter;
 import me.lojosho.hibiscuscommons.hooks.Hooks;
 import me.lojosho.hibiscuscommons.util.ServerUtils;
-import me.lojosho.hibiscuscommons.util.packets.PacketManager;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Level;
 
@@ -62,10 +60,12 @@ public class UserBackpackManager {
     }
 
     private void spawn(CosmeticBackpackType cosmeticBackpackType) {
+        Location entityLoc = user.getEntity().getLocation();
+        entityLoc.setPitch(0f);
         getEntityManager().setIds(List.of(itemDisplayId));
-        getEntityManager().teleport(user.getEntity().getLocation());
+        getEntityManager().teleport(entityLoc);
         List<Player> outsideViewers = getEntityManager().getViewers();
-        HMCCPacketManager.sendEntitySpawnPacket(user.getEntity().getLocation(), getFirstItemDisplayId(), EntityType.ITEM_DISPLAY, UUID.randomUUID(), getEntityManager().getViewers());
+        HMCCPacketManager.sendEntitySpawnPacket(entityLoc, getFirstItemDisplayId(), EntityType.ITEM_DISPLAY, UUID.randomUUID(), getEntityManager().getViewers());
 
         Entity entity = user.getEntity();
 
@@ -80,7 +80,7 @@ public class UserBackpackManager {
         ArrayList<Player> owner = new ArrayList<>();
         if (user.getPlayer() != null) owner.add(user.getPlayer());
 
-        if (cosmeticBackpackType.isFirstPersonCompadible()) {
+        if (cosmeticBackpackType.isFirstPersonCompatible()) {
             for (int i = particleCloud.size(); i < cosmeticBackpackType.getHeight(); i++) {
                 int entityId = ServerUtils.getNextEntityId();
                 HMCCPacketManager.sendEntitySpawnPacket(user.getEntity().getLocation(), entityId, EntityType.AREA_EFFECT_CLOUD, UUID.randomUUID());
@@ -92,10 +92,11 @@ public class UserBackpackManager {
                 if (i == 0) HMCCPacketManager.sendRidingPacket(entity.getEntityId(), particleCloud.get(i), owner);
                 else HMCCPacketManager.sendRidingPacket(particleCloud.get(i - 1), particleCloud.get(i) , owner);
             }
-            HMCCPacketManager.sendRidingPacket(particleCloud.get(particleCloud.size() - 1), user.getUserBackpackManager().getFirstItemDisplayId(), owner);
-            if (!user.isHidden()) HMCCPacketManager.sendItemDisplayMetadata(getFirstItemDisplayId(), user.getUserCosmeticItem(cosmeticBackpackType, cosmeticBackpackType.getFirstPersonBackpack()), outsideViewers);
+            HMCCPacketManager.sendRidingPacket(particleCloud.get(particleCloud.size() - 1),getFirstItemDisplayId(), owner);
+            if (!user.isHidden()) HMCCPacketManager.sendItemDisplayMetadata(getFirstItemDisplayId(), cosmeticBackpackType.getMetadata(), user.getUserCosmeticItem(cosmeticBackpackType, cosmeticBackpackType.getFirstPersonBackpack()), outsideViewers);
         }
-        HMCCPacketManager.sendItemDisplayMetadata(getFirstItemDisplayId(), user.getUserCosmeticItem(cosmeticBackpackType), outsideViewers);
+
+        HMCCPacketManager.sendItemDisplayMetadata(getFirstItemDisplayId(), cosmeticBackpackType.getMetadata(), user.getUserCosmeticItem(cosmeticBackpackType), outsideViewers);
         HMCCPacketManager.sendRidingPacket(entity.getEntityId(), passengerIDs, outsideViewers);
 
         // No one should be using ME because it barely works but some still use it, so it's here
@@ -148,8 +149,8 @@ public class UserBackpackManager {
     }
 
     public void setItem(ItemStack item) {
-        //PacketManager.equipmentSlotUpdate(getFirstItemDisplayId(), EquipmentSlot.HEAD, item, getEntityManager().getViewers());
-        HMCCPacketManager.sendItemDisplayMetadata(getFirstItemDisplayId(), item, getEntityManager().getViewers());
+        ItemDisplayMetadata metadata = Optional.ofNullable((CosmeticBackpackType) user.getCosmetic(CosmeticSlot.BACKPACK)).map(CosmeticBackpackType::getMetadata).orElse(new ItemDisplayMetadata());
+        HMCCPacketManager.sendItemDisplayMetadata(getFirstItemDisplayId(), metadata, item, getEntityManager().getViewers());
     }
 
     public void clearItems() {
