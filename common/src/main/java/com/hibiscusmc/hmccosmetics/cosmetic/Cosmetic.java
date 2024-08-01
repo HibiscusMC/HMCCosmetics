@@ -91,8 +91,6 @@ public abstract class Cosmetic {
             ConfigurationNode scaleNode = config.node("scale");
             ConfigurationNode rotationLeftNode = config.node("rotation-left");
             ConfigurationNode rotationRightNode = config.node("rotation-right");
-            ConfigurationNode billboardNode = config.node("billboard");
-            ConfigurationNode blockLightNode = config.node("block-light");
             ConfigurationNode skyLightNode = config.node("sky-light");
             ConfigurationNode viewRangeNode = config.node("viewrange");
             ConfigurationNode widthNode = config.node("width");
@@ -104,10 +102,6 @@ public abstract class Cosmetic {
             if (!scaleNode.virtual()) metadata.scale = stringToVector(scaleNode.getString("1,1,1"));
             if (!rotationLeftNode.virtual()) metadata.rotationLeft = stringToQuaternion(rotationLeftNode.getString("0,0,0,1"));
             if (!rotationRightNode.virtual()) metadata.rotationRight = stringToQuaternion(rotationRightNode.getString("0,0,0,1"));
-            if (!billboardNode.virtual()) try {
-                metadata.billboard = Display.Billboard.valueOf(billboardNode.getString("VERTICAL"));
-            } catch (Exception ignored) {}
-            if (!blockLightNode.virtual()) metadata.blockLight = blockLightNode.getInt(0);
             if (!skyLightNode.virtual()) metadata.skyLight = skyLightNode.getInt(15);
             if (!viewRangeNode.virtual()) metadata.viewRange = viewRangeNode.getFloat(1);
             if (!widthNode.virtual()) metadata.width = widthNode.getFloat(0);

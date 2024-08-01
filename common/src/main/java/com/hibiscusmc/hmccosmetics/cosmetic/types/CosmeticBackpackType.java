@@ -46,8 +46,8 @@ public class CosmeticBackpackType extends Cosmetic {
             this.height = config.node("height").getInt(5);
         }
 
-        this.firstPersonMetadata = generateItemDisplayMetadata(config.node("firstperson-metadata"));
-        this.metadata = generateItemDisplayMetadata(config.node("metadata"));
+        this.firstPersonMetadata = generateItemDisplayMetadata(config.node("firstperson-metadata")).setVertical();
+        this.metadata = generateItemDisplayMetadata(config.node("metadata")).setFixed();
     }
 
     @Override

@@ -94,16 +94,15 @@ public class HMCCPacketManager extends PacketManager {
 
     public static void sendItemDisplayMetadata(int entityId, ItemStack itemStack, List<Player> sendTo) {
         ItemDisplayMetadata metadata = new ItemDisplayMetadata();
-        PacketManager.sendItemDisplayMetadataPacket(entityId, metadata.translation, metadata.scale, metadata.rotationLeft, metadata.rotationRight, metadata.billboard, metadata.blockLight, metadata.skyLight, metadata.viewRange, metadata.width, metadata.height, metadata.displayTransform, itemStack, sendTo);
+        PacketManager.sendItemDisplayMetadataPacket(entityId, metadata.translation, metadata.scale, metadata.rotationLeft, metadata.rotationRight, metadata.billboard, 0, metadata.skyLight, metadata.viewRange, metadata.width, metadata.height, metadata.displayTransform, itemStack, sendTo);
     }
 
     public static void sendItemDisplayMetadata(int entityId, ItemDisplayMetadata metadata, List<Player> sendTo) {
-        ItemDisplayMetadata.metadataCache.put(entityId, metadata);
-        PacketManager.sendItemDisplayMetadataPacket(entityId, metadata.translation, metadata.scale, metadata.rotationLeft, metadata.rotationRight, metadata.billboard, metadata.blockLight, metadata.skyLight, metadata.viewRange, metadata.width, metadata.height, metadata.displayTransform, metadata.itemStack, sendTo);
+        PacketManager.sendItemDisplayMetadataPacket(entityId, metadata.translation, metadata.scale, metadata.rotationLeft, metadata.rotationRight, metadata.billboard, 0, metadata.skyLight, metadata.viewRange, metadata.width, metadata.height, metadata.displayTransform, metadata.itemStack, sendTo);
     }
 
     public static void sendItemDisplayMetadata(int entityId, ItemDisplayMetadata metadata, ItemStack itemStack, List<Player> sendTo) {
-        PacketManager.sendItemDisplayMetadataPacket(entityId, metadata.translation, metadata.scale, metadata.rotationLeft, metadata.rotationRight, metadata.billboard, metadata.blockLight, metadata.skyLight, metadata.viewRange, metadata.width, metadata.height, metadata.displayTransform, itemStack, sendTo);
+        PacketManager.sendItemDisplayMetadataPacket(entityId, metadata.translation, metadata.scale, metadata.rotationLeft, metadata.rotationRight, metadata.billboard, 0, metadata.skyLight, metadata.viewRange, metadata.width, metadata.height, metadata.displayTransform, itemStack, sendTo);
     }
 
     public static void sendInvisibilityPacket(
