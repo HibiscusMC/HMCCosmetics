@@ -66,18 +66,6 @@ public class UserBackpackManager {
         getEntityManager().teleport(user.getEntity().getLocation());
         List<Player> outsideViewers = getEntityManager().getViewers();
         HMCCPacketManager.sendEntitySpawnPacket(user.getEntity().getLocation(), getFirstItemDisplayId(), EntityType.ITEM_DISPLAY, UUID.randomUUID(), getEntityManager().getViewers());
-        /*if (Settings.isBackpackBlockDetection()) {
-            if (checkBlock()) {
-                setInBlock(true);
-                HMCCPacketManager.sendItemDisplayMetadata(getFirstItemDisplayId(), outsideViewers);
-            } else {
-                HMCCPacketManager.sendItemDisplayMetadata(getFirstItemDisplayId(), outsideViewers);
-            }
-            refreshBlock(outsideViewers);
-        } else {
-            HMCCPacketManager.sendItemDisplayMetadata(getFirstItemDisplayId(), outsideViewers);
-        }*/
-        //HMCCPacketManager.sendItemDisplayMetadata(getFirstItemDisplayId(), new ItemStack(Material.AIR), outsideViewers);
 
         Entity entity = user.getEntity();
 
@@ -105,10 +93,8 @@ public class UserBackpackManager {
                 else HMCCPacketManager.sendRidingPacket(particleCloud.get(i - 1), particleCloud.get(i) , owner);
             }
             HMCCPacketManager.sendRidingPacket(particleCloud.get(particleCloud.size() - 1), user.getUserBackpackManager().getFirstItemDisplayId(), owner);
-            //if (!user.isHidden()) PacketManager.equipmentSlotUpdate(user.getUserBackpackManager().getFirstItemDisplayId(), EquipmentSlot.HEAD, user.getUserCosmeticItem(cosmeticBackpackType, cosmeticBackpackType.getFirstPersonBackpack()), owner);
-            //if (!user.isHidden()) HMCCPacketManager.sendItemDisplayMetadata(getFirstItemDisplayId(), user.getUserCosmeticItem(cosmeticBackpackType, cosmeticBackpackType.getFirstPersonBackpack()), outsideViewers);
+            if (!user.isHidden()) HMCCPacketManager.sendItemDisplayMetadata(getFirstItemDisplayId(), user.getUserCosmeticItem(cosmeticBackpackType, cosmeticBackpackType.getFirstPersonBackpack()), outsideViewers);
         }
-        //PacketManager.equipmentSlotUpdate(getFirstItemDisplayId(), EquipmentSlot.HAND, user.getUserCosmeticItem(cosmeticBackpackType), outsideViewers);
         HMCCPacketManager.sendItemDisplayMetadata(getFirstItemDisplayId(), user.getUserCosmeticItem(cosmeticBackpackType), outsideViewers);
         HMCCPacketManager.sendRidingPacket(entity.getEntityId(), passengerIDs, outsideViewers);
 

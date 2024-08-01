@@ -58,12 +58,9 @@ public class CosmeticBackpackType extends Cosmetic {
         List<Player> outsideViewers = user.getUserBackpackManager().getEntityManager().refreshViewers(loc);
 
         UserBackpackManager backpackManager = user.getUserBackpackManager();
-        //backpackManager.getEntityManager().teleport(loc);
         backpackManager.getEntityManager().setRotation((int) loc.getYaw(), isFirstPersonCompadible());
 
         HMCCPacketManager.sendEntitySpawnPacket(user.getEntity().getLocation(), backpackManager.getFirstItemDisplayId(), EntityType.ITEM_DISPLAY, UUID.randomUUID(), outsideViewers);
-        //HMCCPacketManager.sendArmorstandMetadata(backpackManager.getFirstArmorStandId(), outsideViewers);
-        //PacketManager.equipmentSlotUpdate(backpackManager.getFirstItemDisplayId(), EquipmentSlot.HEAD, user.getUserCosmeticItem(this, getItem()), outsideViewers);
         HMCCPacketManager.sendItemDisplayMetadata(backpackManager.getFirstItemDisplayId(), user.getUserCosmeticItem(this, getItem()), outsideViewers);
         // If true, it will send the riding packet to all players. If false, it will send the riding packet only to new players
         if (Settings.isBackpackForceRidingEnabled()) HMCCPacketManager.sendRidingPacket(entity.getEntityId(), backpackManager.getFirstItemDisplayId(), backpackManager.getEntityManager().getViewers());
@@ -84,7 +81,7 @@ public class CosmeticBackpackType extends Cosmetic {
             if (!user.isHidden()) {
                 //if (loc.getPitch() < -70) NMSHandlers.getHandler().equipmentSlotUpdate(user.getUserBackpackManager().getFirstArmorStandId(), EquipmentSlot.HEAD, new ItemStack(Material.AIR), owner);
                 //else NMSHandlers.getHandler().equipmentSlotUpdate(user.getUserBackpackManager().getFirstArmorStandId(), EquipmentSlot.HEAD, firstPersonBackpack, owner);
-                PacketManager.equipmentSlotUpdate(backpackManager.getFirstItemDisplayId(), EquipmentSlot.HEAD, user.getUserCosmeticItem(this, firstPersonBackpack), owner);
+                HMCCPacketManager.sendItemDisplayMetadata(backpackManager.getFirstItemDisplayId(), user.getUserCosmeticItem(this, firstPersonBackpack), owner);
             }
             MessagesUtil.sendDebugMessages("First Person Backpack Update[owner=" + user.getUniqueId() + ",player_location=" + loc + "]!", Level.INFO);
         }
