@@ -63,6 +63,7 @@ public class HMCCInventoryUtils {
             case FEET -> CosmeticSlot.BOOTS;
             case OFFHAND -> CosmeticSlot.OFFHAND;
             case MAINHAND -> CosmeticSlot.MAINHAND;
+            default -> null;
         };
     }
 
