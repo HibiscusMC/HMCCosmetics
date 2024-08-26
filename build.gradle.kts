@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "com.hibiscusmc"
-version = "2.7.3"
+version = "2.7.4-DEV"
 
 allprojects {
     apply(plugin = "java")
@@ -79,7 +79,7 @@ allprojects {
         compileOnly("org.jetbrains:annotations:24.1.0")
         compileOnly("com.comphenix.protocol:ProtocolLib:5.3.0-SNAPSHOT")
         compileOnly("me.clip:placeholderapi:2.11.6")
-        compileOnly("com.ticxo.modelengine:ModelEngine:R4.0.2")
+        compileOnly("com.ticxo.modelengine:ModelEngine:R4.0.6")
         compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.1.0-SNAPSHOT")
         compileOnly("it.unimi.dsi:fastutil:8.5.13")
         compileOnly("org.projectlombok:lombok:1.18.34")

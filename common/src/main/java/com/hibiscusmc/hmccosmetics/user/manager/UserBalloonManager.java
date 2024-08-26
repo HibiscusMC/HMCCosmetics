@@ -11,6 +11,7 @@ import com.ticxo.modelengine.api.ModelEngineAPI;
 import com.ticxo.modelengine.api.entity.data.BukkitEntityData;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
+import com.ticxo.modelengine.api.nms.RenderParsers;
 import lombok.Getter;
 import me.lojosho.hibiscuscommons.hooks.Hooks;
 import me.lojosho.hibiscuscommons.nms.NMSHandlers;
@@ -82,7 +83,7 @@ public class UserBalloonManager {
                 modeledEntity.getModels().forEach((d, singleModel) -> {
                     if (cosmeticBalloonType.isDyablePart(d)) {
                         singleModel.setDefaultTint(color);
-                        singleModel.getModelRenderer().sendToClient();
+                        singleModel.getModelRenderer().sendToClient(ModelEngineAPI.getNMSHandler().createParsers());
                     }
                 });
             }
