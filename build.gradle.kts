@@ -129,9 +129,9 @@ tasks {
     shadowJar {
         mergeServiceFiles()
 
-        relocate("dev.triumphteam.gui", "com.hisbiscusmc.hmccosmetics.gui")
-        relocate("com.owen1212055.particlehelper", "com.hisbiscusmc.hmccosmetics.particlehelper")
-        relocate("com.ticxo.playeranimator", "com.hisbiscusmc.hmccosmetics.playeranimator")
+        relocate("dev.triumphteam.gui", "com.hibiscusmc.hmccosmetics.shaded.gui")
+        relocate("com.owen1212055.particlehelper", "com.hibiscusmc.hmccosmetics.shaded.particlehelper")
+        relocate("com.ticxo.playeranimator", "com.hibiscusmc.hmccosmetics.shaded.playeranimator")
         archiveFileName.set("HMCCosmeticsRemapped-${project.version}.jar")
 
         dependencies {
