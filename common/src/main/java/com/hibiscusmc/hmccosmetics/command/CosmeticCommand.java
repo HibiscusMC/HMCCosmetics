@@ -247,12 +247,16 @@ public class CosmeticCommand implements CommandExecutor {
             }
             // cosmetic menu exampleMenu playerName
             case ("menu") -> {
-                if (args.length == 1) return true;
                 if (!sender.hasPermission("hmccosmetics.cmd.menu")) {
                     if (!silent) MessagesUtil.sendMessage(sender, "no-permission");
                     return true;
                 }
-                Menu menu = Menus.getMenu(args[1]);
+                Menu menu;
+                if (args.length == 1) {
+                    menu = Menus.getDefaultMenu();
+                } else {
+                    menu = Menus.getMenu(args[1]);
+                }
 
                 if (sender instanceof Player) player = ((Player) sender).getPlayer();
                 if (sender.hasPermission("hmccosmetics.cmd.menu.other")) {
