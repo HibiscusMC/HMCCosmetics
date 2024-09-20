@@ -49,9 +49,6 @@ allprojects {
             }
         }
 
-        // UpdateChecker
-        maven("https://hub.jeff-media.com/nexus/repository/jeff-media-public/")
-
         // ParticleHelper
         maven("https://repo.bytecode.space/repository/maven-public/")
 
