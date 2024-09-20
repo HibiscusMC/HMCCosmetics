@@ -2,7 +2,7 @@ import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
 
 plugins {
     id("java")
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("com.gradleup.shadow") version "8.3.2"
     id("xyz.jpenilla.run-paper") version "2.0.0"
     id("net.minecrell.plugin-yml.bukkit") version "0.6.0"
 }
@@ -80,8 +80,8 @@ allprojects {
         compileOnly("com.comphenix.protocol:ProtocolLib:5.3.0-SNAPSHOT")
         compileOnly("me.clip:placeholderapi:2.11.6")
         compileOnly("com.ticxo.modelengine:ModelEngine:R4.0.6")
-        compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.1.0-SNAPSHOT")
-        compileOnly("it.unimi.dsi:fastutil:8.5.13")
+        compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.12")
+        //compileOnly("it.unimi.dsi:fastutil:8.5.14")
         compileOnly("org.projectlombok:lombok:1.18.34")
         compileOnly("me.lojosho:HibiscusCommons:0.4.1")
 
