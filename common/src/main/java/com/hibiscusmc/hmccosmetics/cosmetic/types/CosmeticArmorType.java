@@ -22,7 +22,12 @@ public class CosmeticArmorType extends Cosmetic {
     public CosmeticArmorType(String id, ConfigurationNode config) {
         super(id, config);
 
-        this.equipSlot = HMCCInventoryUtils.getEquipmentSlot(getSlot());
+        EquipmentSlot slot = HMCCInventoryUtils.getEquipmentSlot(getSlot());
+        if (slot == null) {
+            // Hypothetically it shouldn't be null, but it was happening on some random servers? Adding this just in case
+            throw new IllegalArgumentException("Invalid slot for cosmetic armor type: " + getSlot() + " in " + id + " cosmetic config.");
+        }
+        this.equipSlot = slot;
     }
 
     @Override
@@ -52,6 +57,7 @@ public class CosmeticArmorType extends Cosmetic {
         return cosmeticItem;
     }
 
+    @NotNull
     public EquipmentSlot getEquipSlot() {
         return this.equipSlot;
     }
