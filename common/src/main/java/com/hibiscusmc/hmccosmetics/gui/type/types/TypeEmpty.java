@@ -75,7 +75,7 @@ public class TypeEmpty extends Type {
         }
 
         if (itemMeta instanceof SkullMeta skullMeta) {
-            if (skullMeta.hasOwner()) {
+            if (skullMeta.hasOwner() && skullMeta.getOwner() != null) {
                 skullMeta.setOwner(Hooks.processPlaceholders(user.getPlayer(), skullMeta.getOwner()));
             }
         }
