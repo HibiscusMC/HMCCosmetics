@@ -455,6 +455,22 @@ public class PlayerGameListener implements Listener {
         user.showCosmetics(CosmeticUser.HiddenReason.EMOTE);
     }
 
+    @EventHandler(priority = EventPriority.LOW)
+    public void onPlayerHibiscusPose(HibiscusPlayerPoseEvent event) {
+        if (event.isGettingUp()) return;
+        CosmeticUser user = CosmeticUsers.getUser(event.getPlayer());
+        if (user == null) return;
+        user.hideCosmetics(CosmeticUser.HiddenReason.PLUGIN);
+    }
+
+    @EventHandler(priority = EventPriority.LOW)
+    public void onPlayerHibiscusGetUpPose(HibiscusPlayerPoseEvent event) {
+        if (!event.isGettingUp()) return;
+        CosmeticUser user = CosmeticUsers.getUser(event.getPlayer());
+        if (user == null) return;
+        user.showCosmetics(CosmeticUser.HiddenReason.PLUGIN);
+    }
+
     private void registerInventoryClickListener() {
         ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(HMCCosmeticsPlugin.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Client.WINDOW_CLICK) {
             @Override

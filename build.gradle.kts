@@ -80,7 +80,7 @@ allprojects {
         compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.12")
         //compileOnly("it.unimi.dsi:fastutil:8.5.14")
         compileOnly("org.projectlombok:lombok:1.18.34")
-        compileOnly("me.lojosho:HibiscusCommons:0.4.1")
+        compileOnly("me.lojosho:HibiscusCommons:0.4.9")
 
         // Handled by Spigot Library Loader
         compileOnly("net.kyori:adventure-api:4.17.0")
