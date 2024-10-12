@@ -601,6 +601,7 @@ public class PlayerGameListener implements Listener {
                     switch (pair.getFirst()) {
                         case MAINHAND -> {
                             if (user.getPlayer() == event.getPlayer()) continue; // When a player scrolls real fast, it messes up the mainhand. This fixes it
+                            if (user.getPlayer() != null && user.getPlayer().isInvisible()) continue; // Fixes integration with GSit still showing mainhand even when hidden
                             armor.set(i, new Pair<>(pair.getFirst(), user.getPlayer().getInventory().getItemInMainHand()));
                         }
                         default -> {
