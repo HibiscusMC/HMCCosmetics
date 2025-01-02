@@ -15,14 +15,19 @@ import com.hibiscusmc.hmccosmetics.util.HMCCPlayerUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.wrappers.WrapperPlayServerNamedEntitySpawn;
 import com.hibiscusmc.hmccosmetics.util.packets.wrappers.WrapperPlayServerPlayerInfo;
 import com.hibiscusmc.hmccosmetics.util.packets.wrappers.WrapperPlayServerRelEntityMove;
+import me.lojosho.hibiscuscommons.nms.NMSHandlers;
 import me.lojosho.hibiscuscommons.util.packets.PacketManager;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Display;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 import java.util.*;
 
@@ -44,16 +49,7 @@ public class HMCCPacketManager extends PacketManager {
             final UUID uuid,
             final @NotNull List<Player> sendTo
     ) {
-        PacketContainer packet = new PacketContainer(PacketType.Play.Server.SPAWN_ENTITY);
-        packet.getModifier().writeDefaults();
-        packet.getUUIDs().write(0, uuid);
-        packet.getIntegers().write(0, entityId);
-        packet.getEntityTypeModifier().write(0, entityType);
-        packet.getDoubles().
-                write(0, location.getX()).
-                write(1, location.getY()).
-                write(2, location.getZ());
-        for (Player p : sendTo) sendPacket(p, packet);
+        NMSHandlers.getHandler().getPacketHandler().sendSpawnEntityPacket(entityId, uuid, entityType, location, sendTo);
     }
 
     public static void equipmentSlotUpdate(
@@ -96,6 +92,28 @@ public class HMCCPacketManager extends PacketManager {
         equipmentSlotUpdate(entityId, HMCCInventoryUtils.getEquipmentSlot(cosmeticSlot), user.getUserCosmeticItem(cosmeticSlot), sendTo);
     }
 
+    public static void sendItemDisplayMetadata(int entityId, ItemStack item, boolean elongated, List<Player> sendTo) {
+        Vector3f translation = new Vector3f(0, 3, .1f);
+        if (elongated) translation = new Vector3f(0, 8, .5f); // Adjust later
+
+        NMSHandlers.getHandler().getPacketHandler().sendItemDisplayMetadata(entityId,
+                translation,
+                new Vector3f(1, 1, 1),
+                new Quaternionf(),
+                new Quaternionf(),
+                Display.Billboard.FIXED,
+                10,
+               10,
+                10,
+                0,
+                0,
+                ItemDisplay.ItemDisplayTransform.HEAD,
+                item,
+                sendTo);
+
+    }
+
+    @Deprecated
     public static void sendArmorstandMetadata(
             int entityId,
             List<Player> sendTo

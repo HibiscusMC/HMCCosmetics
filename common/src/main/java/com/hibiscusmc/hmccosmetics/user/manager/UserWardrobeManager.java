@@ -145,7 +145,7 @@ public class UserWardrobeManager {
                 if (user.getUserBackpackManager() == null) user.respawnBackpack();
                 if (user.isBackpackSpawned()) {
                     user.getUserBackpackManager().getEntityManager().teleport(npcLocation.clone().add(0, 2, 0));
-                    PacketManager.equipmentSlotUpdate(user.getUserBackpackManager().getFirstArmorStandId(), EquipmentSlot.HEAD, user.getUserCosmeticItem(user.getCosmetic(CosmeticSlot.BACKPACK)), viewer);
+                    //PacketManager.equipmentSlotUpdate(user.getUserBackpackManager().getFirstArmorStandId(), EquipmentSlot.HEAD, user.getUserCosmeticItem(user.getCosmetic(CosmeticSlot.BACKPACK)), viewer);
                     HMCCPacketManager.ridingMountPacket(NPC_ID, user.getUserBackpackManager().getFirstArmorStandId(), viewer);
                 }
             }
@@ -317,11 +317,12 @@ public class UserWardrobeManager {
                     HMCCPacketManager.equipmentSlotUpdate(NPC_ID, user, slot, viewer);
                 }
 
+                // Handle backpacks
                 if (user.hasCosmeticInSlot(CosmeticSlot.BACKPACK) && user.getUserBackpackManager() != null) {
-                    HMCCPacketManager.sendTeleportPacket(user.getUserBackpackManager().getFirstArmorStandId(), location, false, viewer);
-                    HMCCPacketManager.ridingMountPacket(NPC_ID, user.getUserBackpackManager().getFirstArmorStandId(), viewer);
-                    user.getUserBackpackManager().getEntityManager().setRotation(nextyaw);
-                    HMCCPacketManager.sendEntityDestroyPacket(user.getUserBackpackManager().getFirstArmorStandId(), outsideViewers);
+                    HMCCPacketManager.sendTeleportPacket(user.getUserBackpackManager().getDisplayEntityId(), location, false, viewer);
+                    HMCCPacketManager.ridingMountPacket(NPC_ID, user.getUserBackpackManager().getDisplayEntityId(), viewer);
+                    //user.getUserBackpackManager().getEntityManager().setRotation(nextyaw);
+                    HMCCPacketManager.sendEntityDestroyPacket(user.getUserBackpackManager().getDisplayEntityId(), outsideViewers);
                 }
 
                 if (user.hasCosmeticInSlot(CosmeticSlot.BALLOON) && user.isBalloonSpawned()) {
@@ -356,5 +357,4 @@ public class UserWardrobeManager {
         RUNNING,
         STOPPING,
     }
-
 }
