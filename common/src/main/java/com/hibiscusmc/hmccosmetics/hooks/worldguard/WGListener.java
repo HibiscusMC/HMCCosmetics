@@ -46,7 +46,7 @@ public class WGListener implements Listener {
             if (protectedRegion.getFlags().containsKey(WGHook.getCosmeticWardrobeFlag())) {
                 if (!WardrobeSettings.getWardrobeNames().contains(protectedRegion.getFlags().get(WGHook.getCosmeticWardrobeFlag()).toString())) return;
                 Wardrobe wardrobe = WardrobeSettings.getWardrobe(protectedRegion.getFlags().get(WGHook.getCosmeticWardrobeFlag()).toString());
-                user.enterWardrobe(true, wardrobe);
+                user.enterWardrobe(wardrobe, true);
             }
         }
     }
@@ -74,7 +74,7 @@ public class WGListener implements Listener {
             if (protectedRegion.getFlags().containsKey(WGHook.getCosmeticWardrobeFlag())) {
                 if (!WardrobeSettings.getWardrobeNames().contains(protectedRegion.getFlags().get(WGHook.getCosmeticWardrobeFlag()).toString())) return;
                 Wardrobe wardrobe = WardrobeSettings.getWardrobe(protectedRegion.getFlags().get(WGHook.getCosmeticWardrobeFlag()).toString());
-                user.enterWardrobe(true, wardrobe);
+                user.enterWardrobe(wardrobe, true);
             }
         }
     }

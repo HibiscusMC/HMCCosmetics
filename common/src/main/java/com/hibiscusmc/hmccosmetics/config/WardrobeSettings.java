@@ -2,7 +2,6 @@ package com.hibiscusmc.hmccosmetics.config;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
-import com.hibiscusmc.hmccosmetics.util.misc.Utils;
 import lombok.Getter;
 import me.lojosho.hibiscuscommons.config.serializer.LocationSerializer;
 import me.lojosho.shaded.configurate.ConfigurationNode;
@@ -170,7 +169,8 @@ public class WardrobeSettings {
                 MessagesUtil.sendDebugMessages("Wardrobe Location: " + npcLocation);
                 Location viewerLocation = LocationSerializer.INSTANCE.deserialize(Location.class, wardrobesNode.node(VIEWER_LOCATION_PATH));
                 MessagesUtil.sendDebugMessages("Viewer Location: " + viewerLocation);
-                Location leaveLocation = Utils.replaceIfNull(LocationSerializer.INSTANCE.deserialize(Location.class, wardrobesNode.node(LEAVE_LOCATION_PATH)), viewerLocation);
+                Location leaveLocation = LocationSerializer.INSTANCE.deserialize(Location.class, wardrobesNode.node(LEAVE_LOCATION_PATH));
+                if (leaveLocation == null) leaveLocation = viewerLocation;
                 MessagesUtil.sendDebugMessages("Leave Location: " + leaveLocation);
                 WardrobeLocation wardrobeLocation = new WardrobeLocation(npcLocation, viewerLocation, leaveLocation);
 

@@ -21,11 +21,11 @@ import com.hibiscusmc.hmccosmetics.user.manager.UserEmoteManager;
 import com.hibiscusmc.hmccosmetics.user.manager.UserWardrobeManager;
 import com.hibiscusmc.hmccosmetics.util.HMCCInventoryUtils;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
-import com.hibiscusmc.hmccosmetics.util.HMCCPlayerUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.HMCCPacketManager;
 import lombok.Getter;
 import me.lojosho.hibiscuscommons.hooks.Hooks;
 import me.lojosho.hibiscuscommons.util.InventoryUtils;
+import me.lojosho.hibiscuscommons.util.ServerUtils;
 import me.lojosho.hibiscuscommons.util.packets.PacketManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -61,8 +61,6 @@ public class CosmeticUser {
     // Cosmetic Settings/Toggles
     private final ArrayList<HiddenReason> hiddenReason = new ArrayList<>();
     private final HashMap<CosmeticSlot, Color> colors = new HashMap<>();
-    // Cosmetic caches
-    private final HashMap<String, ItemStack> cosmeticItems = new HashMap<>();
 
     public CosmeticUser(UUID uuid) {
         this.uniqueId = uuid;
@@ -81,6 +79,8 @@ public class CosmeticUser {
         // Occasionally updates the entity cosmetics
         Runnable run = () -> {
             MessagesUtil.sendDebugMessages("Tick[uuid=" + uniqueId + "]", Level.INFO);
+            if (Hooks.isInvisible(uniqueId)) hideCosmetics(HiddenReason.VANISH);
+            else showCosmetics(HiddenReason.VANISH);
             updateCosmetic();
             if (isHidden() && !getUserEmoteManager().isPlayingEmote() && !getCosmetics().isEmpty()) MessagesUtil.sendActionBar(getPlayer(), "hidden-cosmetics");
         };
@@ -192,7 +192,7 @@ public class CosmeticUser {
 
     public void removeCosmetics() {
         // Small optimization could be made, but Concurrent modification prevents us from both getting and removing
-        for (CosmeticSlot slot : CosmeticSlot.values()) {
+        for (CosmeticSlot slot : CosmeticSlot.values().values()) {
             removeCosmeticSlot(slot);
         }
     }
@@ -270,7 +270,7 @@ public class CosmeticUser {
             }
         }
         if (items.isEmpty() || getEntity() == null) return;
-        PacketManager.equipmentSlotUpdate(getEntity().getEntityId(), items, HMCCPlayerUtils.getNearbyPlayers(getEntity().getLocation()));
+        PacketManager.equipmentSlotUpdate(getEntity().getEntityId(), items, ServerUtils.getViewers(getEntity()));
         MessagesUtil.sendDebugMessages("updateCosmetic (All) - end - " + items.size());
     }
 
@@ -386,7 +386,22 @@ public class CosmeticUser {
         return userWardrobeManager;
     }
 
+    /**
+     * Use {@link #enterWardrobe(Wardrobe, boolean)} instead.
+     * @param ignoreDistance
+     * @param wardrobe
+     */
+    @Deprecated(forRemoval = true, since = "2.7.5")
     public void enterWardrobe(boolean ignoreDistance, @NotNull Wardrobe wardrobe) {
+        enterWardrobe(wardrobe, ignoreDistance);
+    }
+
+    /**
+     * This method is used to enter a wardrobe. You can listen to the {@link PlayerWardrobeEnterEvent} to cancel the event or modify any data.
+     * @param wardrobe The wardrobe to enter. Use {@link WardrobeSettings#getWardrobe(String)} to get pre-existing wardrobe or use your own by {@link Wardrobe}.
+     * @param ignoreDistance If true, the player can enter the wardrobe from any distance. If false, the player must be within the distance set in the wardrobe (If wardrobe has a distance of 0 or lower, the player can enter from any distance).
+     */
+    public void enterWardrobe(@NotNull Wardrobe wardrobe, boolean ignoreDistance) {
         if (wardrobe.hasPermission() && !getPlayer().hasPermission(wardrobe.getPermission())) {
             MessagesUtil.sendMessage(getPlayer(), "no-permission");
             return;
@@ -412,10 +427,18 @@ public class CosmeticUser {
         }
     }
 
+    /**
+     * Use {@link #leaveWardrobe(boolean)} instead.
+     */
+    @Deprecated(forRemoval = true, since = "2.7.5")
     public void leaveWardrobe() {
         leaveWardrobe(false);
     }
 
+    /**
+     * Causes the player to leave the wardrobe. If a player is not in the wardrobe, this will do nothing, use (@{@link #isInWardrobe()} to check if they are).
+     * @param ejected If true, the player was ejected from the wardrobe (Skips transition). If false, the player left the wardrobe normally.
+     */
     public void leaveWardrobe(boolean ejected) {
         PlayerWardrobeLeaveEvent event = new PlayerWardrobeLeaveEvent(this);
         Bukkit.getPluginManager().callEvent(event);
@@ -446,6 +469,10 @@ public class CosmeticUser {
         }
     }
 
+    /**
+     * This checks if the player is in a wardrobe. If they are, it will return true, else false. See {@link #getWardrobeManager()} to get the wardrobe manager.
+     * @return If the player is in a wardrobe.
+     */
     public boolean isInWardrobe() {
         return userWardrobeManager != null;
     }
@@ -513,9 +540,9 @@ public class CosmeticUser {
         EquipmentSlot equipmentSlot = HMCCInventoryUtils.getEquipmentSlot(slot);
         if (equipmentSlot == null) return;
         if (getPlayer() != null) {
-            PacketManager.equipmentSlotUpdate(getEntity().getEntityId(), equipmentSlot, getPlayer().getInventory().getItem(equipmentSlot), HMCCPlayerUtils.getNearbyPlayers(getEntity().getLocation()));
+            PacketManager.equipmentSlotUpdate(getEntity().getEntityId(), equipmentSlot, getPlayer().getInventory().getItem(equipmentSlot), ServerUtils.getViewers(getEntity()));
         } else {
-            HMCCPacketManager.equipmentSlotUpdate(getEntity().getEntityId(), this, slot, HMCCPlayerUtils.getNearbyPlayers(getEntity().getLocation()));
+            HMCCPacketManager.equipmentSlotUpdate(getEntity().getEntityId(), this, slot, ServerUtils.getViewers(getEntity()));
         }
     }
 
@@ -624,7 +651,7 @@ public class CosmeticUser {
             if (!isBalloonSpawned()) respawnBalloon();
             CosmeticBalloonType balloonType = (CosmeticBalloonType) getCosmetic(CosmeticSlot.BALLOON);
             getBalloonManager().addPlayerToModel(this, balloonType);
-            List<Player> viewer = HMCCPlayerUtils.getNearbyPlayers(getEntity().getLocation());
+            List<Player> viewer = ServerUtils.getViewers(getEntity());
             HMCCPacketManager.sendLeashPacket(getBalloonManager().getPufferfishBalloonId(), getPlayer().getEntityId(), viewer);
         }
         if (hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
@@ -667,6 +694,7 @@ public class CosmeticUser {
         NONE,
         WORLDGUARD,
         PLUGIN,
+        VANISH,
         POTION,
         ACTION,
         COMMAND,

@@ -27,15 +27,11 @@ import java.util.logging.Level;
 public class CosmeticBackpackType extends Cosmetic {
 
     @Getter
-    private final String modelName;
-    @Getter
     private int height = -1;
     private ItemStack firstPersonBackpack;
 
     public CosmeticBackpackType(String id, ConfigurationNode config) {
         super(id, config);
-
-        modelName = config.node("model").getString();
 
         if (!config.node("firstperson-item").virtual()) {
             this.firstPersonBackpack = generateItemStack(config.node("firstperson-item"));

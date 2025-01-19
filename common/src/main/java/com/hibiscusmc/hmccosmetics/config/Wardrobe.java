@@ -54,7 +54,7 @@ public class Wardrobe {
         Location wardrobeLocation = location.getNpcLocation();
         Location location = user.getEntity().getLocation();
         if (wardrobeLocation == null) return false;
-        if (distance == -1) return true;
+        if (distance <= 0) return true;
         if (!wardrobeLocation.getWorld().equals(location.getWorld())) return false;
         return wardrobeLocation.distanceSquared(location) <= distance * distance;
     }

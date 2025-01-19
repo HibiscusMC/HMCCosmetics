@@ -12,9 +12,21 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class HMCCInventoryUtils {
+
+    private static final Map<CosmeticSlot, EquipmentSlot> SLOT_MAP = new HashMap<>();
+    static {
+        SLOT_MAP.put(CosmeticSlot.HELMET, EquipmentSlot.HEAD);
+        SLOT_MAP.put(CosmeticSlot.CHESTPLATE, EquipmentSlot.CHEST);
+        SLOT_MAP.put(CosmeticSlot.LEGGINGS, EquipmentSlot.LEGS);
+        SLOT_MAP.put(CosmeticSlot.BOOTS, EquipmentSlot.FEET);
+        SLOT_MAP.put(CosmeticSlot.OFFHAND, EquipmentSlot.OFF_HAND);
+        SLOT_MAP.put(CosmeticSlot.MAINHAND, EquipmentSlot.HAND);
+    }
 
     /**
      * Converts from the Bukkit item slots to ProtocolLib item slots. Will produce a null if an improper bukkit item slot is sent through
@@ -132,29 +144,7 @@ public class HMCCInventoryUtils {
     @Contract(pure = true)
     @Nullable
     public static EquipmentSlot getEquipmentSlot(@NotNull CosmeticSlot slot) {
-        switch (slot) {
-            case HELMET -> {
-                return EquipmentSlot.HEAD;
-            }
-            case CHESTPLATE -> {
-                return EquipmentSlot.CHEST;
-            }
-            case LEGGINGS -> {
-                return EquipmentSlot.LEGS;
-            }
-            case BOOTS -> {
-                return EquipmentSlot.FEET;
-            }
-            case OFFHAND -> {
-                return EquipmentSlot.OFF_HAND;
-            }
-            case MAINHAND -> {
-                return EquipmentSlot.HAND;
-            }
-            default -> {
-                return null;
-            }
-        }
+        return SLOT_MAP.get(slot);
     }
 
     public static EquipmentSlot getEquipmentSlot(@NotNull EnumWrappers.ItemSlot slot) {

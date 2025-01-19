@@ -19,7 +19,6 @@ import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBackpackType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticEmoteType;
 import com.hibiscusmc.hmccosmetics.gui.Menu;
-import com.hibiscusmc.hmccosmetics.gui.Menus;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import com.hibiscusmc.hmccosmetics.user.manager.UserEmoteManager;
@@ -29,9 +28,6 @@ import com.hibiscusmc.hmccosmetics.util.HMCCServerUtils;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.packets.HMCCPacketManager;
 import me.lojosho.hibiscuscommons.api.events.*;
-import me.lojosho.hibiscuscommons.hooks.Hook;
-import me.lojosho.hibiscuscommons.hooks.items.HookItemAdder;
-import me.lojosho.hibiscuscommons.hooks.items.HookNexo;
 import me.lojosho.hibiscuscommons.util.packets.PacketManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -54,8 +50,6 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.spigotmc.event.entity.EntityDismountEvent;
-import org.spigotmc.event.entity.EntityMountEvent;
 
 import java.util.*;
 
@@ -111,7 +105,7 @@ public class PlayerGameListener implements Listener {
         if (!event.isSneaking()) return;
         if (!user.isInWardrobe()) return;
 
-        user.leaveWardrobe();
+        user.leaveWardrobe(false);
     }
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
@@ -125,7 +119,7 @@ public class PlayerGameListener implements Listener {
         }
 
         if (user.isInWardrobe()) {
-            user.leaveWardrobe();
+            user.leaveWardrobe(false);
         }
 
         Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
@@ -202,7 +196,7 @@ public class PlayerGameListener implements Listener {
                 event.setCancelled(true);
                 return;
             }
-            if (WardrobeSettings.isDamagedKicked()) user.leaveWardrobe();
+            if (WardrobeSettings.isDamagedKicked()) user.leaveWardrobe(false);
         }
     }
 
@@ -345,7 +339,7 @@ public class PlayerGameListener implements Listener {
         CosmeticUser user = CosmeticUsers.getUser(event.getEntity());
         if (user == null) return;
 
-        if (user.isInWardrobe()) user.leaveWardrobe();
+        if (user.isInWardrobe()) user.leaveWardrobe(false);
 
         if (Settings.isUnapplyOnDeath() && !event.getEntity().hasPermission("hmccosmetics.unapplydeath.bypass")) {
             user.removeCosmetics();

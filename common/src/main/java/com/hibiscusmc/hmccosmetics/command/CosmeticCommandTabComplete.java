@@ -94,7 +94,7 @@ public class CosmeticCommandTabComplete implements TabCompleter {
                 }
                 case "dye" -> {
                     for (CosmeticSlot slot : user.getDyeableSlots()) {
-                        completions.add(slot.name());
+                        completions.add(slot.toString());
                     }
                 }
                 case "setwardrobesetting" -> {

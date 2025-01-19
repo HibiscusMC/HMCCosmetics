@@ -397,13 +397,18 @@ public class HMCCPacketManager extends PacketManager {
         }
     }
 
+    /**
+     * Gets the nearby players (or viewers) of a location through the view distance set in the config. If the view distance is 0, it will return all players in the world.
+     * @param location
+     * @return
+     */
     @NotNull
-    public static List<Player> getViewers(Location location) {
+    public static List<Player> getViewers(@NotNull Location location) {
         ArrayList<Player> viewers = new ArrayList<>();
         if (Settings.getViewDistance() <= 0) {
             viewers.addAll(location.getWorld().getPlayers());
         } else {
-            viewers.addAll(HMCCPlayerUtils.getNearbyPlayers(location));
+            viewers.addAll(PacketManager.getViewers(location, Settings.getViewDistance()));
         }
         return viewers;
     }

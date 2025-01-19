@@ -152,7 +152,7 @@ public class CosmeticCommand implements CommandExecutor {
                 TagResolver placeholders =
                         TagResolver.resolver(Placeholder.parsed("cosmetic", cosmetic.getId()),
                                 TagResolver.resolver(Placeholder.parsed("player", player.getName())),
-                                TagResolver.resolver(Placeholder.parsed("cosmeticslot", cosmetic.getSlot().name())));
+                                TagResolver.resolver(Placeholder.parsed("cosmeticslot", cosmetic.getSlot().toString())));
 
                 if (!silent) MessagesUtil.sendMessage(player, "equip-cosmetic", placeholders);
 
@@ -187,11 +187,12 @@ public class CosmeticCommand implements CommandExecutor {
                 if (args[1].equalsIgnoreCase("all")) {
                     cosmeticSlots = user.getSlotsWithCosmetics();
                 } else {
-                    if (!EnumUtils.isValidEnum(CosmeticSlot.class, args[1].toUpperCase())) {
+                    String rawSlot = args[1].toUpperCase();
+                    if (!CosmeticSlot.contains(rawSlot)) {
                         if (!silent) MessagesUtil.sendMessage(sender, "invalid-slot");
                         return true;
                     }
-                    cosmeticSlots = Set.of(CosmeticSlot.valueOf(args[1].toUpperCase()));
+                    cosmeticSlots = Set.of(CosmeticSlot.valueOf(rawSlot));
                 }
 
                 for (CosmeticSlot cosmeticSlot : cosmeticSlots) {
@@ -203,7 +204,7 @@ public class CosmeticCommand implements CommandExecutor {
                     TagResolver placeholders =
                             TagResolver.resolver(Placeholder.parsed("cosmetic", user.getCosmetic(cosmeticSlot).getId()),
                                     TagResolver.resolver(Placeholder.parsed("player", player.getName())),
-                                    TagResolver.resolver(Placeholder.parsed("cosmeticslot", cosmeticSlot.name())));
+                                    TagResolver.resolver(Placeholder.parsed("cosmeticslot", cosmeticSlot.toString())));
 
                     if (!silent) MessagesUtil.sendMessage(player, "unequip-cosmetic", placeholders);
 
@@ -243,9 +244,9 @@ public class CosmeticCommand implements CommandExecutor {
                 CosmeticUser user = CosmeticUsers.getUser(player);
 
                 if (user.isInWardrobe()) {
-                    user.leaveWardrobe();
+                    user.leaveWardrobe(false);
                 } else {
-                    user.enterWardrobe(false, wardrobe);
+                    user.enterWardrobe(wardrobe, false);
                 }
                 return true;
             }
@@ -306,11 +307,12 @@ public class CosmeticCommand implements CommandExecutor {
                     return true;
                 }
 
-                if (!EnumUtils.isValidEnum(CosmeticSlot.class, args[1])) {
+                String rawSlot = args[1];
+                if (!CosmeticSlot.contains(rawSlot)) {
                     if (!silent) MessagesUtil.sendMessage(player, "invalid-slot");
                     return true;
                 }
-                CosmeticSlot slot = CosmeticSlot.valueOf(args[1]);
+                CosmeticSlot slot = CosmeticSlot.valueOf(rawSlot);
                 Cosmetic cosmetic = user.getCosmetic(slot);
 
                 if (args.length >= 3) {

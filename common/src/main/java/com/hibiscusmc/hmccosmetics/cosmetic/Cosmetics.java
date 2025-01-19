@@ -94,28 +94,25 @@ public class Cosmetics {
 
     private static void setupCosmetics(@NotNull CommentedConfigurationNode config) {
         for (ConfigurationNode cosmeticConfig : config.childrenMap().values()) {
-            try {
-                String id = cosmeticConfig.key().toString();
-                MessagesUtil.sendDebugMessages("Attempting to add " + id);
-                ConfigurationNode slotNode = cosmeticConfig.node("slot");
-                if (slotNode.virtual()) {
-                    MessagesUtil.sendDebugMessages("Unable to create " + id + " because there is no slot defined!", Level.WARNING);
-                    continue;
-                }
-                if (!EnumUtils.isValidEnum(CosmeticSlot.class, slotNode.getString())) {
-                    MessagesUtil.sendDebugMessages("Unable to create " + id + " because " + slotNode.getString() + " is not a valid slot!", Level.WARNING);
-                    continue;
-                }
-                switch (CosmeticSlot.valueOf(slotNode.getString())) {
-                    case BALLOON -> new CosmeticBalloonType(id, cosmeticConfig);
-                    case BACKPACK -> new CosmeticBackpackType(id, cosmeticConfig);
-                    case MAINHAND -> new CosmeticMainhandType(id, cosmeticConfig);
-                    case EMOTE -> new CosmeticEmoteType(id, cosmeticConfig);
-                    case HELMET, CHESTPLATE, LEGGINGS, BOOTS, OFFHAND -> new CosmeticArmorType(id, cosmeticConfig);
-                    default -> new CosmeticTypeRegisterEvent(id, cosmeticConfig).callEvent();
-                }
-            } catch (Exception e) {
-                if (Settings.isDebugMode()) e.printStackTrace();
+            String id = cosmeticConfig.key().toString();
+            MessagesUtil.sendDebugMessages("Attempting to add " + id);
+            ConfigurationNode slotNode = cosmeticConfig.node("slot");
+            if (slotNode.virtual()) {
+                MessagesUtil.sendDebugMessages("Unable to create " + id + " because there is no slot defined!", Level.WARNING);
+                continue;
+            }
+            String slot = slotNode.getString("");
+            if (!CosmeticSlot.contains(slot)) {
+                MessagesUtil.sendDebugMessages("Unable to create " + id + " because " + slotNode.getString() + " is not a valid slot!", Level.WARNING);
+                continue;
+            }
+            switch (slot) {
+                case "BALLOON" -> new CosmeticBalloonType(id, cosmeticConfig);
+                case "BACKPACK" -> new CosmeticBackpackType(id, cosmeticConfig);
+                case "MAINHAND" -> new CosmeticMainhandType(id, cosmeticConfig);
+                case "EMOTE" -> new CosmeticEmoteType(id, cosmeticConfig);
+                case "HELMET", "CHESTPLATE", "LEGGINGS", "BOOTS", "OFFHAND" -> new CosmeticArmorType(id, cosmeticConfig);
+                default -> new CosmeticTypeRegisterEvent(id, cosmeticConfig).callEvent();
             }
         }
     }

@@ -80,16 +80,16 @@ allprojects {
         compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.12")
         //compileOnly("it.unimi.dsi:fastutil:8.5.14")
         compileOnly("org.projectlombok:lombok:1.18.34")
-        compileOnly("me.lojosho:HibiscusCommons:0.6.0")
+        compileOnly("me.lojosho:HibiscusCommons:0.6.0-85d65299")
 
         // Handled by Spigot Library Loader
         compileOnly("net.kyori:adventure-api:4.18.0")
         compileOnly("net.kyori:adventure-text-minimessage:4.18.0")
         compileOnly("net.kyori:adventure-platform-bukkit:4.3.4")
 
-        annotationProcessor("org.projectlombok:lombok:1.18.34")
-        testCompileOnly("org.projectlombok:lombok:1.18.34")
-        testAnnotationProcessor("org.projectlombok:lombok:1.18.34")
+        annotationProcessor("org.projectlombok:lombok:1.18.36")
+        testCompileOnly("org.projectlombok:lombok:1.18.36")
+        testAnnotationProcessor("org.projectlombok:lombok:1.18.36")
 
         implementation("dev.triumphteam:triumph-gui:3.1.11") {
             exclude("net.kyori") // Already have adventure API
@@ -120,7 +120,7 @@ tasks {
     }
 
     runServer {
-        minecraftVersion("1.21.1")
+        minecraftVersion("1.21.4")
 
         downloadPlugins {
             hangar("PlaceholderAPI", "2.11.6")
@@ -260,8 +260,7 @@ bukkit {
 }
 
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(21
-    ))
+    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
 }
 
 fun getGitCommitHash(): String {

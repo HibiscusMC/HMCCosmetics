@@ -18,6 +18,6 @@ public class CosmeticMainhandType extends Cosmetic {
     public void update(@NotNull CosmeticUser user) {
         Player player = user.getPlayer();
 
-        HMCCPacketManager.equipmentSlotUpdate(player.getEntityId(), user, getSlot(), HMCCPlayerUtils.getNearbyPlayers(player));
+        HMCCPacketManager.equipmentSlotUpdate(player.getEntityId(), user, getSlot(), HMCCPacketManager.getViewers(player.getLocation()));
     }
 }

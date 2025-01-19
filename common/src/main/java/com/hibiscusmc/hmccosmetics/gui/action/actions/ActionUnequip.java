@@ -13,7 +13,7 @@ public class ActionUnequip extends Action {
 
     @Override
     public void run(CosmeticUser user, String raw) {
-        if (!EnumUtils.isValidEnum(CosmeticSlot.class, raw)) return;
+        if (!CosmeticSlot.contains(raw)) return;
 
         CosmeticSlot slot = CosmeticSlot.valueOf(raw);
         user.removeCosmeticSlot(slot);

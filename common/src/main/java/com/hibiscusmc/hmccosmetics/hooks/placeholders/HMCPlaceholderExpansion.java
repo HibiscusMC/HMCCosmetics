@@ -122,7 +122,8 @@ public class HMCPlaceholderExpansion extends PlaceholderExpansion {
                 if (placeholderArgs.size() >= 2) {
                     String args1 = placeholderArgs.get(1);
 
-                    if (EnumUtils.isValidEnum(CosmeticSlot.class, args1.toUpperCase())) {
+                    String rawSlot = args1.toUpperCase();
+                    if (CosmeticSlot.contains(rawSlot)) {
                         return TranslationUtil.getTranslation("equipped-cosmetic", String.valueOf(user.getCosmetic(CosmeticSlot.valueOf(args1.toUpperCase())) != null));
                     }
 
@@ -150,7 +151,7 @@ public class HMCPlaceholderExpansion extends PlaceholderExpansion {
                 if (placeholderArgs.size() >= 2) {
                     String args1 = placeholderArgs.get(1).toUpperCase(); // changes offhand to OFFHAND
 
-                    if (!EnumUtils.isValidEnum(CosmeticSlot.class, args1)) return null;
+                    if (!CosmeticSlot.contains(args1)) return null;
 
                     CosmeticSlot slot = CosmeticSlot.valueOf(args1);
                     int amount = 0;
