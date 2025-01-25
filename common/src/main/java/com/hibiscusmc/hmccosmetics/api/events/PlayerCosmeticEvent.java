@@ -1,7 +1,6 @@
 package com.hibiscusmc.hmccosmetics.api.events;
 
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
-import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 
 /**
