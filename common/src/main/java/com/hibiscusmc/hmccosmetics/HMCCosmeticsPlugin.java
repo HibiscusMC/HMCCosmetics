@@ -37,6 +37,7 @@ import me.lojosho.shaded.configurate.yaml.NodeStyle;
 import me.lojosho.shaded.configurate.yaml.YamlConfigurationLoader;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.Permission;
@@ -89,10 +90,14 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
         setup();
 
         // Commands
+        final PluginCommand cosmeticCommand = getServer().getPluginCommand("cosmetic");
+
         if(Settings.isCosmeticCommandEnabled()) {
-            getServer().getPluginCommand("cosmetic").setExecutor(new CosmeticCommand());
-            getServer().getPluginCommand("cosmetic").setTabCompleter(new CosmeticCommandTabComplete());
+            cosmeticCommand.setExecutor(new CosmeticCommand());
+            cosmeticCommand.setTabCompleter(new CosmeticCommandTabComplete());
         } else {
+            cosmeticCommand.unregister(getServer().getCommandMap());
+
             MessagesUtil.sendDebugMessages("Running HMCCosmetics without default /cosmetic command enabled, You may re-enable this in the configuration by setting 'command-settings.cosmetic-command' to true.");
         }
 
