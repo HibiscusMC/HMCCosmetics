@@ -30,6 +30,9 @@ cosmetic-settings:
     display-name: true
     lore: true
 
+command-settings:
+  cosmetic-command: true # whether the /cosmetics command is enabled
+
   # This is a list of worlds that cosmetics are hidden in. When a player enters one of these worlds, their cosmetics will be hidden.
   disabled-worlds:
     - "disabledworld"

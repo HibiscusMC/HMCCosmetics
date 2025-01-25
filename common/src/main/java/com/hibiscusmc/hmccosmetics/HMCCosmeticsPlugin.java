@@ -89,8 +89,12 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
         setup();
 
         // Commands
-        getServer().getPluginCommand("cosmetic").setExecutor(new CosmeticCommand());
-        getServer().getPluginCommand("cosmetic").setTabCompleter(new CosmeticCommandTabComplete());
+        if(Settings.isCosmeticCommandEnabled()) {
+            getServer().getPluginCommand("cosmetic").setExecutor(new CosmeticCommand());
+            getServer().getPluginCommand("cosmetic").setTabCompleter(new CosmeticCommandTabComplete());
+        } else {
+            MessagesUtil.sendDebugMessages("Running HMCCosmetics without default /cosmetic command enabled, You may re-enable this in the configuration by setting 'command-settings.cosmetic-command' to true.");
+        }
 
         // Listener
         getServer().getPluginManager().registerEvents(new PlayerConnectionListener(), this);
