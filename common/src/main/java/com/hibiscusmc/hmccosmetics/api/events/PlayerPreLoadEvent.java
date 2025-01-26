@@ -1,30 +1,36 @@
 package com.hibiscusmc.hmccosmetics.api.events;
 
-import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.UUID;
+
 /**
- * Called when cosmetics are shown from a player.
+ * Called before a player's data is loaded into the plugin.
+ *
+ * <p>
+ *     If this event is cancelled, the player's data will not be loaded,
+ *     and the player will not be able to interact with the plugin.
+ * </p>
  */
-public class PlayerCosmeticShowEvent extends PlayerCosmeticEvent implements Cancellable {
+public class PlayerPreLoadEvent extends PlayerEvent implements Cancellable {
     private static final HandlerList HANDLER_LIST = new HandlerList();
 
-    private boolean cancel = false;
+    private boolean cancelled = false;
 
-    public PlayerCosmeticShowEvent(@NotNull CosmeticUser who) {
-        super(who);
+    public PlayerPreLoadEvent(@NotNull UUID id) {
+        super(id);
     }
 
     @Override
     public boolean isCancelled() {
-        return cancel;
+        return cancelled;
     }
 
     @Override
     public void setCancelled(boolean cancel) {
-        this.cancel = cancel;
+        this.cancelled = cancel;
     }
 
     @Override

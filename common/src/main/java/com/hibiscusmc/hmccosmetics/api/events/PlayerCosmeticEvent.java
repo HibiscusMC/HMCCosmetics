@@ -5,22 +5,22 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Represents a cosmetic user related event
+ * Represents an event related to a {@link CosmeticUser}.
  */
-public abstract class PlayerCosmeticEvent extends Event {
-    protected CosmeticUser user;
+public abstract class PlayerCosmeticEvent extends PlayerEvent {
+    protected final CosmeticUser user;
 
-    public PlayerCosmeticEvent(@NotNull final CosmeticUser who) {
+    public PlayerCosmeticEvent(@NotNull CosmeticUser who) {
+        super(who.getUniqueId());
         user = who;
     }
 
     /**
-     * Returns the user involved in this event
+     * Returns the {@link CosmeticUser} involved in this event.
      *
-     * @return User who is involved in this event
+     * @return the user who is involved in this event
      */
-    @NotNull
-    public final CosmeticUser getUser() {
+    public final @NotNull CosmeticUser getUser() {
         return user;
     }
 }

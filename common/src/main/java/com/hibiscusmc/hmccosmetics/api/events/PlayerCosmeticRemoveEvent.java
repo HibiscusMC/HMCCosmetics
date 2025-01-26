@@ -7,12 +7,14 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Called when a player removes a cosmetic
+ * Called when a player removes a {@link Cosmetic}.
  */
 public class PlayerCosmeticRemoveEvent extends PlayerCosmeticEvent implements Cancellable {
-    private static final HandlerList handlers = new HandlerList();
-    private boolean cancel = false;
+    private static final HandlerList HANDLER_LIST = new HandlerList();
+
     private final Cosmetic cosmetic;
+
+    private boolean cancel = false;
 
     public PlayerCosmeticRemoveEvent(@NotNull CosmeticUser who, @NotNull Cosmetic cosmetic) {
         super(who);
@@ -20,9 +22,9 @@ public class PlayerCosmeticRemoveEvent extends PlayerCosmeticEvent implements Ca
     }
 
     /**
-     * Gets the {@link Cosmetic} being removed in this event
+     * Gets the {@link Cosmetic} being removed in this event.
      *
-     * @return The {@link Cosmetic} which is being removed in this event
+     * @return the cosmetic which is being removed in this event
      */
     public Cosmetic getCosmetic() {
         return cosmetic;
@@ -33,27 +35,17 @@ public class PlayerCosmeticRemoveEvent extends PlayerCosmeticEvent implements Ca
         return cancel;
     }
 
-    /**
-     * Sets the cancellation state of this event
-     *
-     * <p>
-     * Canceling this event will prevent the player from removing the cosmetic
-     * </p>
-     *
-     * @param cancel true if you wish to cancel this event
-     */
     @Override
     public void setCancelled(boolean cancel) {
         this.cancel = cancel;
     }
 
     @Override
-    @NotNull
-    public HandlerList getHandlers() {
-        return handlers;
+    public @NotNull HandlerList getHandlers() {
+        return HANDLER_LIST;
     }
 
-    public static HandlerList getHandlerList() {
-        return handlers;
+    public static @NotNull HandlerList getHandlerList() {
+        return HANDLER_LIST;
     }
 }

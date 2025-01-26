@@ -5,19 +5,17 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Called when the plugin is set up and/or reloaded
+ * Called when the plugin is set up and/or reloaded.
  */
 public class HMCCosmeticSetupEvent extends Event {
-    private static final HandlerList handlers = new HandlerList();
+    private static final HandlerList HANDLER_LIST = new HandlerList();
 
     @Override
-    @NotNull
-    public HandlerList getHandlers() {
-        return handlers;
+    public @NotNull HandlerList getHandlers() {
+        return HANDLER_LIST;
     }
 
-    @NotNull
-    public static HandlerList getHandlerList() {
-        return handlers;
+    public static @NotNull HandlerList getHandlerList() {
+        return HANDLER_LIST;
     }
 }

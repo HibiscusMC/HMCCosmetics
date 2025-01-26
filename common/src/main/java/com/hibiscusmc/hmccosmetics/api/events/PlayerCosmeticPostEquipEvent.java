@@ -5,8 +5,12 @@ import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Called when a player has equipped a {@link Cosmetic}.
+ */
 public class PlayerCosmeticPostEquipEvent extends PlayerCosmeticEvent {
-    private static final HandlerList handlers = new HandlerList();
+    private static final HandlerList HANDLER_LIST = new HandlerList();
+
     private Cosmetic cosmetic;
 
     public PlayerCosmeticPostEquipEvent(@NotNull CosmeticUser who, @NotNull Cosmetic cosmetic) {
@@ -15,32 +19,29 @@ public class PlayerCosmeticPostEquipEvent extends PlayerCosmeticEvent {
     }
 
     /**
-     * Gets the {@link Cosmetic} being equipped in this event
+     * Gets the {@link Cosmetic} being equipped in this event.
      *
-     * @return The {@link Cosmetic} which is being equipped in this event
+     * @return the cosmetic which is being equipped in this event
      */
-    @NotNull
-    public Cosmetic getCosmetic() {
+    public @NotNull Cosmetic getCosmetic() {
         return cosmetic;
     }
 
     /**
-     * Sets the {@link Cosmetic} that the player will equip
+     * Sets the {@link Cosmetic} that the player will equip.
      *
-     * @param cosmetic The {@link Cosmetic} that the player will equip
+     * @param cosmetic the cosmetic that the player will equip
      */
     public void setCosmetic(@NotNull Cosmetic cosmetic) {
         this.cosmetic = cosmetic;
     }
 
     @Override
-    @NotNull
-    public HandlerList getHandlers() {
-        return handlers;
+    public @NotNull HandlerList getHandlers() {
+        return HANDLER_LIST;
     }
 
-    @NotNull
-    public static HandlerList getHandlerList() {
-        return handlers;
+    public static @NotNull HandlerList getHandlerList() {
+        return HANDLER_LIST;
     }
 }

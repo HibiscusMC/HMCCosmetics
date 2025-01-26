@@ -7,12 +7,14 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Called when a player equips a cosmetic
+ * Called when a player equips a {@link Cosmetic}.
  */
 public class PlayerCosmeticEquipEvent extends PlayerCosmeticEvent implements Cancellable {
-    private static final HandlerList handlers = new HandlerList();
-    private boolean cancel = false;
+    private static final HandlerList HANDLER_LIST = new HandlerList();
+
     private Cosmetic cosmetic;
+
+    private boolean cancel = false;
 
     public PlayerCosmeticEquipEvent(@NotNull CosmeticUser who, @NotNull Cosmetic cosmetic) {
         super(who);
@@ -20,9 +22,9 @@ public class PlayerCosmeticEquipEvent extends PlayerCosmeticEvent implements Can
     }
 
     /**
-     * Gets the {@link Cosmetic} being equipped in this event
+     * Gets the {@link Cosmetic} being equipped in this event.
      *
-     * @return The {@link Cosmetic} which is being equipped in this event
+     * @return the cosmetic which is being equipped in this event
      */
     @NotNull
     public Cosmetic getCosmetic() {
@@ -30,9 +32,9 @@ public class PlayerCosmeticEquipEvent extends PlayerCosmeticEvent implements Can
     }
 
     /**
-     * Sets the {@link Cosmetic} that the player will equip
+     * Sets the {@link Cosmetic} that the player will equip.
      *
-     * @param cosmetic The {@link Cosmetic} that the player will equip
+     * @param cosmetic the cosmetic that the player will equip
      */
     public void setCosmetic(@NotNull Cosmetic cosmetic) {
         this.cosmetic = cosmetic;
@@ -43,28 +45,17 @@ public class PlayerCosmeticEquipEvent extends PlayerCosmeticEvent implements Can
         return cancel;
     }
 
-    /**
-     * Sets the cancellation state of this event
-     *
-     * <p>
-     * Canceling this event will prevent the player from equipping the cosmetic
-     * </p>
-     *
-     * @param cancel true if you wish to cancel this event
-     */
     @Override
     public void setCancelled(boolean cancel) {
         this.cancel = cancel;
     }
 
     @Override
-    @NotNull
-    public HandlerList getHandlers() {
-        return handlers;
+    public @NotNull HandlerList getHandlers() {
+        return HANDLER_LIST;
     }
 
-    @NotNull
-    public static HandlerList getHandlerList() {
-        return handlers;
+    public static @NotNull HandlerList getHandlerList() {
+        return HANDLER_LIST;
     }
 }

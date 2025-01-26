@@ -19,7 +19,7 @@ import me.lojosho.hibiscuscommons.nms.NMSHandlers;
 import me.lojosho.hibiscuscommons.util.packets.PacketManager;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.Display;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.Player;
@@ -32,6 +32,8 @@ import org.joml.Vector3f;
 import java.util.*;
 
 public class HMCCPacketManager extends PacketManager {
+
+    private static final List<CosmeticSlot> EQUIPMENT_SLOTS = List.of(CosmeticSlot.HELMET, CosmeticSlot.CHESTPLATE, CosmeticSlot.LEGGINGS, CosmeticSlot.BOOTS, CosmeticSlot.MAINHAND, CosmeticSlot.OFFHAND);
 
     public static void sendEntitySpawnPacket(
             final @NotNull Location location,
@@ -87,33 +89,10 @@ public class HMCCPacketManager extends PacketManager {
             CosmeticSlot cosmeticSlot,
             List<Player> sendTo
     ) {
-        if (cosmeticSlot == CosmeticSlot.BACKPACK || cosmeticSlot == CosmeticSlot.CUSTOM || cosmeticSlot == CosmeticSlot.BALLOON || cosmeticSlot == CosmeticSlot.EMOTE) return;
-
+        if (!EQUIPMENT_SLOTS.contains(cosmeticSlot)) return;
         equipmentSlotUpdate(entityId, HMCCInventoryUtils.getEquipmentSlot(cosmeticSlot), user.getUserCosmeticItem(cosmeticSlot), sendTo);
     }
 
-    public static void sendItemDisplayMetadata(int entityId, ItemStack item, boolean elongated, List<Player> sendTo) {
-        Vector3f translation = new Vector3f(0, 3, .1f);
-        if (elongated) translation = new Vector3f(0, 8, .5f); // Adjust later
-
-        NMSHandlers.getHandler().getPacketHandler().sendItemDisplayMetadata(entityId,
-                translation,
-                new Vector3f(1, 1, 1),
-                new Quaternionf(),
-                new Quaternionf(),
-                Display.Billboard.FIXED,
-                10,
-               10,
-                10,
-                0,
-                0,
-                ItemDisplay.ItemDisplayTransform.HEAD,
-                item,
-                sendTo);
-
-    }
-
-    @Deprecated
     public static void sendArmorstandMetadata(
             int entityId,
             List<Player> sendTo
@@ -124,7 +103,9 @@ public class HMCCPacketManager extends PacketManager {
         final List<WrappedDataValue> wrappedDataValueList = Lists.newArrayList();
 
         // 0x21 = Invisible + Fire (Aka, burns to make it not take the light of the block its in, avoiding turning it black)
-        wrappedDataValueList.add(new WrappedDataValue(0, WrappedDataWatcher.Registry.get(Byte.class), (byte) 0x21));
+        byte mask = 0x20;
+        if (Settings.isBackpackPreventDarkness()) mask = 0x21;
+        wrappedDataValueList.add(new WrappedDataValue(0, WrappedDataWatcher.Registry.get(Byte.class), mask));
         wrappedDataValueList.add(new WrappedDataValue(15, WrappedDataWatcher.Registry.get(Byte.class), (byte) 0x10));
         packet.getDataValueCollectionModifier().write(0, wrappedDataValueList);
         for (Player p : sendTo) sendPacket(p, packet);

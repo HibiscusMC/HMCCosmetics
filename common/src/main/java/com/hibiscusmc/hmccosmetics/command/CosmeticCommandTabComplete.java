@@ -123,6 +123,7 @@ public class CosmeticCommandTabComplete implements TabCompleter {
                     completions.add("leavelocation");
                     completions.add("permission");
                     completions.add("distance");
+                    completions.add("defaultmenu");
                 }
             }
             StringUtil.copyPartialMatches(args[2], completions, finalCompletions);
@@ -134,6 +135,11 @@ public class CosmeticCommandTabComplete implements TabCompleter {
                 case "apply" -> {
                     if (Hooks.isActiveHook("HMCColor")) completions.addAll(HMCColorContextKt.getHmcColor().getConfig().getColors().keySet());
                     completions.add("#FFFFFF");
+                }
+                case "setwardrobesetting" -> {
+                    if (args[2].equalsIgnoreCase("defaultmenu")) {
+                        completions.addAll(Menus.getMenuNames());
+                    }
                 }
             }
             StringUtil.copyPartialMatches(args[3], completions, finalCompletions);

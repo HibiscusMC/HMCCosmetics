@@ -6,42 +6,50 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Called when a cosmetic type not registered with HMCC default cosmetics is attempted to be registered. So if someone puts "test" in the config slot, and it's not a default cosmetic, this event will be called.
+ * Called when an attempt is made to register a cosmetic type that is not part of the default HMCC cosmetics.
+ * <p>
+ * For example, if a user specifies "test" in the config slot, and it is not a default cosmetic, this event will be
+ * triggered.
+ * </p>
  */
 public class CosmeticTypeRegisterEvent extends Event {
-    private static final HandlerList handlers = new HandlerList();
+    private static final HandlerList HANDLER_LIST = new HandlerList();
+
     private final String id;
     private final ConfigurationNode config;
 
-    public CosmeticTypeRegisterEvent(String id, ConfigurationNode config) {
+    public CosmeticTypeRegisterEvent(@NotNull String id, @NotNull ConfigurationNode config) {
         this.id = id;
         this.config = config;
     }
 
     /**
-     * Returns the id of the cosmetic trying to be registered. For example, "beanie" or "test"
-     * @return The id. This is the key in the cosmetic config
+     * Returns the id of the cosmetic attempting to be registered.
+     *
+     * @return the id of the cosmetic. This is the key in the cosmetic configuration.
      */
-    public String getId() {
+    public @NotNull String getId() {
         return id;
     }
 
     /**
-     * This will already be in the nested node below the id in the config.
-     * @return The cosmetic config node in the cosmetic config that was attempted to get registered
+     * Retrieves the {@link ConfigurationNode} for the cosmetic that was attempted to be registered.
+     * <p>
+     * This node is nested below the id in the configuration.
+     * </p>
+     *
+     * @return the configuration node for the cosmetic in the cosmetic configuration
      */
-    public ConfigurationNode getConfig() {
+    public @NotNull ConfigurationNode getConfig() {
         return config;
     }
 
     @Override
-    @NotNull
-    public HandlerList getHandlers() {
-        return handlers;
+    public @NotNull HandlerList getHandlers() {
+        return HANDLER_LIST;
     }
 
-    @NotNull
-    public static HandlerList getHandlerList() {
-        return handlers;
+    public static @NotNull HandlerList getHandlerList() {
+        return HANDLER_LIST;
     }
 }

@@ -11,8 +11,9 @@ import java.util.Set;
 import java.util.UUID;
 
 public class CosmeticUsers {
-
     private static final HashBiMap<UUID, CosmeticUser> COSMETIC_USERS = HashBiMap.create();
+
+    private static CosmeticUserProvider PROVIDER = CosmeticUserProvider.Default.INSTANCE;
 
     /**
      * Adds a user to the Hashmap of stored CosmeticUsers. This will not override an entry if it already exists. If you need to override, delete then add.
@@ -52,7 +53,7 @@ public class CosmeticUsers {
     /**
      * This method allows you to get a CosmeticUser from just using the player class. This just allows you to have a bit less boilerplate.
      * @param player The player to lookup (will take their UUID from the class)
-     * @return Returns the user if there is a vlaid user, returns null if not.
+     * @return Returns the user if there is a valid user, returns null if not.
      */
     @Nullable
     public static CosmeticUser getUser(@NotNull Player player) {
@@ -70,6 +71,31 @@ public class CosmeticUsers {
         if (entity == null) return null;
         if (!(entity instanceof Player player)) return null;
         return COSMETIC_USERS.get(player.getUniqueId());
+    }
+
+    /**
+     * Register a custom {@link CosmeticUserProvider} to provide your own user implementation to
+     * be used and queried.
+     * @param provider the provider to register
+     * @throws IllegalArgumentException if the provider is already registered by another plugin
+     */
+    public static void registerProvider(final CosmeticUserProvider provider) {
+        if(PROVIDER != CosmeticUserProvider.Default.INSTANCE) {
+            throw new IllegalArgumentException("CosmeticUserProvider already registered by %s, this conflicts with %s attempting to register their own.".formatted(
+                PROVIDER.getProviderPlugin().getName(),
+                provider.getProviderPlugin().getName()
+            ));
+        }
+
+        PROVIDER = provider;
+    }
+
+    /**
+     * Fetch the current {@link CosmeticUserProvider} being used.
+     * @return the current {@link CosmeticUserProvider} being used
+     */
+    public static CosmeticUserProvider getProvider() {
+        return PROVIDER;
     }
 
     /**

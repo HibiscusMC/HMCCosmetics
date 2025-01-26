@@ -7,12 +7,14 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Called when a player stops playing an emote
+ * Called when a player stops playing an emote.
  */
 public class PlayerEmoteStopEvent extends PlayerCosmeticEvent implements Cancellable {
-    private static final HandlerList handlers = new HandlerList();
-    private boolean cancel = false;
+    private static final HandlerList HANDLER_LIST = new HandlerList();
+
     private final UserEmoteManager.StopEmoteReason reason;
+
+    private boolean cancel = false;
 
     public PlayerEmoteStopEvent(@NotNull CosmeticUser who, @NotNull UserEmoteManager.StopEmoteReason reason) {
         super(who);
@@ -25,20 +27,19 @@ public class PlayerEmoteStopEvent extends PlayerCosmeticEvent implements Cancell
      * @return The {@link UserEmoteManager.StopEmoteReason} why the emote has stopped playing
      * @deprecated As of release 2.2.5+, replaced by {@link #getReason()}
      */
-    @Deprecated
+    @Deprecated(forRemoval = true)
     @NotNull
     public UserEmoteManager.StopEmoteReason getStopEmoteReason() {
         return reason;
     }
 
     /**
-     * Gets the {@link UserEmoteManager.StopEmoteReason} as to why the emote has stopped playing
+     * Gets the {@link UserEmoteManager.StopEmoteReason} as to why the emote has stopped playing.
      *
-     * @return The {@link UserEmoteManager.StopEmoteReason} why the emote has stopped playing
+     * @return the reason why the emote has stopped playing
      * @since 2.2.5
      */
-    @NotNull
-    public UserEmoteManager.StopEmoteReason getReason() {
+    public @NotNull UserEmoteManager.StopEmoteReason getReason() {
         return reason;
     }
 
@@ -47,28 +48,17 @@ public class PlayerEmoteStopEvent extends PlayerCosmeticEvent implements Cancell
         return cancel;
     }
 
-    /**
-     * Sets the cancellation state of this event
-     *
-     * <p>
-     * Canceling this event will prevent the player from stopping the emote
-     * </p>
-     *
-     * @param cancel true if you wish to cancel this event
-     */
     @Override
     public void setCancelled(boolean cancel) {
         this.cancel = cancel;
     }
 
     @Override
-    @NotNull
-    public HandlerList getHandlers() {
-        return handlers;
+    public @NotNull HandlerList getHandlers() {
+        return HANDLER_LIST;
     }
 
-    @NotNull
-    public static HandlerList getHandlerList() {
-        return handlers;
+    public static @NotNull HandlerList getHandlerList() {
+        return HANDLER_LIST;
     }
 }

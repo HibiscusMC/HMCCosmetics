@@ -7,7 +7,6 @@ import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.packets.HMCCPacketManager;
 import lombok.Getter;
 import lombok.Setter;
-import me.lojosho.hibiscuscommons.util.ServerUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -43,12 +42,12 @@ public class UserEntity {
         if (System.currentTimeMillis() - viewerLastUpdate <= 1000) return List.of(); //Prevents mass refreshes
         ArrayList<Player> newPlayers = new ArrayList<>();
         ArrayList<Player> removePlayers = new ArrayList<>();
+        List<Player> players = HMCCPacketManager.getViewers(location);
         Player ownerPlayer = Bukkit.getPlayer(owner);
         if (ownerPlayer == null) {
             MessagesUtil.sendDebugMessages("Owner is null (refreshViewers), returning empty list");
             return List.of();
         }
-        List<Player> players = ServerUtils.getViewers(ownerPlayer);
 
         for (Player player : players) {
             CosmeticUser user = CosmeticUsers.getUser(player);

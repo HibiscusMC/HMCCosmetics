@@ -72,6 +72,7 @@ public class Settings {
     private static final String LOCKED_COSMETIC_COLOR_PATH = "locked-cosmetic-color";
     private static final String ENABLED_PATH = "enabled";
     private static final String SLOT_OPTIONS_PATH = "slot-options";
+    private static final String BACKPACK_PREVENT_DARKNESS_PATH = "backpack-prevent-darkness";
 
     @Getter
     private static String defaultMenu;
@@ -120,6 +121,8 @@ public class Settings {
     private static boolean disabledGamemodesEnabled;
     @Getter
     private static boolean balloonHeadForward;
+    @Getter
+    private static boolean backpackPreventDarkness;
     @Getter
     private static List<String> disabledGamemodes;
     @Getter
@@ -228,6 +231,7 @@ public class Settings {
         emoteMoveCheck = cosmeticSettings.node(COSMETIC_EMOTE_MOVE_CHECK_PATH).getBoolean(false);
         packetEntityTeleportCooldown = cosmeticSettings.node(COSMETIC_PACKET_ENTITY_TELEPORT_COOLDOWN_PATH).getInt(-1);
         balloonHeadForward = cosmeticSettings.node(COSMETIC_BALLOON_HEAD_FORWARD_PATH).getBoolean(false);
+        backpackPreventDarkness = cosmeticSettings.node(BACKPACK_PREVENT_DARKNESS_PATH).getBoolean(true);
 
         ConfigurationNode menuSettings = source.node(MENU_SETTINGS_PATH);
 

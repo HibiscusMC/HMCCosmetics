@@ -3,12 +3,15 @@ package com.hibiscusmc.hmccosmetics.gui;
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
+import lombok.Getter;
+import lombok.Setter;
 import me.lojosho.shaded.configurate.CommentedConfigurationNode;
 import me.lojosho.shaded.configurate.ConfigurateException;
 import me.lojosho.shaded.configurate.yaml.YamlConfigurationLoader;
 import org.apache.commons.io.FilenameUtils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -22,10 +25,11 @@ public class Menus {
     private static final HashMap<String, Menu> MENUS = new HashMap<>();
     private static final HashMap<UUID, Long> COOLDOWNS = new HashMap<>();
 
-    public static void addMenu(Menu menu) {
+    public static void addMenu(@NotNull Menu menu) {
         MENUS.put(menu.getId().toUpperCase(), menu);
     }
 
+    @Nullable
     public static Menu getMenu(@NotNull String id) {
         return MENUS.get(id.toUpperCase());
     }
@@ -40,11 +44,18 @@ public class Menus {
         return MENUS.containsKey(id.toUpperCase());
     }
 
-    public static boolean hasMenu(Menu menu) {
+    public static boolean hasMenu(@NotNull Menu menu) {
         return MENUS.containsValue(menu);
     }
 
-    public static Menu getDefaultMenu() { return Menus.getMenu(Settings.getDefaultMenu()); }
+    public static boolean hasDefaultMenu() {
+        return MENUS.containsKey(Settings.getDefaultMenu());
+    }
+
+    @Nullable
+    public static Menu getDefaultMenu() {
+        return Menus.getMenu(Settings.getDefaultMenu());
+    }
 
     @NotNull
     public static List<String> getMenuNames() {

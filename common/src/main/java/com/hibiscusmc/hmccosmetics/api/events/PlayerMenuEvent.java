@@ -5,10 +5,10 @@ import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Represents a menu related event
+ * Represents an event related to a player's interaction with a {@link Menu}.
  */
 public abstract class PlayerMenuEvent extends PlayerCosmeticEvent {
-    protected Menu menu;
+    protected final Menu menu;
 
     public PlayerMenuEvent(@NotNull CosmeticUser who, @NotNull Menu menu) {
         super(who);
@@ -16,12 +16,11 @@ public abstract class PlayerMenuEvent extends PlayerCosmeticEvent {
     }
 
     /**
-     * Gets the {@link Menu} involved with this event
+     * Gets the {@link Menu} involved with this event.
      *
-     * @return The {@link Menu} which is involved with the event
+     * @return the menu involved in this event
      */
-    @NotNull
-    public final Menu getMenu() {
+    public @NotNull final Menu getMenu() {
         return menu;
     }
 }

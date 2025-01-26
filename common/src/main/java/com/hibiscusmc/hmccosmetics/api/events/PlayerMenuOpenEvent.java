@@ -7,10 +7,11 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Called when a menu is opened by a player
+ * Called when a {@link Menu} is opened by a player.
  */
 public class PlayerMenuOpenEvent extends PlayerMenuEvent implements Cancellable {
-    private static final HandlerList handlers = new HandlerList();
+    private static final HandlerList HANDLER_LIST = new HandlerList();
+
     private boolean cancel = false;
 
     public PlayerMenuOpenEvent(@NotNull CosmeticUser who, @NotNull Menu menu) {
@@ -22,28 +23,17 @@ public class PlayerMenuOpenEvent extends PlayerMenuEvent implements Cancellable 
         return cancel;
     }
 
-    /**
-     * Sets the cancellation state of this event
-     *
-     * <p>
-     * Canceling this event will prevent the player from opening a {@link Menu}
-     * </p>
-     *
-     * @param cancel true if you wish to cancel this event
-     */
     @Override
     public void setCancelled(boolean cancel) {
         this.cancel = cancel;
     }
 
     @Override
-    @NotNull
-    public HandlerList getHandlers() {
-        return handlers;
+    public @NotNull HandlerList getHandlers() {
+        return HANDLER_LIST;
     }
 
-    @NotNull
-    public static HandlerList getHandlerList() {
-        return handlers;
+    public static @NotNull HandlerList getHandlerList() {
+        return HANDLER_LIST;
     }
 }

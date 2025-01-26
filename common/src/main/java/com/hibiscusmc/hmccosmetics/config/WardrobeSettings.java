@@ -282,4 +282,14 @@ public class WardrobeSettings {
 
         plugin.saveConfig();
     }
+
+    public static void setWardrobeDefaultMenu(Wardrobe wardrobe, String defaultMenu) {
+        wardrobe.setDefaultMenu(defaultMenu);
+
+        HMCCosmeticsPlugin plugin = HMCCosmeticsPlugin.getInstance();
+
+        plugin.getConfig().set("wardrobe.wardrobes." + wardrobe.getId() + ".default-menu", defaultMenu);
+
+        plugin.saveConfig();
+    }
 }

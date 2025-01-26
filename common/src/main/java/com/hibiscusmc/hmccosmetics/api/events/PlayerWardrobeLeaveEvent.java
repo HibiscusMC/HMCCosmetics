@@ -6,10 +6,11 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Called when a player leaves their wardrobe
+ * Called when a player leaves their {@link com.hibiscusmc.hmccosmetics.config.Wardrobe}.
  */
 public class PlayerWardrobeLeaveEvent extends PlayerCosmeticEvent implements Cancellable {
-    private static final HandlerList handlers = new HandlerList();
+    private static final HandlerList HANDLER_LIST = new HandlerList();
+
     private boolean cancel = false;
 
     public PlayerWardrobeLeaveEvent(@NotNull CosmeticUser who) {
@@ -21,28 +22,17 @@ public class PlayerWardrobeLeaveEvent extends PlayerCosmeticEvent implements Can
         return cancel;
     }
 
-    /**
-     * Sets the cancellation state of this event
-     *
-     * <p>
-     * Canceling this event will prevent the player from leaving their wardrobe
-     * </p>
-     *
-     * @param cancel true if you wish to cancel this event
-     */
     @Override
     public void setCancelled(boolean cancel) {
         this.cancel = cancel;
     }
 
     @Override
-    @NotNull
-    public HandlerList getHandlers() {
-        return handlers;
+    public @NotNull HandlerList getHandlers() {
+        return HANDLER_LIST;
     }
 
-    @NotNull
-    public static HandlerList getHandlerList() {
-        return handlers;
+    public static @NotNull HandlerList getHandlerList() {
+        return HANDLER_LIST;
     }
 }
