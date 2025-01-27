@@ -13,7 +13,7 @@ import java.util.UUID;
 public class CosmeticUsers {
     private static final HashBiMap<UUID, CosmeticUser> COSMETIC_USERS = HashBiMap.create();
 
-    private static CosmeticUserProvider PROVIDER = CosmeticUserProvider.DEFAULT;
+    private static CosmeticUserProvider PROVIDER = CosmeticUserProvider.Default.INSTANCE;
 
     /**
      * Adds a user to the Hashmap of stored CosmeticUsers. This will not override an entry if it already exists. If you need to override, delete then add.
@@ -80,7 +80,7 @@ public class CosmeticUsers {
      * @throws IllegalArgumentException if the provider is already registered by another plugin
      */
     public static void registerProvider(final CosmeticUserProvider provider) {
-        if(PROVIDER != CosmeticUserProvider.DEFAULT) {
+        if(PROVIDER != CosmeticUserProvider.Default.INSTANCE) {
             throw new IllegalArgumentException("CosmeticUserProvider already registered by %s, this conflicts with %s attempting to register their own.".formatted(
                 PROVIDER.getProviderPlugin().getName(),
                 provider.getProviderPlugin().getName()

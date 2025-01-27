@@ -46,10 +46,16 @@ public class PlayerConnectionListener implements Listener {
             Bukkit.getPluginManager().callEvent(preLoadEvent);
             if (preLoadEvent.isCancelled()) return;
 
-            Database.get(uuid).thenAccept(data -> {
-                if (data == null) return;
+            Database.get(uuid).thenAccept(userData -> {
+                if (userData == null) {
+                    return;
+                }
+
                 Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> {
-                    CosmeticUser cosmeticUser = CosmeticUsers.getProvider().createCosmeticUser(uuid, data);
+                    CosmeticUser cosmeticUser = CosmeticUsers.getProvider()
+                        .createCosmeticUser(uuid)
+                        .initialize(userData);
+
                     CosmeticUsers.addUser(cosmeticUser);
                     MessagesUtil.sendDebugMessages("Run User Join for " + uuid);
 
