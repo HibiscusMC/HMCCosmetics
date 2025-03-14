@@ -39,6 +39,8 @@ public class UserBalloonManager {
     private UserBalloonPufferfish pufferfish;
     private final ArmorStand modelEntity;
 
+    private double angularPitchVelocity = 0.0f;
+
     public UserBalloonManager(CosmeticUser user, @NotNull Location location) {
         this.user = user;
         this.pufferfish = new UserBalloonPufferfish(user.getUniqueId(), NMSHandlers.getHandler().getUtilHandler().getNextEntityId(), UUID.randomUUID());
@@ -186,6 +188,32 @@ public class UserBalloonManager {
 
     public void setVelocity(Vector vector) {
         this.getModelEntity().setVelocity(vector);
+    }
+
+    public double getAngularPitchVelocity() {
+        return angularPitchVelocity;
+    }
+
+    public void setAngularPitchVelocity(double angularPitchVelocity) {
+        this.angularPitchVelocity = angularPitchVelocity;
+    }
+
+    public double getXRotation() {
+        if (balloonType == BalloonType.ITEM) {
+            final ArmorStand armorStand = (ArmorStand) getModelEntity();
+            return armorStand.getHeadPose().getX();
+        }
+        return 0;
+    }
+
+    public void setXRotation(final double xRotation) {
+        // the more velocity a balloon has, the more tilted it is,
+        // and since the yaw is already set, we just compute the
+        // pitch
+        if (balloonType == BalloonType.ITEM) {
+            final ArmorStand armorStand = (ArmorStand) getModelEntity();
+            armorStand.setHeadPose(armorStand.getHeadPose().setX(xRotation));
+        }
     }
 
     public void sendRemoveLeashPacket(List<Player> viewer) {
