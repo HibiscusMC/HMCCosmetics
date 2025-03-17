@@ -22,6 +22,7 @@ import com.hibiscusmc.hmccosmetics.listener.PaperPlayerGameListener;
 import com.hibiscusmc.hmccosmetics.listener.PlayerConnectionListener;
 import com.hibiscusmc.hmccosmetics.listener.PlayerGameListener;
 import com.hibiscusmc.hmccosmetics.listener.ServerListener;
+import com.hibiscusmc.hmccosmetics.task.BalloonTickTask;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
@@ -227,6 +228,12 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
                 if (getInstance().getServer().getPluginManager().getPermission(menu.getPermissionNode()) != null) continue;
                 getInstance().getServer().getPluginManager().addPermission(new Permission(menu.getPermissionNode()));
             }
+        }
+
+        if (Settings.isBalloonPhysics()) {
+            BalloonTickTask.INSTANCE.schedule();
+        } else {
+            BalloonTickTask.INSTANCE.stop();
         }
 
         if (Settings.isEmotesEnabled() && (HMCCosmeticsAPI.getNMSVersion().contains("v1_19_R3") || HMCCosmeticsAPI.getNMSVersion().contains("v1_20_R1"))) EmoteManager.loadEmotes(); // PlayerAnimator does not support 1.20.2 yet
