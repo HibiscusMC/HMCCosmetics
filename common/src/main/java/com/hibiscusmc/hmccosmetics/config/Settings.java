@@ -20,6 +20,7 @@ public class Settings {
     private static final String CONFIG_VERSION = "config-version";
     private static final String COSMETIC_SETTINGS_PATH = "cosmetic-settings";
     private static final String BALLOON_OFFSET = "balloon-offset";
+    private static final String BALLOON_PHYSICS = "balloon-physics";
     private static final String VIEW_DISTANCE_PATH = "view-distance";
     private static final String DYE_MENU_PATH = "dye-menu";
     private static final String DYE_MENU_NAME = "title";
@@ -125,6 +126,8 @@ public class Settings {
     private static boolean balloonHeadForward;
     @Getter
     private static boolean backpackPreventDarkness;
+    @Getter
+    private static boolean balloonPhysics;
     @Getter
     private static List<String> disabledGamemodes;
     @Getter
@@ -235,6 +238,7 @@ public class Settings {
         emoteMoveCheck = cosmeticSettings.node(COSMETIC_EMOTE_MOVE_CHECK_PATH).getBoolean(false);
         packetEntityTeleportCooldown = cosmeticSettings.node(COSMETIC_PACKET_ENTITY_TELEPORT_COOLDOWN_PATH).getInt(-1);
         balloonHeadForward = cosmeticSettings.node(COSMETIC_BALLOON_HEAD_FORWARD_PATH).getBoolean(false);
+        balloonPhysics = cosmeticSettings.node(BALLOON_PHYSICS).getBoolean(false);
         backpackPreventDarkness = cosmeticSettings.node(BACKPACK_PREVENT_DARKNESS_PATH).getBoolean(true);
 
         ConfigurationNode menuSettings = source.node(MENU_SETTINGS_PATH);

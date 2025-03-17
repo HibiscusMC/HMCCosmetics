@@ -91,6 +91,9 @@ cosmetic-settings:
   # If the plugin should set the pitch of balloons to always be 0, to prevent players looking up affecting the balloon.
   # This only applies to models that have a "head" section to them. THIS DOES NOT IMPACT THE REST OF THE ENTITY.
   balloon-head-unmoving: false
+  # If the plugin should use realistic physics for balloons (Experimental feature) May be more resource
+  # intensive for the server)
+  balloon-physics: false
   # how the balloon should be positioned relative to the player
   balloon-offset:
     x: 0.5
