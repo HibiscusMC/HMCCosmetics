@@ -64,14 +64,7 @@ public class CosmeticBalloonType extends Cosmetic {
         this.modelName = modelId;
     }
 
-    @Override
-    public void update(@NotNull CosmeticUser user) {
-        // called every 1 second, or every tick (during player move)
-
-        final long now = System.currentTimeMillis();
-        final long elapsedMillis = lastCall == -1 ? 0 : now - lastCall;
-        lastCall = now;
-
+    public void updateBalloonPosition(@NotNull CosmeticUser user, float deltaTime) {
         Entity entity = Bukkit.getEntity(user.getUniqueId());
         UserBalloonManager userBalloonManager = user.getBalloonManager();
 
@@ -82,8 +75,6 @@ public class CosmeticBalloonType extends Cosmetic {
             user.respawnBalloon();
             return;
         }
-
-        float deltaTime = elapsedMillis / 1000.0f;
 
         Location playerLocation = entity.getLocation();
         Location balloonLocation = userBalloonManager.getLocation();
@@ -158,6 +149,54 @@ public class CosmeticBalloonType extends Cosmetic {
 
         userBalloonManager.setAngularPitchVelocity(angularVelocity);
         userBalloonManager.setXRotation(newRotation);
+
+        HMCCPacketManager.sendTeleportPacket(userBalloonManager.getPufferfishBalloonId(), newLocation, false, viewer);
+        HMCCPacketManager.sendLeashPacket(userBalloonManager.getPufferfishBalloonId(), entity.getEntityId(), viewer);
+        if (user.isHidden()) {
+            userBalloonManager.getPufferfish().hidePufferfish();
+            return;
+        }
+        if (!user.isHidden() && showLead) {
+            List<Player> sendTo = userBalloonManager.getPufferfish().refreshViewers(newLocation);
+            if (sendTo.isEmpty()) return;
+            user.getBalloonManager().getPufferfish().spawnPufferfish(newLocation, sendTo);
+        }
+    }
+
+    @Override
+    public void update(@NotNull CosmeticUser user) {
+        if (Settings.isBalloonPhysics()) {
+            // use the physics-based update instead !
+            return;
+        }
+
+        Entity entity = Bukkit.getEntity(user.getUniqueId());
+        UserBalloonManager userBalloonManager = user.getBalloonManager();
+
+        if (entity == null || userBalloonManager == null) return;
+        if (user.isInWardrobe()) return;
+
+        if (!userBalloonManager.getModelEntity().isValid()) {
+            user.respawnBalloon();
+            return;
+        }
+
+        Location newLocation = entity.getLocation();
+        Location currentLocation = user.getBalloonManager().getLocation();
+        newLocation = newLocation.clone().add(getBalloonOffset());
+        if (Settings.isBalloonHeadForward()) newLocation.setPitch(0);
+
+        List<Player> viewer = HMCCPacketManager.getViewers(entity.getLocation());
+
+        if (entity.getLocation().getWorld() != userBalloonManager.getLocation().getWorld()) {
+            userBalloonManager.getModelEntity().teleport(newLocation);
+            HMCCPacketManager.sendTeleportPacket(userBalloonManager.getPufferfishBalloonId(), newLocation, false, viewer);
+            return;
+        }
+
+        Vector velocity = newLocation.toVector().subtract(currentLocation.toVector());
+        userBalloonManager.setLocation(newLocation);
+        userBalloonManager.setVelocity(velocity.multiply(1.1));
 
         HMCCPacketManager.sendTeleportPacket(userBalloonManager.getPufferfishBalloonId(), newLocation, false, viewer);
         HMCCPacketManager.sendLeashPacket(userBalloonManager.getPufferfishBalloonId(), entity.getEntityId(), viewer);

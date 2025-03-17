@@ -207,7 +207,11 @@ public class PlayerGameListener implements Listener {
             return;
         }
         user.updateCosmetic(CosmeticSlot.BACKPACK);
-        user.updateCosmetic(CosmeticSlot.BALLOON);
+
+        // If balloon physics is enabled, this has its own task
+        if (!Settings.isBalloonPhysics()) {
+            user.updateCosmetic(CosmeticSlot.BALLOON);
+        }
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
