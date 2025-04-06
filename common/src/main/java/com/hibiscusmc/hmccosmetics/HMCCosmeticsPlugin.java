@@ -14,6 +14,7 @@ import com.hibiscusmc.hmccosmetics.emotes.EmoteManager;
 import com.hibiscusmc.hmccosmetics.gui.Menu;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
 import com.hibiscusmc.hmccosmetics.hooks.items.HookHMCCosmetics;
+import com.hibiscusmc.hmccosmetics.hooks.misc.HookBetterHud;
 import com.hibiscusmc.hmccosmetics.hooks.placeholders.HMCPlaceholderExpansion;
 import com.hibiscusmc.hmccosmetics.hooks.worldguard.WGHook;
 import com.hibiscusmc.hmccosmetics.hooks.worldguard.WGListener;
@@ -52,6 +53,7 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
     public HMCCosmeticsPlugin() {
         super(13873, 1879);
         new HookHMCCosmetics();
+        new HookBetterHud();
     }
 
     @Override
@@ -66,8 +68,8 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
         if (!Path.of(getDataFolder().getPath() + "/cosmetics/").toFile().exists()) saveResource("cosmetics/defaultcosmetics.yml", false);
         if (!Path.of(getDataFolder().getPath() + "/menus/").toFile().exists()) saveResource("menus/defaultmenu.yml", false);
 
-        // Player Animator
-        if (HMCCosmeticsAPI.getNMSVersion().contains("v1_19_R3") || HMCCosmeticsAPI.getNMSVersion().contains("v1_20_R1")) PlayerAnimatorImpl.initialize(this); // PlayerAnimator does not support 1.20.2 yet
+        // Player Animator ~ Do no longer support running this on a version that PlayerAnimator is supported
+        // if (HMCCosmeticsAPI.getNMSVersion().contains("v1_19_R3") || HMCCosmeticsAPI.getNMSVersion().contains("v1_20_R1")) PlayerAnimatorImpl.initialize(this); // PlayerAnimator does not support 1.20.2 yet
 
         // Configuration Sync
         final File configFile = Path.of(getInstance().getDataFolder().getPath(), "config.yml").toFile();
@@ -96,7 +98,7 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
         getServer().getPluginManager().registerEvents(new PlayerConnectionListener(), this);
         getServer().getPluginManager().registerEvents(new PlayerGameListener(), this);
         getServer().getPluginManager().registerEvents(new ServerListener(), this);
-        // Taken from PaperLib
+
         if (HibiscusCommonsPlugin.isOnPaper()) {
             getServer().getPluginManager().registerEvents(new PaperPlayerGameListener(), this);
         }
@@ -227,7 +229,7 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
             }
         }
 
-        if (Settings.isEmotesEnabled() && (HMCCosmeticsAPI.getNMSVersion().contains("v1_19_R3") || HMCCosmeticsAPI.getNMSVersion().contains("v1_20_R1"))) EmoteManager.loadEmotes(); // PlayerAnimator does not support 1.20.2 yet
+        //if (Settings.isEmotesEnabled() && (HMCCosmeticsAPI.getNMSVersion().contains("v1_19_R3") || HMCCosmeticsAPI.getNMSVersion().contains("v1_20_R1"))) EmoteManager.loadEmotes(); // PlayerAnimator does not support 1.20.2 yet
 
         getInstance().getLogger().info("Successfully Enabled HMCCosmetics");
         getInstance().getLogger().info(Cosmetics.values().size() + " Cosmetics Successfully Setup");

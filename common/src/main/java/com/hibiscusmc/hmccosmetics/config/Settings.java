@@ -73,6 +73,8 @@ public class Settings {
     private static final String ENABLED_PATH = "enabled";
     private static final String SLOT_OPTIONS_PATH = "slot-options";
     private static final String BACKPACK_PREVENT_DARKNESS_PATH = "backpack-prevent-darkness";
+    private static final String BETTER_HUD_PATH = "betterhud";
+    private static final String BETTER_HUD_HIDE_IN_WARDROBE_PATH = "wardrobe-hide";
 
     @Getter
     private static String defaultMenu;
@@ -169,6 +171,8 @@ public class Settings {
     private static boolean emoteMoveCheck;
     @Getter @Setter
     private static boolean allPlayersHidden;
+    @Getter
+    private static boolean wardrobeHideHud;
 
 
     public static void load(ConfigurationNode source) {
@@ -270,6 +274,9 @@ public class Settings {
 
         ConfigurationNode nexoSettings = hookSettings.node(HOOK_NEXO_PATH);
         nexoChangeReload = nexoSettings.node(HOOK_RELOAD_CHANGE_PATH).getBoolean(true);
+
+        ConfigurationNode betterHudSettings = hookSettings.node(BETTER_HUD_PATH);
+        wardrobeHideHud = betterHudSettings.node(BETTER_HUD_HIDE_IN_WARDROBE_PATH).getBoolean(true);
 
         ConfigurationNode worldGuardSettings = hookSettings.node(HOOK_WORLDGUARD_PATH);
         worldGuardMoveCheck = worldGuardSettings.node(HOOK_WG_MOVE_CHECK_PATH).getBoolean(true);

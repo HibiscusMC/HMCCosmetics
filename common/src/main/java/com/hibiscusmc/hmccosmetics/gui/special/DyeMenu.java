@@ -6,6 +6,7 @@ import com.hibiscusmc.hmccolor.shaded.gui.guis.GuiItem;
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
+import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticHolder;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import me.lojosho.hibiscuscommons.hooks.Hooks;
 import me.lojosho.hibiscuscommons.util.ColorBuilder;
@@ -15,23 +16,19 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.*;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Objects;
+import org.jetbrains.annotations.Nullable;
 
 public class DyeMenu {
-
-    public static void openMenu(@NotNull CosmeticUser user, Cosmetic cosmetic) {
-        Player player = user.getPlayer();
-        if (player == null) return;
+    public static void openMenu(@NotNull Player viewer, @NotNull CosmeticHolder cosmeticHolder, Cosmetic cosmetic) {
         if (!Hooks.isActiveHook("HMCColor")) {
-            addCosmetic(user, cosmetic, null);
+            addCosmetic(viewer, cosmeticHolder, cosmetic, null);
             return;
         }
-        ItemStack originalItem = user.getUserCosmeticItem(cosmetic);
+        ItemStack originalItem = cosmetic.getItem();
         if (originalItem == null || !cosmetic.isDyable()) return;
 
-        Gui gui = HMCColorApi.createColorMenu(player);
-        gui.updateTitle(Hooks.processPlaceholders(player, StringUtils.parseStringToString(Settings.getDyeMenuName())));
+        Gui gui = HMCColorApi.createColorMenu(viewer);
+        gui.updateTitle(Hooks.processPlaceholders(viewer, StringUtils.parseStringToString(Settings.getDyeMenuName())));
         gui.setItem(Settings.getDyeMenuInputSlot(), new GuiItem(originalItem));
         gui.setDefaultTopClickAction(event -> {
             if (event.getSlot() == Settings.getDyeMenuOutputSlot()) {
@@ -55,23 +52,28 @@ public class DyeMenu {
                 }
                 if (color == null) return;
 
-                addCosmetic(user, cosmetic, color);
+                addCosmetic(viewer, cosmeticHolder, cosmetic, color);
                 event.setCancelled(true);
             } else event.setCancelled(true);
         });
 
         gui.setPlayerInventoryAction(event -> event.setCancelled(true));
         gui.setCloseGuiAction(event -> {});
-        gui.open(player);
+        gui.open(viewer);
     }
 
-    private static void addCosmetic(@NotNull CosmeticUser user, Cosmetic cosmetic, Color color) {
+    public static void openMenu(@NotNull CosmeticUser user, Cosmetic cosmetic) {
         Player player = user.getPlayer();
-        user.addPlayerCosmetic(cosmetic, color);
-        player.setItemOnCursor(new ItemStack(Material.AIR));
+        if (player == null) return;
+        openMenu(player, user, cosmetic);
+    }
+
+    private static void addCosmetic(@NotNull Player viewer, @NotNull CosmeticHolder cosmeticHolder, @NotNull Cosmetic cosmetic, @Nullable Color color) {
+        cosmeticHolder.addCosmetic(cosmetic, color);
+        viewer.setItemOnCursor(new ItemStack(Material.AIR));
         Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
-            player.closeInventory();
-            user.updateCosmetic(cosmetic.getSlot());
+            viewer.closeInventory();
+            cosmeticHolder.updateCosmetic(cosmetic.getSlot());
         }, 2);
     }
 }

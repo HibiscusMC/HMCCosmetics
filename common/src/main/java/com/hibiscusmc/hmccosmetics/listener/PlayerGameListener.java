@@ -2,10 +2,7 @@ package com.hibiscusmc.hmccosmetics.listener;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.events.ListenerPriority;
-import com.comphenix.protocol.events.PacketAdapter;
-import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.events.PacketEvent;
+import com.comphenix.protocol.events.*;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.Pair;
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
@@ -455,7 +452,7 @@ public class PlayerGameListener implements Listener {
     }
 
     private void registerInventoryClickListener() {
-        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(HMCCosmeticsPlugin.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Client.WINDOW_CLICK) {
+        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(HMCCosmeticsPlugin.getInstance(), ListenerPriority.NORMAL, List.of(PacketType.Play.Client.WINDOW_CLICK), ListenerOptions.ASYNC) {
             @Override
             public void onPacketReceiving(PacketEvent event) {
                 Player player = event.getPlayer();
@@ -481,7 +478,7 @@ public class PlayerGameListener implements Listener {
     }
 
     private void registerMenuChangeListener() {
-        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(HMCCosmeticsPlugin.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Server.WINDOW_ITEMS) {
+        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(HMCCosmeticsPlugin.getInstance(), ListenerPriority.NORMAL, List.of(PacketType.Play.Server.WINDOW_ITEMS), ListenerOptions.ASYNC) {
             @Override
             public void onPacketSending(PacketEvent event) {
                 MessagesUtil.sendDebugMessages("Menu Initial ");
@@ -515,7 +512,7 @@ public class PlayerGameListener implements Listener {
                     if ((slot >= 5 && slot <= 8) || slot == 45) {
                         if (!items.containsKey(slot)) continue;
                         slotData.set(slot, items.get(slot));
-                        MessagesUtil.sendDebugMessages("Set " + slot + " as " + items.get(slot));
+                        if (Settings.isDebugMode()) MessagesUtil.sendDebugMessages("Set " + slot + " as " + items.get(slot));
                     }
                 }
                 packet.getItemListModifier().write(0, slotData);
@@ -703,7 +700,6 @@ public class PlayerGameListener implements Listener {
         for (final EquipmentSlot slot : EquipmentSlot.values()) {
             final Set<Material> armorItems = ARMOR_ITEMS.get(slot);
             if (armorItems == null) continue;
-            if (material == null) continue;
             if (armorItems.contains(material)) return slot;
         }
         return null;

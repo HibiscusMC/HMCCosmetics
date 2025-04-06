@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "com.hibiscusmc"
-version = "2.7.5${getGitCommitHash()}"
+version = "2.7.7${getGitCommitHash()}"
 
 allprojects {
     apply(plugin = "java")
@@ -18,7 +18,7 @@ allprojects {
         mavenCentral()
 
         // Paper Repo
-        maven("https://papermc.io/repo/repository/maven-public/")
+        maven("https://repo.papermc.io/repository/maven-public/")
         maven("https://oss.sonatype.org/content/repositories/snapshots")
 
         // Jitpack
@@ -81,13 +81,16 @@ allprojects {
         compileOnly("me.clip:placeholderapi:2.11.6")
         compileOnly("com.ticxo.modelengine:ModelEngine:R4.0.6")
         compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.12")
+        compileOnly("io.github.toxicity188:BetterHud-standard-api:1.12") //Standard api
+        compileOnly("io.github.toxicity188:BetterHud-bukkit-api:1.12") //Platform api
+        compileOnly("io.github.toxicity188:BetterCommand:1.3") //BetterCommand library
         //compileOnly("it.unimi.dsi:fastutil:8.5.14")
         compileOnly("org.projectlombok:lombok:1.18.34")
-        compileOnly("me.lojosho:HibiscusCommons:0.6.0-85d65299")
+        compileOnly("me.lojosho:HibiscusCommons:0.6.2-d21ebed8")
 
         // Handled by Spigot Library Loader
-        compileOnly("net.kyori:adventure-api:4.18.0")
-        compileOnly("net.kyori:adventure-text-minimessage:4.18.0")
+        compileOnly("net.kyori:adventure-api:4.19.0")
+        compileOnly("net.kyori:adventure-text-minimessage:4.19.0")
         compileOnly("net.kyori:adventure-platform-bukkit:4.3.4")
 
         annotationProcessor("org.projectlombok:lombok:1.18.36")
@@ -99,6 +102,14 @@ allprojects {
         }
         implementation("com.owen1212055:particlehelper:1.0.0-SNAPSHOT")
         implementation("com.ticxo.playeranimator:PlayerAnimator:R1.2.7")
+    }
+
+    tasks {
+        javadoc {
+            // javadoc spec has these added.
+            (options as StandardJavadocDocletOptions)
+                .tags("apiNote:a:API:", "implSpec:a:Implementation Requirements", "implNote:a:Implementation Note:")
+        }
     }
 }
 
@@ -165,7 +176,7 @@ bukkit {
     apiVersion = "1.20"
     authors = listOf("LoJoSho")
     depend = listOf("HibiscusCommons", "ProtocolLib")
-    softDepend = listOf("ModelEngine", "Oraxen", "ItemsAdder", "Geary", "HMCColor", "WorldGuard", "MythicMobs", "PlaceholderAPI", "SuperVanish", "PremiumVanish", "LibsDisguises", "Denizen", "MMOItems", "Eco")
+    softDepend = listOf("BetterHud", "ModelEngine", "Oraxen", "ItemsAdder", "Geary", "HMCColor", "WorldGuard", "MythicMobs", "PlaceholderAPI", "SuperVanish", "PremiumVanish", "LibsDisguises", "Denizen", "MMOItems", "Eco")
     version = "${project.version}"
     loadBefore = listOf(
         "Cosmin" // Fixes an issue with Cosmin loading before and taking /cosmetic, when messing with what we do.
@@ -264,6 +275,9 @@ bukkit {
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+
+    withJavadocJar()
+    withSourcesJar()
 }
 
 fun getGitCommitHash(): String {

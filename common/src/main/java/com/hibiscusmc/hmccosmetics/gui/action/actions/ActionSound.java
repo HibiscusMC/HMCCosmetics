@@ -1,5 +1,6 @@
 package com.hibiscusmc.hmccosmetics.gui.action.actions;
 
+import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticHolder;
 import com.hibiscusmc.hmccosmetics.gui.action.Action;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
@@ -16,8 +17,7 @@ public class ActionSound extends Action {
     }
 
     @Override
-    public void run(@NotNull CosmeticUser user, @NotNull String raw) {
-        Player player = user.getPlayer();
+    public void run(Player viewer, CosmeticHolder cosmeticHolder, String raw) {
         String[] processedString = raw.split(" ");
 
         String soundName = processedString[0];
@@ -31,6 +31,11 @@ public class ActionSound extends Action {
 
         MessagesUtil.sendDebugMessages("Attempting to play " + soundName, Level.INFO);
 
-        player.playSound(player.getLocation(), soundName, volume, pitch);
+        viewer.playSound(viewer.getLocation(), soundName, volume, pitch);
+    }
+
+    @Override
+    public void run(@NotNull CosmeticUser user, @NotNull String raw) {
+        run(user.getPlayer(), user, raw);
     }
 }

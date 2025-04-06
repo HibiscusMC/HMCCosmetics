@@ -1,5 +1,6 @@
 package com.hibiscusmc.hmccosmetics.gui.action.actions;
 
+import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticHolder;
 import com.hibiscusmc.hmccosmetics.gui.action.Action;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
@@ -24,7 +25,7 @@ public class ActionParticle extends Action {
 
     @Override
     @SuppressWarnings("ConstantConditions")
-    public void run(CosmeticUser user, @NotNull String raw) {
+    public void run(Player viewer, CosmeticHolder cosmeticHolder, String raw) {
         String[] rawString = raw.split(" ");
         ParticleType<?, ?> particleType = Particles.fromKey(NamespacedKey.minecraft(rawString[0].toLowerCase()));
         if (particleType == null) {
@@ -43,9 +44,14 @@ public class ActionParticle extends Action {
         }
 
         particle = HMCCServerUtils.addParticleValues(particle, rawString);
-        Location location = user.getPlayer().getLocation();
+        Location location = viewer.getLocation();
         for (Player player : HMCCPacketManager.getViewers(location)) {
             particle.compile().send(player, location);
         }
+    }
+
+    @Override
+    public void run(CosmeticUser user, @NotNull String raw) {
+        run(user.getPlayer(), user, raw);
     }
 }

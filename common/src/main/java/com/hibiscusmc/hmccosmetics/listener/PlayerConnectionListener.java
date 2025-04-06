@@ -55,6 +55,7 @@ public class PlayerConnectionListener implements Listener {
                     CosmeticUser cosmeticUser = CosmeticUsers.getProvider()
                         .createCosmeticUser(uuid)
                         .initialize(userData);
+                    cosmeticUser.startTicking();
 
                     CosmeticUsers.addUser(cosmeticUser);
                     MessagesUtil.sendDebugMessages("Run User Join for " + uuid);

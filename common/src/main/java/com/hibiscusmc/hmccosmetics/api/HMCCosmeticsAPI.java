@@ -10,6 +10,7 @@ import com.hibiscusmc.hmccosmetics.gui.Menus;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUserProvider;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
+import me.lojosho.hibiscuscommons.nms.MinecraftVersion;
 import me.lojosho.hibiscuscommons.nms.NMSHandlers;
 import me.lojosho.shaded.configurate.ConfigurationNode;
 import org.bukkit.Color;
@@ -95,7 +96,7 @@ public final class HMCCosmeticsAPI {
      *              customization
      */
     public static void equipCosmetic(@NotNull CosmeticUser user, @NotNull Cosmetic cosmetic, @Nullable Color color) {
-        user.addPlayerCosmetic(cosmetic, color);
+        user.addCosmetic(cosmetic, color);
     }
 
     /**
@@ -200,7 +201,9 @@ public final class HMCCosmeticsAPI {
      * @return the NMS version of the server in string format, or {@code null} if setup is not complete.
      */
     public static @Nullable String getNMSVersion() {
-        return NMSHandlers.getVersion();
+        MinecraftVersion version = NMSHandlers.getVersion();
+        if (version == null) return null;
+        return version.toString();
     }
 
     /**

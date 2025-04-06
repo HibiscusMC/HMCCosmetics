@@ -1,6 +1,5 @@
 package com.hibiscusmc.hmccosmetics.user;
 
-import com.google.common.collect.HashBiMap;
 import com.hibiscusmc.hmccosmetics.util.HMCCServerUtils;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -9,9 +8,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class CosmeticUsers {
-    private static final HashBiMap<UUID, CosmeticUser> COSMETIC_USERS = HashBiMap.create();
+
+    private static final ConcurrentHashMap<UUID, CosmeticUser> COSMETIC_USERS = new ConcurrentHashMap<>();
 
     private static CosmeticUserProvider PROVIDER = CosmeticUserProvider.Default.INSTANCE;
 
@@ -104,6 +105,7 @@ public class CosmeticUsers {
      */
     @NotNull
     public static Set<CosmeticUser> values() {
-        return COSMETIC_USERS.values();
+        // fix this later; this is a temporary fix. It was originally a set, now it's a collection
+        return Set.copyOf(COSMETIC_USERS.values());
     }
 }

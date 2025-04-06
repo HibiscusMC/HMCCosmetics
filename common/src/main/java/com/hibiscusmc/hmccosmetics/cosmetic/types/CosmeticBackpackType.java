@@ -4,6 +4,9 @@ import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
+import com.hibiscusmc.hmccosmetics.user.manager.UserBackpackManager;
+import com.hibiscusmc.hmccosmetics.user.manager.UserEntity;
+import com.hibiscusmc.hmccosmetics.user.manager.UserBackpackManager;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.packets.HMCCPacketManager;
 import lombok.Getter;
@@ -41,7 +44,7 @@ public class CosmeticBackpackType extends Cosmetic {
 
     @Override
     public void update(@NotNull CosmeticUser user) {
-        Entity entity = Bukkit.getEntity(user.getUniqueId());
+        Entity entity = user.getEntity();
         if (entity == null) return;
 
         if (user.isInWardrobe() || !user.isBackpackSpawned()) return;
@@ -51,8 +54,10 @@ public class CosmeticBackpackType extends Cosmetic {
             return;
         }
 
+        UserBackpackManager backpackManager = user.getUserBackpackManager();
         Location loc = entity.getLocation().clone().add(0, 2, 0);
         loc.setPitch(0);
+
         List<Player> addedViewers = user.getUserBackpackManager().getEntityManager().refreshViewers(loc);
         int entityId = user.getUserBackpackManager().getDisplayEntityId();
         ItemStack backpackItem = user.getUserCosmeticItem(CosmeticSlot.BACKPACK);
@@ -69,7 +74,7 @@ public class CosmeticBackpackType extends Cosmetic {
         if (!user.isInWardrobe() && isFirstPersonCompadible() && user.getPlayer() != null) {
             List<Player> owner = List.of(user.getPlayer());
 
-            ArrayList<Integer> particleCloud = user.getUserBackpackManager().getAreaEffectEntityId();
+            ArrayList<Integer> particleCloud = backpackManager.getAreaEffectEntityId();
             for (int i = 0; i < particleCloud.size(); i++) {
                 if (i == 0) {
                     HMCCPacketManager.sendRidingPacket(entity.getEntityId(), particleCloud.get(i), owner);
@@ -77,17 +82,17 @@ public class CosmeticBackpackType extends Cosmetic {
                     HMCCPacketManager.sendRidingPacket(particleCloud.get(i - 1), particleCloud.get(i) , owner);
                 }
             }
-            HMCCPacketManager.sendRidingPacket(particleCloud.get(particleCloud.size() - 1), user.getUserBackpackManager().getFirstArmorStandId(), owner);
+            HMCCPacketManager.sendRidingPacket(particleCloud.get(particleCloud.size() - 1), firstArmorStandId, owner);
             if (!user.isHidden()) {
                 //if (loc.getPitch() < -70) NMSHandlers.getHandler().equipmentSlotUpdate(user.getUserBackpackManager().getFirstArmorStandId(), EquipmentSlot.HEAD, new ItemStack(Material.AIR), owner);
                 //else NMSHandlers.getHandler().equipmentSlotUpdate(user.getUserBackpackManager().getFirstArmorStandId(), EquipmentSlot.HEAD, firstPersonBackpack, owner);
-                PacketManager.equipmentSlotUpdate(user.getUserBackpackManager().getFirstArmorStandId(), EquipmentSlot.HEAD, user.getUserCosmeticItem(this, firstPersonBackpack), owner);
+                PacketManager.equipmentSlotUpdate(firstArmorStandId, EquipmentSlot.HEAD, user.getUserCosmeticItem(this, firstPersonBackpack), owner);
             }
             //MessagesUtil.sendDebugMessages("First Person Backpack Update[owner=" + user.getUniqueId() + ",player_location=" + loc + "]!", Level.INFO);
         }
          */
 
-        user.getUserBackpackManager().showBackpack();
+        backpackManager.showBackpack();
     }
 
     public boolean isFirstPersonCompadible() {

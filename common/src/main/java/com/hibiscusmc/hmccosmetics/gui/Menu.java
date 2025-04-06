@@ -5,6 +5,7 @@ import com.hibiscusmc.hmccosmetics.api.events.PlayerMenuCloseEvent;
 import com.hibiscusmc.hmccosmetics.api.events.PlayerMenuOpenEvent;
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
+import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticHolder;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
 import com.hibiscusmc.hmccosmetics.gui.type.Type;
 import com.hibiscusmc.hmccosmetics.gui.type.Types;
@@ -108,8 +109,7 @@ public class Menu {
 
             int priority = config.node("priority").getInt(1);
 
-            Type type = null;
-
+            Type type = Types.getDefaultType();
             if (!config.node("type").virtual()) {
                 String typeId = config.node("type").getString("");
                 if (Types.isType(typeId)) type = Types.getType(typeId);
@@ -123,7 +123,7 @@ public class Menu {
                     menuItems.sort(priorityCompare);
                     items.put(slot, menuItems);
                 } else {
-                    items.put(slot, new ArrayList<>(Arrays.asList(menuItem)));
+                    items.put(slot, new ArrayList<>(List.of(menuItem)));
                 }
             }
         }
@@ -136,13 +136,21 @@ public class Menu {
     public void openMenu(@NotNull CosmeticUser user, boolean ignorePermission) {
         Player player = user.getPlayer();
         if (player == null) return;
+        openMenu(player, user, ignorePermission);
+    }
+
+    public void openMenu(@NotNull Player viewer, @NotNull CosmeticHolder cosmeticHolder) {
+        openMenu(viewer, cosmeticHolder, false);
+    }
+
+    public void openMenu(@NotNull Player viewer, @NotNull CosmeticHolder cosmeticHolder, boolean ignorePermission) {
         if (!ignorePermission && !permissionNode.isEmpty()) {
-            if (!player.hasPermission(permissionNode) && !player.isOp()) {
-                MessagesUtil.sendMessage(player, "no-permission");
+            if (!viewer.hasPermission(permissionNode) && !viewer.isOp()) {
+                MessagesUtil.sendMessage(viewer, "no-permission");
                 return;
             }
         }
-        final Component component = AdventureUtils.MINI_MESSAGE.deserialize(Hooks.processPlaceholders(player, this.title));
+        final Component component = AdventureUtils.MINI_MESSAGE.deserialize(Hooks.processPlaceholders(viewer, this.title));
         Gui gui = Gui.gui()
                 .title(component)
                 .type(GuiType.CHEST)
@@ -159,7 +167,7 @@ public class Menu {
                     Bukkit.getScheduler().cancelTask(taskid.get());
                 }
 
-                updateMenu(user, gui);
+                updateMenu(viewer, cosmeticHolder, gui);
             };
 
             if (refreshRate != -1) {
@@ -170,25 +178,29 @@ public class Menu {
         });
 
         gui.setCloseGuiAction(event -> {
-            PlayerMenuCloseEvent closeEvent = new PlayerMenuCloseEvent(user, this, event.getReason());
-            Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> Bukkit.getPluginManager().callEvent(closeEvent));
+            if (cosmeticHolder instanceof CosmeticUser user) {
+                PlayerMenuCloseEvent closeEvent = new PlayerMenuCloseEvent(user, this, event.getReason());
+                Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> Bukkit.getPluginManager().callEvent(closeEvent));
+            }
 
             if (taskid.get() != -1) Bukkit.getScheduler().cancelTask(taskid.get());
         });
 
         // API
-        PlayerMenuOpenEvent event = new PlayerMenuOpenEvent(user, this);
-        Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> Bukkit.getPluginManager().callEvent(event));
-        if (event.isCancelled()) return;
+        if (cosmeticHolder instanceof CosmeticUser user) {
+            PlayerMenuOpenEvent event = new PlayerMenuOpenEvent(user, this);
+            Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> Bukkit.getPluginManager().callEvent(event));
+            if (event.isCancelled()) return;
+        }
         // Internal
 
         Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> {
-            gui.open(player);
-            updateMenu(user, gui); // fixes shading? I know I do this twice but it's easier than writing a whole new class to deal with this shit
+            gui.open(viewer);
+            updateMenu(viewer, cosmeticHolder, gui); // fixes shading? I know I do this twice but it's easier than writing a whole new class to deal with this shit
         });
     }
 
-    private void updateMenu(CosmeticUser user, Gui gui) {
+    private void updateMenu(Player viewer, CosmeticHolder cosmeticHolder, Gui gui) {
         StringBuilder title = new StringBuilder(this.title);
 
         int row = 0;
@@ -212,15 +224,15 @@ public class Menu {
                     // Handles the items
                     List<MenuItem> menuItems = items.get(i);
                     MenuItem item = menuItems.get(0);
-                    updateItem(user, gui, i);
+                    updateItem(viewer, cosmeticHolder, gui, i);
 
                     if (item.type() instanceof TypeCosmetic) {
                         Cosmetic cosmetic = Cosmetics.getCosmetic(item.itemConfig().node("cosmetic").getString(""));
                         if (cosmetic == null) continue;
-                        if (user.hasCosmeticInSlot(cosmetic)) {
+                        if (cosmeticHolder.hasCosmeticInSlot(cosmetic)) {
                             title.append(Settings.getEquippedCosmeticColor());
                         } else {
-                            if (user.canEquipCosmetic(cosmetic, true)) {
+                            if (cosmeticHolder.canEquipCosmetic(cosmetic, true)) {
                                 title.append(Settings.getEquipableCosmeticColor());
                             } else {
                                 title.append(Settings.getLockedCosmeticColor());
@@ -236,42 +248,42 @@ public class Menu {
                 }
             }
             MessagesUtil.sendDebugMessages("Updated menu with title " + title);
-            gui.updateTitle(StringUtils.parseStringToString(Hooks.processPlaceholders(user.getPlayer(), title.toString())));
+            gui.updateTitle(StringUtils.parseStringToString(Hooks.processPlaceholders(viewer, title.toString())));
         } else {
             for (int i = 0; i < gui.getInventory().getSize(); i++) {
                 if (items.containsKey(i)) {
-                    updateItem(user, gui, i);
+                    updateItem(viewer, cosmeticHolder, gui, i);
                 }
             }
         }
     }
 
-    private void updateItem(CosmeticUser user, Gui gui, int slot) {
+    private void updateItem(Player viewer, CosmeticHolder cosmeticHolder, Gui gui, int slot) {
         if (!items.containsKey(slot)) return;
         List<MenuItem> menuItems = items.get(slot);
         if (menuItems.isEmpty()) return;
 
         for (MenuItem item : menuItems) {
             Type type = item.type();
-            ItemStack modifiedItem = getMenuItem(user, type, item.itemConfig(), item.item().clone(), slot);
+            ItemStack modifiedItem = getMenuItem(viewer, cosmeticHolder, type, item.itemConfig(), item.item().clone(), slot);
             if (modifiedItem.getType().isAir()) continue;
             GuiItem guiItem = ItemBuilder.from(modifiedItem).asGuiItem();
             guiItem.setAction(event -> {
-                UUID uuid = user.getUniqueId();
+                UUID uuid = viewer.getUniqueId();
                 if (Settings.isMenuClickCooldown()) {
                     Long userCooldown = Menus.getCooldown(uuid);
                     if (userCooldown != 0 && (System.currentTimeMillis() - Menus.getCooldown(uuid) <= getCooldown())) {
-                        MessagesUtil.sendDebugMessages("Cooldown for " + user.getUniqueId() + " System time: " + System.currentTimeMillis() + " Cooldown: " + Menus.getCooldown(user.getUniqueId()) + " Difference: " + (System.currentTimeMillis() - Menus.getCooldown(user.getUniqueId())));
-                        MessagesUtil.sendMessage(user.getPlayer(), "on-click-cooldown");
+                        MessagesUtil.sendDebugMessages("Cooldown for " + viewer.getUniqueId() + " System time: " + System.currentTimeMillis() + " Cooldown: " + Menus.getCooldown(viewer.getUniqueId()) + " Difference: " + (System.currentTimeMillis() - Menus.getCooldown(viewer.getUniqueId())));
+                        MessagesUtil.sendMessage(viewer, "on-click-cooldown");
                         return;
                     } else {
-                        Menus.addCooldown(user.getUniqueId(), System.currentTimeMillis());
+                        Menus.addCooldown(uuid, System.currentTimeMillis());
                     }
                 }
                 MessagesUtil.sendDebugMessages("Updated Menu Item in slot number " + slot);
                 final ClickType clickType = event.getClick();
-                if (type != null) type.run(user, item.itemConfig(), clickType);
-                updateMenu(user, gui);
+                if (type != null) type.run(viewer, cosmeticHolder, item.itemConfig(), clickType);
+                updateMenu(viewer, cosmeticHolder, gui);
             });
 
             MessagesUtil.sendDebugMessages("Set an item in slot " + slot + " in the menu of " + getId());
@@ -306,11 +318,11 @@ public class Menu {
         return slots;
     }
 
-    @Contract("_, _, _, _, _ -> param2")
+    @Contract("_, _, _, _, _, _ -> param4")
     @NotNull
-    private ItemStack getMenuItem(CosmeticUser user, Type type, ConfigurationNode config, ItemStack itemStack, int slot) {
+    private ItemStack getMenuItem(Player viewer, CosmeticHolder cosmeticHolder, Type type, ConfigurationNode config, ItemStack itemStack, int slot) {
         if (!itemStack.hasItemMeta()) return itemStack;
-        return type.setItem(user, config, itemStack, slot);
+        return type.setItem(viewer, cosmeticHolder, config, itemStack, slot);
     }
 
     public boolean canOpen(Player player) {

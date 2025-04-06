@@ -180,6 +180,10 @@ public class UserBalloonManager {
         this.getModelEntity().teleport(location);
     }
 
+    public Vector getVelocity() {
+        return getModelEntity().getVelocity();
+    }
+
     public void setVelocity(Vector vector) {
         this.getModelEntity().setVelocity(vector);
     }

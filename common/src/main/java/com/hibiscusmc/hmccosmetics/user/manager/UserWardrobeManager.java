@@ -109,14 +109,19 @@ public class UserWardrobeManager {
         MessagesUtil.sendMessage(player, "opened-wardrobe");
 
         Runnable run = () -> {
+            if (!player.isOnline()) {
+                end();
+                return;
+            }
+
             // Armorstand
             HMCCPacketManager.sendEntitySpawnPacket(viewingLocation, ARMORSTAND_ID, EntityType.ARMOR_STAND, UUID.randomUUID(), viewer);
             HMCCPacketManager.sendArmorstandMetadata(ARMORSTAND_ID, viewer);
             HMCCPacketManager.sendLookPacket(ARMORSTAND_ID, viewingLocation, viewer);
 
             // Player
-            user.getPlayer().teleport(viewingLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
-            user.getPlayer().setInvisible(true);
+            player.teleport(viewingLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
+            player.setInvisible(true);
             HMCCPacketManager.gamemodeChangePacket(player, 3);
             HMCCPacketManager.sendCameraPacket(ARMORSTAND_ID, viewer);
 

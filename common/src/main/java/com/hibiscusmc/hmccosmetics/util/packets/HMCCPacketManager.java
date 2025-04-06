@@ -385,13 +385,7 @@ public class HMCCPacketManager extends PacketManager {
      */
     @NotNull
     public static List<Player> getViewers(@NotNull Location location) {
-        ArrayList<Player> viewers = new ArrayList<>();
-        if (Settings.getViewDistance() <= 0) {
-            viewers.addAll(location.getWorld().getPlayers());
-        } else {
-            viewers.addAll(PacketManager.getViewers(location, Settings.getViewDistance()));
-        }
-        return viewers;
+        return PacketManager.getViewers(location, Settings.getViewDistance());
     }
 
     public static void sendPacket(Player player, PacketContainer packet) {

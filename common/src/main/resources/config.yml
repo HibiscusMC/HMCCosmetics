@@ -105,13 +105,13 @@ menu-settings:
   shading:
     # Below is the shading mechanism behind cosmetic items. This is a bit complicated, but it allows for a lot of customization.
     # The shading is done through the title and by shifting textures around. This is done by offsets.
-    # Only Oraxen is support by default. Vanilla can't properly handle it without a lot of unicodes and ItemsAdder adds weird offsets and decolors it. (This is why it is disabled by default)
+    # Only Nexo is support by default. Vanilla can't properly handle it without a lot of unicodes and ItemsAdder adds weird offsets and decolors it. (This is why it is disabled by default)
     enabled: false # Default of menus having shading. This can be toggled individually in menus with "shading: true/false"
-    first-row-shift: "<s:-169>" # Oraxen: "<s:-169>"
-    sequent-row-shift: " <s:-169>" # Oraxen: " <s:-169>" (Space is important here!)
-    individual-column-shift: "<s:-3>" # Oraxen: "<s:-3>"
-    background: "<g:shade_row_<row>:colorable> " # Oraxen: "<g:shade_row_<row>:colorable> 
-    clear-background: "<g:clear_row_<row>:colorable> " # Oraxen: "<g:clear_row_<row>:colorable> "
+    first-row-shift: "<shift:-169>" # Nexo: "<shift:-169>"
+    sequent-row-shift: " <shift:-169>" # Nexo: " <shift:-169>" (Space is important here!)
+    individual-column-shift: "<shift:-3>" # Nexo: "<shift:-3>"
+    background: "<glyph:shade_row_<row>:colorable> " # Nexo: "<glyph:shade_row_<row>:colorable> 
+    clear-background: "<glyph:clear_row_<row>:colorable> " # Nexo: "<glyph:clear_row_<row>:colorable> "
     #These use MiniMessage for color! https://docs.advntr.dev/minimessage/format.html#color
     equipped-cosmetic-color: "<yellow>"
     equipable-cosmetic-color: "<green>"
@@ -123,6 +123,7 @@ menu-settings:
 dye-menu:
   # If you use ItemsAdder, set this to "<white>:img_offset_-8::img_dye_menu:"
   # If you use Oraxen, set this to "<white><s:-8><g:dye_menu>"
+  # If you use Nexo, set this to "<white><shift:-8><glyph:dye_menu>"
   title: "<white>"
   input-slot: 10
   output-slot: 16
@@ -138,6 +139,8 @@ hook-settings:
     # Checks worldguard regions for HMCC flags. If set to false, flags will not work properly.
     # Requires restart to apply changes.
     player-move-check: true
+  betterhud:
+    wardrobe-hide: true
 wardrobe:
   # how much yaw should change per tick, set to 0 for none
   rotation-speed: 3
@@ -170,6 +173,7 @@ wardrobe:
     enabled: true
     # If you use ItemsAdder, set this to "<black>%img_title%
     # If you use Oraxen, set this to "<black><glyph:title>"
+    # If you use Nexo, set this to "<black>%nexo_title%" and use PlaceholderAPI
     text: "<black>"
     delay: 40
     title-fade-in: 1000 # milliseconds

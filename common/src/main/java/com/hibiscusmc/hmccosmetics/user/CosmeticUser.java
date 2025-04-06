@@ -8,6 +8,7 @@ import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.config.Wardrobe;
 import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
+import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticHolder;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticArmorType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBackpackType;
@@ -44,11 +45,10 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.logging.Level;
 
-public class CosmeticUser {
-
+public class CosmeticUser implements CosmeticHolder {
     @Getter
     private final UUID uniqueId;
-    private int taskId;
+    private int taskId = -1;
     private final HashMap<CosmeticSlot, Cosmetic> playerCosmetics = new HashMap<>();
     private UserWardrobeManager userWardrobeManager;
     private UserBalloonManager userBalloonManager;
@@ -105,7 +105,6 @@ public class CosmeticUser {
             this.applyHiddenState(userData.getHiddenReasons());
         }
 
-        this.startTickTask();
         return this;
     }
 
@@ -139,69 +138,88 @@ public class CosmeticUser {
         }
 
         Player bukkitPlayer = getPlayer();
+        if (bukkitPlayer != null && Settings.isDisabledGamemodesEnabled() && Settings.getDisabledGamemodes().contains(bukkitPlayer.getGameMode().toString())) {
+            MessagesUtil.sendDebugMessages("Hiding cosmetics due to gamemode");
+            hideCosmetics(HiddenReason.GAMEMODE);
+        } else if (this.isHidden(HiddenReason.GAMEMODE)) {
+            MessagesUtil.sendDebugMessages("Showing cosmetics for gamemode");
+            showCosmetics(HiddenReason.GAMEMODE);
+        }
+
+        if (bukkitPlayer != null && Settings.getDisabledWorlds().contains(getEntity().getLocation().getWorld().getName())) {
+            MessagesUtil.sendDebugMessages("Hiding Cosmetics due to world");
+            hideCosmetics(CosmeticUser.HiddenReason.WORLD);
+        } else if (this.isHidden(HiddenReason.WORLD)) {
+            MessagesUtil.sendDebugMessages("Showing Cosmetics due to world");
+            showCosmetics(HiddenReason.WORLD);
+        }
+        if (Settings.isAllPlayersHidden()) {
+            hideCosmetics(HiddenReason.DISABLED);
+        }
+
         for (final HiddenReason reason : hiddenReasons) {
-            if(bukkitPlayer != null && Settings.isDisabledGamemodesEnabled() && Settings.getDisabledGamemodes().contains(bukkitPlayer.getGameMode().toString())) {
-                MessagesUtil.sendDebugMessages("Hiding cosmetics due to gamemode");
-                this.hideCosmetics(HiddenReason.GAMEMODE);
-                return;
-            } else if(this.isHidden(HiddenReason.GAMEMODE)) {
-                MessagesUtil.sendDebugMessages("Showing cosmetics for gamemode");
-                this.showCosmetics(HiddenReason.GAMEMODE);
-            }
-
-            if(bukkitPlayer != null && Settings.getDisabledGamemodes().contains(bukkitPlayer.getWorld().getName())) {
-                MessagesUtil.sendDebugMessages("Hiding Cosmetics due to gamemode");
-                this.hideCosmetics(CosmeticUser.HiddenReason.GAMEMODE);
-                return;
-            } else if(this.isHidden(HiddenReason.WORLD)) {
-                MessagesUtil.sendDebugMessages("Showing Cosmetics due to world");
-                this.showCosmetics(HiddenReason.WORLD);
-                return;
-            }
-            if(Settings.isAllPlayersHidden()) {
-                this.hideCosmetics(HiddenReason.DISABLED);
-            }
-
             this.silentlyAddHideFlag(reason);
         }
     }
 
-    private void startTickTask() {
-        // Occasionally updates the entity cosmetics
-        Runnable run = () -> {
-            MessagesUtil.sendDebugMessages("Tick[uuid=" + uniqueId + "]", Level.INFO);
-            if (Hooks.isInvisible(uniqueId)) hideCosmetics(HiddenReason.VANISH);
-            else showCosmetics(HiddenReason.VANISH);
-            updateCosmetic();
-            if (isHidden() && !getUserEmoteManager().isPlayingEmote() && !getCosmetics().isEmpty()) MessagesUtil.sendActionBar(getPlayer(), "hidden-cosmetics");
-        };
-
+    /**
+     * Start ticking against the {@link CosmeticUser}.
+     * @implNote The tick-rate is determined by the tick period specified in the configuration, if it is less-than or equal to 0
+     * there will be no {@link BukkitTask} created, and the {@link CosmeticUser#taskId} will be -1
+     */
+    public final void startTicking() {
         int tickPeriod = Settings.getTickPeriod();
-        if (tickPeriod > 0) {
-            BukkitTask task = Bukkit.getScheduler().runTaskTimer(HMCCosmeticsPlugin.getInstance(), run, 0, tickPeriod);
-            taskId = task.getTaskId();
+        if(tickPeriod <= 0) {
+            MessagesUtil.sendDebugMessages("CosmeticUser tick is disabled.");
+            return;
+        }
+
+        final BukkitTask task = Bukkit.getScheduler().runTaskTimer(HMCCosmeticsPlugin.getInstance(), this::tick, 0, tickPeriod);
+        this.taskId = task.getTaskId();
+    }
+
+    /**
+     * Dispatch an operation to happen against this {@link CosmeticUser}
+     * at a pre-determined tick-rate.
+     * The tick-rate is determined by the tick period specified in the configuration.
+     */
+    protected void tick() {
+        MessagesUtil.sendDebugMessages("Tick[uuid=" + uniqueId + "]", Level.INFO);
+
+        if (Hooks.isInvisible(uniqueId)) {
+            this.hideCosmetics(HiddenReason.VANISH);
+        } else {
+            this.showCosmetics(HiddenReason.VANISH);
+        }
+
+        this.updateCosmetic();
+
+        if(isHidden() && !getUserEmoteManager().isPlayingEmote() && !playerCosmetics.isEmpty()) {
+            MessagesUtil.sendActionBar(getPlayer(), "hidden-cosmetics");
         }
     }
 
     public void destroy() {
-        Bukkit.getScheduler().cancelTask(taskId);
+        if(this.taskId != -1) { // ensure we're actually ticking this user.
+            Bukkit.getScheduler().cancelTask(taskId);
+        }
+
         despawnBackpack();
         despawnBalloon();
     }
 
-    public Cosmetic getCosmetic(CosmeticSlot slot) {
+    @Override
+    public Cosmetic getCosmetic(@NotNull CosmeticSlot slot) {
         return playerCosmetics.get(slot);
     }
 
-    public ImmutableCollection<Cosmetic> getCosmetics() {
+    @Override
+    public @NotNull ImmutableCollection<Cosmetic> getCosmetics() {
         return ImmutableList.copyOf(playerCosmetics.values());
     }
 
-    public void addPlayerCosmetic(@NotNull Cosmetic cosmetic) {
-        addPlayerCosmetic(cosmetic, null);
-    }
-
-    public void addPlayerCosmetic(@NotNull Cosmetic cosmetic, @Nullable Color color) {
+    @Override
+    public void addCosmetic(@NotNull Cosmetic cosmetic, @Nullable Color color) {
         // API
         PlayerCosmeticEquipEvent event = new PlayerCosmeticEquipEvent(this, cosmetic);
         Bukkit.getPluginManager().callEvent(event);
@@ -233,15 +251,24 @@ public class CosmeticUser {
         Bukkit.getPluginManager().callEvent(postEquipEvent);
     }
 
-    public void removeCosmetics() {
-        // Small optimization could be made, but Concurrent modification prevents us from both getting and removing
-        for (CosmeticSlot slot : CosmeticSlot.values().values()) {
-            removeCosmeticSlot(slot);
-        }
+    /**
+     * @deprecated Use {@link #addCosmetic(Cosmetic)} instead
+     */
+    @Deprecated(since = "2.7.7", forRemoval = true)
+    public void addPlayerCosmetic(@NotNull Cosmetic cosmetic) {
+        addCosmetic(cosmetic);
     }
 
+    /**
+     * @deprecated Use {@link #addCosmetic(Cosmetic, Color)} instead
+     */
+    @Deprecated(since = "2.7.7", forRemoval = true)
+    public void addPlayerCosmetic(@NotNull Cosmetic cosmetic, @Nullable Color color) {
+        addCosmetic(cosmetic, color);
+    }
 
-    public void removeCosmeticSlot(CosmeticSlot slot) {
+    @Override
+    public void removeCosmeticSlot(@NotNull CosmeticSlot slot) {
         // API
         PlayerCosmeticRemoveEvent event = new PlayerCosmeticRemoveEvent(this, getCosmetic(slot));
         Bukkit.getPluginManager().callEvent(event);
@@ -263,30 +290,21 @@ public class CosmeticUser {
         removeArmor(slot);
     }
 
-
-    public void removeCosmeticSlot(Cosmetic cosmetic) {
-        removeCosmeticSlot(cosmetic.getSlot());
-    }
-
-    public boolean hasCosmeticInSlot(CosmeticSlot slot) {
+    @Override
+    public boolean hasCosmeticInSlot(@NotNull CosmeticSlot slot) {
         return playerCosmetics.containsKey(slot);
-    }
-
-    public boolean hasCosmeticInSlot(Cosmetic cosmetic) {
-        if (getCosmetic(cosmetic.getSlot()) == null) return false;
-        return Objects.equals(cosmetic.getId(), getCosmetic(cosmetic.getSlot()).getId());
     }
 
     public Set<CosmeticSlot> getSlotsWithCosmetics() {
         return Set.copyOf(playerCosmetics.keySet());
     }
 
-    public void updateCosmetic(CosmeticSlot slot) {
-        if (getCosmetic(slot) == null) {
-            return;
+    @Override
+    public void updateCosmetic(@NotNull CosmeticSlot slot) {
+        Cosmetic cosmetic = playerCosmetics.get(slot);
+        if (cosmetic != null) {
+            cosmetic.update(this);
         }
-        getCosmetic(slot).update(this);
-        return;
     }
 
     public void updateCosmetic(Cosmetic cosmetic) {
@@ -297,7 +315,7 @@ public class CosmeticUser {
         MessagesUtil.sendDebugMessages("updateCosmetic (All) - start");
         HashMap<EquipmentSlot, ItemStack> items = new HashMap<>();
 
-        for (Cosmetic cosmetic : getCosmetics()) {
+        for (Cosmetic cosmetic : playerCosmetics.values()) {
             if (cosmetic instanceof CosmeticArmorType armorType) {
                 if (getUserEmoteManager().isPlayingEmote() || isInWardrobe()) return;
                 if (!(getEntity() instanceof HumanEntity humanEntity)) return;
@@ -309,7 +327,7 @@ public class CosmeticUser {
 
                 items.put(HMCCInventoryUtils.getEquipmentSlot(armorType.getSlot()), armorType.getItem(this));
             } else {
-                updateCosmetic(cosmetic.getSlot());
+                cosmetic.update(this);
             }
         }
         if (items.isEmpty() || getEntity() == null) return;
@@ -614,23 +632,20 @@ public class CosmeticUser {
     public List<CosmeticSlot> getDyeableSlots() {
         ArrayList<CosmeticSlot> dyableSlots = new ArrayList<>();
 
-        for (Cosmetic cosmetic : getCosmetics()) {
+        for (Cosmetic cosmetic : playerCosmetics.values()) {
             if (cosmetic.isDyable()) dyableSlots.add(cosmetic.getSlot());
         }
 
         return dyableSlots;
     }
 
-    public boolean canEquipCosmetic(Cosmetic cosmetic) {
-        return canEquipCosmetic(cosmetic, false);
-    }
-
-    public boolean canEquipCosmetic(Cosmetic cosmetic, boolean ignoreWardrobe) {
+    @Override
+    public boolean canEquipCosmetic(@NotNull Cosmetic cosmetic, boolean ignoreWardrobe) {
         if (!cosmetic.requiresPermission()) return true;
         if (isInWardrobe() && !ignoreWardrobe) {
             if (WardrobeSettings.isTryCosmeticsInWardrobe() && userWardrobeManager.getWardrobeStatus().equals(UserWardrobeManager.WardrobeStatus.RUNNING)) return true;
         }
-        return getPlayer().hasPermission(cosmetic.getPermission());
+        return getEntity().hasPermission(cosmetic.getPermission());
     }
 
     public void hidePlayer() {

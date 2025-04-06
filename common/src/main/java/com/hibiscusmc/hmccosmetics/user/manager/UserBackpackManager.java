@@ -30,7 +30,7 @@ public class UserBackpackManager {
     @Getter
     private boolean backpackHidden;
     @Getter
-    private int displayEntityId;
+    private final int displayEntityId;
     private ArrayList<Integer> particleCloud = new ArrayList<>();
     @Getter
     private final CosmeticUser user;

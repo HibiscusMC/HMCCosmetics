@@ -144,6 +144,11 @@ public class CosmeticCommand implements CommandExecutor {
 
                 CosmeticUser user = CosmeticUsers.getUser(player);
 
+                if (user == null) {
+                    if (!silent) MessagesUtil.sendMessage(sender, "invalid-player");
+                    return true;
+                }
+
                 if (!user.canEquipCosmetic(cosmetic) && !console) {
                     if (!silent) MessagesUtil.sendMessage(player, "no-cosmetic-permission");
                     return true;
@@ -156,7 +161,7 @@ public class CosmeticCommand implements CommandExecutor {
 
                 if (!silent) MessagesUtil.sendMessage(player, "equip-cosmetic", placeholders);
 
-                user.addPlayerCosmetic(cosmetic, color);
+                user.addCosmetic(cosmetic, color);
                 user.updateCosmetic(cosmetic.getSlot());
                 return true;
             }
@@ -325,7 +330,7 @@ public class CosmeticCommand implements CommandExecutor {
                         if (!silent) MessagesUtil.sendMessage(player, "invalid-color");
                         return true;
                     }
-                    user.addPlayerCosmetic(cosmetic, color); // #FFFFFF
+                    user.addCosmetic(cosmetic, color); // #FFFFFF
                 } else {
                     DyeMenu.openMenu(user, cosmetic);
                 }

@@ -79,8 +79,8 @@ public class CosmeticBalloonType extends Cosmetic {
         }
 
         Vector velocity = newLocation.toVector().subtract(currentLocation.toVector());
-        userBalloonManager.setVelocity(velocity.multiply(1.1));
         userBalloonManager.setLocation(newLocation);
+        userBalloonManager.setVelocity(velocity.multiply(1.1));
 
         HMCCPacketManager.sendTeleportPacket(userBalloonManager.getPufferfishBalloonId(), newLocation, false, viewer);
         HMCCPacketManager.sendLeashPacket(userBalloonManager.getPufferfishBalloonId(), entity.getEntityId(), viewer);

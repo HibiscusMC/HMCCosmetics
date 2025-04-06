@@ -1,9 +1,11 @@
 package com.hibiscusmc.hmccosmetics.gui.action;
 
+import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticHolder;
 import com.hibiscusmc.hmccosmetics.gui.action.actions.*;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -41,16 +43,20 @@ public class Actions {
         actions.put(action.getId().toUpperCase(), action);
     }
 
-    public static void runActions(CosmeticUser user, @NotNull List<String> raw) {
+    public static void runActions(Player viewer, CosmeticHolder cosmeticHolder, @NotNull List<String> raw) {
         for (String a : raw) {
             String id = StringUtils.substringBetween(a, "[", "]").toUpperCase();
             String message = StringUtils.substringAfter(a, "] ");
             MessagesUtil.sendDebugMessages("ID is " + id + " // Raw Data is " + message);
             if (isAction(id)) {
-                getAction(id).run(user, message);
+                getAction(id).run(viewer, cosmeticHolder, message);
             } else {
                 MessagesUtil.sendDebugMessages("Possible ids: " + actions.keySet());
             }
         }
+    }
+
+    public static void runActions(CosmeticUser user, @NotNull List<String> raw) {
+        runActions(user.getPlayer(), user, raw);
     }
 }

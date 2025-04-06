@@ -1,11 +1,13 @@
 package com.hibiscusmc.hmccosmetics.gui.type.types;
 
+import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticHolder;
 import com.hibiscusmc.hmccosmetics.gui.action.Actions;
 import com.hibiscusmc.hmccosmetics.gui.type.Type;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import me.lojosho.hibiscuscommons.hooks.Hooks;
 import me.lojosho.shaded.configurate.ConfigurationNode;
 import me.lojosho.shaded.configurate.serialize.SerializationException;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -23,9 +25,10 @@ public class TypeEmpty extends Type {
         // This is an empty type, meaning, when a menu item has a type of "empty" it will run the code in the method run.
     }
 
-    // This is the code that's run when the item is clicked.
+    // This is the code that's run when the item is clicked. The item is clicked by the "viewer" player in a menu for the
+    // given "cosmeticHolder". They're the same player by default, but it's not guaranteed.
     @Override
-    public void run(CosmeticUser user, @NotNull ConfigurationNode config, ClickType clickType) {
+    public void run(Player viewer, CosmeticHolder cosmeticHolder, @NotNull ConfigurationNode config, ClickType clickType) {
         List<String> actionStrings = new ArrayList<>(); // List where we keep the actions the server will execute.
         ConfigurationNode actionConfig = config.node("actions"); // Configuration node that actions are under.
 
@@ -52,31 +55,45 @@ public class TypeEmpty extends Type {
             }
 
             // We run the actions once we got the raw strings from the config.
-            Actions.runActions(user, actionStrings);
+            Actions.runActions(viewer, cosmeticHolder, actionStrings);
         } catch (SerializationException e) {
             throw new RuntimeException(e);
         }
     }
 
+    // backward-compatibility method, will not be required in the future
+    @Override
+    public void run(CosmeticUser user, ConfigurationNode config, ClickType clickType) {
+        final var player = user.getPlayer();
+        if (player == null) return;
+        run(player, user, config, clickType);
+    }
+
+    // backward-compatibility method, will not be required in the future
+    @Override
+    public ItemStack setItem(CosmeticUser user, ConfigurationNode config, ItemStack itemStack, int slot) {
+        return setItem(user.getPlayer(), user, config, itemStack, slot);
+    }
+
     @Override
     @SuppressWarnings("Duplicates")
-    public ItemStack setItem(CosmeticUser user, ConfigurationNode config, @NotNull ItemStack itemStack, int slot) {
+    public ItemStack setItem(Player viewer, CosmeticHolder cosmeticHolder, ConfigurationNode config, @NotNull ItemStack itemStack, int slot) {
         List<String> processedLore = new ArrayList<>();
         ItemMeta itemMeta = itemStack.getItemMeta();
 
         if (itemMeta.hasDisplayName()) {
-            itemMeta.setDisplayName(Hooks.processPlaceholders(user.getPlayer(), itemMeta.getDisplayName()));
+            itemMeta.setDisplayName(Hooks.processPlaceholders(viewer, itemMeta.getDisplayName()));
         }
 
         if (itemMeta.hasLore()) {
             for (String loreLine : itemMeta.getLore()) {
-                processedLore.add(Hooks.processPlaceholders(user.getPlayer(), loreLine));
+                processedLore.add(Hooks.processPlaceholders(viewer, loreLine));
             }
         }
 
         if (itemMeta instanceof SkullMeta skullMeta) {
             if (skullMeta.hasOwner() && skullMeta.getOwner() != null) {
-                skullMeta.setOwner(Hooks.processPlaceholders(user.getPlayer(), skullMeta.getOwner()));
+                skullMeta.setOwner(Hooks.processPlaceholders(viewer, skullMeta.getOwner()));
             }
         }
 
