@@ -69,7 +69,7 @@ public class UserBackpackManager {
         ItemStack backpackItem = user.getUserCosmeticItem(CosmeticSlot.BACKPACK);
 
         HMCCPacketManager.sendEntitySpawnPacket(loc, getDisplayEntityId(), EntityType.ITEM_DISPLAY, UUID.randomUUID(), outsideViewers);
-        HMCCPacketManager.sendItemDisplayMetadata(getDisplayEntityId(), backpackItem, false, outsideViewers);
+        HMCCPacketManager.sendDisplayEntityMetadataPacket(getDisplayEntityId(), backpackItem, outsideViewers);
 
         Entity entity = user.getEntity();
         int[] passengerIDs = new int[entity.getPassengers().size() + 1];

@@ -55,7 +55,7 @@ public class CosmeticBackpackType extends Cosmetic {
         }
 
         UserBackpackManager backpackManager = user.getUserBackpackManager();
-        Location loc = entity.getLocation().clone().add(0, 2, 0);
+        Location loc = entity.getLocation();
         loc.setPitch(0);
 
         List<Player> addedViewers = user.getUserBackpackManager().getEntityManager().refreshViewers(loc);
@@ -65,7 +65,7 @@ public class CosmeticBackpackType extends Cosmetic {
         user.getUserBackpackManager().getEntityManager().teleport(loc);
 
         HMCCPacketManager.sendEntitySpawnPacket(user.getEntity().getLocation(), entityId, EntityType.ITEM_DISPLAY, UUID.randomUUID(), addedViewers);
-        HMCCPacketManager.sendItemDisplayMetadata(entityId, backpackItem, false, addedViewers);
+        HMCCPacketManager.sendDisplayEntityMetadataPacket(backpackManager.getDisplayEntityId(), backpackItem, addedViewers);
         // If true, it will send the riding packet to all players. If false, it will send the riding packet only to new players
         if (Settings.isBackpackForceRidingEnabled()) HMCCPacketManager.sendRidingPacket(entity.getEntityId(), user.getUserBackpackManager().getDisplayEntityId(), user.getUserBackpackManager().getEntityManager().getViewers());
         else HMCCPacketManager.sendRidingPacket(entity.getEntityId(), user.getUserBackpackManager().getDisplayEntityId(), addedViewers);

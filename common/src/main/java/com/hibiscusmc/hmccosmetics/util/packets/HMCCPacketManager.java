@@ -19,10 +19,7 @@ import me.lojosho.hibiscuscommons.nms.NMSHandlers;
 import me.lojosho.hibiscuscommons.util.packets.PacketManager;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.ItemDisplay;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -376,6 +373,38 @@ public class HMCCPacketManager extends PacketManager {
         for (final Player p : sendTo) {
             sendPacket(p, wrapper.getHandle());
         }
+    }
+
+    public static void sendDisplayEntityMetadataPacket(int entityid, ItemStack backpackItem, List<Player> sendTo) {
+        // TODO: Make the default values adjustable
+        Vector3f translation = new Vector3f(0, 3, 0);
+        Vector3f scale = new Vector3f(1, 1, 1);
+        Quaternionf rotationLeft = new Quaternionf();
+        Quaternionf rotationRight = new Quaternionf();
+        Display.Billboard billboard = Display.Billboard.FIXED;
+        int blockLight = 15;
+        int skylight = 15;
+        int viewRange = Settings.getViewDistance();
+        int width = 0;
+        int height = 0;
+        ItemDisplay.ItemDisplayTransform transform = ItemDisplay.ItemDisplayTransform.HEAD;
+
+        NMSHandlers.getHandler().getPacketHandler().sendItemDisplayMetadata(
+                entityid,
+                translation,
+                scale,
+                rotationLeft,
+                rotationRight,
+                billboard,
+                blockLight,
+                skylight,
+                viewRange,
+                width,
+                height,
+                transform,
+                backpackItem,
+                sendTo
+        );
     }
 
     /**

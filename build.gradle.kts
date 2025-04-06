@@ -86,7 +86,7 @@ allprojects {
         compileOnly("io.github.toxicity188:BetterCommand:1.3") //BetterCommand library
         //compileOnly("it.unimi.dsi:fastutil:8.5.14")
         compileOnly("org.projectlombok:lombok:1.18.34")
-        compileOnly("me.lojosho:HibiscusCommons:0.6.2-d21ebed8")
+        compileOnly("me.lojosho:HibiscusCommons:0.6.3")
 
         // Handled by Spigot Library Loader
         compileOnly("net.kyori:adventure-api:4.19.0")
