@@ -1,6 +1,5 @@
 package com.hibiscusmc.hmccosmetics.user.manager;
 
-import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import com.hibiscusmc.hmccosmetics.util.HMCCPlayerUtils;
@@ -80,7 +79,7 @@ public class UserEntity {
         if (this.getLocation() != null && this.getLocation().getWorld() == location.getWorld()) {
             // Was thinking about using schedulers to just send the packet later... but that would be a lot of tasks and
             // would probably cause more lag. Furthermore, the server "ticks" the cosmetics every second by defualt. So it's fine like this.
-            if (System.currentTimeMillis() - getLastPositionUpdate() <= Settings.getPacketEntityTeleportCooldown()) return;
+            //if (System.currentTimeMillis() - getLastPositionUpdate() <= Settings.getPacketEntityTeleportCooldown()) return;
         }
         this.location = location;
         for (Integer entity : ids) {
@@ -99,7 +98,7 @@ public class UserEntity {
             // First person backpacks need both packets to rotate properly, otherwise they look off
             // Regular backpacks just need the look packet
             if (additonalPacket) HMCCPacketManager.sendRotationPacket(entity, yaw, false, getViewers());
-            HMCCPacketManager.sendLookPacket(entity, location, getViewers());
+            HMCCPacketManager.sendRotateHeadPacket(entity, location, getViewers());
         }
     }
 }

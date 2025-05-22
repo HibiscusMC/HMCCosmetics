@@ -1,30 +1,27 @@
 package com.hibiscusmc.hmccosmetics.util.packets;
 
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.wrappers.*;
 import com.google.common.collect.Lists;
-import com.hibiscusmc.hmccosmetics.api.HMCCosmeticsAPI;
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import com.hibiscusmc.hmccosmetics.util.HMCCInventoryUtils;
-import com.hibiscusmc.hmccosmetics.util.HMCCPlayerUtils;
-import com.hibiscusmc.hmccosmetics.util.packets.wrappers.WrapperPlayServerNamedEntitySpawn;
-import com.hibiscusmc.hmccosmetics.util.packets.wrappers.WrapperPlayServerPlayerInfo;
-import com.hibiscusmc.hmccosmetics.util.packets.wrappers.WrapperPlayServerRelEntityMove;
+import me.lojosho.hibiscuscommons.nms.NMSHandlers;
+import me.lojosho.hibiscuscommons.nms.NMSHandlers;
 import me.lojosho.hibiscuscommons.util.packets.PacketManager;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 public class HMCCPacketManager extends PacketManager {
 
@@ -46,16 +43,7 @@ public class HMCCPacketManager extends PacketManager {
             final UUID uuid,
             final @NotNull List<Player> sendTo
     ) {
-        PacketContainer packet = new PacketContainer(PacketType.Play.Server.SPAWN_ENTITY);
-        packet.getModifier().writeDefaults();
-        packet.getUUIDs().write(0, uuid);
-        packet.getIntegers().write(0, entityId);
-        packet.getEntityTypeModifier().write(0, entityType);
-        packet.getDoubles().
-                write(0, location.getX()).
-                write(1, location.getY()).
-                write(2, location.getZ());
-        for (Player p : sendTo) sendPacket(p, packet);
+        NMSHandlers.getHandler().getPacketHandler().sendSpawnEntityPacket(entityId, uuid, entityType, location, sendTo);
     }
 
     public static void equipmentSlotUpdate(
@@ -97,53 +85,20 @@ public class HMCCPacketManager extends PacketManager {
         equipmentSlotUpdate(entityId, HMCCInventoryUtils.getEquipmentSlot(cosmeticSlot), user.getUserCosmeticItem(cosmeticSlot), sendTo);
     }
 
-    public static void sendArmorstandMetadata(
-            int entityId,
-            List<Player> sendTo
-    ) {
-        PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
-        packet.getModifier().writeDefaults();
-        packet.getIntegers().write(0, entityId);
-        final List<WrappedDataValue> wrappedDataValueList = Lists.newArrayList();
-
+    public static void sendArmorstandMetadata(int entityId, List<Player> sendTo) {
         // 0x21 = Invisible + Fire (Aka, burns to make it not take the light of the block its in, avoiding turning it black)
-        byte mask = 0x20;
-        if (Settings.isBackpackPreventDarkness()) mask = 0x21;
-        wrappedDataValueList.add(new WrappedDataValue(0, WrappedDataWatcher.Registry.get(Byte.class), mask));
-        wrappedDataValueList.add(new WrappedDataValue(15, WrappedDataWatcher.Registry.get(Byte.class), (byte) 0x10));
-        packet.getDataValueCollectionModifier().write(0, wrappedDataValueList);
-        for (Player p : sendTo) sendPacket(p, packet);
+        byte mask = (byte) (Settings.isBackpackPreventDarkness() ? 0x21 : 0x20);
+        Map<Integer, Number> dataValues = Map.of(0, mask, 15, (byte) 0x10);
+        NMSHandlers.getHandler().getPacketHandler().sendSharedEntityData(entityId, dataValues, sendTo);
     }
 
-    public static void sendInvisibilityPacket(
-            int entityId,
-            List<Player> sendTo
-    ) {
-        PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
-        packet.getModifier().writeDefaults();
-        packet.getIntegers().write(0, entityId);
-
-        final List<WrappedDataValue> wrappedDataValueList = Lists.newArrayList();
-        wrappedDataValueList.add(new WrappedDataValue(0, WrappedDataWatcher.Registry.get(Byte.class), (byte) 0x20));
-        packet.getDataValueCollectionModifier().write(0, wrappedDataValueList);
-        for (Player p : sendTo) sendPacket(p, packet);
+    public static void sendInvisibilityPacket(int entityId, List<Player> sendTo) {
+        NMSHandlers.getHandler().getPacketHandler().sendSharedEntityData(entityId, Map.of(0, (byte) 0x20), sendTo);
     }
 
-    public static void sendCloudEffect(
-            int entityId,
-            List<Player> sendTo
-    ) {
-        PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
-        packet.getModifier().writeDefaults();
-        packet.getIntegers().write(0, entityId);
-
-        final List<WrappedDataValue> wrappedDataValueList = Lists.newArrayList();
-        wrappedDataValueList.add(new WrappedDataValue(0, WrappedDataWatcher.Registry.get(Byte.class), (byte) 0x20));
-        wrappedDataValueList.add(new WrappedDataValue(8, WrappedDataWatcher.Registry.get(Float.class), 0f));
-        //wrappedDataValueList.add(new WrappedDataValue(11, WrappedDataWatcher.Registry.get(Integer.class), 21));
-        packet.getDataValueCollectionModifier().write(0, wrappedDataValueList);
-
-        for (Player p : sendTo) sendPacket(p, packet);
+    public static void sendCloudEffect(int entityId, List<Player> sendTo) {
+        Map<Integer, Number> dataValues = Map.of(0, (byte) 0x20, 8, 0f);
+        NMSHandlers.getHandler().getPacketHandler().sendSharedEntityData(entityId, dataValues, sendTo);
     }
 
     public static void sendRotationPacket(
@@ -161,16 +116,10 @@ public class HMCCPacketManager extends PacketManager {
             @NotNull List<Player> sendTo
     ) {
         float ROTATION_FACTOR = 256.0F / 360.0F;
-        float yaw = location.getYaw() * ROTATION_FACTOR;
-        float pitch = location.getPitch() * ROTATION_FACTOR;
-        PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_LOOK);
-        packet.getIntegers().write(0, entityId);
-        packet.getBytes().write(0, (byte) yaw);
-        packet.getBytes().write(1, (byte) pitch);
+        byte yaw = (byte) (location.getYaw() * ROTATION_FACTOR);
+        byte pitch = (byte) (location.getPitch() * ROTATION_FACTOR);
 
-        //Bukkit.getLogger().info("DEBUG: Yaw: " + (location.getYaw() * ROTATION_FACTOR) + " | Original Yaw: " + location.getYaw());
-        packet.getBooleans().write(0, onGround);
-        for (Player p : sendTo) sendPacket(p, packet);
+        NMSHandlers.getHandler().getPacketHandler().sendRotationPacket(entityId, yaw, pitch, onGround, sendTo);
     }
 
     public static void sendRotationPacket(
@@ -180,15 +129,7 @@ public class HMCCPacketManager extends PacketManager {
             @NotNull List<Player> sendTo
     ) {
         float ROTATION_FACTOR = 256.0F / 360.0F;
-        float yaw2 = yaw * ROTATION_FACTOR;
-        PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_LOOK);
-        packet.getIntegers().write(0, entityId);
-        packet.getBytes().write(0, (byte) yaw2);
-        packet.getBytes().write(1, (byte) 0);
-
-        //Bukkit.getLogger().info("DEBUG: Yaw: " + (location.getYaw() * ROTATION_FACTOR) + " | Original Yaw: " + location.getYaw());
-        packet.getBooleans().write(0, onGround);
-        for (Player p : sendTo) sendPacket(p, packet);
+        NMSHandlers.getHandler().getPacketHandler().sendRotationPacket(entityId, yaw * ROTATION_FACTOR, 0, onGround, sendTo);
     }
 
 
@@ -216,12 +157,7 @@ public class HMCCPacketManager extends PacketManager {
             final int[] passengerIds,
             final @NotNull List<Player> sendTo
     ) {
-        PacketContainer packet = new PacketContainer(PacketType.Play.Server.MOUNT);
-        packet.getIntegers().write(0, mountId);
-        packet.getIntegerArrays().write(0, passengerIds);
-        for (final Player p : sendTo) {
-            sendPacket(p, packet);
-        }
+        NMSHandlers.getHandler().getPacketHandler().sendMountPacket(mountId, passengerIds, sendTo);
     }
 
     /**
@@ -251,17 +187,7 @@ public class HMCCPacketManager extends PacketManager {
             final int entityId,
             final @NotNull List<Player> sendTo
     ) {
-        if (HMCCosmeticsAPI.getNMSVersion().contains("v1_19_R3") || HMCCosmeticsAPI.getNMSVersion().contains("v1_20_R1")) {
-            WrapperPlayServerNamedEntitySpawn wrapper = new WrapperPlayServerNamedEntitySpawn();
-            wrapper.setEntityID(entityId);
-            wrapper.setPlayerUUID(uuid);
-            wrapper.setPosition(location.toVector());
-            wrapper.setPitch(location.getPitch());
-            wrapper.setYaw(location.getYaw());
-            for (final Player p : sendTo) sendPacket(p, wrapper.getHandle());
-            return;
-        }
-        sendEntitySpawnPacket(location, entityId, EntityType.PLAYER, uuid);
+        sendEntitySpawnPacket(location, entityId, EntityType.PLAYER, uuid, sendTo);
     }
 
     /**
@@ -274,28 +200,10 @@ public class HMCCPacketManager extends PacketManager {
             final Player skinnedPlayer,
             final int entityId,
             final UUID uuid,
-            final String NPCName,
+            final String npcName,
             final List<Player> sendTo
     ) {
-        WrapperPlayServerPlayerInfo info = new WrapperPlayServerPlayerInfo();
-        info.setAction(EnumWrappers.PlayerInfoAction.ADD_PLAYER);
-
-        String name = NPCName;
-        while (name.length() > 16) {
-            name = name.substring(16);
-        }
-
-        WrappedGameProfile wrappedGameProfile = new WrappedGameProfile(uuid, name);
-        WrappedSignedProperty skinData = HMCCPlayerUtils.getSkin(skinnedPlayer);
-        if (skinData != null) wrappedGameProfile.getProperties().put("textures", skinData);
-
-        info.getHandle().getPlayerInfoDataLists().write(1, Collections.singletonList(new PlayerInfoData(
-                wrappedGameProfile,
-                0,
-                EnumWrappers.NativeGameMode.CREATIVE,
-                WrappedChatComponent.fromText(name)
-        )));
-        for (final Player p : sendTo) sendPacket(p, info.getHandle());
+        NMSHandlers.getHandler().getPacketHandler().sendFakePlayerInfoPacket(skinnedPlayer, entityId, uuid, npcName, sendTo);
     }
 
     /**
@@ -319,32 +227,20 @@ public class HMCCPacketManager extends PacketManager {
          https://wiki.vg/Entity_metadata#Entity
          */
         final byte mask = 0x01 | 0x02 | 0x04 | 0x08 | 0x010 | 0x020 | 0x40;
-        PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
-        packet.getModifier().writeDefaults();
-        packet.getIntegers().write(0, playerId);
-
-        final List<WrappedDataValue> wrappedDataValueList = Lists.newArrayList();
-        wrappedDataValueList.add(new WrappedDataValue(17, WrappedDataWatcher.Registry.get(Byte.class), mask));
-        packet.getDataValueCollectionModifier().write(0, wrappedDataValueList);
-
-        for (final Player p : sendTo) sendPacket(p, packet);
+        NMSHandlers.getHandler().getPacketHandler().sendSharedEntityData(playerId, Map.of(17, mask), sendTo);
     }
 
     /**
      * Removes a fake player from being seen by players.
-     * @param player Which gameprofile to wrap for removing the player.
      * @param uuid What is the fake player UUID
      * @param sendTo Whom to send the packet to
      */
     @SuppressWarnings("deprecation")
     public static void sendRemovePlayerPacket(
-            final Player player,
             final UUID uuid,
             final List<Player> sendTo
     ) {
-        PacketContainer packet = new PacketContainer(PacketType.Play.Server.PLAYER_INFO_REMOVE);
-        packet.getUUIDLists().write(0, List.of(uuid));
-        for (final Player p : sendTo) sendPacket(p, packet);
+        NMSHandlers.getHandler().getPacketHandler().sendPlayerInfoRemovePacket(uuid, sendTo);
     }
 
     public static void sendLeashPacket(
@@ -370,16 +266,39 @@ public class HMCCPacketManager extends PacketManager {
             final boolean onGround,
             @NotNull List<Player> sendTo
     ) {
-        PacketContainer packet = new PacketContainer(PacketType.Play.Server.REL_ENTITY_MOVE);
-        WrapperPlayServerRelEntityMove wrapper = new WrapperPlayServerRelEntityMove(packet);
-        wrapper.setEntityID(entityId);
-        wrapper.setDx(to.getX() - from.getX());
-        wrapper.setDy(to.getY() - from.getY());
-        wrapper.setDz(to.getZ() - from.getZ());
-        wrapper.setOnGround(onGround);
-        for (final Player p : sendTo) {
-            sendPacket(p, wrapper.getHandle());
-        }
+        NMSHandlers.getHandler().getPacketHandler().sendMovePacket(entityId, from, to, onGround, sendTo);
+    }
+
+    public static void sendDisplayEntityMetadataPacket(int entityid, ItemStack backpackItem, List<Player> sendTo) {
+        // TODO: Make the default values adjustable
+        Vector3f translation = new Vector3f(0, 3, 0);
+        Vector3f scale = new Vector3f(1, 1, 1);
+        Quaternionf rotationLeft = new Quaternionf();
+        Quaternionf rotationRight = new Quaternionf();
+        Display.Billboard billboard = Display.Billboard.FIXED;
+        int blockLight = 15;
+        int skylight = 15;
+        int viewRange = Settings.getViewDistance();
+        int width = 0;
+        int height = 0;
+        ItemDisplay.ItemDisplayTransform transform = ItemDisplay.ItemDisplayTransform.HEAD;
+
+        NMSHandlers.getHandler().getPacketHandler().sendItemDisplayMetadata(
+                entityid,
+                translation,
+                scale,
+                rotationLeft,
+                rotationRight,
+                billboard,
+                blockLight,
+                skylight,
+                viewRange,
+                width,
+                height,
+                transform,
+                backpackItem,
+                sendTo
+        );
     }
 
     /**
@@ -390,10 +309,5 @@ public class HMCCPacketManager extends PacketManager {
     @NotNull
     public static List<Player> getViewers(@NotNull Location location) {
         return PacketManager.getViewers(location, Settings.getViewDistance());
-    }
-
-    public static void sendPacket(Player player, PacketContainer packet) {
-        if (player == null) return;
-        ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, null,false);
     }
 }

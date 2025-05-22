@@ -117,12 +117,12 @@ public class UserWardrobeManager {
             // Armorstand
             HMCCPacketManager.sendEntitySpawnPacket(viewingLocation, ARMORSTAND_ID, EntityType.ARMOR_STAND, UUID.randomUUID(), viewer);
             HMCCPacketManager.sendArmorstandMetadata(ARMORSTAND_ID, viewer);
-            HMCCPacketManager.sendLookPacket(ARMORSTAND_ID, viewingLocation, viewer);
+            HMCCPacketManager.sendRotateHeadPacket(ARMORSTAND_ID, viewingLocation, viewer);
 
             // Player
             player.teleport(viewingLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
             player.setInvisible(true);
-            HMCCPacketManager.gamemodeChangePacket(player, 3);
+            HMCCPacketManager.gamemodeChangePacket(player, GameMode.SPECTATOR);
             HMCCPacketManager.sendCameraPacket(ARMORSTAND_ID, viewer);
 
             // NPC
@@ -142,7 +142,7 @@ public class UserWardrobeManager {
             }, 4);
 
             // Location
-            HMCCPacketManager.sendLookPacket(NPC_ID, npcLocation, viewer);
+            HMCCPacketManager.sendRotateHeadPacket(NPC_ID, npcLocation, viewer);
             HMCCPacketManager.sendRotationPacket(NPC_ID, npcLocation, true, viewer);
 
             // Misc
@@ -234,7 +234,7 @@ public class UserWardrobeManager {
             // NPC
             if (user.isBalloonSpawned()) user.getBalloonManager().sendRemoveLeashPacket();
             HMCCPacketManager.sendEntityDestroyPacket(NPC_ID, viewer); // Success
-            HMCCPacketManager.sendRemovePlayerPacket(player, WARDROBE_UUID, viewer); // Success
+            HMCCPacketManager.sendRemovePlayerPacket(WARDROBE_UUID, viewer); // Success
 
             // Player
             HMCCPacketManager.sendCameraPacket(player.getEntityId(), viewer);
@@ -247,11 +247,11 @@ public class UserWardrobeManager {
             if (WardrobeSettings.isForceExitGamemode()) {
                 MessagesUtil.sendDebugMessages("Force Exit Gamemode " + WardrobeSettings.getExitGamemode());
                 player.setGameMode(WardrobeSettings.getExitGamemode());
-                HMCCPacketManager.gamemodeChangePacket(player, HMCCServerUtils.convertGamemode(WardrobeSettings.getExitGamemode())); // Success
+                HMCCPacketManager.gamemodeChangePacket(player, WardrobeSettings.getExitGamemode()); // Success
             } else {
                 MessagesUtil.sendDebugMessages("Original Gamemode " + this.originalGamemode);
                 player.setGameMode(this.originalGamemode);
-                HMCCPacketManager.gamemodeChangePacket(player, HMCCServerUtils.convertGamemode(this.originalGamemode)); // Success
+                HMCCPacketManager.gamemodeChangePacket(player, this.originalGamemode); // Success
             }
             user.showPlayer();
 
@@ -311,7 +311,7 @@ public class UserWardrobeManager {
                 int yaw = data.get();
                 location.setYaw(yaw);
 
-                HMCCPacketManager.sendLookPacket(NPC_ID, location, viewer);
+                HMCCPacketManager.sendRotateHeadPacket(NPC_ID, location, viewer);
                 user.hidePlayer();
                 int rotationSpeed = WardrobeSettings.getRotationSpeed();
                 location.setYaw(HMCCServerUtils.getNextYaw(yaw - 30, rotationSpeed));
@@ -323,10 +323,11 @@ public class UserWardrobeManager {
                     HMCCPacketManager.equipmentSlotUpdate(NPC_ID, user, slot, viewer);
                 }
 
+                // Handle backpacks
                 if (user.hasCosmeticInSlot(CosmeticSlot.BACKPACK) && user.getUserBackpackManager() != null) {
                     HMCCPacketManager.sendTeleportPacket(user.getUserBackpackManager().getFirstArmorStandId(), location, false, viewer);
                     HMCCPacketManager.ridingMountPacket(NPC_ID, user.getUserBackpackManager().getFirstArmorStandId(), viewer);
-                    user.getUserBackpackManager().getEntityManager().setRotation(nextyaw);
+                    //user.getUserBackpackManager().getEntityManager().setRotation(nextyaw);
                     HMCCPacketManager.sendEntityDestroyPacket(user.getUserBackpackManager().getFirstArmorStandId(), outsideViewers);
                 }
 
@@ -358,5 +359,4 @@ public class UserWardrobeManager {
         RUNNING,
         STOPPING,
     }
-
 }
