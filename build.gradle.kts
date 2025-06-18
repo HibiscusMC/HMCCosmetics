@@ -80,6 +80,7 @@ allprojects {
         compileOnly("me.clip:placeholderapi:2.11.6")
         compileOnly("com.ticxo.modelengine:ModelEngine:R4.0.6")
         compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.12")
+        compileOnly("net.citizensnpcs:citizens-main:2.0.37-SNAPSHOT")
         compileOnly("io.github.toxicity188:BetterHud-standard-api:1.12") //Standard api
         compileOnly("io.github.toxicity188:BetterHud-bukkit-api:1.12") //Platform api
         compileOnly("io.github.toxicity188:BetterCommand:1.3") //BetterCommand library
