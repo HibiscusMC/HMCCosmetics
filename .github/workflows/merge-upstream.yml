@@ -23,17 +23,29 @@ jobs:
         run: |
           git fetch upstream
           git checkout remapped
-          git merge upstream/remapped
-          BRANCH=sync-upstream-$(date +%Y%m%d)
-          git checkout -b $BRANCH
-          git push origin $BRANCH
-          echo "branch=$BRANCH" >> $GITHUB_OUTPUT
+
+          # Ensure sync-upstream branch exists and is clean
+          git branch -D sync-upstream || true
+          git checkout -b sync-upstream
+          
+          # Merge in upstream changes
+          git merge --no-commit --no-ff upstream/remapped || true
+
+          if git diff --quiet; then
+            echo "No changes detected from upstream."
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            git commit -m "🔄 Sync with upstream/remapped"
+            git push origin sync-upstream --force
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
 
       - name: Create PR
+        if: steps.sync.outputs.changed == 'true'
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ steps.sync.outputs.branch }}
+          branch: sync-upstream
           title: "🔄 Sync with upstream"
           body: "Merge upstream/remapped into remapped."
           base: remapped
