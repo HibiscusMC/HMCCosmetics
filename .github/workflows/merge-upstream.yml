@@ -18,11 +18,11 @@ jobs:
       - name: Add Upstream
         run: git remote add upstream https://github.com/HibiscusMC/HMCCosmetics.git
 
-      - name: Fetch Upstream and Rebase
+      - name: Fetch Upstream and Merge
         run: |
           git fetch upstream
           git checkout remapped
-          git rebase upstream/remapped
+          git merge upstream/remapped
           BRANCH=sync-upstream-$(date +%Y%m%d)
           git checkout -b $BRANCH
           git push origin $BRANCH
