@@ -1,5 +1,6 @@
 name: Scheduled Merge Remote Action
 on: 
+  workflow_dispatch:
   schedule:
     - cron: '0 0 * * 1'
 
