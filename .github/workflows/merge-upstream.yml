@@ -19,6 +19,7 @@ jobs:
         run: git remote add upstream https://github.com/HibiscusMC/HMCCosmetics.git
 
       - name: Fetch Upstream and Merge
+        id: sync
         run: |
           git fetch upstream
           git checkout remapped
@@ -26,6 +27,7 @@ jobs:
           BRANCH=sync-upstream-$(date +%Y%m%d)
           git checkout -b $BRANCH
           git push origin $BRANCH
+          echo "branch=$BRANCH" >> $GITHUB_OUTPUT
 
       - name: Create PR
         uses: peter-evans/create-pull-request@v6
