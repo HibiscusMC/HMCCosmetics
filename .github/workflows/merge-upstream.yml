@@ -33,5 +33,5 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           branch: ${{ steps.sync.outputs.branch }}
           title: "🔄 Sync with upstream"
-          body: "Automated rebase from upstream/remapped into remapped."
+          body: "Merge upstream/remapped into remapped."
           base: remapped
