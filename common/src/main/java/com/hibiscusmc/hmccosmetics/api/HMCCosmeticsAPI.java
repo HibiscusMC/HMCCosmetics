@@ -12,7 +12,6 @@ import com.hibiscusmc.hmccosmetics.user.CosmeticUserProvider;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import me.lojosho.hibiscuscommons.nms.MinecraftVersion;
 import me.lojosho.hibiscuscommons.nms.NMSHandlers;
-import me.lojosho.shaded.configurate.ConfigurationNode;
 import org.bukkit.Color;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
@@ -21,7 +20,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.function.BiConsumer;
 
 /**
  * The main API class for HMCCosmetics. This class provides methods to interact with the plugin.

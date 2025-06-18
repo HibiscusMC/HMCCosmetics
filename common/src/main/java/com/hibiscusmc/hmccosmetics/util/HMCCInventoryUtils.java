@@ -11,11 +11,18 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class HMCCInventoryUtils {
+    private static final Map<CosmeticSlot, EquipmentSlot> SLOT_MAP = Map.of(
+        CosmeticSlot.HELMET, EquipmentSlot.HEAD,
+        CosmeticSlot.CHESTPLATE, EquipmentSlot.CHEST,
+        CosmeticSlot.LEGGINGS, EquipmentSlot.LEGS,
+        CosmeticSlot.BOOTS, EquipmentSlot.FEET,
+        CosmeticSlot.MAINHAND, EquipmentSlot.HAND,
+        CosmeticSlot.OFFHAND, EquipmentSlot.OFF_HAND
+    );
 
     public static int getPacketArmorSlot(final EquipmentSlot slot) {
         return switch (slot) {
@@ -117,29 +124,7 @@ public class HMCCInventoryUtils {
     @Contract(pure = true)
     @Nullable
     public static EquipmentSlot getEquipmentSlot(@NotNull CosmeticSlot slot) {
-        switch (slot) {
-            case HELMET -> {
-                return EquipmentSlot.HEAD;
-            }
-            case CHESTPLATE -> {
-                return EquipmentSlot.CHEST;
-            }
-            case LEGGINGS -> {
-                return EquipmentSlot.LEGS;
-            }
-            case BOOTS -> {
-                return EquipmentSlot.FEET;
-            }
-            case OFFHAND -> {
-                return EquipmentSlot.OFF_HAND;
-            }
-            case MAINHAND -> {
-                return EquipmentSlot.HAND;
-            }
-            default -> {
-                return null;
-            }
-        }
+        return SLOT_MAP.get(slot);
     }
 
     public static EquipmentSlot getEquipmentSlot(@NotNull com.github.retrooper.packetevents.protocol.player.EquipmentSlot slot) {

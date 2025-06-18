@@ -1,6 +1,5 @@
 package com.hibiscusmc.hmccosmetics.util;
 
-import me.lojosho.hibiscuscommons.util.StringUtils;
 import me.lojosho.shaded.configurate.ConfigurationNode;
 
 import java.util.ArrayList;

@@ -2,12 +2,10 @@ package com.hibiscusmc.hmccosmetics.cosmetic;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.*;
-import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import lombok.extern.slf4j.Slf4j;
 import me.lojosho.shaded.configurate.ConfigurationNode;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 import java.util.function.BiFunction;

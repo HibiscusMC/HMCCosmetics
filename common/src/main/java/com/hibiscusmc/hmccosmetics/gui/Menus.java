@@ -3,8 +3,6 @@ package com.hibiscusmc.hmccosmetics.gui;
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
-import lombok.Getter;
-import lombok.Setter;
 import me.lojosho.shaded.configurate.CommentedConfigurationNode;
 import me.lojosho.shaded.configurate.ConfigurateException;
 import me.lojosho.shaded.configurate.yaml.YamlConfigurationLoader;

@@ -6,7 +6,6 @@ import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.database.UserData;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import org.bukkit.Bukkit;
-import org.bukkit.Color;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
