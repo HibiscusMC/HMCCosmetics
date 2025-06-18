@@ -9,16 +9,16 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout your fork
+      - name: Checkout Repository
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
 
-      - name: Add upstream remote
+      - name: Add Upstream
         run: git remote add upstream https://github.com/HibiscusMC/HibiscusCommons.git
 
-      - name: Fetch upstream and rebase
+      - name: Fetch Upstream and Rebase
         run: |
           git fetch upstream
           git checkout remapped
@@ -27,7 +27,7 @@ jobs:
           git checkout -b $BRANCH
           git push origin $BRANCH
 
-      - name: Create Pull Request
+      - name: Create PR
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
