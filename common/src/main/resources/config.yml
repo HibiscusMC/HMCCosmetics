@@ -40,19 +40,10 @@ cosmetic-settings:
     gamemodes:
       - "SPECTATOR"
 
-  # This disables the entire internal emote system within the plugin. This option requires a restart.
-  emote-enable: true
-  emote-distance: -3 # This shows how far away the camera should be while a player is doing an emote. Negative is behind player.
-  emote-block-check: true # If the server should check if the block is open where the camera is placed (prevents players viewing through blocks)
-  emote-air-check: true # Check if there is air under a player, if there is, don't play emote
-  emote-damage-leave: true # If the player should leave the emote when they take damage
-  emote-invincible: false # If the player should not take damage while doing an emote
-  # If a player should be put into camera mode when looking at an emote. Highly recommend keeping it as true.
-  emote-camera: true
-  # If a player should be able to move in an emote. This option really only affects if "emote-camera" is false
-  emote-move: false
   # This make it so it always sends the riding packets for the backpack. This sends more packets but is more reliable for servers which modify player passengers.
   backpack-force-riding-packet: false
+  # This prevents the backpack from being dark when the player is below a block at the expense of making the backpack bright
+  backpack-prevent-darkness: true
   # This helps reduce the amount of packets sent for packet entities, but reduces accuracy of the entity. This is in milliseconds. -1 to disable.
   # This is useful for servers with a lot of backpacks, as they are passengers, which means the client will update their position automatically within an area where the entity is located.
   entity-cooldown-teleport-packet: 500
@@ -103,13 +94,13 @@ menu-settings:
   shading:
     # Below is the shading mechanism behind cosmetic items. This is a bit complicated, but it allows for a lot of customization.
     # The shading is done through the title and by shifting textures around. This is done by offsets.
-    # Only Oraxen is support by default. Vanilla can't properly handle it without a lot of unicodes and ItemsAdder adds weird offsets and decolors it. (This is why it is disabled by default)
+    # Only Nexo is support by default. Vanilla can't properly handle it without a lot of unicodes and ItemsAdder adds weird offsets and decolors it. (This is why it is disabled by default)
     enabled: false # Default of menus having shading. This can be toggled individually in menus with "shading: true/false"
-    first-row-shift: "<s:-169>" # Oraxen: "<s:-169>"
-    sequent-row-shift: " <s:-169>" # Oraxen: " <s:-169>" (Space is important here!)
-    individual-column-shift: "<s:-3>" # Oraxen: "<s:-3>"
-    background: "<g:shade_row_<row>:colorable> " # Oraxen: "<g:shade_row_<row>:colorable> 
-    clear-background: "<g:clear_row_<row>:colorable> " # Oraxen: "<g:clear_row_<row>:colorable> "
+    first-row-shift: "<shift:-169>" # Nexo: "<shift:-169>"
+    sequent-row-shift: " <shift:-169>" # Nexo: " <shift:-169>" (Space is important here!)
+    individual-column-shift: "<shift:-3>" # Nexo: "<shift:-3>"
+    background: "<glyph:shade_row_<row>:colorable> " # Nexo: "<glyph:shade_row_<row>:colorable> 
+    clear-background: "<glyph:clear_row_<row>:colorable> " # Nexo: "<glyph:clear_row_<row>:colorable> "
     #These use MiniMessage for color! https://docs.advntr.dev/minimessage/format.html#color
     equipped-cosmetic-color: "<yellow>"
     equipable-cosmetic-color: "<green>"
@@ -121,6 +112,7 @@ menu-settings:
 dye-menu:
   # If you use ItemsAdder, set this to "<white>:img_offset_-8::img_dye_menu:"
   # If you use Oraxen, set this to "<white><s:-8><g:dye_menu>"
+  # If you use Nexo, set this to "<white><shift:-8><glyph:dye_menu>"
   title: "<white>"
   input-slot: 10
   output-slot: 16
@@ -136,6 +128,8 @@ hook-settings:
     # Checks worldguard regions for HMCC flags. If set to false, flags will not work properly.
     # Requires restart to apply changes.
     player-move-check: true
+  betterhud:
+    wardrobe-hide: true
 wardrobe:
   # how much yaw should change per tick, set to 0 for none
   rotation-speed: 3
@@ -168,6 +162,7 @@ wardrobe:
     enabled: true
     # If you use ItemsAdder, set this to "<black>%img_title%
     # If you use Oraxen, set this to "<black><glyph:title>"
+    # If you use Nexo, set this to "<black>%nexo_title%" and use PlaceholderAPI
     text: "<black>"
     delay: 40
     title-fade-in: 1000 # milliseconds

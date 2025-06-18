@@ -19,6 +19,7 @@ set-wardrobe-viewing: "%prefix% <gradient:#6D9DC5:#45CDE9>Set new wardrobe viewi
 set-wardrobe-leaving: "%prefix% <gradient:#6D9DC5:#45CDE9>Set new wardrobe leaving location!"
 set-wardrobe-permission: "%prefix% <gradient:#6D9DC5:#45CDE9>Set new wardrobe permission!"
 set-wardrobe-distance: "%prefix% <gradient:#6D9DC5:#45CDE9>Set new wardrobe distance!"
+set-wardrobe-menu: "%prefix% <gradient:#6D9DC5:#45CDE9>Set new wardrobe menu!"
 no-wardrobes: "%prefix% <red>There are no wardrobes with that name!"
 wardrobe-not-setup: "%prefix% <red>This wardrobe does not have all required locations set!"
 

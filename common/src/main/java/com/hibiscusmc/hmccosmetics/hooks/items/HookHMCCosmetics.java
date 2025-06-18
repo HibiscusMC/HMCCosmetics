@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 public class HookHMCCosmetics extends Hook {
     public HookHMCCosmetics() {
         super("HMCCosmetics", HookFlag.ITEM_SUPPORT);
+        setActive(true);
     }
 
     /**
@@ -25,4 +26,3 @@ public class HookHMCCosmetics extends Hook {
         return cosmetic.getItem();
     }
 }
-

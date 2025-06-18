@@ -29,7 +29,7 @@ public class UserBackpackManager {
     @Getter
     private boolean backpackHidden;
     @Getter
-    private int invisibleArmorStand;
+    private final int invisibleArmorStand;
     private ArrayList<Integer> particleCloud = new ArrayList<>();
     @Getter
     private final CosmeticUser user;
@@ -93,25 +93,11 @@ public class UserBackpackManager {
                 if (i == 0) HMCCPacketManager.sendRidingPacket(entity.getEntityId(), particleCloud.get(i), owner);
                 else HMCCPacketManager.sendRidingPacket(particleCloud.get(i - 1), particleCloud.get(i) , owner);
             }
-            HMCCPacketManager.sendRidingPacket(particleCloud.get(particleCloud.size() - 1), user.getUserBackpackManager().getFirstArmorStandId(), owner);
+            HMCCPacketManager.sendRidingPacket(particleCloud.getLast(), user.getUserBackpackManager().getFirstArmorStandId(), owner);
             if (!user.isHidden()) PacketManager.equipmentSlotUpdate(user.getUserBackpackManager().getFirstArmorStandId(), EquipmentSlot.HEAD, user.getUserCosmeticItem(cosmeticBackpackType, cosmeticBackpackType.getFirstPersonBackpack()), owner);
         }
         PacketManager.equipmentSlotUpdate(getFirstArmorStandId(), EquipmentSlot.HEAD, user.getUserCosmeticItem(cosmeticBackpackType), outsideViewers);
         HMCCPacketManager.sendRidingPacket(entity.getEntityId(), passengerIDs, outsideViewers);
-
-        // No one should be using ME because it barely works but some still use it, so it's here
-        if (cosmeticBackpackType.getModelName() != null && Hooks.isActiveHook("ModelEngine")) {
-            if (ModelEngineAPI.getBlueprint(cosmeticBackpackType.getModelName()) == null) {
-                MessagesUtil.sendDebugMessages("Invalid Model Engine Blueprint " + cosmeticBackpackType.getModelName(), Level.SEVERE);
-                return;
-            }
-            /* TODO: Readd ModelEngine support
-            ModeledEntity modeledEntity = ModelEngineAPI.createModeledEntity(new PacketBaseEntity(getFirstArmorStandId(), UUID.randomUUID(), entity.getLocation()));
-            ActiveModel model = ModelEngineAPI.createActiveModel(ModelEngineAPI.getBlueprint(cosmeticBackpackType.getModelName()));
-            model.setCanHurt(false);
-            modeledEntity.addModel(model, false);
-             */
-        }
 
         MessagesUtil.sendDebugMessages("spawnBackpack Bukkit - Finish");
     }

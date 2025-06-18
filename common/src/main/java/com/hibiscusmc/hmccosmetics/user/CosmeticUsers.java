@@ -1,6 +1,5 @@
 package com.hibiscusmc.hmccosmetics.user;
 
-import com.google.common.collect.HashBiMap;
 import com.hibiscusmc.hmccosmetics.util.HMCCServerUtils;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -9,10 +8,13 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class CosmeticUsers {
 
-    private static final HashBiMap<UUID, CosmeticUser> COSMETIC_USERS = HashBiMap.create();
+    private static final ConcurrentHashMap<UUID, CosmeticUser> COSMETIC_USERS = new ConcurrentHashMap<>();
+
+    private static CosmeticUserProvider PROVIDER = CosmeticUserProvider.Default.INSTANCE;
 
     /**
      * Adds a user to the Hashmap of stored CosmeticUsers. This will not override an entry if it already exists. If you need to override, delete then add.
@@ -52,7 +54,7 @@ public class CosmeticUsers {
     /**
      * This method allows you to get a CosmeticUser from just using the player class. This just allows you to have a bit less boilerplate.
      * @param player The player to lookup (will take their UUID from the class)
-     * @return Returns the user if there is a vlaid user, returns null if not.
+     * @return Returns the user if there is a valid user, returns null if not.
      */
     @Nullable
     public static CosmeticUser getUser(@NotNull Player player) {
@@ -73,11 +75,37 @@ public class CosmeticUsers {
     }
 
     /**
+     * Register a custom {@link CosmeticUserProvider} to provide your own user implementation to
+     * be used and queried.
+     * @param provider the provider to register
+     * @throws IllegalArgumentException if the provider is already registered by another plugin
+     */
+    public static void registerProvider(final CosmeticUserProvider provider) {
+        if(PROVIDER != CosmeticUserProvider.Default.INSTANCE) {
+            throw new IllegalArgumentException("CosmeticUserProvider already registered by %s, this conflicts with %s attempting to register their own.".formatted(
+                PROVIDER.getProviderPlugin().getName(),
+                provider.getProviderPlugin().getName()
+            ));
+        }
+
+        PROVIDER = provider;
+    }
+
+    /**
+     * Fetch the current {@link CosmeticUserProvider} being used.
+     * @return the current {@link CosmeticUserProvider} being used
+     */
+    public static CosmeticUserProvider getProvider() {
+        return PROVIDER;
+    }
+
+    /**
      * Gets all the values for CosmeticUsers to allow you to iterate over everyone.
      * @return CosmeticUsers in a set. This will never be null, but might be empty.
      */
     @NotNull
     public static Set<CosmeticUser> values() {
-        return COSMETIC_USERS.values();
+        // fix this later; this is a temporary fix. It was originally a set, now it's a collection
+        return Set.copyOf(COSMETIC_USERS.values());
     }
 }

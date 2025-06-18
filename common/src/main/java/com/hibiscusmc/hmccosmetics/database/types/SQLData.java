@@ -23,22 +23,17 @@ public abstract class SQLData extends Data {
         return CompletableFuture.supplyAsync(() -> {
             UserData data = new UserData(uniqueId);
 
-            PreparedStatement preparedStatement = null;
-            try {
-                preparedStatement = preparedStatement("SELECT * FROM COSMETICDATABASE WHERE UUID = ?;");
+            try (PreparedStatement preparedStatement = preparedStatement("SELECT * FROM COSMETICDATABASE WHERE UUID = ?;")){
                 preparedStatement.setString(1, uniqueId.toString());
-                ResultSet rs = preparedStatement.executeQuery();
-                if (rs.next()) {
-                    String rawData = rs.getString("COSMETICS");
-                    HashMap<CosmeticSlot, Map.Entry<Cosmetic, Integer>> cosmetics = deserializeData(rawData);
-                    data.setCosmetics(cosmetics);
+                try (ResultSet rs = preparedStatement.executeQuery()) {
+                    if (rs.next()) {
+                        String rawData = rs.getString("COSMETICS");
+                        HashMap<CosmeticSlot, Map.Entry<Cosmetic, Integer>> cosmetics = deserializeData(rawData);
+                        data.setCosmetics(cosmetics);
+                    }
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
-            } finally {
-                try {
-                    if (preparedStatement != null) preparedStatement.close();
-                } catch (SQLException e) {}
             }
             return data;
         });
@@ -48,18 +43,12 @@ public abstract class SQLData extends Data {
     @SuppressWarnings("resource")
     public void save(CosmeticUser user) {
         Runnable run = () -> {
-            PreparedStatement preparedSt = null;
-            try {
-                preparedSt = preparedStatement("REPLACE INTO COSMETICDATABASE(UUID,COSMETICS) VALUES(?,?);");
+            try (PreparedStatement preparedSt = preparedStatement("REPLACE INTO COSMETICDATABASE(UUID,COSMETICS) VALUES(?,?);")) {
                 preparedSt.setString(1, user.getUniqueId().toString());
                 preparedSt.setString(2, serializeData(user));
                 preparedSt.executeUpdate();
             } catch (SQLException e) {
                 throw new RuntimeException(e);
-            } finally {
-                try {
-                    if (preparedSt != null) preparedSt.close();
-                } catch (SQLException e) {}
             }
         };
         if (!HMCCosmeticsPlugin.getInstance().isDisabled()) {

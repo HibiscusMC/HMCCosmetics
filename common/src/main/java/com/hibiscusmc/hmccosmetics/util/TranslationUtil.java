@@ -32,7 +32,7 @@ public class TranslationUtil {
     public static String getTranslation(String key, String message) {
         List<TranslationPair> pairs = keys.get(key);
         for (TranslationPair pair : pairs) {
-            if (pair.key().equals(message)) return StringUtils.parseStringToString(pair.value());
+            if (pair.key().equals(message)) return pair.value();
         }
 
         return message;

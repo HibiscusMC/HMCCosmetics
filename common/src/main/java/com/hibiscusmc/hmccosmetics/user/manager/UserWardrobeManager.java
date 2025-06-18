@@ -64,6 +64,7 @@ public class UserWardrobeManager {
     private BossBar bossBar;
     @Getter
     private boolean active;
+    @Setter
     @Getter
     private WardrobeStatus wardrobeStatus;
     @Getter
@@ -108,14 +109,19 @@ public class UserWardrobeManager {
         MessagesUtil.sendMessage(player, "opened-wardrobe");
 
         Runnable run = () -> {
+            if (!player.isOnline()) {
+                end();
+                return;
+            }
+
             // Armorstand
             HMCCPacketManager.sendEntitySpawnPacket(viewingLocation, ARMORSTAND_ID, EntityType.ARMOR_STAND, UUID.randomUUID(), viewer);
             HMCCPacketManager.sendArmorstandMetadata(ARMORSTAND_ID, viewer);
             HMCCPacketManager.sendLookPacket(ARMORSTAND_ID, viewingLocation, viewer);
 
             // Player
-            user.getPlayer().teleport(viewingLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
-            user.getPlayer().setInvisible(true);
+            player.teleport(viewingLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
+            player.setInvisible(true);
             HMCCPacketManager.gamemodeChangePacket(player, 3);
             HMCCPacketManager.sendCameraPacket(ARMORSTAND_ID, viewer);
 
@@ -284,7 +290,7 @@ public class UserWardrobeManager {
         run.run();
     }
 
-    public void update() {
+    private void update() {
         final AtomicInteger data = new AtomicInteger();
 
         BukkitRunnable runnable = new BukkitRunnable() {
@@ -313,7 +319,7 @@ public class UserWardrobeManager {
                 int nextyaw = HMCCServerUtils.getNextYaw(yaw, rotationSpeed);
                 data.set(nextyaw);
 
-                for (CosmeticSlot slot : CosmeticSlot.values()) {
+                for (CosmeticSlot slot : CosmeticSlot.values().values()) {
                     HMCCPacketManager.equipmentSlotUpdate(NPC_ID, user, slot, viewer);
                 }
 
@@ -344,10 +350,6 @@ public class UserWardrobeManager {
         };
 
         runnable.runTaskTimer(HMCCosmeticsPlugin.getInstance(), 0, 2);
-    }
-
-    public void setWardrobeStatus(WardrobeStatus status) {
-        this.wardrobeStatus = status;
     }
 
     public enum WardrobeStatus {

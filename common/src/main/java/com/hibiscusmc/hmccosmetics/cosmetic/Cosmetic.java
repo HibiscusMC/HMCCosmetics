@@ -2,33 +2,61 @@ package com.hibiscusmc.hmccosmetics.cosmetic;
 
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import me.lojosho.hibiscuscommons.config.serializer.ItemSerializer;
 import me.lojosho.shaded.configurate.ConfigurationNode;
 import me.lojosho.shaded.configurate.serialize.SerializationException;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.logging.Level;
 
+@Getter
+@Setter
 public abstract class Cosmetic {
+    protected static ItemStack UNDEFINED_DISPLAY_ITEM_STACK;
 
-    @Getter @Setter
+    static {
+        UNDEFINED_DISPLAY_ITEM_STACK = new ItemStack(Material.BARRIER);
+
+        ItemMeta meta = UNDEFINED_DISPLAY_ITEM_STACK.getItemMeta();
+        if (meta != null) {
+            // Legacy methods for Spigot >:(
+            meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&cUndefined Item Display"));
+            meta.setLore(List.of(
+                    ChatColor.translateAlternateColorCodes('&', "&cPlease check your configurations & console to"),
+                    ChatColor.translateAlternateColorCodes('&', "&censure there are no errors.")));
+        }
+        UNDEFINED_DISPLAY_ITEM_STACK.setItemMeta(meta);
+    }
+
+    /** Identifier of the cosmetic. */
     private String id;
-    @Getter @Setter
-    private String permission;
-    private ItemStack item;
-    @Getter @Setter
-    private String material;
-    @Getter @Setter
-    private CosmeticSlot slot;
-    @Getter @Setter
-    private boolean dyable;
 
-    protected Cosmetic(String id, @NotNull ConfigurationNode config) {
+    /** Permission to use the cosmetic. */
+    private String permission;
+
+    /** The display {@link ItemStack} of the cosmetic. */
+    @Getter(AccessLevel.NONE) @Setter(AccessLevel.NONE)
+    private ItemStack item;
+
+    /** The material string of the cosmetic. */
+    private String material;
+
+    /** The {@link CosmeticSlot} this cosmetic occupies. */
+    private CosmeticSlot slot;
+
+    /** Whether the cosmetic is dyeable or not. */
+    private boolean dyeable;
+
+    protected Cosmetic(@NotNull String id, @NotNull ConfigurationNode config) {
         this.id = id;
 
         if (!config.node("permission").virtual()) {
@@ -39,23 +67,49 @@ public abstract class Cosmetic {
 
         if (!config.node("item").virtual()) {
             this.material = config.node("item", "material").getString();
-            this.item = generateItemStack(config.node("item"));
+            try {
+                this.item = generateItemStack(config.node("item"));
+            } catch(Exception ex) {
+                MessagesUtil.sendDebugMessages("Forcing %s to use undefined display".formatted(getId()));
+                this.item = UNDEFINED_DISPLAY_ITEM_STACK;
+            }
         }
 
         MessagesUtil.sendDebugMessages("Slot: " + config.node("slot").getString());
+        this.slot = CosmeticSlot.valueOf(config.node("slot").getString());
 
-        setSlot(CosmeticSlot.valueOf(config.node("slot").getString()));
-        setDyable(config.node("dyeable").getBoolean(false));
+        this.dyeable = config.node("dyeable").getBoolean(false);
+        MessagesUtil.sendDebugMessages("Dyeable " + dyeable);
+    }
 
-        MessagesUtil.sendDebugMessages("Dyeable " + dyable);
-        Cosmetics.addCosmetic(this);
+    protected Cosmetic(String id, String permission, ItemStack item, String material, CosmeticSlot slot, boolean dyeable) {
+        this.id = id;
+        this.permission = permission;
+        this.item = item;
+        this.material = material;
+        this.slot = slot;
+        this.dyeable = dyeable;
     }
 
     public boolean requiresPermission() {
         return permission != null;
     }
 
-    public abstract void update(CosmeticUser user);
+    /**
+     * Dispatched when an update is requested upon the cosmetic.
+     * @param user the user to preform the update against
+     */
+    public final void update(CosmeticUser user) {
+        this.doUpdate(user);
+    }
+
+    /**
+     * Action preformed on the update.
+     * @param user the user to preform the update against
+     */
+    protected void doUpdate(final CosmeticUser user) {
+        // NO-OP.
+    }
 
     @Nullable
     public ItemStack getItem() {
@@ -63,6 +117,11 @@ public abstract class Cosmetic {
         return item.clone();
     }
 
+    /**
+     * Generate an {@link ItemStack} from a {@link ConfigurationNode}.
+     * @param config the configuration node
+     * @return the {@link ItemStack}
+     */
     protected ItemStack generateItemStack(ConfigurationNode config) {
         try {
             ItemStack item = ItemSerializer.INSTANCE.deserialize(ItemStack.class, config);

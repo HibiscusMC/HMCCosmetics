@@ -6,12 +6,14 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Called when cosmetics are hidden from a player
+ * Called when cosmetics are hidden from a player.
  */
 public class PlayerCosmeticHideEvent extends PlayerCosmeticEvent implements Cancellable {
-    private static final HandlerList handlers = new HandlerList();
-    private boolean cancel = false;
+    private static final HandlerList HANDLER_LIST = new HandlerList();
+
     private final CosmeticUser.HiddenReason reason;
+
+    private boolean cancel = false;
 
     public PlayerCosmeticHideEvent(@NotNull CosmeticUser who, @NotNull CosmeticUser.HiddenReason reason) {
         super(who);
@@ -19,12 +21,11 @@ public class PlayerCosmeticHideEvent extends PlayerCosmeticEvent implements Canc
     }
 
     /**
-     * Gets the {@link CosmeticUser.HiddenReason} as to why cosmetics are being hidden for the player
+     * Gets the {@link CosmeticUser.HiddenReason} as to why cosmetics are being hidden for the player.
      *
-     * @return The {@link CosmeticUser.HiddenReason} why cosmetics are being hidden for the player
+     * @return the reason why cosmetics are being hidden for the player
      */
-    @NotNull
-    public CosmeticUser.HiddenReason getReason() {
+    public @NotNull CosmeticUser.HiddenReason getReason() {
         return reason;
     }
 
@@ -33,28 +34,17 @@ public class PlayerCosmeticHideEvent extends PlayerCosmeticEvent implements Canc
         return cancel;
     }
 
-    /**
-     * Sets the cancellation state of this event
-     *
-     * <p>
-     * Canceling this event will prevent the player from hiding cosmetics
-     * </p>
-     *
-     * @param cancel true if you wish to cancel this event
-     */
     @Override
     public void setCancelled(boolean cancel) {
         this.cancel = cancel;
     }
 
     @Override
-    @NotNull
-    public HandlerList getHandlers() {
-        return handlers;
+    public @NotNull HandlerList getHandlers() {
+        return HANDLER_LIST;
     }
 
-    @NotNull
-    public static HandlerList getHandlerList() {
-        return handlers;
+    public static @NotNull HandlerList getHandlerList() {
+        return HANDLER_LIST;
     }
 }

@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -43,8 +44,8 @@ public class UserEntity {
         if (System.currentTimeMillis() - viewerLastUpdate <= 1000) return List.of(); //Prevents mass refreshes
         ArrayList<Player> newPlayers = new ArrayList<>();
         ArrayList<Player> removePlayers = new ArrayList<>();
-        List<Player> players = HMCCPlayerUtils.getNearbyPlayers(location);
-        Player ownerPlayer = Bukkit.getPlayer(owner);
+        List<Player> players = HMCCPacketManager.getViewers(location);
+        Entity ownerPlayer = Bukkit.getEntity(owner);
         if (ownerPlayer == null) {
             MessagesUtil.sendDebugMessages("Owner is null (refreshViewers), returning empty list");
             return List.of();

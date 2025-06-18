@@ -35,6 +35,8 @@ import java.util.*;
 
 public class HMCCPacketManager extends PacketManager {
 
+    private static final List<CosmeticSlot> EQUIPMENT_SLOTS = List.of(CosmeticSlot.HELMET, CosmeticSlot.CHESTPLATE, CosmeticSlot.LEGGINGS, CosmeticSlot.BOOTS, CosmeticSlot.MAINHAND, CosmeticSlot.OFFHAND);
+
     public static void sendEntitySpawnPacket(
             final @NotNull Location location,
             final int entityId,
@@ -99,8 +101,7 @@ public class HMCCPacketManager extends PacketManager {
             CosmeticSlot cosmeticSlot,
             List<Player> sendTo
     ) {
-        if (cosmeticSlot == CosmeticSlot.BACKPACK || cosmeticSlot == CosmeticSlot.CUSTOM || cosmeticSlot == CosmeticSlot.BALLOON || cosmeticSlot == CosmeticSlot.EMOTE) return;
-
+        if (!EQUIPMENT_SLOTS.contains(cosmeticSlot)) return;
         equipmentSlotUpdate(entityId, HMCCInventoryUtils.getEquipmentSlot(cosmeticSlot), user.getUserCosmeticItem(cosmeticSlot), sendTo);
     }
 
@@ -415,15 +416,14 @@ public class HMCCPacketManager extends PacketManager {
         }
     }
 
+    /**
+     * Gets the nearby players (or viewers) of a location through the view distance set in the config. If the view distance is 0, it will return all players in the world.
+     * @param location
+     * @return
+     */
     @NotNull
-    public static List<Player> getViewers(Location location) {
-        ArrayList<Player> viewers = new ArrayList<>();
-        if (Settings.getViewDistance() <= 0) {
-            viewers.addAll(location.getWorld().getPlayers());
-        } else {
-            viewers.addAll(HMCCPlayerUtils.getNearbyPlayers(location));
-        }
-        return viewers;
+    public static List<Player> getViewers(@NotNull Location location) {
+        return PacketManager.getViewers(location, Settings.getViewDistance());
     }
 
     public static void sendPacket(Player player, PacketWrapper<?> packet) {

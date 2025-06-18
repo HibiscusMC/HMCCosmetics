@@ -108,15 +108,6 @@ kite:
     model-data: 7
     name: "<blue>Kite"
     amount: 1
-handstand:
-  slot: EMOTE
-  animation: handstand
-meditate:
-  slot: EMOTE
-  animation: meditate
-thinking:
-  slot: EMOTE
-  animation: thinking
 explorer_backpack:
   slot: BACKPACK
   permission: "hmccosmetics.explorer_backpack"

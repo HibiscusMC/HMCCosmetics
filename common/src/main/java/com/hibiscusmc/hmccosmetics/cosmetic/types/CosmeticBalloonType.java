@@ -4,6 +4,7 @@ import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.manager.UserBalloonManager;
+import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.packets.HMCCPacketManager;
 import lombok.Getter;
 import me.lojosho.shaded.configurate.ConfigurationNode;
@@ -22,7 +23,7 @@ public class CosmeticBalloonType extends Cosmetic {
     @Getter
     private final String modelName;
     @Getter
-    private List<String> dyableParts;
+    private List<String> dyeableParts;
     @Getter
     private final boolean showLead;
     @Getter
@@ -41,8 +42,8 @@ public class CosmeticBalloonType extends Cosmetic {
             balloonOffset = Settings.loadVector(balloonOffsetNode);
 
         try {
-            if (!config.node("dyable-parts").virtual()) {
-                dyableParts = config.node("dyable-parts").getList(String.class);
+            if (!config.node("dyeable-parts").virtual()) {
+                dyeableParts = config.node("dyeable-parts").getList(String.class);
             }
         } catch (SerializationException e) {
             // Seriously?
@@ -53,7 +54,7 @@ public class CosmeticBalloonType extends Cosmetic {
     }
 
     @Override
-    public void update(@NotNull CosmeticUser user) {
+    protected void doUpdate(@NotNull CosmeticUser user) {
         Entity entity = Bukkit.getEntity(user.getUniqueId());
         UserBalloonManager userBalloonManager = user.getBalloonManager();
 
@@ -79,8 +80,13 @@ public class CosmeticBalloonType extends Cosmetic {
         }
 
         Vector velocity = newLocation.toVector().subtract(currentLocation.toVector());
-        userBalloonManager.setVelocity(velocity.multiply(1.1));
         userBalloonManager.setLocation(newLocation);
+        userBalloonManager.setVelocity(velocity.multiply(1.1));
+
+        MessagesUtil.sendDebugMessages("Balloon Cosmetic Update for " + user.getEntity().getName());
+        MessagesUtil.sendDebugMessages("Ballon previous location is " + currentLocation);
+        MessagesUtil.sendDebugMessages("Balloon location set to " + newLocation);
+        MessagesUtil.sendDebugMessages("Balloon velocity set to " + velocity);
 
         HMCCPacketManager.sendTeleportPacket(userBalloonManager.getPufferfishBalloonId(), newLocation, false, viewer);
         HMCCPacketManager.sendLeashPacket(userBalloonManager.getPufferfishBalloonId(), entity.getEntityId(), viewer);
@@ -95,10 +101,10 @@ public class CosmeticBalloonType extends Cosmetic {
         }
     }
 
-    public boolean isDyablePart(String name) {
+    public boolean isDyeablePart(String name) {
         // If player does not define parts, dye whole model
-        if (dyableParts == null) return true;
-        if (dyableParts.isEmpty()) return true;
-        return dyableParts.contains(name);
+        if (dyeableParts == null) return true;
+        if (dyeableParts.isEmpty()) return true;
+        return dyeableParts.contains(name);
     }
 }

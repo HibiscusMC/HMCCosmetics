@@ -10,9 +10,7 @@ import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
-import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticEmoteType;
 import com.hibiscusmc.hmccosmetics.database.Database;
-import com.hibiscusmc.hmccosmetics.emotes.EmoteManager;
 import com.hibiscusmc.hmccosmetics.gui.Menu;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
 import com.hibiscusmc.hmccosmetics.gui.special.DyeMenu;
@@ -23,7 +21,6 @@ import com.hibiscusmc.hmccosmetics.util.HMCCServerUtils;
 import me.lojosho.hibiscuscommons.hooks.Hooks;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
-import org.apache.commons.lang3.EnumUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.OfflinePlayer;
@@ -144,6 +141,11 @@ public class CosmeticCommand implements CommandExecutor {
 
                 CosmeticUser user = CosmeticUsers.getUser(player);
 
+                if (user == null) {
+                    if (!silent) MessagesUtil.sendMessage(sender, "invalid-player");
+                    return true;
+                }
+
                 if (!user.canEquipCosmetic(cosmetic) && !console) {
                     if (!silent) MessagesUtil.sendMessage(player, "no-cosmetic-permission");
                     return true;
@@ -152,11 +154,11 @@ public class CosmeticCommand implements CommandExecutor {
                 TagResolver placeholders =
                         TagResolver.resolver(Placeholder.parsed("cosmetic", cosmetic.getId()),
                                 TagResolver.resolver(Placeholder.parsed("player", player.getName())),
-                                TagResolver.resolver(Placeholder.parsed("cosmeticslot", cosmetic.getSlot().name())));
+                                TagResolver.resolver(Placeholder.parsed("cosmeticslot", cosmetic.getSlot().toString())));
 
                 if (!silent) MessagesUtil.sendMessage(player, "equip-cosmetic", placeholders);
 
-                user.addPlayerCosmetic(cosmetic, color);
+                user.addCosmetic(cosmetic, color);
                 user.updateCosmetic(cosmetic.getSlot());
                 return true;
             }
@@ -187,11 +189,12 @@ public class CosmeticCommand implements CommandExecutor {
                 if (args[1].equalsIgnoreCase("all")) {
                     cosmeticSlots = user.getSlotsWithCosmetics();
                 } else {
-                    if (!EnumUtils.isValidEnum(CosmeticSlot.class, args[1].toUpperCase())) {
+                    String rawSlot = args[1].toUpperCase();
+                    if (!CosmeticSlot.contains(rawSlot)) {
                         if (!silent) MessagesUtil.sendMessage(sender, "invalid-slot");
                         return true;
                     }
-                    cosmeticSlots = Set.of(CosmeticSlot.valueOf(args[1].toUpperCase()));
+                    cosmeticSlots = Set.of(CosmeticSlot.valueOf(rawSlot));
                 }
 
                 for (CosmeticSlot cosmeticSlot : cosmeticSlots) {
@@ -203,7 +206,7 @@ public class CosmeticCommand implements CommandExecutor {
                     TagResolver placeholders =
                             TagResolver.resolver(Placeholder.parsed("cosmetic", user.getCosmetic(cosmeticSlot).getId()),
                                     TagResolver.resolver(Placeholder.parsed("player", player.getName())),
-                                    TagResolver.resolver(Placeholder.parsed("cosmeticslot", cosmeticSlot.name())));
+                                    TagResolver.resolver(Placeholder.parsed("cosmeticslot", cosmeticSlot.toString())));
 
                     if (!silent) MessagesUtil.sendMessage(player, "unequip-cosmetic", placeholders);
 
@@ -243,9 +246,9 @@ public class CosmeticCommand implements CommandExecutor {
                 CosmeticUser user = CosmeticUsers.getUser(player);
 
                 if (user.isInWardrobe()) {
-                    user.leaveWardrobe();
+                    user.leaveWardrobe(false);
                 } else {
-                    user.enterWardrobe(false, wardrobe);
+                    user.enterWardrobe(wardrobe, false);
                 }
                 return true;
             }
@@ -306,11 +309,12 @@ public class CosmeticCommand implements CommandExecutor {
                     return true;
                 }
 
-                if (!EnumUtils.isValidEnum(CosmeticSlot.class, args[1])) {
+                String rawSlot = args[1];
+                if (!CosmeticSlot.contains(rawSlot)) {
                     if (!silent) MessagesUtil.sendMessage(player, "invalid-slot");
                     return true;
                 }
-                CosmeticSlot slot = CosmeticSlot.valueOf(args[1]);
+                CosmeticSlot slot = CosmeticSlot.valueOf(rawSlot);
                 Cosmetic cosmetic = user.getCosmetic(slot);
 
                 if (args.length >= 3) {
@@ -323,7 +327,7 @@ public class CosmeticCommand implements CommandExecutor {
                         if (!silent) MessagesUtil.sendMessage(player, "invalid-color");
                         return true;
                     }
-                    user.addPlayerCosmetic(cosmetic, color); // #FFFFFF
+                    user.addCosmetic(cosmetic, color); // #FFFFFF
                 } else {
                     DyeMenu.openMenu(user, cosmetic);
                 }
@@ -377,6 +381,11 @@ public class CosmeticCommand implements CommandExecutor {
                         if (!silent) MessagesUtil.sendMessage(player, "set-wardrobe-distance");
                         return true;
                     }
+                    if (args[2].equalsIgnoreCase("defaultmenu")) {
+                        WardrobeSettings.setWardrobeDefaultMenu(wardrobe, args[3]);
+                        if (!silent) MessagesUtil.sendMessage(player, "set-wardrobe-menu");
+                        return true;
+                    }
                 }
             }
             case ("dump") -> {
@@ -391,6 +400,7 @@ public class CosmeticCommand implements CommandExecutor {
                 if (user.hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
                     player.sendMessage("Backpack Location -> " + user.getUserBackpackManager().getEntityManager().getLocation());
                 }
+                player.sendMessage("Cosmetic Passengers -> " + user.getUserBackpackManager().getAreaEffectEntityId());
                 player.sendMessage("Cosmetics -> " + user.getCosmetics());
                 player.sendMessage("EntityId -> " + player.getEntityId());
                 return true;
@@ -452,59 +462,6 @@ public class CosmeticCommand implements CommandExecutor {
                     if (!silent) MessagesUtil.sendMessage(sender, "debug-enabled");
                 }
             }
-            case ("emote") -> {
-                if (!sender.hasPermission("hmccosmetics.cmd.emote")) {
-                    if (!silent) MessagesUtil.sendMessage(sender, "no-permission");
-                    return true;
-                }
-                if (sender.hasPermission("hmccosmetics.cmd.emote.other")) {
-                    if (args.length >= 2) player = Bukkit.getPlayer(args[1]);
-                }
-                if (player == null) {
-                    if (!silent) MessagesUtil.sendMessage(sender, "invalid-player");
-                    return true;
-                }
-                CosmeticUser user = CosmeticUsers.getUser(player);
-                if (!user.hasCosmeticInSlot(CosmeticSlot.EMOTE)) {
-                    if (!silent) MessagesUtil.sendMessage(sender, "emote-none");
-                    return true;
-                }
-
-                CosmeticEmoteType cosmeticEmoteType = (CosmeticEmoteType) user.getCosmetic(CosmeticSlot.EMOTE);
-                cosmeticEmoteType.run(user);
-                return true;
-            }
-
-            case ("playemote") -> {
-                // /cosmetic playEmote <emoteId> [playerName]
-                if (!sender.hasPermission("hmccosmetics.cmd.playemote")) {
-                    if (!silent) MessagesUtil.sendMessage(sender, "no-permission");
-                    return true;
-                }
-
-                if (args.length < 2) {
-                    if (!silent) MessagesUtil.sendMessage(player, "not-enough-args");
-                    return true;
-                }
-
-                if (!EmoteManager.has(args[1])) {
-                    MessagesUtil.sendDebugMessages("Did not contain " + args[1]);
-                    if (!silent) MessagesUtil.sendMessage(sender, "emote-invalid");
-                    return true;
-                }
-
-                if (sender.hasPermission("hmccosmetics.cmd.playemote.other")) {
-                    if (args.length >= 3) player = Bukkit.getPlayer(args[2]);
-                }
-                if (player == null) {
-                    if (!silent) MessagesUtil.sendMessage(sender, "invalid-player");
-                    return true;
-                }
-                CosmeticUser user = CosmeticUsers.getUser(player);
-                user.getUserEmoteManager().playEmote(args[1]);
-                return true;
-            }
-
             case "disableall" -> {
                 if (!sender.hasPermission("hmccosmetics.cmd.disableall")) {
                     if (!silent) MessagesUtil.sendMessage(sender, "no-permission");

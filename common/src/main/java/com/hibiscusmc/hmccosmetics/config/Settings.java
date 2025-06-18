@@ -35,7 +35,6 @@ public class Settings {
     private static final String ITEM_PROCESS_LORE_PATH = "lore";
     private static final String DISABLED_GAMEMODE_PATH = "disabled-gamemode";
     private static final String DISABLED_GAMEMODE_GAMEMODES_PATH = "gamemodes";
-    private static final String EMOTE_DISTANCE_PATH = "emote-distance";
     private static final String HOOK_SETTING_PATH = "hook-settings";
     private static final String HOOK_ITEMADDER_PATH = "itemsadder";
     private static final String HOOK_NEXO_PATH = "nexo";
@@ -43,13 +42,6 @@ public class Settings {
     private static final String HOOK_WORLDGUARD_PATH = "worldguard";
     private static final String HOOK_WG_MOVE_CHECK_PATH = "player-move-check";
     private static final String HOOK_WG_MOVE_CHECK_PATH_LEGACY = "player_move_check";
-    private static final String COSMETIC_EMOTE_ENABLE = "emote-enable";
-    private static final String COSMETIC_EMOTE_CHECK_PATH = "emote-block-check";
-    private static final String COSMETIC_EMOTE_AIR_CHECK_PATH = "emote-air-check";
-    private static final String COSMETIC_EMOTE_DAMAGE_PATH = "emote-damage-leave";
-    private static final String COSMETIC_EMOTE_INVINCIBLE_PATH = "emote-invincible";
-    private static final String COSMETIC_EMOTE_CAMERA_PATH = "emote-camera";
-    private static final String COSMETIC_EMOTE_MOVE_CHECK_PATH = "emote-move";
     private static final String COSMETIC_DISABLED_WORLDS_PATH = "disabled-worlds";
     private static final String COSMETIC_PACKET_ENTITY_TELEPORT_COOLDOWN_PATH = "entity-cooldown-teleport-packet";
     private static final String COSMETIC_BACKPACK_FORCE_RIDING_PACKET_PATH = "backpack-force-riding-packet";
@@ -61,6 +53,7 @@ public class Settings {
     private static final String COSMETIC_TYPE_SETTINGS_PATH = "cosmetic-type";
     private static final String EQUIP_CLICK_TYPE = "equip-click";
     private static final String UNEQUIP_CLICK_TYPE = "unequip-click";
+    private static final String DYE_CLICK_TYPE = "dye-click";
     private static final String SHADING_PATH = "shading";
     private static final String FIRST_ROW_SHIFT_PATH = "first-row-shift";
     private static final String SEQUENT_ROW_SHIFT_PATH = "sequent-row-shift";
@@ -72,6 +65,9 @@ public class Settings {
     private static final String LOCKED_COSMETIC_COLOR_PATH = "locked-cosmetic-color";
     private static final String ENABLED_PATH = "enabled";
     private static final String SLOT_OPTIONS_PATH = "slot-options";
+    private static final String BACKPACK_PREVENT_DARKNESS_PATH = "backpack-prevent-darkness";
+    private static final String BETTER_HUD_PATH = "betterhud";
+    private static final String BETTER_HUD_HIDE_IN_WARDROBE_PATH = "wardrobe-hide";
 
     @Getter
     private static String defaultMenu;
@@ -101,25 +97,17 @@ public class Settings {
     private static boolean nexoChangeReload;
     @Getter
     private static boolean worldGuardMoveCheck;
-    @Getter
-    private static boolean cosmeticEmoteBlockCheck;
     private static final HashMap<EquipmentSlot, SlotOptionConfig> slotOptions = new HashMap<>();
-    @Getter
-    private static boolean emoteAirCheck;
-    @Getter
-    private static boolean emoteDamageLeave;
-    @Getter
-    private static boolean emoteInvincible;
     @Getter
     private static boolean destroyLooseCosmetics;
     @Getter
     private static boolean backpackForceRidingEnabled;
     @Getter
-    private static boolean emotesEnabled;
-    @Getter
     private static boolean disabledGamemodesEnabled;
     @Getter
     private static boolean balloonHeadForward;
+    @Getter
+    private static boolean backpackPreventDarkness;
     @Getter
     private static List<String> disabledGamemodes;
     @Getter
@@ -143,6 +131,8 @@ public class Settings {
     @Getter
     private static String cosmeticUnEquipClickType;
     @Getter
+    private static String cosmeticDyeClickType;
+    @Getter
     private static boolean defaultShading;
     @Getter
     private static String firstRowShift;
@@ -160,12 +150,10 @@ public class Settings {
     private static String equipableCosmeticColor;
     @Getter
     private static String lockedCosmeticColor;
-    @Getter
-    private static boolean emoteCameraEnabled;
-    @Getter
-    private static boolean emoteMoveCheck;
     @Getter @Setter
     private static boolean allPlayersHidden;
+    @Getter
+    private static boolean wardrobeHideHud;
 
 
     public static void load(ConfigurationNode source) {
@@ -202,12 +190,6 @@ public class Settings {
         unapplyOnDeath = cosmeticSettings.node(UNAPPLY_DEATH_PATH).getBoolean(false);
         forcePermissionJoin = cosmeticSettings.node(FORCE_PERMISSION_JOIN_PATH).getBoolean(false);
         forceShowOnJoin = cosmeticSettings.node(FORCE_SHOW_COSMETICS_PATH).getBoolean(false);
-        emotesEnabled = cosmeticSettings.node(COSMETIC_EMOTE_ENABLE).getBoolean(true);
-        emoteDistance = cosmeticSettings.node(EMOTE_DISTANCE_PATH).getDouble(-3);
-        cosmeticEmoteBlockCheck = cosmeticSettings.node(COSMETIC_EMOTE_CHECK_PATH).getBoolean(true);
-        emoteAirCheck = cosmeticSettings.node(COSMETIC_EMOTE_AIR_CHECK_PATH).getBoolean(true);
-        emoteDamageLeave = cosmeticSettings.node(COSMETIC_EMOTE_DAMAGE_PATH).getBoolean(false);
-        emoteInvincible = cosmeticSettings.node(COSMETIC_EMOTE_INVINCIBLE_PATH).getBoolean(false);
         destroyLooseCosmetics = cosmeticSettings.node(COSMETIC_DESTROY_LOOSE_COSMETIC_PATH).getBoolean(false);
         backpackForceRidingEnabled = cosmeticSettings.node(COSMETIC_BACKPACK_FORCE_RIDING_PACKET_PATH).getBoolean(false);
 
@@ -224,10 +206,9 @@ public class Settings {
 
         tickPeriod = cosmeticSettings.node(TICK_PERIOD_PATH).getInt(-1);
         viewDistance = cosmeticSettings.node(VIEW_DISTANCE_PATH).getInt(-3);
-        emoteCameraEnabled = cosmeticSettings.node(COSMETIC_EMOTE_CAMERA_PATH).getBoolean(true);
-        emoteMoveCheck = cosmeticSettings.node(COSMETIC_EMOTE_MOVE_CHECK_PATH).getBoolean(false);
         packetEntityTeleportCooldown = cosmeticSettings.node(COSMETIC_PACKET_ENTITY_TELEPORT_COOLDOWN_PATH).getInt(-1);
         balloonHeadForward = cosmeticSettings.node(COSMETIC_BALLOON_HEAD_FORWARD_PATH).getBoolean(false);
+        backpackPreventDarkness = cosmeticSettings.node(BACKPACK_PREVENT_DARKNESS_PATH).getBoolean(true);
 
         ConfigurationNode menuSettings = source.node(MENU_SETTINGS_PATH);
 
@@ -247,8 +228,9 @@ public class Settings {
         lockedCosmeticColor = shadingSettings.node(LOCKED_COSMETIC_COLOR_PATH).getString();
 
         ConfigurationNode cosmeticTypeSettings = menuSettings.node(COSMETIC_TYPE_SETTINGS_PATH);
-        cosmeticEquipClickType = cosmeticTypeSettings.node(EQUIP_CLICK_TYPE).getString("ALL");
-        cosmeticUnEquipClickType = cosmeticTypeSettings.node(UNEQUIP_CLICK_TYPE).getString("ALL");
+        cosmeticEquipClickType = cosmeticTypeSettings.node(EQUIP_CLICK_TYPE).getString("ANY");
+        cosmeticUnEquipClickType = cosmeticTypeSettings.node(UNEQUIP_CLICK_TYPE).getString("ANY");
+        cosmeticDyeClickType = cosmeticTypeSettings.node(DYE_CLICK_TYPE).getString("ANY");
 
         final var balloonSection = cosmeticSettings.node(BALLOON_OFFSET);
         balloonOffset = loadVector(balloonSection);
@@ -266,6 +248,9 @@ public class Settings {
 
         ConfigurationNode nexoSettings = hookSettings.node(HOOK_NEXO_PATH);
         nexoChangeReload = nexoSettings.node(HOOK_RELOAD_CHANGE_PATH).getBoolean(true);
+
+        ConfigurationNode betterHudSettings = hookSettings.node(BETTER_HUD_PATH);
+        wardrobeHideHud = betterHudSettings.node(BETTER_HUD_HIDE_IN_WARDROBE_PATH).getBoolean(true);
 
         ConfigurationNode worldGuardSettings = hookSettings.node(HOOK_WORLDGUARD_PATH);
         worldGuardMoveCheck = worldGuardSettings.node(HOOK_WG_MOVE_CHECK_PATH).getBoolean(true);

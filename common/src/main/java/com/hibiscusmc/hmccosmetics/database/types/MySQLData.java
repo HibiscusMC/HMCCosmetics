@@ -39,10 +39,12 @@ public class MySQLData extends SQLData {
         try {
             openConnection();
             if (connection == null) throw new NullPointerException("Connection is null");
-            connection.prepareStatement("CREATE TABLE IF NOT EXISTS `COSMETICDATABASE` " +
+            try (PreparedStatement preparedStatement =  connection.prepareStatement("CREATE TABLE IF NOT EXISTS `COSMETICDATABASE` " +
                     "(UUID varchar(36) PRIMARY KEY, " +
                     "COSMETICS MEDIUMTEXT " +
-                    ");").execute();
+                    ");")) {
+                preparedStatement.execute();
+            }
         } catch (SQLException | NullPointerException e) {
             plugin.getLogger().severe("");
             plugin.getLogger().severe("");
@@ -60,17 +62,11 @@ public class MySQLData extends SQLData {
     @Override
     public void clear(UUID uniqueId) {
         Bukkit.getScheduler().runTaskAsynchronously(HMCCosmeticsPlugin.getInstance(), () -> {
-            PreparedStatement preparedSt = null;
-            try {
-                preparedSt = preparedStatement("DELETE FROM COSMETICDATABASE WHERE UUID=?;");
+            try (PreparedStatement preparedSt = preparedStatement("DELETE FROM COSMETICDATABASE WHERE UUID=?;")) {
                 preparedSt.setString(1, uniqueId.toString());
                 preparedSt.executeUpdate();
             } catch (SQLException e) {
                 e.printStackTrace();
-            } finally {
-                try {
-                    if (preparedSt != null) preparedSt.close();
-                } catch (SQLException e) {}
             }
         });
     }

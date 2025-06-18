@@ -6,25 +6,30 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Called when cosmetics are shown from a player.
+ * Called before a player's data is un-loaded from the plugin.
+ *
+ * <p>
+ *     If this event is cancelled, the player's data will not be un-loaded,
+ *     and will be kept in memory.
+ * </p>
  */
-public class PlayerCosmeticShowEvent extends PlayerCosmeticEvent implements Cancellable {
+public class PlayerPreUnloadEvent extends PlayerCosmeticEvent implements Cancellable {
     private static final HandlerList HANDLER_LIST = new HandlerList();
 
-    private boolean cancel = false;
+    private boolean cancelled = false;
 
-    public PlayerCosmeticShowEvent(@NotNull CosmeticUser who) {
+    public PlayerPreUnloadEvent(@NotNull CosmeticUser who) {
         super(who);
     }
 
     @Override
     public boolean isCancelled() {
-        return cancel;
+        return cancelled;
     }
 
     @Override
     public void setCancelled(boolean cancel) {
-        this.cancel = cancel;
+        this.cancelled = cancel;
     }
 
     @Override
