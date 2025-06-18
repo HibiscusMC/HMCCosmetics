@@ -1,22 +1,37 @@
-name: Scheduled Merge Remote Action
-on: 
-  workflow_dispatch:
+name: Sync from upstream
+
+on:
   schedule:
-    - cron: '0 0 * * 1'
+    - cron: '0 5 * * 1'  # Every Monday at 5am UTC
+  workflow_dispatch:
 
 jobs:
-  merge-upstream:
+  sync:
     runs-on: ubuntu-latest
-    steps: 
-      - name: Checkout
+    steps:
+      - name: Checkout Repository
         uses: actions/checkout@v4
         with:
-          ref: remapped
-          fetch-depth: 0 
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
 
-      - name: Merge Upstream
-        uses: exions/merge-upstream@v1
+      - name: Add Upstream
+        run: git remote add upstream https://github.com/HibiscusMC/HMCCosmetics.git
+
+      - name: Fetch Upstream and Rebase
+        run: |
+          git fetch upstream
+          git checkout remapped
+          git rebase upstream/remapped
+          BRANCH=sync-upstream-$(date +%Y%m%d)
+          git checkout -b $BRANCH
+          git push origin $BRANCH
+
+      - name: Create PR
+        uses: peter-evans/create-pull-request@v6
         with:
-          upstream: HibiscusMC/HMCCosmetics
-          upstream-branch: remapped
-          branch: remapped
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ steps.sync.outputs.branch }}
+          title: "🔄 Sync with upstream"
+          body: "Merge upstream/remapped into remapped."
+          base: remapped
