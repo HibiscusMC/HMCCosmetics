@@ -597,7 +597,7 @@ public class CosmeticUser implements CosmeticHolder {
     }
 
     /**
-     * This gets the entity associated with the user
+     * This gets the entity associated with the user.
      * @return Entity
      */
     public Entity getEntity() {
