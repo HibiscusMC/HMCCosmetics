@@ -1,0 +1,77 @@
+title: "<white>"
+rows: 6
+items:
+  garbage_truck_balloon:
+    slots:
+      - 1
+    item:
+      material: hmccosmetics:garbage_truck_balloon
+      lore:
+        - ""
+        - "<gray>Enabled: <#6D9DC5>%HMCCosmetics_equipped_garbage_truck_balloon%"
+        - "<gray>Allowed: <#6D9DC5>%HMCCosmetics_unlocked_garbage_truck_balloon%" 
+    type: cosmetic
+    cosmetic: garbage_truck_balloon
+  kite:
+    slots:
+      - 2
+    item:
+      material: hmccosmetics:kite
+      lore:
+        - ""
+        - "<gray>Enabled: <#6D9DC5>%HMCCosmetics_equipped_kite%"
+        - "<gray>Allowed: <#6D9DC5>%HMCCosmetics_unlocked_kite%" 
+    type: cosmetic
+    cosmetic: kite
+  button_backpacks_menu:
+    slots:
+      - 27
+    item:
+      material: PAPER
+      model-data: 18
+      name: "<blue>Backpack Cosmetics"
+      amount: 1
+    type: empty
+    actions:
+      any:
+        - "[MENU] defaultmenu_backpacks"
+        - "[SOUND] minecraft:ui.button.click 1 1"
+  button_hand_menu:
+    slots:
+      - 36
+    item:
+      material: PAPER
+      model-data: 19
+      name: "<blue>Hand Cosmetics"
+      amount: 1
+    type: empty
+    actions:
+      any:
+        - "[MENU] defaultmenu_hands"
+        - "[SOUND] minecraft:ui.button.click 1 1"
+  button_balloon_menu:
+    slots:
+      - 0
+    item:
+      material: PAPER
+      model-data: 20
+      name: "<blue>Balloon Cosmetics"
+      amount: 1
+    type: empty
+    actions:
+      any:
+        - "[MENU] defaultmenu_balloons"
+        - "[SOUND] minecraft:ui.button.click 1 1"
+  button_hats_menu:
+    slots:
+      - 18
+    item:
+      material: PAPER
+      model-data: 17
+      name: "<blue>Hat Cosmetics"
+      amount: 1
+    type: empty
+    actions:
+      any:
+        - "[MENU] defaultmenu_hats"
+        - "[SOUND] minecraft:ui.button.click 1 1"

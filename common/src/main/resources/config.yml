@@ -3,7 +3,7 @@
 #
 config-version: 1
 
-default-menu: defaultmenu
+default-menu: defaultmenu_hats
 debug-mode: false
 database-settings:
   type: sqlite # SQLite (Default), MYSQL, NONE
@@ -96,8 +96,8 @@ menu-settings:
     # The shading is done through the title and by shifting textures around. This is done by offsets.
     # Only Nexo is support by default. Vanilla can't properly handle it without a lot of unicodes and ItemsAdder adds weird offsets and decolors it. (This is why it is disabled by default)
     enabled: false # Default of menus having shading. This can be toggled individually in menus with "shading: true/false"
-    first-row-shift: "<shift:-169>" # Nexo: "<shift:-169>"
-    sequent-row-shift: " <shift:-169>" # Nexo: " <shift:-169>" (Space is important here!)
+    first-row-shift: "<shift:-153>" # Nexo: "<shift:-153>"
+    sequent-row-shift: " <shift:-153>" # Nexo: " <shift:-153>" (Space is important here!)
     individual-column-shift: "<shift:-3>" # Nexo: "<shift:-3>"
     background: "<glyph:shade_row_<row>:colorable> " # Nexo: "<glyph:shade_row_<row>:colorable> 
     clear-background: "<glyph:clear_row_<row>:colorable> " # Nexo: "<glyph:clear_row_<row>:colorable> "

@@ -16,7 +16,6 @@ import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticMainhandType;
 import com.hibiscusmc.hmccosmetics.database.UserData;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
-import com.hibiscusmc.hmccosmetics.hooks.EntityHook;
 import com.hibiscusmc.hmccosmetics.user.manager.UserBackpackManager;
 import com.hibiscusmc.hmccosmetics.user.manager.UserBalloonManager;
 import com.hibiscusmc.hmccosmetics.user.manager.UserWardrobeManager;
@@ -603,19 +602,7 @@ public class CosmeticUser implements CosmeticHolder {
      * @deprecated Use {@link CosmeticUser#getPlayer()}
      */
     public Entity getEntity() {
-        Player player = this.getPlayer();
-        if (player != null) {
-            return player;
-        }
-
-        for (EntityHook hook : HMCCosmeticsPlugin.getInstance().getEntityHooks()) {
-            Entity entity = hook.getEntity(uniqueId);
-            if (entity != null) {
-                return entity;
-            }
-        }
-
-        return null;
+        return getPlayer();
     }
 
     public Color getCosmeticColor(CosmeticSlot slot) {

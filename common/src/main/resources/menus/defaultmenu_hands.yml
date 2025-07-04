@@ -1,0 +1,99 @@
+title: "<white>"
+rows: 6
+items:
+  lantern_cosmetic:
+    slots:
+      - 1
+    item:
+      material: hmccosmetics:lantern_cosmetic
+      lore:
+        - ""
+        - "<gray>Enabled: <#6D9DC5>%HMCCosmetics_equipped_lantern_cosmetic%"
+        - "<gray>Allowed: <#6D9DC5>%HMCCosmetics_unlocked_lantern_cosmetic%"
+    type: cosmetic
+    cosmetic: lantern_cosmetic
+  hammer:
+    slots:
+      - 2
+    item:
+      material: hmccosmetics:hammer
+      lore:
+        - ""
+        - "<gray>Enabled: <#6D9DC5>%HMCCosmetics_equipped_hammer%"
+        - "<gray>Allowed: <#6D9DC5>%HMCCosmetics_unlocked_hammer%" 
+    type: cosmetic
+    cosmetic: hammer
+  earth_day_grabber:
+    slots:
+      - 3
+    item:
+      material: hmccosmetics:earth_day_grabber
+      lore:
+        - ""
+        - "<gray>Enabled: <#6D9DC5>%HMCCosmetics_equipped_earth_day_grabber%"
+        - "<gray>Allowed: <#6D9DC5>%HMCCosmetics_unlocked_earth_day_grabber%" 
+    type: cosmetic
+    cosmetic: earth_day_grabber
+  hibiscus_flower:
+    slots:
+      - 4
+    item:
+      material: hmccosmetics:hibiscus_flower
+      lore:
+        - ""
+        - "<gray>Enabled: <#6D9DC5>%HMCCosmetics_equipped_hibiscus_flower%"
+        - "<gray>Allowed: <#6D9DC5>%HMCCosmetics_unlocked_hibiscus_flower%" 
+    type: cosmetic
+    cosmetic: hibiscus_flower
+  button_backpacks_menu:
+    slots:
+      - 36
+    item:
+      material: PAPER
+      model-data: 18
+      name: "<blue>Backpack Cosmetics"
+      amount: 1
+    type: empty
+    actions:
+      any:
+        - "[MENU] defaultmenu_backpacks"
+        - "[SOUND] minecraft:ui.button.click 1 1"
+  button_hand_menu:
+    slots:
+      - 0
+    item:
+      material: PAPER
+      model-data: 19
+      name: "<blue>Hand Cosmetics"
+      amount: 1
+    type: empty
+    actions:
+      any:
+        - "[MENU] defaultmenu_hands"
+        - "[SOUND] minecraft:ui.button.click 1 1"
+  button_balloon_menu:
+    slots:
+      - 18
+    item:
+      material: PAPER
+      model-data: 20
+      name: "<blue>Balloon Cosmetics"
+      amount: 1
+    type: empty
+    actions:
+      any:
+        - "[MENU] defaultmenu_balloons"
+        - "[SOUND] minecraft:ui.button.click 1 1"
+  button_hats_menu:
+    slots:
+      - 27
+    item:
+      material: PAPER
+      model-data: 17
+      name: "<blue>Hat Cosmetics"
+      amount: 1
+    type: empty
+    actions:
+      any:
+        - "[MENU] defaultmenu_hats"
+        - "[SOUND] minecraft:ui.button.click 1 1"

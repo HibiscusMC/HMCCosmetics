@@ -11,18 +11,21 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class HMCCInventoryUtils {
-    private static final Map<CosmeticSlot, EquipmentSlot> SLOT_MAP = Map.of(
-        CosmeticSlot.HELMET, EquipmentSlot.HEAD,
-        CosmeticSlot.CHESTPLATE, EquipmentSlot.CHEST,
-        CosmeticSlot.LEGGINGS, EquipmentSlot.LEGS,
-        CosmeticSlot.BOOTS, EquipmentSlot.FEET,
-        CosmeticSlot.MAINHAND, EquipmentSlot.HAND,
-        CosmeticSlot.OFFHAND, EquipmentSlot.OFF_HAND
-    );
+
+    private static final Map<CosmeticSlot, EquipmentSlot> SLOT_MAP = new HashMap<>();
+    static {
+        SLOT_MAP.put(CosmeticSlot.HELMET, EquipmentSlot.HEAD);
+        SLOT_MAP.put(CosmeticSlot.CHESTPLATE, EquipmentSlot.CHEST);
+        SLOT_MAP.put(CosmeticSlot.LEGGINGS, EquipmentSlot.LEGS);
+        SLOT_MAP.put(CosmeticSlot.BOOTS, EquipmentSlot.FEET);
+        SLOT_MAP.put(CosmeticSlot.OFFHAND, EquipmentSlot.OFF_HAND);
+        SLOT_MAP.put(CosmeticSlot.MAINHAND, EquipmentSlot.HAND);
+    }
 
     public static int getPacketArmorSlot(final EquipmentSlot slot) {
         return switch (slot) {
@@ -43,18 +46,6 @@ public class HMCCInventoryUtils {
             case 7 -> EquipmentSlot.LEGS;
             case 8 -> EquipmentSlot.FEET;
             case 45 -> EquipmentSlot.OFF_HAND;
-            default -> null;
-        };
-    }
-
-    public static CosmeticSlot getItemSlotToCosmeticSlot(final com.github.retrooper.packetevents.protocol.player.EquipmentSlot slot) {
-        return switch (slot) {
-            case HELMET -> CosmeticSlot.HELMET;
-            case CHEST_PLATE -> CosmeticSlot.CHESTPLATE;
-            case LEGGINGS -> CosmeticSlot.LEGGINGS;
-            case BOOTS -> CosmeticSlot.BOOTS;
-            case OFF_HAND -> CosmeticSlot.OFFHAND;
-            case MAIN_HAND -> CosmeticSlot.MAINHAND;
             default -> null;
         };
     }
@@ -125,18 +116,6 @@ public class HMCCInventoryUtils {
     @Nullable
     public static EquipmentSlot getEquipmentSlot(@NotNull CosmeticSlot slot) {
         return SLOT_MAP.get(slot);
-    }
-
-    public static EquipmentSlot getEquipmentSlot(@NotNull com.github.retrooper.packetevents.protocol.player.EquipmentSlot slot) {
-        return switch (slot) {
-            case HELMET -> EquipmentSlot.HEAD;
-            case CHEST_PLATE -> EquipmentSlot.CHEST;
-            case LEGGINGS -> EquipmentSlot.LEGS;
-            case BOOTS -> EquipmentSlot.FEET;
-            case OFF_HAND -> EquipmentSlot.OFF_HAND;
-            case MAIN_HAND -> EquipmentSlot.HAND;
-            default -> null;
-        };
     }
 
     public static boolean isCosmeticItem(ItemStack itemStack) {

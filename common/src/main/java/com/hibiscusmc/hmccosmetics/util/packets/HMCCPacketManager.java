@@ -1,34 +1,23 @@
 package com.hibiscusmc.hmccosmetics.util.packets;
 
-import com.github.retrooper.packetevents.PacketEvents;
-import com.github.retrooper.packetevents.protocol.attribute.Attributes;
-import com.github.retrooper.packetevents.protocol.entity.data.EntityData;
-import com.github.retrooper.packetevents.protocol.entity.data.EntityDataTypes;
-import com.github.retrooper.packetevents.protocol.player.GameMode;
-import com.github.retrooper.packetevents.protocol.player.TextureProperty;
-import com.github.retrooper.packetevents.protocol.player.User;
-import com.github.retrooper.packetevents.protocol.player.UserProfile;
-import com.github.retrooper.packetevents.util.Vector3d;
-import com.github.retrooper.packetevents.wrapper.PacketWrapper;
-import com.github.retrooper.packetevents.wrapper.play.server.*;
-import com.hibiscusmc.hmccosmetics.api.HMCCosmeticsAPI;
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import com.hibiscusmc.hmccosmetics.util.HMCCInventoryUtils;
-import com.hibiscusmc.hmccosmetics.util.HMCCPlayerUtils;
-import io.github.retrooper.packetevents.util.SpigotConversionUtil;
+import me.lojosho.hibiscuscommons.nms.NMSHandlers;
 import me.lojosho.hibiscuscommons.util.packets.PacketManager;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Display;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 import java.util.*;
 
@@ -52,17 +41,7 @@ public class HMCCPacketManager extends PacketManager {
             final UUID uuid,
             final @NotNull List<Player> sendTo
     ) {
-        WrapperPlayServerSpawnEntity packet = new WrapperPlayServerSpawnEntity(
-            entityId,
-            uuid,
-            SpigotConversionUtil.fromBukkitEntityType(entityType),
-            SpigotConversionUtil.fromBukkitLocation(location),
-            0,
-            0,
-            new Vector3d(0, 0, 0)
-        );
-
-        for (Player p : sendTo) sendPacket(p, packet);
+        NMSHandlers.getHandler().getPacketHandler().sendSpawnEntityPacket(entityId, uuid, entityType, location, sendTo);
     }
 
     public static void equipmentSlotUpdate(
@@ -108,63 +87,24 @@ public class HMCCPacketManager extends PacketManager {
             int entityId,
             List<Player> sendTo
     ) {
-        WrapperPlayServerEntityMetadata packet = new WrapperPlayServerEntityMetadata(
-            entityId,
-            List.of(
-                new EntityData(0, EntityDataTypes.BYTE, (byte) 0x21),
-                new EntityData(15, EntityDataTypes.BYTE, (byte) 0x10)
-            )
-        );
-
-        for (Player p : sendTo) sendPacket(p, packet);
-    }
-
-    public static void sendScalePacket(
-            int entityId,
-            double scale,
-            List<Player> sendTo
-    ) {
-        WrapperPlayServerUpdateAttributes packet = new WrapperPlayServerUpdateAttributes(
-            entityId,
-            List.of(
-                new WrapperPlayServerUpdateAttributes.Property(
-                    Attributes.GENERIC_SCALE,
-                    scale,
-                    Collections.emptyList()
-                )
-            )
-        );
-
-        for (Player p : sendTo) sendPacket(p, packet);
+        byte mask = (byte) (Settings.isBackpackPreventDarkness() ? 0x21 : 0x20);
+        Map<Integer, Number> dataValues = Map.of(0, mask, 15, (byte) 0x10);
+        NMSHandlers.getHandler().getPacketHandler().sendSharedEntityData(entityId, dataValues, sendTo);
     }
 
     public static void sendInvisibilityPacket(
             int entityId,
             List<Player> sendTo
     ) {
-        WrapperPlayServerEntityMetadata packet = new WrapperPlayServerEntityMetadata(
-            entityId,
-            List.of(
-                new EntityData(0, EntityDataTypes.BYTE, (byte) 0x20)
-            )
-        );
-
-        for (Player p : sendTo) sendPacket(p, packet);
+        NMSHandlers.getHandler().getPacketHandler().sendSharedEntityData(entityId, Map.of(0, (byte) 0x20), sendTo);
     }
 
     public static void sendCloudEffect(
             int entityId,
             List<Player> sendTo
     ) {
-        WrapperPlayServerEntityMetadata packet = new WrapperPlayServerEntityMetadata(
-            entityId,
-            List.of(
-                new EntityData(0, EntityDataTypes.BYTE, (byte) 0x20),
-                new EntityData(8, EntityDataTypes.FLOAT, 0f)
-            )
-        );
-
-        for (Player p : sendTo) sendPacket(p, packet);
+        Map<Integer, Number> dataValues = Map.of(0, (byte) 0x20, 8, 0f);
+        NMSHandlers.getHandler().getPacketHandler().sendSharedEntityData(entityId, dataValues, sendTo);
     }
 
     public static void sendRotationPacket(
@@ -181,19 +121,7 @@ public class HMCCPacketManager extends PacketManager {
             boolean onGround,
             @NotNull List<Player> sendTo
     ) {
-        float ROTATION_FACTOR = 256.0F / 360.0F;
-        float yaw = location.getYaw() * ROTATION_FACTOR;
-        float pitch = location.getPitch() * ROTATION_FACTOR;
-
-        // TODO: Verify that is the right packet (ProtocolLib called the packet type: ENTITY_LOOK)
-        WrapperPlayServerEntityRotation packet = new WrapperPlayServerEntityRotation(
-            entityId,
-            yaw,
-            pitch,
-            onGround
-        );
-
-        for (Player p : sendTo) sendPacket(p, packet);
+        NMSHandlers.getHandler().getPacketHandler().sendRotationPacket(entityId, location.getYaw(), location.getPitch(), onGround, sendTo);
     }
 
     public static void sendRotationPacket(
@@ -202,20 +130,8 @@ public class HMCCPacketManager extends PacketManager {
             boolean onGround,
             @NotNull List<Player> sendTo
     ) {
-        float ROTATION_FACTOR = 256.0F / 360.0F;
-        float yaw2 = yaw * ROTATION_FACTOR;
-
-        // TODO: Verify that is the right packet (ProtocolLib called the packet type: ENTITY_LOOK)
-        WrapperPlayServerEntityRotation packet = new WrapperPlayServerEntityRotation(
-            entityId,
-            yaw2,
-            0,
-            onGround
-        );
-
-        for (Player p : sendTo) sendPacket(p, packet);
+        NMSHandlers.getHandler().getPacketHandler().sendRotationPacket(entityId, yaw, 0, onGround, sendTo);
     }
-
 
     /**
      * Mostly to deal with backpacks, this deals with entities riding other entities.
@@ -241,14 +157,7 @@ public class HMCCPacketManager extends PacketManager {
             final int[] passengerIds,
             final @NotNull List<Player> sendTo
     ) {
-        WrapperPlayServerSetPassengers packet = new WrapperPlayServerSetPassengers(
-            mountId,
-            passengerIds
-        );
-
-        for (final Player p : sendTo) {
-            sendPacket(p, packet);
-        }
+        NMSHandlers.getHandler().getPacketHandler().sendMountPacket(mountId, passengerIds, sendTo);
     }
 
     /**
@@ -278,17 +187,7 @@ public class HMCCPacketManager extends PacketManager {
             final int entityId,
             final @NotNull List<Player> sendTo
     ) {
-        if (HMCCosmeticsAPI.getNMSVersion().contains("v1_19_R3") || HMCCosmeticsAPI.getNMSVersion().contains("v1_20_R1")) {
-            WrapperPlayServerSpawnPlayer packet = new WrapperPlayServerSpawnPlayer(
-                entityId,
-                uuid,
-                SpigotConversionUtil.fromBukkitLocation(location)
-            );
-
-            for (final Player p : sendTo) sendPacket(p, packet);
-            return;
-        }
-        sendEntitySpawnPacket(location, entityId, EntityType.PLAYER, uuid);
+        sendEntitySpawnPacket(location, entityId, EntityType.PLAYER, uuid, sendTo);
     }
 
     /**
@@ -301,32 +200,10 @@ public class HMCCPacketManager extends PacketManager {
             final Player skinnedPlayer,
             final int entityId,
             final UUID uuid,
-            final String NPCName,
+            final String npcName,
             final List<Player> sendTo
     ) {
-        String name = NPCName;
-        while (name.length() > 16) {
-            name = name.substring(16);
-        }
-
-        UserProfile userProfile = new UserProfile(uuid, name);
-        TextureProperty skinData = HMCCPlayerUtils.getSkin(skinnedPlayer);
-        if (skinData != null) {
-            userProfile.setTextureProperties(List.of(skinData));
-        }
-
-        WrapperPlayServerPlayerInfo packet = new WrapperPlayServerPlayerInfo(
-            WrapperPlayServerPlayerInfo.Action.ADD_PLAYER,
-            new WrapperPlayServerPlayerInfo.PlayerData(
-                Component.text(name),
-                userProfile,
-                GameMode.CREATIVE,
-                0
-            )
-        );
-
-
-        for (final Player p : sendTo) sendPacket(p, packet);
+        NMSHandlers.getHandler().getPacketHandler().sendFakePlayerInfoPacket(skinnedPlayer, entityId, uuid, npcName, sendTo);
     }
 
     /**
@@ -350,12 +227,7 @@ public class HMCCPacketManager extends PacketManager {
          https://wiki.vg/Entity_metadata#Entity
          */
         final byte mask = 0x01 | 0x02 | 0x04 | 0x08 | 0x010 | 0x020 | 0x40;
-        WrapperPlayServerEntityMetadata packet = new WrapperPlayServerEntityMetadata(
-            playerId,
-            List.of(new EntityData(17, EntityDataTypes.BYTE, mask))
-        );
-
-        for (final Player p : sendTo) sendPacket(p, packet);
+        NMSHandlers.getHandler().getPacketHandler().sendSharedEntityData(playerId, Map.of(17, mask), sendTo);
     }
 
     /**
@@ -370,13 +242,7 @@ public class HMCCPacketManager extends PacketManager {
             final UUID uuid,
             final List<Player> sendTo
     ) {
-        WrapperPlayServerPlayerInfoRemove packet = new WrapperPlayServerPlayerInfoRemove(
-            List.of(uuid)
-        );
-
-        for (final Player p : sendTo) {
-            sendPacket(p, packet);
-        }
+        NMSHandlers.getHandler().getPacketHandler().sendPlayerInfoRemovePacket(uuid, sendTo);
     }
 
     public static void sendLeashPacket(
@@ -402,17 +268,43 @@ public class HMCCPacketManager extends PacketManager {
             final boolean onGround,
             @NotNull List<Player> sendTo
     ) {
-        WrapperPlayServerEntityRelativeMove packet = new WrapperPlayServerEntityRelativeMove(
-            entityId,
-            to.getX() - from.getX(),
-            to.getY() - from.getY(),
-            to.getZ() - from.getZ(),
-            onGround
-        );
+        NMSHandlers.getHandler().getPacketHandler().sendMovePacket(entityId, from, to, onGround, sendTo);
+    }
 
-        for (final Player p : sendTo) {
-            sendPacket(p, packet);
-        }
+    // For future transition to display entities
+    public static void sendDisplayEntityMetadataPacket(
+            int entityid,
+            ItemStack backpackItem,
+            List<Player> sendTo) {
+        // TODO: Make the default values adjustable
+        Vector3f translation = new Vector3f(0, 3, 0);
+        Vector3f scale = new Vector3f(1, 1, 1);
+        Quaternionf rotationLeft = new Quaternionf();
+        Quaternionf rotationRight = new Quaternionf();
+        Display.Billboard billboard = Display.Billboard.FIXED;
+        int blockLight = 15;
+        int skylight = 15;
+        int viewRange = Settings.getViewDistance();
+        int width = 0;
+        int height = 0;
+        ItemDisplay.ItemDisplayTransform transform = ItemDisplay.ItemDisplayTransform.HEAD;
+
+        NMSHandlers.getHandler().getPacketHandler().sendItemDisplayMetadata(
+                entityid,
+                translation,
+                scale,
+                rotationLeft,
+                rotationRight,
+                billboard,
+                blockLight,
+                skylight,
+                viewRange,
+                width,
+                height,
+                transform,
+                backpackItem,
+                sendTo
+        );
     }
 
     /**
@@ -423,22 +315,5 @@ public class HMCCPacketManager extends PacketManager {
     @NotNull
     public static List<Player> getViewers(@NotNull Location location) {
         return PacketManager.getViewers(location, Settings.getViewDistance());
-    }
-
-    public static void sendPacket(Player player, PacketWrapper<?> packet) {
-        if (player == null) return;
-        PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet);
-    }
-
-    public static @Nullable User findUser(int entityId) {
-        return PacketEvents.getAPI().getProtocolManager().getUsers().stream()
-            .filter(foundUser -> foundUser.getEntityId() == entityId)
-            .findFirst()
-            .orElse(null);
-    }
-
-    public static @Nullable UUID findUUID(int entityId) {
-        User user = findUser(entityId);
-        return user != null ? user.getUUID() : null;
     }
 }

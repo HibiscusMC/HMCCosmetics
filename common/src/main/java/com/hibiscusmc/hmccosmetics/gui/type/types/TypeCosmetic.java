@@ -102,6 +102,8 @@ public class TypeCosmetic extends Type {
             } else {
                 if (!actionConfig.node("on-equip").virtual()) actionStrings.addAll(actionConfig.node("on-equip").getList(String.class));
                 MessagesUtil.sendDebugMessages("on-equip");
+                MessagesUtil.sendDebugMessages("Preparing for on-equip with the following checks:");
+                MessagesUtil.sendDebugMessages("CosmeticDyeable? " + cosmetic.isDyeable() + " / isDyeClick? " + isDyeClick + " / isHMCColorActive? " + Hooks.isActiveHook("HMCColor"));
                 // TODO: Redo this
                 if (cosmetic.isDyeable() && isDyeClick && Hooks.isActiveHook("HMCColor")) {
                     DyeMenu.openMenu(viewer, cosmeticHolder, cosmetic);
