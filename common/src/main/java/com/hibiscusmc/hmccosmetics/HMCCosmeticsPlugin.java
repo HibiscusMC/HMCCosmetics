@@ -11,8 +11,6 @@ import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
 import com.hibiscusmc.hmccosmetics.database.Database;
 import com.hibiscusmc.hmccosmetics.gui.Menu;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
-import com.hibiscusmc.hmccosmetics.hooks.EntityHook;
-import com.hibiscusmc.hmccosmetics.hooks.entities.CitizensHook;
 import com.hibiscusmc.hmccosmetics.hooks.items.HookHMCCosmetics;
 import com.hibiscusmc.hmccosmetics.hooks.misc.HookBetterHud;
 import com.hibiscusmc.hmccosmetics.hooks.placeholders.HMCPlaceholderExpansion;
@@ -27,7 +25,6 @@ import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.TranslationUtil;
-import lombok.Getter;
 import me.lojosho.hibiscuscommons.HibiscusCommonsPlugin;
 import me.lojosho.hibiscuscommons.HibiscusPlugin;
 import me.lojosho.hibiscuscommons.config.serializer.ItemSerializer;
@@ -45,16 +42,11 @@ import org.bukkit.permissions.Permission;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
 
 public final class HMCCosmeticsPlugin extends HibiscusPlugin {
 
     private static HMCCosmeticsPlugin instance;
     private static YamlConfigurationLoader configLoader;
-
-    @Getter
-    private final List<EntityHook> entityHooks = new ArrayList<>();
 
     public HMCCosmeticsPlugin() {
         super(13873, 1879);
@@ -94,7 +86,6 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
 
         // Move this over to Hibiscus Commons later
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) new HMCPlaceholderExpansion().register();
-        if (Bukkit.getPluginManager().getPlugin("Citizens") != null) entityHooks.add(new CitizensHook());
 
         // Setup
         setup();
