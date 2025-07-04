@@ -61,7 +61,7 @@ public class UserBackpackManager {
         if (user.getPlayer() != null) {
             AttributeInstance scaleAttribute = user.getPlayer().getAttribute(Attribute.GENERIC_SCALE);
             if (scaleAttribute != null) {
-                HMCCPacketManager.sendScalePacket(getFirstArmorStandId(), scaleAttribute.getValue(), outsideViewers);
+                HMCCPacketManager.sendEntityScalePacket(getFirstArmorStandId(), scaleAttribute.getValue(), outsideViewers);
             }
         }
 

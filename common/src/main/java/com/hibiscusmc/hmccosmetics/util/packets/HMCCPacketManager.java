@@ -271,6 +271,14 @@ public class HMCCPacketManager extends PacketManager {
         NMSHandlers.getHandler().getPacketHandler().sendMovePacket(entityId, from, to, onGround, sendTo);
     }
 
+    public static void sendEntityScalePacket(
+        int entityId,
+        double scale,
+        List<Player> sendTo
+    ) {
+        NMSHandlers.getHandler().getPacketHandler().sendEntityScalePacket(entityId, scale, sendTo);
+    }
+
     // For future transition to display entities
     public static void sendDisplayEntityMetadataPacket(
             int entityid,

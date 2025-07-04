@@ -68,7 +68,7 @@ public class CosmeticBackpackType extends Cosmetic {
         if (user.getPlayer() != null) {
             AttributeInstance scaleAttribute = user.getPlayer().getAttribute(Attribute.GENERIC_SCALE);
             if (scaleAttribute != null) {
-                HMCCPacketManager.sendScalePacket(user.getUserBackpackManager().getFirstArmorStandId(), scaleAttribute.getValue(), outsideViewers);
+                HMCCPacketManager.sendEntityScalePacket(user.getUserBackpackManager().getFirstArmorStandId(), scaleAttribute.getValue(), outsideViewers);
             }
         }
 
