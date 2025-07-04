@@ -597,9 +597,8 @@ public class CosmeticUser implements CosmeticHolder {
     }
 
     /**
-     * This gets the entity associated with the user, if overriding please ensure that the method you use is thread-safe
+     * This gets the entity associated with the user
      * @return Entity
-     * @deprecated Use {@link CosmeticUser#getPlayer()}
      */
     public Entity getEntity() {
         return getPlayer();
