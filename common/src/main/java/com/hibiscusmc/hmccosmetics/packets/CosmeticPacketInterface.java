@@ -8,9 +8,11 @@ import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticArmorType;
 import com.hibiscusmc.hmccosmetics.gui.Menu;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
+import com.hibiscusmc.hmccosmetics.user.manager.UserBackpackManager;
 import com.hibiscusmc.hmccosmetics.user.manager.UserWardrobeManager;
 import com.hibiscusmc.hmccosmetics.util.HMCCInventoryUtils;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
+import com.hibiscusmc.hmccosmetics.util.packets.HMCCPacketManager;
 import me.lojosho.hibiscuscommons.packets.PacketAction;
 import me.lojosho.hibiscuscommons.packets.PacketInterface;
 import me.lojosho.hibiscuscommons.packets.wrapper.*;
@@ -147,6 +149,28 @@ public class CosmeticPacketInterface implements PacketInterface {
         wrapper.setPassengers(passengers);
         return PacketAction.CHANGED;
          */
+    }
+
+    @Override
+    public PacketAction readPlayerScale(@NotNull Player player, @NotNull PlayerScaleWrapper wrapper) {
+        int entityId = wrapper.getEntityId();
+        Player changedPlayer = Bukkit.getOnlinePlayers().stream()
+            .filter(onlinePlayer -> onlinePlayer.getEntityId() == entityId)
+            .findFirst()
+            .orElse(null);
+        if (changedPlayer == null) return PacketAction.NOTHING;
+
+        CosmeticUser cosmeticUser = CosmeticUsers.getUser(changedPlayer.getUniqueId());
+        if (cosmeticUser == null || cosmeticUser.isInWardrobe()) return PacketAction.NOTHING;
+
+        UserBackpackManager backpack = cosmeticUser.getUserBackpackManager();
+        if (backpack != null) {
+            for (int cosmeticId : backpack.getEntityManager().getIds()) {
+                HMCCPacketManager.sendEntityScalePacket(cosmeticId, wrapper.getScale(), Collections.singletonList(player));
+            }
+        }
+
+        return PacketAction.NOTHING;
     }
 
     @Override
