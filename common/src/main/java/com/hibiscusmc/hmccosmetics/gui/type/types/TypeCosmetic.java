@@ -7,7 +7,6 @@ import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticHolder;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticArmorType;
 import com.hibiscusmc.hmccosmetics.gui.action.Actions;
-import com.hibiscusmc.hmccosmetics.gui.special.DyeMenu;
 import com.hibiscusmc.hmccosmetics.gui.special.DyeMenuProvider;
 import com.hibiscusmc.hmccosmetics.gui.type.Type;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
@@ -16,7 +15,6 @@ import me.lojosho.hibiscuscommons.config.serializer.ItemSerializer;
 import me.lojosho.hibiscuscommons.hooks.Hooks;
 import me.lojosho.shaded.configurate.ConfigurationNode;
 import me.lojosho.shaded.configurate.serialize.SerializationException;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.EquipmentSlot;
@@ -57,13 +55,12 @@ public class TypeCosmetic extends Type {
             return;
         }
 
-        boolean isUnEquippingCosmetic = false;
-        if (cosmeticHolder.getCosmetic(cosmetic.getSlot()) == cosmetic) isUnEquippingCosmetic = true;
+        boolean isUnEquippingCosmetic = cosmeticHolder.getCosmetic(cosmetic.getSlot()) == cosmetic;
 
         String dyeClick = Settings.getCosmeticDyeClickType();
-        String requiredClick;
-        if (isUnEquippingCosmetic) requiredClick = Settings.getCosmeticUnEquipClickType();
-        else requiredClick = Settings.getCosmeticEquipClickType();
+        String requiredClick = isUnEquippingCosmetic
+                ? Settings.getCosmeticUnEquipClickType()
+                : Settings.getCosmeticEquipClickType();
 
         MessagesUtil.sendDebugMessages("Required click type: " + requiredClick);
         MessagesUtil.sendDebugMessages("Click type: " + clickType.name());
@@ -105,7 +102,8 @@ public class TypeCosmetic extends Type {
                 MessagesUtil.sendDebugMessages("on-equip");
                 MessagesUtil.sendDebugMessages("Preparing for on-equip with the following checks:");
                 MessagesUtil.sendDebugMessages("CosmeticDyeable? " + cosmetic.isDyeable() + " / isDyeClick? " + isDyeClick + " / isHMCColorActive? " + Hooks.isActiveHook("HMCColor"));
-                // TODO: Redo this
+
+                // If dyeable and dye-click, launch the dye menu; otherwise equip on required click.
                 if (cosmetic.isDyeable() && isDyeClick && DyeMenuProvider.hasMenuProvider()) {
                     DyeMenuProvider.openMenu(viewer, cosmeticHolder, cosmetic);
                 } else if (isRequiredClick) {
@@ -118,14 +116,16 @@ public class TypeCosmetic extends Type {
         } catch (SerializationException e) {
             e.printStackTrace();
         }
-        // Fixes issue with offhand cosmetics not appearing. Yes, I know this is dumb
-        Runnable run = () -> cosmeticHolder.updateCosmetic(cosmetic.getSlot());
-        if (cosmetic instanceof CosmeticArmorType) {
-            if (((CosmeticArmorType) cosmetic).getEquipSlot().equals(EquipmentSlot.OFF_HAND)) {
-                Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), run, 1);
-            }
+
+        // Fixes issue with offhand cosmetics not appearing. Yes, I know this is dumb.
+        Runnable update = () -> cosmeticHolder.updateCosmetic(cosmetic.getSlot());
+        if (cosmetic instanceof CosmeticArmorType && ((CosmeticArmorType) cosmetic).getEquipSlot() == EquipmentSlot.OFF_HAND) {
+            // Folia-safe: run later on the viewer's entity thread.
+            HMCCosmeticsPlugin.getInstance().scheduler().runForLater(viewer, 1L, update);
+        } else {
+            update.run();
         }
-        run.run();
+
         MessagesUtil.sendDebugMessages("Finished Type Click Run");
     }
 
@@ -159,7 +159,7 @@ public class TypeCosmetic extends Type {
             try {
                 if (equippedItem.node("material").virtual()) equippedItem.node("material").set(config.node("item", "material").getString());
             } catch (SerializationException e) {
-                // Nothing >:)
+                // ignore
             }
             try {
                 itemStack = ItemSerializer.INSTANCE.deserialize(ItemStack.class, equippedItem);
@@ -177,7 +177,7 @@ public class TypeCosmetic extends Type {
             try {
                 if (lockedItem.node("material").virtual()) lockedItem.node("material").set(config.node("item", "material").getString());
             } catch (SerializationException e) {
-                // Nothing >:)
+                // ignore
             }
             try {
                 itemStack = ItemSerializer.INSTANCE.deserialize(ItemStack.class, lockedItem);

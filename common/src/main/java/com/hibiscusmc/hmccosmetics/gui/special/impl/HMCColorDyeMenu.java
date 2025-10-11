@@ -11,7 +11,6 @@ import com.hibiscusmc.hmccosmetics.gui.special.DyeMenu;
 import me.lojosho.hibiscuscommons.hooks.Hooks;
 import me.lojosho.hibiscuscommons.nms.NMSHandlers;
 import me.lojosho.hibiscuscommons.util.AdventureUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -29,6 +28,7 @@ public class HMCColorDyeMenu implements DyeMenu {
         Gui gui = HMCColorApi.createColorMenu(viewer);
         gui.updateTitle(AdventureUtils.MINI_MESSAGE.deserialize(Hooks.processPlaceholders(viewer, Settings.getDyeMenuName())));
         gui.setItem(Settings.getDyeMenuInputSlot(), new GuiItem(originalItem));
+
         gui.setDefaultTopClickAction(event -> {
             if (event.getSlot() == Settings.getDyeMenuOutputSlot()) {
                 ItemStack item = event.getInventory().getItem(Settings.getDyeMenuOutputSlot());
@@ -39,7 +39,9 @@ public class HMCColorDyeMenu implements DyeMenu {
 
                 addCosmetic(viewer, cosmeticHolder, cosmetic, color);
                 event.setCancelled(true);
-            } else event.setCancelled(true);
+            } else {
+                event.setCancelled(true);
+            }
         });
 
         gui.setPlayerInventoryAction(event -> event.setCancelled(true));
@@ -50,9 +52,10 @@ public class HMCColorDyeMenu implements DyeMenu {
     private void addCosmetic(@NotNull Player viewer, @NotNull CosmeticHolder cosmeticHolder, @NotNull Cosmetic cosmetic, @Nullable Color color) {
         cosmeticHolder.addCosmetic(cosmetic, color);
         viewer.setItemOnCursor(new ItemStack(Material.AIR));
-        Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
+        // Close + update a couple ticks later on the viewer's entity thread (Folia-safe)
+        HMCCosmeticsPlugin.getInstance().scheduler().runForLater(viewer, 2L, () -> {
             viewer.closeInventory();
             cosmeticHolder.updateCosmetic(cosmetic.getSlot());
-        }, 2);
+        });
     }
 }

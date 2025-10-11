@@ -27,6 +27,8 @@ public class MySQLData extends SQLData {
     @Nullable
     private Connection connection;
 
+    private final Object connectionLock = new Object();
+
     @Override
     public void setup() {
         host = DatabaseSettings.getHost();
@@ -39,63 +41,84 @@ public class MySQLData extends SQLData {
         try {
             openConnection();
             if (connection == null) throw new IllegalStateException("Connection is null");
-            try (PreparedStatement preparedStatement =  connection.prepareStatement("CREATE TABLE IF NOT EXISTS `COSMETICDATABASE` " +
-                    "(UUID varchar(36) PRIMARY KEY, " +
-                    "COSMETICS MEDIUMTEXT " +
-                    ");")) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(
+                    "CREATE TABLE IF NOT EXISTS `COSMETICDATABASE` (" +
+                            "UUID varchar(36) PRIMARY KEY," +
+                            "COSMETICS MEDIUMTEXT" +
+                            ");")) {
                 preparedStatement.execute();
             }
         } catch (SQLException | IllegalStateException e) {
             plugin.getLogger().severe("");
-            plugin.getLogger().severe("");
             plugin.getLogger().severe("MySQL DATABASE CAN NOT BE REACHED.");
             plugin.getLogger().severe("CHECK CONFIG FOR ERRORS");
-            plugin.getLogger().severe("");
             plugin.getLogger().severe("SAFETY SHUTTING DOWN SERVER");
             plugin.getLogger().severe("");
-            plugin.getLogger().severe("");
-            Bukkit.shutdown();
+
+            // Ensure shutdown on the main/global context in Folia
+            plugin.scheduler().runGlobal(() -> {
+                plugin.getLogger().log(Level.SEVERE, "Shutting down due to database initialization failure.", e);
+                Bukkit.shutdown();
+            });
+
             throw new RuntimeException(e);
         }
     }
 
     @Override
     public void clear(UUID uniqueId) {
-        Bukkit.getScheduler().runTaskAsynchronously(HMCCosmeticsPlugin.getInstance(), () -> {
+        HMCCosmeticsPlugin.getInstance().scheduler().runAsync(() -> {
             try (PreparedStatement preparedSt = preparedStatement("DELETE FROM COSMETICDATABASE WHERE UUID=?;")) {
+                if (preparedSt == null) return;
                 preparedSt.setString(1, uniqueId.toString());
                 preparedSt.executeUpdate();
             } catch (SQLException e) {
-                e.printStackTrace();
+                HMCCosmeticsPlugin.getInstance().getLogger().log(Level.SEVERE, "Failed to clear user row: " + uniqueId, e);
             }
         });
     }
 
     private void openConnection() throws SQLException {
-        // Connection isn't null AND Connection isn't closed :: return
-        try {
-            if (isConnectionOpen()) return;
-            if (connection != null) close(); // Close connection if still active
-        } catch (RuntimeException e) {
-            e.printStackTrace(); // If isConnectionOpen() throws error
-        }
+        synchronized (connectionLock) {
+            try {
+                if (isConnectionOpen()) return;
+                if (connection != null) {
+                    try {
+                        connection.close();
+                    } catch (SQLException ignored) {}
+                    connection = null;
+                }
+            } catch (RuntimeException ex) {
+                // ignore state check issues, we will try to open fresh
+            }
 
-        // Connect to database host
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-            connection = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database, setupProperties());
-        } catch (SQLException | ClassNotFoundException e) {
-            System.out.println(e.getMessage());
+            try {
+                // Modern MySQL driver
+                Class.forName("com.mysql.cj.jdbc.Driver");
+            } catch (ClassNotFoundException e) {
+                HMCCosmeticsPlugin.getInstance().getLogger().log(Level.SEVERE, "MySQL driver not found (com.mysql.cj.jdbc.Driver).", e);
+                throw new SQLException("MySQL driver not found", e);
+            }
+
+            final String url =
+                    "jdbc:mysql://" + host + ":" + port + "/" + database + setupProperties();
+
+            connection = DriverManager.getConnection(url, setupProperties());
         }
     }
 
     public void close() {
-        Bukkit.getScheduler().runTaskAsynchronously(HMCCosmeticsPlugin.getInstance(), () -> {
-            try {
-                if (connection == null) throw new IllegalStateException("Connection is null");
-                connection.close();
-            } catch (SQLException | NullPointerException e) {
-                System.out.println(e.getMessage());
+        HMCCosmeticsPlugin.getInstance().scheduler().runAsync(() -> {
+            synchronized (connectionLock) {
+                if (connection != null) {
+                    try {
+                        connection.close();
+                    } catch (SQLException e) {
+                        HMCCosmeticsPlugin.getInstance().getLogger().log(Level.WARNING, "Error while closing MySQL connection", e);
+                    } finally {
+                        connection = null;
+                    }
+                }
             }
         });
     }
@@ -105,37 +128,49 @@ public class MySQLData extends SQLData {
         Properties props = new Properties();
         props.setProperty("user", user);
         props.setProperty("password", password);
+
+        // Optional pool-friendly hints (no-op for plain DriverManager but harmless)
+        props.setProperty("maxReconnects", "3");
+        props.setProperty("useServerPrepStmts", "true");
+        props.setProperty("cachePrepStmts", "true");
+        props.setProperty("prepStmtCacheSize", "250");
+        props.setProperty("prepStmtCacheSqlLimit", "2048");
         return props;
     }
 
     private boolean isConnectionOpen() {
-        try {
-            return connection != null && !connection.isClosed();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        synchronized (connectionLock) {
+            try {
+                return connection != null && !connection.isClosed();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
     @Override
     public PreparedStatement preparedStatement(String query) {
-        PreparedStatement ps = null;
-
         if (!isConnectionOpen()) {
-            MessagesUtil.sendDebugMessages("The MySQL database connection is not open (Could the database been idle for to long?). Reconnecting...", Level.WARNING);
+            MessagesUtil.sendDebugMessages(
+                    "The MySQL database connection is not open (idle timeout?). Reconnecting...",
+                    Level.WARNING
+            );
             try {
                 openConnection();
             } catch (SQLException e) {
-                e.printStackTrace();
+                HMCCosmeticsPlugin.getInstance().getLogger().log(Level.SEVERE, "Failed to reopen MySQL connection.", e);
+                return null;
             }
         }
 
-        try {
-            if (connection == null) throw new IllegalStateException("Connection is null");
-            ps = connection.prepareStatement(query);
-        } catch (SQLException | IllegalStateException e) {
-            e.printStackTrace();
+        synchronized (connectionLock) {
+            try {
+                if (connection == null) throw new IllegalStateException("Connection is null");
+                return connection.prepareStatement(query);
+            } catch (SQLException | IllegalStateException e) {
+                HMCCosmeticsPlugin.getInstance().getLogger().log(Level.SEVERE, "Failed to create PreparedStatement.", e);
+                return null;
+            }
         }
-
-        return ps;
     }
 }

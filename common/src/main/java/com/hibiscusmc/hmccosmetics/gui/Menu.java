@@ -31,7 +31,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Menu {
 
@@ -151,56 +151,73 @@ public class Menu {
         Gui gui = Gui.gui()
                 .title(component)
                 .type(GuiType.CHEST)
-                .inventory((title, owner, type) -> Bukkit.createInventory(owner, rows * 9, title))
+                .inventory((t, owner, type) -> Bukkit.createInventory(owner, rows * 9, t))
                 .create();
 
         gui.setDefaultClickAction(event -> event.setCancelled(true));
 
-        AtomicInteger taskid = new AtomicInteger(-1);
+        // Folia-safe repeating updater controlled by this flag
+        AtomicBoolean active = new AtomicBoolean(false);
+
         gui.setOpenGuiAction(event -> {
-            Runnable run = () -> {
-                if (gui.getInventory().getViewers().isEmpty() && taskid.get() != -1) {
-                    Bukkit.getScheduler().cancelTask(taskid.get());
-                }
+            active.set(true);
 
+            // First run immediately on the viewer's entity thread
+            HMCCosmeticsPlugin.getInstance().scheduler().runFor(viewer, () -> {
+                if (!active.get()) return;
                 updateMenu(viewer, cosmeticHolder, gui);
-            };
-
-            if (refreshRate != -1) {
-                taskid.set(Bukkit.getScheduler().scheduleSyncRepeatingTask(HMCCosmeticsPlugin.getInstance(), run, 0, refreshRate));
-            } else {
-                run.run();
-            }
+                if (refreshRate != -1) {
+                    scheduleRefreshLoop(viewer, cosmeticHolder, gui, active);
+                }
+            });
         });
 
         gui.setCloseGuiAction(event -> {
+            active.set(false);
+
             if (cosmeticHolder instanceof CosmeticUser user) {
                 PlayerMenuCloseEvent closeEvent = new PlayerMenuCloseEvent(user, this, event.getReason());
-                Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> Bukkit.getPluginManager().callEvent(closeEvent));
+                HMCCosmeticsPlugin.getInstance().scheduler().runFor(viewer, () ->
+                        Bukkit.getPluginManager().callEvent(closeEvent)
+                );
             }
-
-            if (taskid.get() != -1) Bukkit.getScheduler().cancelTask(taskid.get());
         });
 
         Runnable openGuiTask = () -> {
             gui.open(viewer);
-            updateMenu(viewer, cosmeticHolder, gui); // fixes shading? I know I do this twice but it's easier than writing a whole new class to deal with this shit
+            // immediate update after open to ensure shading/title correctness
+            updateMenu(viewer, cosmeticHolder, gui);
         };
 
-        // API
+        // API event before opening
         if (cosmeticHolder instanceof CosmeticUser user) {
             PlayerMenuOpenEvent event = new PlayerMenuOpenEvent(user, this);
-            Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> {
+            HMCCosmeticsPlugin.getInstance().scheduler().runFor(viewer, () -> {
                 Bukkit.getPluginManager().callEvent(event);
                 if (!event.isCancelled()) {
                     openGuiTask.run();
                 }
             });
+        } else {
+            HMCCosmeticsPlugin.getInstance().scheduler().runFor(viewer, openGuiTask);
         }
-        // Internal
-        else {
-            Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), openGuiTask);
-        }
+    }
+
+    /**
+     * Self-rescheduling refresh loop bound to the viewer's entity thread (Folia-safe).
+     */
+    private void scheduleRefreshLoop(Player viewer, CosmeticHolder cosmeticHolder, Gui gui, AtomicBoolean active) {
+        HMCCosmeticsPlugin.getInstance().scheduler().runForLater(viewer, refreshRate, () -> {
+            if (!active.get() || gui.getInventory().getViewers().isEmpty()) {
+                active.set(false);
+                return;
+            }
+            updateMenu(viewer, cosmeticHolder, gui);
+            // Chain again if still active
+            if (active.get()) {
+                scheduleRefreshLoop(viewer, cosmeticHolder, gui, active);
+            }
+        });
     }
 
     private void updateMenu(Player viewer, CosmeticHolder cosmeticHolder, Gui gui) {

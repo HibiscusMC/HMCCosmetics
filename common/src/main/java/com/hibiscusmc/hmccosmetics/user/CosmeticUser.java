@@ -34,20 +34,25 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.*;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 
 public class CosmeticUser implements CosmeticHolder {
     @Getter
     private final UUID uniqueId;
-    private int taskId = -1;
+
+    // Folia ticking control
+    private final AtomicBoolean ticking = new AtomicBoolean(false);
+    private int tickPeriod = -1;
+
     private final HashMap<CosmeticSlot, Cosmetic> playerCosmetics = new HashMap<>();
     private UserWardrobeManager userWardrobeManager;
     private UserBalloonManager userBalloonManager;
@@ -165,18 +170,35 @@ public class CosmeticUser implements CosmeticHolder {
 
     /**
      * Start ticking against the {@link CosmeticUser}.
-     * @implNote The tick-rate is determined by the tick period specified in the configuration, if it is less-than or equal to 0
-     * there will be no {@link BukkitTask} created, and the {@link CosmeticUser#taskId} will be -1
+     * The tick-rate is determined by the tick period specified in the configuration.
      */
     public final void startTicking() {
-        int tickPeriod = Settings.getTickPeriod();
-        if(tickPeriod <= 0) {
+        int configured = Settings.getTickPeriod();
+        if (configured <= 0) {
             MessagesUtil.sendDebugMessages("CosmeticUser tick is disabled.");
             return;
         }
+        this.tickPeriod = configured;
+        if (ticking.compareAndSet(false, true)) {
+            scheduleTickLoop();
+        }
+    }
 
-        final BukkitTask task = Bukkit.getScheduler().runTaskTimer(HMCCosmeticsPlugin.getInstance(), this::tick, 0, tickPeriod);
-        this.taskId = task.getTaskId();
+    /** Folia-safe self-rescheduling tick loop, bound to the player's entity thread. */
+    private void scheduleTickLoop() {
+        if (!ticking.get()) return;
+        final Player player = getPlayer();
+        if (player == null) {
+            // Player not online; stop ticking for safety.
+            ticking.set(false);
+            return;
+        }
+        HMCCosmeticsPlugin.getInstance().scheduler().runForLater(player, tickPeriod, () -> {
+            if (!ticking.get()) return;
+            tick();
+            // Reschedule next tick
+            scheduleTickLoop();
+        });
     }
 
     /**
@@ -201,9 +223,8 @@ public class CosmeticUser implements CosmeticHolder {
     }
 
     public void destroy() {
-        if(this.taskId != -1) { // ensure we're actually ticking this user.
-            Bukkit.getScheduler().cancelTask(taskId);
-        }
+        // Stop Folia tick loop
+        ticking.set(false);
 
         despawnBackpack();
         despawnBalloon();
@@ -364,7 +385,6 @@ public class CosmeticUser implements CosmeticHolder {
     @SuppressWarnings("deprecation")
     public ItemStack getUserCosmeticItem(@NotNull Cosmetic cosmetic, @Nullable ItemStack item) {
         if (item == null) {
-            //MessagesUtil.sendDebugMessages("GetUserCosemticUser Item is null");
             return new ItemStack(Material.AIR);
         }
         if (item.hasItemMeta()) {
@@ -378,7 +398,6 @@ public class CosmeticUser implements CosmeticHolder {
                     owner = Hooks.processPlaceholders(getPlayer(), owner);
 
                     skullMeta.setOwningPlayer(Bukkit.getOfflinePlayer(owner));
-                    //skullMeta.getPersistentDataContainer().remove(InventoryUtils.getSkullOwner()); // Don't really need this?
                 }
                 if (skullMeta.getPersistentDataContainer().has(InventoryUtils.getSkullTexture(), PersistentDataType.STRING)) {
                     String texture = skullMeta.getPersistentDataContainer().get(InventoryUtils.getSkullTexture(), PersistentDataType.STRING);
@@ -387,7 +406,6 @@ public class CosmeticUser implements CosmeticHolder {
 
                     Bukkit.getUnsafe().modifyItemStack(item, "{SkullOwner:{Id:[I;0,0,0,0],Properties:{textures:[{Value:\""
                             + texture + "\"}]}}}");
-                    //skullMeta.getPersistentDataContainer().remove(InventoryUtils.getSkullTexture()); // Don't really need this?
                 }
 
                 itemMeta = skullMeta;
@@ -408,7 +426,6 @@ public class CosmeticUser implements CosmeticHolder {
                 }
                 itemMeta.setLore(processedLore);
             }
-
 
             itemMeta.getPersistentDataContainer().set(HMCCInventoryUtils.getCosmeticKey(), PersistentDataType.STRING, cosmetic.getId());
             itemMeta.getPersistentDataContainer().set(InventoryUtils.getOwnerKey(), PersistentDataType.STRING, getEntity().getUniqueId().toString());
@@ -504,13 +521,26 @@ public class CosmeticUser implements CosmeticHolder {
                     WardrobeSettings.getTransitionStay(),
                     WardrobeSettings.getTransitionFadeOut()
             );
-            Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
+            final Player p = getPlayer();
+            if (p != null) {
+                HMCCosmeticsPlugin.getInstance().scheduler().runForLater(p, WardrobeSettings.getTransitionDelay(), () -> {
+                    if (userWardrobeManager != null) {
+                        userWardrobeManager.end();
+                        userWardrobeManager = null;
+                    }
+                });
+            } else {
+                // Fallback: if player vanished mid-transition, just end immediately
+                if (userWardrobeManager != null) {
+                    userWardrobeManager.end();
+                    userWardrobeManager = null;
+                }
+            }
+        } else {
+            if (userWardrobeManager != null) {
                 userWardrobeManager.end();
                 userWardrobeManager = null;
-            }, WardrobeSettings.getTransitionDelay());
-        } else {
-            userWardrobeManager.end();
-            userWardrobeManager = null;
+            }
         }
     }
 
@@ -665,8 +695,6 @@ public class CosmeticUser implements CosmeticHolder {
         if (!hiddenReason.contains(reason)) hiddenReason.add(reason);
         if (hasCosmeticInSlot(CosmeticSlot.BALLOON)) {
             despawnBalloon();
-            //getBalloonManager().removePlayerFromModel(getPlayer());
-            //getBalloonManager().sendRemoveLeashPacket();
         }
         if (hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
             despawnBackpack();
@@ -710,7 +738,6 @@ public class CosmeticUser implements CosmeticHolder {
         updateCosmetic();
         MessagesUtil.sendDebugMessages("ShowCosmetics");
     }
-
 
     /**
      * This method is deprecated and will be removed in the future. Use {@link #isHidden()} instead.

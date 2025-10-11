@@ -15,10 +15,8 @@ import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.packets.HMCCPacketManager;
 import me.lojosho.hibiscuscommons.api.events.*;
 import me.lojosho.hibiscuscommons.util.packets.PacketManager;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -62,9 +60,10 @@ public class PlayerGameListener implements Listener {
         CosmeticSlot cosmeticSlot = HMCCInventoryUtils.BukkitCosmeticSlot(slot);
         if (cosmeticSlot == null) return;
         if (!user.hasCosmeticInSlot(cosmeticSlot)) return;
-        Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
-            user.updateCosmetic(cosmeticSlot);
-        }, 1);
+
+        if (event.getWhoClicked() instanceof Player p) {
+            HMCCosmeticsPlugin.getInstance().scheduler().runForLater(p, 1L, () -> user.updateCosmetic(cosmeticSlot));
+        }
         MessagesUtil.sendDebugMessages("Event fired, updated cosmetic " + cosmeticSlot);
     }
 
@@ -93,7 +92,7 @@ public class PlayerGameListener implements Listener {
             user.leaveWardrobe(false);
         }
 
-        Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
+        HMCCosmeticsPlugin.getInstance().scheduler().runForLater(event.getPlayer(), 2L, () -> {
             if (user.getEntity() == null || user.isInWardrobe()) return; // fixes disconnecting when in wardrobe (the entity stuff)
             if (Settings.getDisabledWorlds().contains(user.getEntity().getLocation().getWorld().getName())) {
                 user.hideCosmetics(CosmeticUser.HiddenReason.WORLD);
@@ -107,7 +106,7 @@ public class PlayerGameListener implements Listener {
                 user.respawnBalloon();
             }
             user.updateCosmetic();
-        }, 2);
+        });
 
         if (event.getCause().equals(PlayerTeleportEvent.TeleportCause.NETHER_PORTAL) || event.getCause().equals(PlayerTeleportEvent.TeleportCause.END_PORTAL)) return;
     }
@@ -131,10 +130,10 @@ public class PlayerGameListener implements Listener {
         if (user.hasCosmeticInSlot(CosmeticSlot.BALLOON)) {
             user.despawnBalloon();
 
-            Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
+            HMCCosmeticsPlugin.getInstance().scheduler().runForLater(event.getPlayer(), 4L, () -> {
                 user.spawnBalloon((CosmeticBalloonType) user.getCosmetic(CosmeticSlot.BALLOON));
                 user.updateCosmetic();
-            }, 4);
+            });
         }
     }
 
@@ -216,10 +215,10 @@ public class PlayerGameListener implements Listener {
             return;
         }
 
-        Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
+        HMCCosmeticsPlugin.getInstance().scheduler().runForLater(event.getPlayer(), 2L, () -> {
             MessagesUtil.sendDebugMessages("PlayerItemDamageEvent UpdateCosmetic " + cosmeticSlot);
             user.updateCosmetic(cosmeticSlot);
-        }, 2);
+        });
     }
 
     @EventHandler(priority = EventPriority.LOW)
@@ -227,14 +226,19 @@ public class PlayerGameListener implements Listener {
         CosmeticUser user = CosmeticUsers.getUser(event.getPlayer().getUniqueId());
         if (user == null) return;
         // Really need to look into optimization of this
-        Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
+        HMCCosmeticsPlugin.getInstance().scheduler().runForLater(event.getPlayer(), 2L, () -> {
             if (user.getEntity() == null) return; // Player has likely logged off
             user.updateCosmetic(CosmeticSlot.OFFHAND);
             List<Player> viewers = HMCCPacketManager.getViewers(user.getEntity().getLocation());
             if (viewers.isEmpty()) return;
             viewers.remove(user.getPlayer());
-            PacketManager.equipmentSlotUpdate(user.getEntity().getEntityId(), EquipmentSlot.HAND, event.getPlayer().getInventory().getItemInMainHand(), viewers);
-        }, 2);
+            PacketManager.equipmentSlotUpdate(
+                    user.getEntity().getEntityId(),
+                    EquipmentSlot.HAND,
+                    event.getPlayer().getInventory().getItemInMainHand(),
+                    viewers
+            );
+        });
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
@@ -269,9 +273,9 @@ public class PlayerGameListener implements Listener {
 
         //NMSHandlers.getHandler().slotUpdate(event.getPlayer(), event.getPreviousSlot());
         if (user.hasCosmeticInSlot(CosmeticSlot.MAINHAND)) {
-            Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
+            HMCCosmeticsPlugin.getInstance().scheduler().runForLater(event.getPlayer(), 2L, () -> {
                 user.updateCosmetic(CosmeticSlot.MAINHAND);
-            }, 2);
+            });
         }
 
         // #84, Riptides mess with backpacks
@@ -338,24 +342,24 @@ public class PlayerGameListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onPlayerMounted(EntityMountEvent event) {
-		if (event.getEntity() instanceof Player player) {
+    public void onPlayerMounted(EntityMountEvent event) {
+        if (event.getEntity() instanceof Player player) {
             CosmeticUser user = CosmeticUsers.getUser(player);
             if (user == null) return;
 
-            Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(HMCCosmeticsPlugin.getInstance(), user::respawnBackpack, 1);
-		}
-	}
+            HMCCosmeticsPlugin.getInstance().scheduler().runForLater(player, 1L, user::respawnBackpack);
+        }
+    }
 
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onPlayerDismounted(EntityDismountEvent event) {
-		if (event.getDismounted() instanceof Player player) {
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onPlayerDismounted(EntityDismountEvent event) {
+        if (event.getDismounted() instanceof Player player) {
             CosmeticUser user = CosmeticUsers.getUser(player);
             if (user == null) return;
 
-            Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(HMCCosmeticsPlugin.getInstance(), user::respawnBackpack, 1);
-		}
-	}
+            HMCCosmeticsPlugin.getInstance().scheduler().runForLater(player, 1L, user::respawnBackpack);
+        }
+    }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerInteract(PlayerInteractEntityEvent event) {

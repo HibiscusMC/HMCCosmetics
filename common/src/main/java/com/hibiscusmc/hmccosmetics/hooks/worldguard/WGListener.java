@@ -1,5 +1,6 @@
 package com.hibiscusmc.hmccosmetics.hooks.worldguard;
 
+import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.config.Wardrobe;
 import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
@@ -27,17 +28,20 @@ import java.util.Set;
  * Contains {@link com.sk89q.worldguard.WorldGuard WorldGuard} related event listeners
  */
 public class WGListener implements Listener {
+
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerMove(@NotNull PlayerMoveEvent event) {
-        Player player = event.getPlayer();
-        Location from = event.getFrom();
-        Location to = event.getTo();
+        final Player player = event.getPlayer();
+        final Location from = event.getFrom();
+        final Location to = event.getTo();
+        if (to == null) return;
         if (from.getBlockX() == to.getBlockX() && from.getBlockY() == to.getBlockY() && from.getBlockZ() == to.getBlockZ()) return;
 
         CosmeticUser user = CosmeticUsers.getUser(player);
         if (user == null) return;
-        Location location = player.getLocation();
-        ApplicableRegionSet set = getRegions(location);
+
+        // This event is already running on the player's region thread on Folia.
+        ApplicableRegionSet set = getRegions(player.getLocation());
         if (user.isHidden() && set.getRegions().isEmpty()) {
             user.showCosmetics(CosmeticUser.HiddenReason.WORLDGUARD);
         }
@@ -45,15 +49,17 @@ public class WGListener implements Listener {
         Set<String> wardrobeNames = WardrobeSettings.getWardrobeNames();
         for (ProtectedRegion protectedRegion : set.getRegions()) {
             Map<Flag<?>, Object> flags = protectedRegion.getFlags();
+
             if (flags.containsKey(WGHook.getCosmeticEnableFlag())) {
-                if (flags.get(WGHook.getCosmeticEnableFlag()).toString().equalsIgnoreCase("ALLOW")) {
+                if (String.valueOf(flags.get(WGHook.getCosmeticEnableFlag())).equalsIgnoreCase("ALLOW")) {
                     user.showCosmetics(CosmeticUser.HiddenReason.WORLDGUARD);
                 } else {
                     user.hideCosmetics(CosmeticUser.HiddenReason.WORLDGUARD);
                 }
             }
+
             if (flags.containsKey(WGHook.getCosmeticWardrobeFlag())) {
-                String wardrobeName = flags.getOrDefault(WGHook.getCosmeticWardrobeFlag(), "").toString();
+                String wardrobeName = String.valueOf(flags.getOrDefault(WGHook.getCosmeticWardrobeFlag(), ""));
                 if (wardrobeName.isEmpty() || !wardrobeNames.contains(wardrobeName)) return;
                 Wardrobe wardrobe = WardrobeSettings.getWardrobe(wardrobeName);
                 if (wardrobe == null) return;
@@ -64,30 +70,43 @@ public class WGListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerTeleport(PlayerTeleportEvent event) {
-        CosmeticUser user = CosmeticUsers.getUser(event.getPlayer());
+        final Player player = event.getPlayer();
+        final CosmeticUser user = CosmeticUsers.getUser(player);
         if (user == null) return;
-        Location location = event.getTo();
-        ApplicableRegionSet set = getRegions(location);
-        if (user.isHidden()) {
-            if (set.getRegions().isEmpty()) {
+
+        final Location to = event.getTo();
+        if (to == null) return;
+
+        // Run shortly after the teleport on the player's entity thread (Folia-safe).
+        HMCCosmeticsPlugin.getInstance().scheduler().runForLater(player, 1L, () -> {
+            ApplicableRegionSet set = getRegions(to);
+
+            if (user.isHidden() && set.getRegions().isEmpty()) {
                 user.showCosmetics(CosmeticUser.HiddenReason.WORLDGUARD);
             }
-        }
-        for (ProtectedRegion protectedRegion : set.getRegions()) {
-            if (protectedRegion.getFlags().containsKey(WGHook.getCosmeticEnableFlag())) {
-                if (protectedRegion.getFlags().get(WGHook.getCosmeticEnableFlag()).toString().equalsIgnoreCase("ALLOW")) {
-                    user.showCosmetics(CosmeticUser.HiddenReason.WORLDGUARD);
+
+            for (ProtectedRegion protectedRegion : set.getRegions()) {
+                Map<Flag<?>, Object> flags = protectedRegion.getFlags();
+
+                if (flags.containsKey(WGHook.getCosmeticEnableFlag())) {
+                    if (String.valueOf(flags.get(WGHook.getCosmeticEnableFlag())).equalsIgnoreCase("ALLOW")) {
+                        user.showCosmetics(CosmeticUser.HiddenReason.WORLDGUARD);
+                    } else {
+                        user.hideCosmetics(CosmeticUser.HiddenReason.WORLDGUARD);
+                    }
                     return;
                 }
-                user.hideCosmetics(CosmeticUser.HiddenReason.WORLDGUARD);
-                return;
+
+                if (flags.containsKey(WGHook.getCosmeticWardrobeFlag())) {
+                    String wardrobeName = String.valueOf(flags.get(WGHook.getCosmeticWardrobeFlag()));
+                    if (!WardrobeSettings.getWardrobeNames().contains(wardrobeName)) return;
+                    Wardrobe wardrobe = WardrobeSettings.getWardrobe(wardrobeName);
+                    if (wardrobe != null) {
+                        user.enterWardrobe(wardrobe, true);
+                    }
+                }
             }
-            if (protectedRegion.getFlags().containsKey(WGHook.getCosmeticWardrobeFlag())) {
-                if (!WardrobeSettings.getWardrobeNames().contains(protectedRegion.getFlags().get(WGHook.getCosmeticWardrobeFlag()).toString())) return;
-                Wardrobe wardrobe = WardrobeSettings.getWardrobe(protectedRegion.getFlags().get(WGHook.getCosmeticWardrobeFlag()).toString());
-                user.enterWardrobe(wardrobe, true);
-            }
-        }
+        });
     }
 
     private ApplicableRegionSet getRegions(Location location) {

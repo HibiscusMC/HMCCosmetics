@@ -155,9 +155,9 @@ public class CosmeticPacketInterface implements PacketInterface {
     public PacketAction readPlayerScale(@NotNull Player player, @NotNull PlayerScaleWrapper wrapper) {
         int entityId = wrapper.getEntityId();
         Player changedPlayer = Bukkit.getOnlinePlayers().stream()
-            .filter(onlinePlayer -> onlinePlayer.getEntityId() == entityId)
-            .findFirst()
-            .orElse(null);
+                .filter(onlinePlayer -> onlinePlayer.getEntityId() == entityId)
+                .findFirst()
+                .orElse(null);
         if (changedPlayer == null) return PacketAction.NOTHING;
 
         CosmeticUser cosmeticUser = CosmeticUsers.getUser(changedPlayer.getUniqueId());
@@ -184,7 +184,8 @@ public class CosmeticPacketInterface implements PacketInterface {
         CosmeticSlot cosmeticSlot = HMCCInventoryUtils.NMSCosmeticSlot(slotNumber);
         if (cosmeticSlot == null || !user.hasCosmeticInSlot(cosmeticSlot)) return PacketAction.NOTHING;
 
-        Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> user.updateCosmetic(cosmeticSlot), 1);
+        // Folia-safe: perform the update one tick later on the player's entity thread
+        HMCCosmeticsPlugin.getInstance().scheduler().runForLater(player, 1L, () -> user.updateCosmetic(cosmeticSlot));
         MessagesUtil.sendDebugMessages("Packet fired, updated cosmetic " + cosmeticSlot);
         return PacketAction.NOTHING;
     }
