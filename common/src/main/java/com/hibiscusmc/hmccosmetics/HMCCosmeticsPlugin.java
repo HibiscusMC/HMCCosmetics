@@ -25,6 +25,7 @@ import com.hibiscusmc.hmccosmetics.listener.ServerListener;
 import com.hibiscusmc.hmccosmetics.packets.CosmeticPacketInterface;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
+import com.hibiscusmc.hmccosmetics.util.FoliaScheduler;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.TranslationUtil;
 import me.lojosho.hibiscuscommons.HibiscusCommonsPlugin;
@@ -51,6 +52,15 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
     private static HMCCosmeticsPlugin instance;
     private static YamlConfigurationLoader configLoader;
 
+    /** Folia-aware scheduler shared across the plugin. */
+    private FoliaScheduler folia;
+
+    /** Instance accessor for the scheduler. Prefer entity/region methods on Folia. */
+    public FoliaScheduler scheduler() { return folia; }
+
+    /** Static convenience accessor. */
+    public static FoliaScheduler schedulerStatic() { return getInstance().scheduler(); }
+
     public HMCCosmeticsPlugin() {
         super(13873, 1879);
         new HookHMCCosmetics();
@@ -59,8 +69,14 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
 
     @Override
     public void onStart() {
-        // Plugin startup logic
         instance = this;
+
+        // Initialize Folia-aware scheduler early.
+        this.folia = new FoliaScheduler(this);
+
+        getLogger().info("[HMCCosmetics] Runtime: " + (isFoliaEnvironment()
+                ? "Folia (region/async schedulers enabled)"
+                : "Paper/Spigot (Bukkit scheduler fallback)"));
 
         // File setup
         saveDefaultConfig();
@@ -87,18 +103,22 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
             e.printStackTrace();
         }
 
-        // Move this over to Hibiscus Commons later
-        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) new HMCPlaceholderExpansion().register();
+        // PAPI
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            new HMCPlaceholderExpansion().register();
+        }
 
-        // Setup
+        // Setup domain
         setup();
         setPacketInterface(new CosmeticPacketInterface());
 
         // Commands
-        getServer().getPluginCommand("cosmetic").setExecutor(new CosmeticCommand());
-        getServer().getPluginCommand("cosmetic").setTabCompleter(new CosmeticCommandTabComplete());
+        if (getServer().getPluginCommand("cosmetic") != null) {
+            getServer().getPluginCommand("cosmetic").setExecutor(new CosmeticCommand());
+            getServer().getPluginCommand("cosmetic").setTabCompleter(new CosmeticCommandTabComplete());
+        }
 
-        // Listener
+        // Listeners
         getServer().getPluginManager().registerEvents(new PlayerConnectionListener(), this);
         getServer().getPluginManager().registerEvents(new PlayerGameListener(), this);
         getServer().getPluginManager().registerEvents(new ServerListener(), this);
@@ -106,27 +126,28 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
         if (HibiscusCommonsPlugin.isOnPaper()) {
             getServer().getPluginManager().registerEvents(new PaperPlayerGameListener(), this);
         }
+
         // Database
         new Database();
 
-        // WorldGuard
+        // WorldGuard move check listener
         if (Bukkit.getPluginManager().getPlugin("WorldGuard") != null && Settings.isWorldGuardMoveCheck()) {
             getServer().getPluginManager().registerEvents(new WGListener(), this);
         }
 
-        // HMCColor
+        // Optional HMCColor integration
         if (Hooks.isActiveHook("HMCColor")) {
             try {
                 DyeMenuProvider.setDyeMenuProvider(new HMCColorDyeMenu());
             } catch (IllegalStateException e) {
-                getLogger().warning("Unable to set HMCColor as the dye menu. There is likely another plugin registering another dye menu.");
+                getLogger().warning("Unable to set HMCColor as the dye menu. Another plugin likely registered a dye menu first.");
             }
         }
     }
 
     @Override
     public void onLoad() {
-        // WorldGuard
+        // WorldGuard flags
         if (Bukkit.getPluginManager().getPlugin("WorldGuard") != null) {
             new WGHook();
         }
@@ -154,14 +175,13 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
 
         // Configuration setup
         final File file = Path.of(getInstance().getDataFolder().getPath(), "config.yml").toFile();
-        final YamlConfigurationLoader loader = YamlConfigurationLoader.
-                builder().
-                path(file.toPath()).
-                defaultOptions(opts ->
-                        opts.serializers(build -> {
-                            build.register(Location.class, LocationSerializer.INSTANCE);
-                            build.register(ItemStack.class, ItemSerializer.INSTANCE);
-                        }))
+        final YamlConfigurationLoader loader = YamlConfigurationLoader
+                .builder()
+                .path(file.toPath())
+                .defaultOptions(opts -> opts.serializers(build -> {
+                    build.register(Location.class, LocationSerializer.INSTANCE);
+                    build.register(ItemStack.class, ItemSerializer.INSTANCE);
+                }))
                 .nodeStyle(NodeStyle.BLOCK)
                 .build();
         try {
@@ -175,14 +195,13 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
 
         // Messages setup
         final File messagesFile = Path.of(getInstance().getDataFolder().getPath(), "messages.yml").toFile();
-        final YamlConfigurationLoader messagesLoader = YamlConfigurationLoader.
-                builder().
-                path(messagesFile.toPath()).
-                defaultOptions(opts ->
-                        opts.serializers(build -> {
-                            build.register(Location.class, LocationSerializer.INSTANCE);
-                            build.register(ItemStack.class, ItemSerializer.INSTANCE);
-                        }))
+        final YamlConfigurationLoader messagesLoader = YamlConfigurationLoader
+                .builder()
+                .path(messagesFile.toPath())
+                .defaultOptions(opts -> opts.serializers(build -> {
+                    build.register(Location.class, LocationSerializer.INSTANCE);
+                    build.register(ItemStack.class, ItemSerializer.INSTANCE);
+                }))
                 .nodeStyle(NodeStyle.BLOCK)
                 .build();
         try {
@@ -193,9 +212,9 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
 
         // Translation setup
         final File translationFile = Path.of(getInstance().getDataFolder().getPath(), "translations.yml").toFile();
-        final YamlConfigurationLoader translationLoader = YamlConfigurationLoader.
-                builder().
-                path(translationFile.toPath())
+        final YamlConfigurationLoader translationLoader = YamlConfigurationLoader
+                .builder()
+                .path(translationFile.toPath())
                 .nodeStyle(NodeStyle.BLOCK)
                 .build();
         try {
@@ -204,38 +223,23 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
             throw new RuntimeException(e);
         }
 
-        // Cosmetics setup
+        // Cosmetics & Menus
         Cosmetics.setup();
-
-        // Menus setup
         Menus.setup();
 
-        // For reloads
-        /*
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            CosmeticUser user = CosmeticUsers.getUser(player.getUniqueId());
-            if (user == null) continue;
-            for (Cosmetic cosmetic : user.getCosmetic()) {
-                Color color = user.getCosmeticColor(cosmetic.getSlot());
-                Cosmetic newCosmetic = Cosmetics.getCosmetic(cosmetic.getId());
-                user.removeCosmeticSlot(cosmetic);
-
-                if (newCosmetic == null) continue;
-                user.addPlayerCosmetic(newCosmetic, color);
-            }
-            user.updateCosmetic();
-        }
-         */
+        // Dynamic permissions for cosmetics and menus
         for (Cosmetic cosmetic : Cosmetics.values()) {
             if (cosmetic.getPermission() != null) {
-                if (getInstance().getServer().getPluginManager().getPermission(cosmetic.getPermission()) != null) continue;
-                getInstance().getServer().getPluginManager().addPermission(new Permission(cosmetic.getPermission()));
+                if (getInstance().getServer().getPluginManager().getPermission(cosmetic.getPermission()) == null) {
+                    getInstance().getServer().getPluginManager().addPermission(new Permission(cosmetic.getPermission()));
+                }
             }
         }
         for (Menu menu : Menus.values()) {
             if (menu.getPermissionNode() != null) {
-                if (getInstance().getServer().getPluginManager().getPermission(menu.getPermissionNode()) != null) continue;
-                getInstance().getServer().getPluginManager().addPermission(new Permission(menu.getPermissionNode()));
+                if (getInstance().getServer().getPluginManager().getPermission(menu.getPermissionNode()) == null) {
+                    getInstance().getServer().getPluginManager().addPermission(new Permission(menu.getPermissionNode()));
+                }
             }
         }
 
@@ -246,5 +250,15 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
         getInstance().getLogger().info("Data storage is set to " + DatabaseSettings.getDatabaseType());
 
         Bukkit.getPluginManager().callEvent(new HMCCosmeticSetupEvent());
+    }
+
+    /** Local detection in case callers need it without touching the adapter. */
+    private boolean isFoliaEnvironment() {
+        try {
+            Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
+            return true;
+        } catch (ClassNotFoundException ignored) {
+            return false;
+        }
     }
 }
