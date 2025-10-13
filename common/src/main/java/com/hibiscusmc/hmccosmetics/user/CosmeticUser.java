@@ -54,7 +54,7 @@ public class CosmeticUser implements CosmeticHolder {
     private final HashMap<CosmeticSlot, Cosmetic> playerCosmetics = new HashMap<>();
     private UserWardrobeManager userWardrobeManager;
     private UserBalloonManager userBalloonManager;
-    @Getter
+    @Getter @Nullable
     private UserBackpackManager userBackpackManager;
 
     // Cosmetic Settings/Toggles
