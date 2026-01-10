@@ -4,17 +4,21 @@ import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.api.events.PlayerCosmeticPostEquipEvent;
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
+import com.hibiscusmc.hmccosmetics.config.section.Wardrobe;
+import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBackpackType;
 import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
+import com.hibiscusmc.hmccosmetics.user.manager.UserWardrobeManager;
 import com.hibiscusmc.hmccosmetics.util.HMCCInventoryUtils;
 import com.hibiscusmc.hmccosmetics.util.HMCCServerUtils;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.SchedulerUtil;
 import com.hibiscusmc.hmccosmetics.util.packets.HMCCPacketManager;
 import me.lojosho.hibiscuscommons.api.events.*;
+import me.lojosho.hibiscuscommons.nms.NMSHandlers;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -36,6 +40,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
@@ -252,24 +257,96 @@ public class PlayerGameListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onMainHandSwitch(PlayerItemHeldEvent event) {
         CosmeticUser user = CosmeticUsers.getUser(event.getPlayer());
         if (user == null) return;
 
-        //NMSHandlers.getHandler().slotUpdate(event.getPlayer(), event.getPreviousSlot());
-        if (user.hasCosmeticInSlot(CosmeticSlot.MAINHAND)) {
-            SchedulerUtil.runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
-                user.updateCosmetic(CosmeticSlot.MAINHAND);
-            }, 2);
+        // 检查玩家是否在衣柜中
+        if (user.getWardrobeManager() != null && user.getWardrobeManager().isActive()) {
+            // 取消切换物品栏槽位事件
+            event.setCancelled(true);
+            
+            // 获取当前和之前的槽位
+            int previousSlot = event.getPreviousSlot();
+            int newSlot = event.getNewSlot();
+            
+            // 计算旋转角度（向右切换为正，向左切换为负）
+            int rotationAmount = 0;
+            if (newSlot > previousSlot) {
+                // 向右切换（考虑循环）
+                if (previousSlot == 0 && newSlot == 8) {
+                    // 从0到8是向左切换
+                    rotationAmount = -15;
+                } else {
+                    // 正常向右切换
+                    rotationAmount = 15;
+                }
+            } else if (newSlot < previousSlot) {
+                // 向左切换（考虑循环）
+                if (previousSlot == 8 && newSlot == 0) {
+                    // 从8到0是向右切换
+                    rotationAmount = 15;
+                } else {
+                    // 正常向左切换
+                    rotationAmount = -15;
+                }
+            }
+            
+            // 如果有旋转量，则旋转NPC
+            if (rotationAmount != 0) {
+                rotateWardrobeNPC(user, rotationAmount);
+            }
+            return;
         }
 
-        // #84, Riptides mess with backpacks
-        ItemStack currentItem = event.getPlayer().getInventory().getItem(event.getNewSlot());
-        if (currentItem == null) return;
-        if (!currentItem.hasItemMeta()) return;
-        if (user.hasCosmeticInSlot(CosmeticSlot.BACKPACK) && currentItem.containsEnchantment(Enchantment.RIPTIDE)) {
-            user.despawnBackpack();
+        // 原有的主手切换处理逻辑
+        user.updateCosmetic(CosmeticSlot.MAINHAND);
+        if (user.hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
+            Cosmetic cosmetic = user.getCosmetic(CosmeticSlot.BACKPACK);
+            if (cosmetic.getId().equalsIgnoreCase("trident")) {
+                user.removeCosmeticSlot(CosmeticSlot.BACKPACK);
+            }
+        }
+    }
+    
+    /**
+     * 旋转衣柜NPC
+     * @param user 化妆品用户
+     * @param rotationAmount 旋转角度
+     */
+    private void rotateWardrobeNPC(CosmeticUser user, int rotationAmount) {
+        if (user.getWardrobeManager() == null || !user.getWardrobeManager().isActive()) return;
+        
+        Player player = user.getPlayer();
+        if (player == null) return;
+        
+        // 获取NPC当前位置
+        Location npcLocation = user.getWardrobeManager().getNpcLocation();
+        int currentYaw = (int) npcLocation.getYaw();
+        
+        // 计算新的角度
+        int newYaw = (currentYaw + rotationAmount) % 360;
+        if (newYaw < 0) newYaw += 360;
+        
+        // 更新位置
+        npcLocation.setYaw(newYaw);
+        
+        // 获取观看者
+        List<Player> viewer = Collections.singletonList(player);
+        
+        // 发送旋转数据包
+        HMCCPacketManager.sendRotateHeadPacket(user.getWardrobeManager().getNPC_ID(), npcLocation, viewer);
+        NMSHandlers.getHandler().getPacketBuilder()
+            .buildEntityRotatePacket(user.getWardrobeManager().getNPC_ID(), newYaw, 0, false)
+            .sendPacket(viewer);
+        
+        // 播放音效
+        player.playSound(player.getLocation(), org.bukkit.Sound.BLOCK_BAMBOO_BREAK, org.bukkit.SoundCategory.UI, 0.5f, 1.0f);
+        
+        // 如果有背包，也需要旋转
+        if (user.hasCosmeticInSlot(CosmeticSlot.BACKPACK) && user.getUserBackpackManager() != null) {
+            user.getUserBackpackManager().getEntityManager().setRotation(newYaw);
         }
     }
 
@@ -323,7 +400,8 @@ public class PlayerGameListener implements Listener {
             user.getBalloonManager().getPufferfish().spawnPufferfish(npclocation.clone().add(cosmetic.getBalloonOffset()), viewer);
             HMCCPacketManager.sendLeashPacket(user.getBalloonManager().getPufferfishBalloonId(), user.getWardrobeManager().getNPC_ID(), viewer);
             HMCCPacketManager.sendTeleportPacket(user.getBalloonManager().getPufferfishBalloonId(), npclocation, false, viewer);
-            user.getBalloonManager().getModelEntity().teleport(npclocation);
+            // 在Folia环境中使用异步传送
+            user.getBalloonManager().getModelEntity().teleportAsync(npclocation);
         }
     }
 
@@ -349,13 +427,32 @@ public class PlayerGameListener implements Listener {
 		}
 	}
 
-    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerInteract(PlayerInteractEntityEvent event) {
-        final Player player = event.getPlayer();
-        final Entity entity = event.getRightClicked();
-        // Balloons are technically actual entities, so we need to cancel any interactions with them
-        if (!entity.getPersistentDataContainer().has(HMCCServerUtils.getCosmemeticMobKey(), PersistentDataType.BOOLEAN)) return;
-        event.setCancelled(true);
+        if (!(event.getRightClicked() instanceof Player)) return;
+        
+        Player player = event.getPlayer();
+        CosmeticUser user = CosmeticUsers.getUser(player);
+        
+        // 检查实体是否为衣柜NPC
+        if (user.getWardrobeManager() != null && 
+            event.getRightClicked().getEntityId() == user.getWardrobeManager().getNPC_ID()) {
+            // 如果玩家不在衣柜中，则打开衣柜
+            if (!user.isInWardrobe()) {
+                // 获取默认衣柜
+                Wardrobe wardrobe = WardrobeSettings.getWardrobe("default");
+                if (wardrobe != null) {
+                    user.enterWardrobe(wardrobe, false);
+                    event.setCancelled(true);
+                }
+            }
+            return;
+        }
+        
+        // 原有的HMCCosmetics实体交互处理
+        if (HMCCServerUtils.getEntity(event.getRightClicked().getEntityId()) != null) {
+            event.setCancelled(true);
+        }
     }
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)

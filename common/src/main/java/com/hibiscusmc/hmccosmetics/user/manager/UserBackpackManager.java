@@ -52,7 +52,8 @@ public class UserBackpackManager {
 
     private void spawn(CosmeticBackpackType cosmeticBackpackType) {
         getEntityManager().setIds(List.of(invisibleArmorStand));
-        getEntityManager().teleport(user.getEntity().getLocation());
+        // 在Folia环境中使用异步传送
+        getEntityManager().teleportAsync(user.getEntity().getLocation());
         List<Player> outsideViewers = getEntityManager().getViewers();
 
         HMCCPacketManager.spawnInvisibleArmorstand(getFirstArmorStandId(), user.getEntity().getLocation(), UUID.randomUUID(), outsideViewers);

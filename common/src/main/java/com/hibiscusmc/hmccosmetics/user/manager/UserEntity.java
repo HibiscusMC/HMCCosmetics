@@ -114,6 +114,15 @@ public class UserEntity {
         setLastPositionUpdate(System.currentTimeMillis());
     }
 
+    // 在Folia环境中使用异步传送
+    public void teleportAsync(Location location) {
+        this.location = location;
+        for (Integer entity : ids) {
+            HMCCPacketManager.sendTeleportPacket(entity, location, false, getViewers());
+        }
+        setLastPositionUpdate(System.currentTimeMillis());
+    }
+
     public void setRotation(int yaw) {
         setRotation(yaw, false);
     }

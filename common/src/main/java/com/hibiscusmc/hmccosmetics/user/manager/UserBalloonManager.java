@@ -183,7 +183,8 @@ public class UserBalloonManager {
     }
 
     public void setLocation(Location location) {
-        this.getModelEntity().teleport(location);
+        // 在Folia环境中使用异步传送
+        this.getModelEntity().teleportAsync(location);
     }
 
     public Vector getVelocity() {

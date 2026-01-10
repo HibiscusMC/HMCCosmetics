@@ -53,7 +53,8 @@ public class CosmeticBackpackType extends Cosmetic implements CosmeticUpdateBeha
         UserEntity entityManager = backpackManager.getEntityManager();
         if(entityManager == null) return;
 
-        entityManager.teleport(loc);
+        // 在Folia环境中使用异步传送
+        entityManager.teleportAsync(loc);
         entityManager.setRotation((int) loc.getYaw(), isFirstPersonCompadible());
 
         int firstArmorStandId = backpackManager.getFirstArmorStandId();
@@ -124,7 +125,8 @@ public class CosmeticBackpackType extends Cosmetic implements CosmeticUpdateBeha
         UserEntity entityManager = backpackManager.getEntityManager();
         if(entityManager == null) return;
 
-        entityManager.teleport(loc);
+        // 在Folia环境中使用异步传送
+        entityManager.teleportAsync(loc);
         entityManager.setRotation((int) loc.getYaw(), isFirstPersonCompadible());
     }
 
