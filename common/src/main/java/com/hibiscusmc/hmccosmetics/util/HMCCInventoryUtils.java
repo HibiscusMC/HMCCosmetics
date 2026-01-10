@@ -2,11 +2,9 @@ package com.hibiscusmc.hmccosmetics.util;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
-import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -137,14 +135,5 @@ public class HMCCInventoryUtils {
      */
     public static List<EquipmentSlot> getPlayerArmorSlots() {
         return Arrays.asList(EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET, EquipmentSlot.OFF_HAND, EquipmentSlot.HAND);
-    }
-
-    public static boolean isGlider(@NotNull ItemStack itemStack) {
-        Material type = itemStack.getType();
-        if (type.isAir()) return false;
-        if (type == Material.ELYTRA) return true; // Hacky
-        ItemMeta itemMeta = itemStack.getItemMeta();
-        if (itemMeta == null) return false;
-        return itemMeta.isGlider();
     }
 }

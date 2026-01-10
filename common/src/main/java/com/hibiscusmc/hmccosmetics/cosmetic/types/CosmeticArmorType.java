@@ -58,8 +58,8 @@ public class CosmeticArmorType extends Cosmetic implements CosmeticUpdateBehavio
         }
         if (Settings.getSlotOption(equipSlot).isAddElytraComponent()
                 && HibiscusCommonsPlugin.isOnPaper()
-                && HMCCInventoryUtils.isGlider(physicalEquippedItem)) {
-            cosmeticItem.editMeta(itemMeta -> itemMeta.setGlider(true));
+                && physicalEquippedItem.hasData(DataComponentTypes.GLIDER)) {
+            cosmeticItem.setData(DataComponentTypes.GLIDER);
         }
         if (Settings.getSlotOption(equipSlot).isItemDamagePassThrough()
         && HibiscusCommonsPlugin.isOnPaper()) {
