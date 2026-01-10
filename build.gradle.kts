@@ -190,7 +190,7 @@ bukkit {
     loadBefore = listOf(
         "Cosmin" // Fixes an issue with Cosmin loading before and taking /cosmetic, when messing with what we do.
     )
-
+    foliaSupported = true
     commands {
         register("cosmetic") {
             description = "Base Cosmetic Command"

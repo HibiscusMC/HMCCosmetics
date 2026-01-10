@@ -8,6 +8,7 @@ import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticHolder;
 import com.hibiscusmc.hmccosmetics.gui.special.DyeMenu;
+import com.hibiscusmc.hmccosmetics.util.SchedulerUtil;
 import me.lojosho.hibiscuscommons.hooks.Hooks;
 import me.lojosho.hibiscuscommons.nms.NMSHandlers;
 import me.lojosho.hibiscuscommons.util.AdventureUtils;
@@ -55,7 +56,7 @@ public class HMCColorDyeMenu implements DyeMenu {
     private void addCosmetic(@NotNull Player viewer, @NotNull CosmeticHolder cosmeticHolder, @NotNull Cosmetic cosmetic, @Nullable Color color) {
         cosmeticHolder.addCosmetic(cosmetic, color);
         viewer.setItemOnCursor(new ItemStack(Material.AIR));
-        Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
+        SchedulerUtil.runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
             viewer.closeInventory();
             cosmeticHolder.updateCosmetic(cosmetic.getSlot());
         }, 2);

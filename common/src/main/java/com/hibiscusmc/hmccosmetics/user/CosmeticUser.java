@@ -22,6 +22,7 @@ import com.hibiscusmc.hmccosmetics.user.manager.UserBalloonManager;
 import com.hibiscusmc.hmccosmetics.user.manager.UserWardrobeManager;
 import com.hibiscusmc.hmccosmetics.util.HMCCInventoryUtils;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
+import com.hibiscusmc.hmccosmetics.util.SchedulerUtil;
 import com.hibiscusmc.hmccosmetics.util.packets.HMCCPacketManager;
 import lombok.Getter;
 import me.lojosho.hibiscuscommons.hooks.Hooks;
@@ -178,7 +179,14 @@ public class CosmeticUser implements CosmeticHolder {
             return;
         }
 
-        final BukkitTask task = Bukkit.getScheduler().runTaskTimer(HMCCosmeticsPlugin.getInstance(), this::tick, 0, tickPeriod);
+        final BukkitTask task;
+        if (SchedulerUtil.isFolia() && getPlayer() != null) {
+            // 在Folia环境下，使用实体调度器确保任务在正确的区域执行
+            task = SchedulerUtil.runTaskTimer(HMCCosmeticsPlugin.getInstance(), getPlayer(), this::tick, 0, tickPeriod);
+        } else {
+            // 在非Folia环境下，使用全局调度器
+            task = SchedulerUtil.runTaskTimer(HMCCosmeticsPlugin.getInstance(), this::tick, 0, tickPeriod);
+        }
         this.taskId = task.getTaskId();
     }
 
@@ -205,7 +213,7 @@ public class CosmeticUser implements CosmeticHolder {
 
     public void destroy() {
         if(this.taskId != -1) { // ensure we're actually ticking this user.
-            Bukkit.getScheduler().cancelTask(taskId);
+            SchedulerUtil.cancelTask(taskId);
         }
 
         despawnBackpack();
@@ -539,10 +547,19 @@ public class CosmeticUser implements CosmeticHolder {
                     WardrobeSettings.getTransitionStay(),
                     WardrobeSettings.getTransitionFadeOut()
             );
-            Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
-                userWardrobeManager.end();
-                userWardrobeManager = null;
-            }, WardrobeSettings.getTransitionDelay());
+            if (SchedulerUtil.isFolia() && getPlayer() != null) {
+                // 在Folia环境下，使用实体调度器确保任务在正确的区域执行
+                SchedulerUtil.runTaskLater(HMCCosmeticsPlugin.getInstance(), getPlayer(), () -> {
+                    userWardrobeManager.end();
+                    userWardrobeManager = null;
+                }, WardrobeSettings.getTransitionDelay());
+            } else {
+                // 在非Folia环境下，使用全局调度器
+                SchedulerUtil.runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
+                    userWardrobeManager.end();
+                    userWardrobeManager = null;
+                }, WardrobeSettings.getTransitionDelay());
+            }
         } else {
             userWardrobeManager.end();
             userWardrobeManager = null;

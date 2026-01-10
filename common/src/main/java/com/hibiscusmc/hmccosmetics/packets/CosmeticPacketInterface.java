@@ -12,6 +12,7 @@ import com.hibiscusmc.hmccosmetics.user.manager.UserBackpackManager;
 import com.hibiscusmc.hmccosmetics.user.manager.UserWardrobeManager;
 import com.hibiscusmc.hmccosmetics.util.HMCCInventoryUtils;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
+import com.hibiscusmc.hmccosmetics.util.SchedulerUtil;
 import com.hibiscusmc.hmccosmetics.util.packets.HMCCPacketManager;
 import me.lojosho.hibiscuscommons.packets.PacketAction;
 import me.lojosho.hibiscuscommons.packets.PacketInterface;
@@ -189,7 +190,13 @@ public class CosmeticPacketInterface implements PacketInterface {
         CosmeticSlot cosmeticSlot = HMCCInventoryUtils.NMSCosmeticSlot(slotNumber);
         if (cosmeticSlot == null || !user.hasCosmeticInSlot(cosmeticSlot)) return PacketAction.NOTHING;
 
-        Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> user.updateCosmetic(cosmeticSlot), 1);
+        if (SchedulerUtil.isFolia() && user.getPlayer() != null) {
+            // 在Folia环境下，使用实体调度器确保任务在正确的区域执行
+            SchedulerUtil.runTaskLater(HMCCosmeticsPlugin.getInstance(), user.getPlayer(), () -> user.updateCosmetic(cosmeticSlot), 1);
+        } else {
+            // 在非Folia环境下，使用全局调度器
+            SchedulerUtil.runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> user.updateCosmetic(cosmeticSlot), 1);
+        }
         MessagesUtil.sendDebugMessages("Packet fired, updated cosmetic " + cosmeticSlot);
         return PacketAction.NOTHING;
     }

@@ -5,6 +5,7 @@ import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.database.UserData;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
+import com.hibiscusmc.hmccosmetics.util.SchedulerUtil;
 import org.bukkit.Bukkit;
 
 import java.sql.PreparedStatement;
@@ -51,7 +52,7 @@ public abstract class SQLData extends Data {
             }
         };
         if (!HMCCosmeticsPlugin.getInstance().isDisabled()) {
-            Bukkit.getScheduler().runTaskAsynchronously(HMCCosmeticsPlugin.getInstance(), run);
+            SchedulerUtil.runTaskAsynchronously(HMCCosmeticsPlugin.getInstance(), run);
         } else {
             run.run();
         }

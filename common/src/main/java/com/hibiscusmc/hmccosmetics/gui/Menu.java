@@ -2,16 +2,18 @@ package com.hibiscusmc.hmccosmetics.gui;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.api.events.PlayerMenuCloseEvent;
-import com.hibiscusmc.hmccosmetics.api.events.PlayerMenuOpenEvent;
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticHolder;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
+import com.hibiscusmc.hmccosmetics.api.events.PlayerMenuCloseEvent;
+import com.hibiscusmc.hmccosmetics.api.events.PlayerMenuOpenEvent;
 import com.hibiscusmc.hmccosmetics.gui.type.Type;
 import com.hibiscusmc.hmccosmetics.gui.type.Types;
 import com.hibiscusmc.hmccosmetics.gui.type.types.TypeCosmetic;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
+import com.hibiscusmc.hmccosmetics.util.SchedulerUtil;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.components.GuiType;
 import dev.triumphteam.gui.guis.Gui;
@@ -27,6 +29,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -160,14 +163,14 @@ public class Menu {
         gui.setOpenGuiAction(event -> {
             Runnable run = () -> {
                 if (gui.getInventory().getViewers().isEmpty() && taskid.get() != -1) {
-                    Bukkit.getScheduler().cancelTask(taskid.get());
+                    SchedulerUtil.cancelTask(taskid.get());
                 }
 
                 updateMenu(viewer, cosmeticHolder, gui);
             };
 
             if (refreshRate != -1) {
-                taskid.set(Bukkit.getScheduler().scheduleSyncRepeatingTask(HMCCosmeticsPlugin.getInstance(), run, 0, refreshRate));
+                taskid.set(SchedulerUtil.scheduleSyncRepeatingTask(HMCCosmeticsPlugin.getInstance(), run, 0, refreshRate));
             } else {
                 run.run();
             }
@@ -176,10 +179,10 @@ public class Menu {
         gui.setCloseGuiAction(event -> {
             if (cosmeticHolder instanceof CosmeticUser user) {
                 PlayerMenuCloseEvent closeEvent = new PlayerMenuCloseEvent(user, this, event.getReason());
-                Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> Bukkit.getPluginManager().callEvent(closeEvent));
+                SchedulerUtil.runTask(HMCCosmeticsPlugin.getInstance(), () -> Bukkit.getPluginManager().callEvent(closeEvent));
             }
 
-            if (taskid.get() != -1) Bukkit.getScheduler().cancelTask(taskid.get());
+            if (taskid.get() != -1) SchedulerUtil.cancelTask(taskid.get());
         });
 
         Runnable openGuiTask = () -> {
@@ -190,7 +193,7 @@ public class Menu {
         // API
         if (cosmeticHolder instanceof CosmeticUser user) {
             PlayerMenuOpenEvent event = new PlayerMenuOpenEvent(user, this);
-            Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> {
+            SchedulerUtil.runTask(HMCCosmeticsPlugin.getInstance(), () -> {
                 Bukkit.getPluginManager().callEvent(event);
                 if (!event.isCancelled()) {
                     openGuiTask.run();
@@ -199,7 +202,7 @@ public class Menu {
         }
         // Internal
         else {
-            Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), openGuiTask);
+            SchedulerUtil.runTask(HMCCosmeticsPlugin.getInstance(), openGuiTask);
         }
     }
 
