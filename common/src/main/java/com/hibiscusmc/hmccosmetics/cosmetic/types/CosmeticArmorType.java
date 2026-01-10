@@ -6,6 +6,7 @@ import com.hibiscusmc.hmccosmetics.cosmetic.behavior.CosmeticUpdateBehavior;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.HMCCInventoryUtils;
 import com.hibiscusmc.hmccosmetics.util.packets.HMCCPacketManager;
+import io.papermc.paper.datacomponent.DataComponentTypes;
 import me.lojosho.hibiscuscommons.HibiscusCommonsPlugin;
 import me.lojosho.shaded.configurate.ConfigurationNode;
 import org.bukkit.Bukkit;
@@ -59,6 +60,13 @@ public class CosmeticArmorType extends Cosmetic implements CosmeticUpdateBehavio
                 && HibiscusCommonsPlugin.isOnPaper()
                 && HMCCInventoryUtils.isGlider(physicalEquippedItem)) {
             cosmeticItem.editMeta(itemMeta -> itemMeta.setGlider(true));
+        }
+        if (Settings.getSlotOption(equipSlot).isItemDamagePassThrough()
+        && HibiscusCommonsPlugin.isOnPaper()) {
+            if (physicalEquippedItem.hasData(DataComponentTypes.MAX_DAMAGE))
+                cosmeticItem.setData(DataComponentTypes.MAX_DAMAGE, physicalEquippedItem.getData(DataComponentTypes.MAX_DAMAGE));
+            if (physicalEquippedItem.hasData(DataComponentTypes.DAMAGE))
+                cosmeticItem.setData(DataComponentTypes.DAMAGE, physicalEquippedItem.getData(DataComponentTypes.DAMAGE));
         }
         // Basically, if force offhand is off AND there is no item in an offhand slot, then the equipment packet to add the cosmetic
         return cosmeticItem;

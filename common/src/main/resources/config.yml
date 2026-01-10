@@ -65,20 +65,25 @@ cosmetic-settings:
       add-enchantments: false
       # Should the player slot be empty for the cosmetic to be applied? A cosmetic will be "hidden" if a player has an item equipped in the slot
       require-empty: false
+      passthrough-damage: false
     chestplate:
       add-enchantments: false
       require-empty: false
       add-elytra-componnt: true
+      passthrough-damage: false
     leggings:
       add-enchantments: false
       require-empty: false
+      passthrough-damage: false
     boots:
       add-enchantments: false
       require-empty: false
+      passthrough-damage: false
     offhand:
       add-enchantments: false
       # There is a small visual blip for a tick when you put a new item in the offhand slot, hence why its enabled by default.
       require-empty: true
+      passthrough-damage: false
 
   # This attempts to destroy cosmetics that get loose in the wild, such as through a player entering creative mode.
   # Most servers who don't use creative mode and have properly set up the plugin should have no need for this and can leave it disabled.
