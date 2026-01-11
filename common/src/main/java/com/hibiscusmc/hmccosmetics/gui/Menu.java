@@ -18,14 +18,23 @@ import dev.triumphteam.gui.components.GuiType;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import io.papermc.paper.datacomponent.DataComponentTypes;
+import io.papermc.paper.datacomponent.item.CustomModelData;
+import io.papermc.paper.datacomponent.item.DyedItemColor;
 import lombok.Getter;
 import me.lojosho.hibiscuscommons.config.serializer.ItemSerializer;
 import me.lojosho.hibiscuscommons.hooks.Hooks;
 import me.lojosho.hibiscuscommons.util.AdventureUtils;
+import me.lojosho.shaded.configurate.BasicConfigurationNode;
+import me.lojosho.shaded.configurate.CommentedConfigurationNode;
 import me.lojosho.shaded.configurate.ConfigurationNode;
 import me.lojosho.shaded.configurate.serialize.SerializationException;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
+import org.bukkit.Color;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
@@ -259,6 +268,9 @@ public class Menu {
                 gui.updateTitle(AdventureUtils.MINI_MESSAGE.deserialize(Hooks.processPlaceholders(viewer, title.toString())));
             }
             case MODERN -> {
+                TextColor equippableColor = MiniMessage.miniMessage().deserialize(Settings.getEquipableCosmeticColor()).color();
+                TextColor equippedColor = MiniMessage.miniMessage().deserialize(Settings.getEquippedCosmeticColor()).color();
+                TextColor lockedColor = MiniMessage.miniMessage().deserialize(Settings.getLockedCosmeticColor()).color();
                 for (int i = 0; i < gui.getInventory().getSize(); i++) {
                     if (items.containsKey(i)) {
                         List<MenuItem> menuItems = items.get(i);
@@ -269,15 +281,16 @@ public class Menu {
                                 Cosmetic cosmetic = Cosmetics.getCosmetic(item.itemConfig().node("cosmetic").getString(""));
                                 if (cosmetic == null) return;
 
-                                //TODO Set the ItemModel on the item & set CMD to true/false/unset if equippable/locked/equipped
-                                // This ItemModel needs to be generated aswell & injected into Nexo
-                                if (cosmeticHolder.hasCosmeticInSlot(cosmetic)) {
-                                    itemStack.setData(DataComponentTypes.ITEM_MODEL, );
-                                } else if (cosmeticHolder.canEquipCosmetic(cosmetic, true)) {
-                                    itemStack.setData(DataComponentTypes.ITEM_MODEL, );
-                                } else {
-                                    itemStack.setData(DataComponentTypes.ITEM_MODEL, );
-                                }
+                                //TODO get the cosmetic ID
+                                Key itemKey = Key.key("hmccosmetics", item.itemConfig(). + "_shading");
+                                itemStack.setData(DataComponentTypes.ITEM_MODEL, itemKey);
+
+                                DyedItemColor.Builder builder = DyedItemColor.dyedItemColor();
+                                if (cosmeticHolder.hasCosmeticInSlot(cosmetic)) builder.color(Color.fromRGB(equippableColor.value()));
+                                else if (cosmeticHolder.canEquipCosmetic(cosmetic, true)) builder.color(Color.fromRGB(equippedColor.value()));
+                                else builder.color(Color.fromRGB(lockedColor.value()));
+
+                                itemStack.setData(DataComponentTypes.DYED_COLOR, builder.build());
                             }
                         }));
                     }

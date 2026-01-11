@@ -63,6 +63,9 @@ allprojects {
 
         // Hibiscus Commons
         maven("https://repo.hibiscusmc.com/releases")
+
+        // Nexo
+        maven("https://repo.nexomc.com/releases")
     }
 
     dependencies {
@@ -86,6 +89,7 @@ allprojects {
         //compileOnly("it.unimi.dsi:fastutil:8.5.14")
         compileOnly("org.projectlombok:lombok:1.18.34")
         compileOnly("me.lojosho:HibiscusCommons:0.8.3-a89bcec3")
+        compileOnly("com.nexomc:nexo:1.17.0")
 
         annotationProcessor("org.projectlombok:lombok:1.18.36")
         testCompileOnly("org.projectlombok:lombok:1.18.36")
