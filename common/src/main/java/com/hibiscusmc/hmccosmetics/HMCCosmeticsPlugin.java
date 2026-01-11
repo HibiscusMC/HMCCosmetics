@@ -19,6 +19,7 @@ import com.hibiscusmc.hmccosmetics.hooks.items.HookHMCCosmetics;
 import com.hibiscusmc.hmccosmetics.hooks.misc.HookBetterHud;
 import com.hibiscusmc.hmccosmetics.hooks.misc.HookVulcan;
 import com.hibiscusmc.hmccosmetics.hooks.placeholders.HMCPlaceholderExpansion;
+import com.hibiscusmc.hmccosmetics.hooks.resourcepack.HookNexo;
 import com.hibiscusmc.hmccosmetics.hooks.worldguard.WGHook;
 import com.hibiscusmc.hmccosmetics.hooks.worldguard.WGListener;
 import com.hibiscusmc.hmccosmetics.listener.*;
@@ -63,6 +64,7 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
         new HookHMCCosmetics();
         new HookBetterHud();
         new HookVulcan();
+        new HookNexo();
     }
 
     @Override

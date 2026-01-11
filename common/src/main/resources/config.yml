@@ -116,7 +116,8 @@ menu-settings:
     # Below is the shading mechanism behind cosmetic items. This is a bit complicated, but it allows for a lot of customization.
     # The shading is done through the title and by shifting textures around. This is done by offsets.
     # Only Nexo is support by default. Vanilla can't properly handle it without a lot of unicodes and ItemsAdder adds weird offsets and decolors it. (This is why it is disabled by default)
-    enabled: false # Default of menus having shading. This can be toggled individually in menus with "shading: true/false"
+    # Enable by using MODERN or TEXT
+    type: NONE
     first-row-shift: "<shift:-153>" # Nexo: "<shift:-153>"
     sequent-row-shift: " <shift:-153>" # Nexo: " <shift:-153>" (Space is important here!)
     individual-column-shift: "<shift:-3>" # Nexo: "<shift:-3>"

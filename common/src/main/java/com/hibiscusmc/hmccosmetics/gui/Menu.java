@@ -7,7 +7,6 @@ import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticHolder;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
-import com.hibiscusmc.hmccosmetics.gui.type.ShadingType;
 import com.hibiscusmc.hmccosmetics.gui.type.Type;
 import com.hibiscusmc.hmccosmetics.gui.type.Types;
 import com.hibiscusmc.hmccosmetics.gui.type.types.TypeCosmetic;
@@ -18,19 +17,15 @@ import dev.triumphteam.gui.components.GuiType;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import io.papermc.paper.datacomponent.DataComponentTypes;
-import io.papermc.paper.datacomponent.item.CustomModelData;
 import io.papermc.paper.datacomponent.item.DyedItemColor;
 import lombok.Getter;
 import me.lojosho.hibiscuscommons.config.serializer.ItemSerializer;
 import me.lojosho.hibiscuscommons.hooks.Hooks;
 import me.lojosho.hibiscuscommons.util.AdventureUtils;
-import me.lojosho.shaded.configurate.BasicConfigurationNode;
-import me.lojosho.shaded.configurate.CommentedConfigurationNode;
 import me.lojosho.shaded.configurate.ConfigurationNode;
 import me.lojosho.shaded.configurate.serialize.SerializationException;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
@@ -63,8 +58,6 @@ public class Menu {
     private final HashMap<Integer, List<MenuItem>> items;
     @Getter
     private final int refreshRate;
-    @Getter
-    private final ShadingType shadingType;
 
     public Menu(String id, @NotNull ConfigurationNode config) {
         this.id = config.node("id").getString(id);
@@ -75,7 +68,6 @@ public class Menu {
         cooldown = config.node("click-cooldown").getLong(Settings.getDefaultMenuCooldown());
         permissionNode = config.node("permission").getString("");
         refreshRate = config.node("refresh-rate").getInt(-1);
-        shadingType = ShadingType.fromString(config.node("shading").node("type").getString(""), ShadingType.NONE);
 
         items = new HashMap<>();
         setupItems();
@@ -220,7 +212,7 @@ public class Menu {
         StringBuilder title = new StringBuilder(this.title);
 
         int row = 0;
-        switch (shadingType) {
+        switch (Settings.getShadingType()) {
             case TEXT -> {
                 for (int i = 0; i < gui.getInventory().getSize(); i++) {
                     // Handles the title
@@ -281,8 +273,7 @@ public class Menu {
                                 Cosmetic cosmetic = Cosmetics.getCosmetic(item.itemConfig().node("cosmetic").getString(""));
                                 if (cosmetic == null) return;
 
-                                //TODO get the cosmetic ID
-                                Key itemKey = Key.key("hmccosmetics", item.itemConfig(). + "_shading");
+                                Key itemKey = Key.key("hmccosmetics", cosmetic.getId() + "_shading");
                                 itemStack.setData(DataComponentTypes.ITEM_MODEL, itemKey);
 
                                 DyedItemColor.Builder builder = DyedItemColor.dyedItemColor();
@@ -318,8 +309,8 @@ public class Menu {
         for (MenuItem item : menuItems) {
             Type type = item.type();
             ItemStack itemStack = item.item().clone();
-            if (consumer != null) consumer.accept(itemStack);
             ItemStack modifiedItem = getMenuItem(viewer, cosmeticHolder, type, item.itemConfig(), itemStack, slot);
+            if (consumer != null) consumer.accept(modifiedItem);
             if (modifiedItem.getType().isAir()) continue;
             GuiItem guiItem = ItemBuilder.from(modifiedItem).asGuiItem();
             guiItem.setAction(event -> {

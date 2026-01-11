@@ -253,7 +253,7 @@ public class Settings {
         if (defaultShadingType == ShadingType.NONE && shadingSettings.node(ENABLED_PATH).getBoolean()) {
             defaultShadingType = ShadingType.TEXT;
         }
-        shadingType = ShadingType.fromString(shadingSettings.node(TYPE).getString(""), defaultShadingType);
+        shadingType = ShadingType.fromString(shadingSettings.node(TYPE).getString(defaultShadingType.name()), defaultShadingType);
         firstRowShift = shadingSettings.node(FIRST_ROW_SHIFT_PATH).getString();
         sequentRowShift = shadingSettings.node(SEQUENT_ROW_SHIFT_PATH).getString();
         individualColumnShift = shadingSettings.node(INDIVIDUAL_COLUMN_SHIFT_PATH).getString();
