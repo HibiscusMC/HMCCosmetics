@@ -2,8 +2,11 @@ package com.hibiscusmc.hmccosmetics.util.search;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.util.Octree;
+import com.hibiscusmc.hmccosmetics.util.SchedulerUtil;
+import me.earthme.luminol.api.entity.EntityTeleportAsyncEvent;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -93,7 +96,27 @@ public class OctreePlayerSearchEngine extends PlayerSearchEngine {
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerTeleport(PlayerTeleportEvent event) {
+        // 仅在非Folia环境下处理此事件
+        if (SchedulerUtil.isFolia()) {
+            return;
+        }
         updatePlayerPosition(event.getPlayer());
+    }
+    
+    // 在Folia环境下使用EntityTeleportAsyncEvent替代PlayerTeleportEvent
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onEntityTeleportAsync(EntityTeleportAsyncEvent event) {
+        // 仅在Folia环境下处理此事件
+        if (!SchedulerUtil.isFolia()) {
+            return;
+        }
+        
+        // 只处理玩家传送
+        if (!(event.getEntity() instanceof Player player)) {
+            return;
+        }
+        
+        updatePlayerPosition(player);
     }
 
     @EventHandler(priority = EventPriority.NORMAL)

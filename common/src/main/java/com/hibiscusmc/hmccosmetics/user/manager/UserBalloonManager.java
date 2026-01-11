@@ -37,22 +37,42 @@ public class UserBalloonManager {
     private CosmeticBalloonType cosmeticBalloonType;
     @Getter
     private UserBalloonPufferfish pufferfish;
-    private final ArmorStand modelEntity;
+    private ArmorStand modelEntity;
 
     public UserBalloonManager(CosmeticUser user, @NotNull Location location) {
         this.user = user;
         this.pufferfish = new UserBalloonPufferfish(user.getUniqueId(), NMSHandlers.getHandler().getUtilHandler().getNextEntityId(), UUID.randomUUID());
-        this.modelEntity = location.getWorld().spawn(location, ArmorStand.class, (e) -> {
-            e.setInvisible(true);
-            e.setGravity(false);
-            e.setSilent(true);
-            e.setInvulnerable(true);
-            e.setSmall(true);
-            e.setMarker(true);
-            e.setPersistent(false);
-            e.setAI(false);
-            e.getPersistentDataContainer().set(HMCCServerUtils.getCosmemeticMobKey(), PersistentDataType.BOOLEAN, true);
-        });
+        
+        // 在Folia环境中，确保在正确的线程上创建实体
+        if (com.hibiscusmc.hmccosmetics.util.SchedulerUtil.isFolia()) {
+            // 使用玩家特定的调度器来创建实体
+            com.hibiscusmc.hmccosmetics.util.SchedulerUtil.runTask(com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin.getInstance(), user.getPlayer(), () -> {
+                this.modelEntity = location.getWorld().spawn(location, ArmorStand.class, (e) -> {
+                    e.setInvisible(true);
+                    e.setGravity(false);
+                    e.setSilent(true);
+                    e.setInvulnerable(true);
+                    e.setSmall(true);
+                    e.setMarker(true);
+                    e.setPersistent(false);
+                    e.setAI(false);
+                    e.getPersistentDataContainer().set(HMCCServerUtils.getCosmemeticMobKey(), PersistentDataType.BOOLEAN, true);
+                });
+            });
+        } else {
+            // 非Folia环境，直接创建
+            this.modelEntity = location.getWorld().spawn(location, ArmorStand.class, (e) -> {
+                e.setInvisible(true);
+                e.setGravity(false);
+                e.setSilent(true);
+                e.setInvulnerable(true);
+                e.setSmall(true);
+                e.setMarker(true);
+                e.setPersistent(false);
+                e.setAI(false);
+                e.getPersistentDataContainer().set(HMCCServerUtils.getCosmemeticMobKey(), PersistentDataType.BOOLEAN, true);
+            });
+        }
     }
 
     public void spawnModel(@NotNull CosmeticBalloonType cosmeticBalloonType, Color color) {
@@ -192,7 +212,15 @@ public class UserBalloonManager {
     }
 
     public void setVelocity(Vector vector) {
-        this.getModelEntity().setVelocity(vector);
+        // 在Folia环境中使用异步任务处理速度设置
+        if (com.hibiscusmc.hmccosmetics.util.SchedulerUtil.isFolia()) {
+            com.hibiscusmc.hmccosmetics.util.SchedulerUtil.runTask(com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin.getInstance(), user.getPlayer(), () -> {
+                this.getModelEntity().setVelocity(vector);
+            });
+        } else {
+            // 非Folia环境保持原有逻辑
+            this.getModelEntity().setVelocity(vector);
+        }
     }
 
     public void sendRemoveLeashPacket(List<Player> viewer) {

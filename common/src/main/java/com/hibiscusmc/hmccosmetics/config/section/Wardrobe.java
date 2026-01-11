@@ -27,7 +27,7 @@ public class Wardrobe {
     /**
      * This creates a Wardrobe object with all the information that a user will need when entering.
      * @param id The id of the wardrobe
-     * @param location The 3 locations of the Wardrobe, if any of these 3 locations are null, the wardrobe will not work
+     * @param location The locations of the Wardrobe, npcLocation and viewerLocation are required, leaveLocation is optional (if null, player will return to their original position)
      * @param permission The permission required to enter the wardrobe, if null, no permission is required
      * @param distance The distance from the wardrobe that the player can be to enter, if -1, the player can enter from any distance
      * @param defaultMenu The default menu that the player will open when entering the wardrobe.

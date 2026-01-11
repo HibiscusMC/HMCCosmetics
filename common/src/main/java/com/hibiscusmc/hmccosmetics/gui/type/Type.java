@@ -59,6 +59,7 @@ public abstract class Type {
     /**
      * @deprecated Override {@link #setItem(Player, CosmeticHolder, ConfigurationNode, ItemStack, int)} instead.
      */
+    @Deprecated
     public abstract ItemStack setItem(CosmeticUser user, ConfigurationNode config, ItemStack itemStack, int slot);
 
     @Contract("_, _ -> param2")

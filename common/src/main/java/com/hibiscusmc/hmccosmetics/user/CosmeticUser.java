@@ -1,7 +1,9 @@
 package com.hibiscusmc.hmccosmetics.user;
 
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Multimap;
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.api.events.*;
 import com.hibiscusmc.hmccosmetics.config.Settings;
@@ -25,6 +27,7 @@ import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.SchedulerUtil;
 import com.hibiscusmc.hmccosmetics.util.packets.HMCCPacketManager;
 import lombok.Getter;
+import lombok.Setter;
 import me.lojosho.hibiscuscommons.hooks.Hooks;
 import me.lojosho.hibiscuscommons.nms.NMSHandlers;
 import me.lojosho.hibiscuscommons.util.InventoryUtils;
@@ -32,7 +35,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
@@ -40,12 +46,15 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
 public class CosmeticUser implements CosmeticHolder {
@@ -61,6 +70,9 @@ public class CosmeticUser implements CosmeticHolder {
     // Cosmetic Settings/Toggles
     private final ArrayList<HiddenReason> hiddenReason = new ArrayList<>();
     private final HashMap<CosmeticSlot, Color> colors = new HashMap<>();
+    
+    // 刷新状态标记，用于传送后需要刷新时装的情况
+    private boolean needsRefresh = false;
 
     /**
      * Use {@link #CosmeticUser(UUID)} instead and use {@link #initialize(UserData)} to populate the user with data.
@@ -346,6 +358,27 @@ public class CosmeticUser implements CosmeticHolder {
 
     public void updateCosmetic() {
         MessagesUtil.sendDebugMessages("updateCosmetic (All) - start");
+        
+        // 体型检测：如果体型不是0.2的倍数且装备了背包，则取消装备背包并提醒玩家
+        if (getPlayer() != null && hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
+            AttributeInstance scaleAttribute = getPlayer().getAttribute(Attribute.SCALE);
+            if (scaleAttribute != null) {
+                double playerScale = scaleAttribute.getValue();
+                // 使用BigDecimal精确计算，检查体型是否为0.2的倍数
+                java.math.BigDecimal scale = new java.math.BigDecimal(Double.toString(playerScale));
+                java.math.BigDecimal remainder = scale.remainder(new java.math.BigDecimal("0.2"));
+                // 只有当余数不为0时才认为不是0.2的倍数
+                if (remainder.compareTo(java.math.BigDecimal.ZERO) != 0) {
+                    MessagesUtil.sendDebugMessages("Player scale " + playerScale + " is not multiple of 0.2, removing backpack");
+                    // 取消装备背包
+                    removeCosmeticSlot(CosmeticSlot.BACKPACK);
+                    // 发送提醒消息
+                    MessagesUtil.sendMessage(getPlayer(), "invalid-scale-backpack");
+                    return; // 直接返回，不继续更新其他时装
+                }
+            }
+        }
+        
         final HashMap<EquipmentSlot, ItemStack> items = new HashMap<>();
 
         for(final Cosmetic cosmetic : playerCosmetics.values()) {
@@ -600,14 +633,42 @@ public class CosmeticUser implements CosmeticHolder {
         org.bukkit.entity.Entity entity = getEntity();
 
         UserBalloonManager userBalloonManager1 = new UserBalloonManager(this, entity.getLocation());
-        // 在Folia环境中使用异步传送
-        userBalloonManager1.getModelEntity().teleportAsync(entity.getLocation().add(cosmeticBalloonType.getBalloonOffset()));
-
-        userBalloonManager1.spawnModel(cosmeticBalloonType, getCosmeticColor(cosmeticBalloonType.getSlot()));
-        userBalloonManager1.addPlayerToModel(this, cosmeticBalloonType, getCosmeticColor(cosmeticBalloonType.getSlot()));
-
-        this.userBalloonManager = userBalloonManager1;
-        //this.userBalloonManager = NMSHandlers.getHandler().spawnBalloon(this, cosmeticBalloonType);
+        
+        // 获取玩家体型并应用到气球初始位置和大小
+        final double playerScale; // 默认体型
+        if (getPlayer() != null) {
+            AttributeInstance scaleAttribute = getPlayer().getAttribute(Attribute.SCALE);
+            if (scaleAttribute != null) {
+                playerScale = scaleAttribute.getValue();
+            } else {
+                playerScale = 1.0;
+            }
+        } else {
+            playerScale = 1.0;
+        }
+        
+        // 在Folia环境中使用异步任务处理实体创建和传送
+        if (com.hibiscusmc.hmccosmetics.util.SchedulerUtil.isFolia()) {
+            com.hibiscusmc.hmccosmetics.util.SchedulerUtil.runTask(com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin.getInstance(), getPlayer(), () -> {
+                // 确保实体已创建
+                if (userBalloonManager1.getModelEntity() != null) {
+                    userBalloonManager1.getModelEntity().teleportAsync(entity.getLocation().add(cosmeticBalloonType.getBalloonOffset().clone().multiply(playerScale)));
+                    userBalloonManager1.spawnModel(cosmeticBalloonType, getCosmeticColor(cosmeticBalloonType.getSlot()));
+                    userBalloonManager1.addPlayerToModel(this, cosmeticBalloonType, getCosmeticColor(cosmeticBalloonType.getSlot()));
+                    // 发送缩放数据包
+                    HMCCPacketManager.sendEntityScalePacket(userBalloonManager1.getModelId(), playerScale, HMCCPacketManager.getViewers(getEntity().getLocation()));
+                    this.userBalloonManager = userBalloonManager1;
+                }
+            });
+        } else {
+            // 非Folia环境保持原有逻辑
+            userBalloonManager1.getModelEntity().teleportAsync(entity.getLocation().add(cosmeticBalloonType.getBalloonOffset().clone().multiply(playerScale)));
+            userBalloonManager1.spawnModel(cosmeticBalloonType, getCosmeticColor(cosmeticBalloonType.getSlot()));
+            userBalloonManager1.addPlayerToModel(this, cosmeticBalloonType, getCosmeticColor(cosmeticBalloonType.getSlot()));
+            // 发送缩放数据包
+            HMCCPacketManager.sendEntityScalePacket(userBalloonManager1.getModelId(), playerScale, HMCCPacketManager.getViewers(getEntity().getLocation()));
+            this.userBalloonManager = userBalloonManager1;
+        }
     }
 
     public void despawnBalloon() {
@@ -750,9 +811,11 @@ public class CosmeticUser implements CosmeticHolder {
         if (hasCosmeticInSlot(CosmeticSlot.BALLOON)) {
             if (!isBalloonSpawned()) respawnBalloon();
             CosmeticBalloonType balloonType = (CosmeticBalloonType) getCosmetic(CosmeticSlot.BALLOON);
-            getBalloonManager().addPlayerToModel(this, balloonType);
-            List<Player> viewer = HMCCPacketManager.getViewers(getEntity().getLocation());
-            HMCCPacketManager.sendLeashPacket(getBalloonManager().getPufferfishBalloonId(), getPlayer().getEntityId(), viewer);
+            if (getBalloonManager() != null) {
+                getBalloonManager().addPlayerToModel(this, balloonType);
+                List<Player> viewer = HMCCPacketManager.getViewers(getEntity().getLocation());
+                HMCCPacketManager.sendLeashPacket(getBalloonManager().getPufferfishBalloonId(), getPlayer().getEntityId(), viewer);
+            }
         }
         if (hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
             if (!isBackpackSpawned()) respawnBackpack();
@@ -788,6 +851,31 @@ public class CosmeticUser implements CosmeticHolder {
 
     public void clearHiddenReasons() {
         hiddenReason.clear();
+    }
+
+    /**
+     * 设置刷新状态标记，用于传送后需要刷新时装的情况
+     */
+    public void setNeedsRefresh(boolean needsRefresh) {
+        this.needsRefresh = needsRefresh;
+    }
+
+    /**
+     * 获取刷新状态标记
+     */
+    public boolean needsRefresh() {
+        return this.needsRefresh;
+    }
+
+    /**
+     * 执行刷新时装操作，包括重生背包、气球和更新化妆品
+     */
+    public void refreshCosmetics() {
+        respawnBackpack();
+        respawnBalloon();
+        updateCosmetic();
+        // 重置刷新状态
+        this.needsRefresh = false;
     }
 
     public enum HiddenReason {

@@ -204,7 +204,7 @@ public class WardrobeSettings {
             Location viewerLocation = LocationSerializer.INSTANCE.deserialize(Location.class, wardrobesNode.node(VIEWER_LOCATION_PATH));
             MessagesUtil.sendDebugMessages("Viewer Location: " + viewerLocation);
             Location leaveLocation = LocationSerializer.INSTANCE.deserialize(Location.class, wardrobesNode.node(LEAVE_LOCATION_PATH));
-            if (leaveLocation == null) leaveLocation = viewerLocation;
+            // 不再设置默认值，保持leaveLocation为null
             MessagesUtil.sendDebugMessages("Leave Location: " + leaveLocation);
             WardrobeLocation wardrobeLocation = new WardrobeLocation(npcLocation, viewerLocation, leaveLocation);
 
@@ -298,12 +298,17 @@ public class WardrobeSettings {
         }
         YamlConfiguration config = YamlConfiguration.loadConfiguration(wardrobeFile);
 
-        config.set(wardrobe.getId() + ".leave-location.world", newLocation.getWorld().getName());
-        config.set(wardrobe.getId() + ".leave-location.x", newLocation.getX());
-        config.set(wardrobe.getId() + ".leave-location.y", newLocation.getY());
-        config.set(wardrobe.getId() + ".leave-location.z", newLocation.getZ());
-        config.set(wardrobe.getId() + ".leave-location.yaw", newLocation.getYaw());
-        config.set(wardrobe.getId() + ".leave-location.pitch", newLocation.getPitch());
+        if (newLocation == null) {
+            // 设置为null时，从配置文件中删除leave-location节点
+            config.set(wardrobe.getId() + ".leave-location", null);
+        } else {
+            config.set(wardrobe.getId() + ".leave-location.world", newLocation.getWorld().getName());
+            config.set(wardrobe.getId() + ".leave-location.x", newLocation.getX());
+            config.set(wardrobe.getId() + ".leave-location.y", newLocation.getY());
+            config.set(wardrobe.getId() + ".leave-location.z", newLocation.getZ());
+            config.set(wardrobe.getId() + ".leave-location.yaw", newLocation.getYaw());
+            config.set(wardrobe.getId() + ".leave-location.pitch", newLocation.getPitch());
+        }
 
         saveConfig(config, wardrobeFile);
     }

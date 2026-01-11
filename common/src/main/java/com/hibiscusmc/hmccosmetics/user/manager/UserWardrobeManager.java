@@ -38,6 +38,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import org.bukkit.scheduler.BukkitTask;
 
 public class UserWardrobeManager {
 
@@ -73,9 +74,14 @@ public class UserWardrobeManager {
     @Getter
     @Setter
     private Menu lastOpenMenu;
+    @Getter
+    private int originalMainHandSlot; // 记录玩家原始主手槽位位置
+    @Getter
+    private double originalScale; // 记录玩家原始体型
 
     private NMSPacketBuilder packetBuilder = NMSHandlers.getHandler().getPacketBuilder();
     private NMSPacketSender packetSender = NMSHandlers.getHandler().getPacketSender();
+    private BukkitTask foliaTask;
 
     public UserWardrobeManager(CosmeticUser user, Wardrobe wardrobe) {
         NPC_ID = me.lojosho.hibiscuscommons.util.ServerUtils.getNextEntityId();
@@ -102,7 +108,19 @@ public class UserWardrobeManager {
         Player player = user.getPlayer();
 
         this.originalGamemode = player.getGameMode();
-        if (WardrobeSettings.isReturnLastLocation()) {
+        // 记录玩家原始主手槽位位置
+        this.originalMainHandSlot = player.getInventory().getHeldItemSlot();
+        
+        // 保存玩家原始体型，但不立即修改
+        AttributeInstance scaleAttribute = player.getAttribute(Attribute.SCALE);
+        if (scaleAttribute != null) {
+            this.originalScale = scaleAttribute.getValue();
+            // 体型设置将在动画播放后进行
+        } else {
+            this.originalScale = 1.0; // 默认值
+        }
+        
+        if (WardrobeSettings.isReturnLastLocation() || wardrobeLocation.getLeaveLocation() == null) {
             this.exitLocation = player.getLocation().clone();
         }
 
@@ -136,6 +154,8 @@ public class UserWardrobeManager {
                     return;
                 }
                 player.setInvisible(true);
+                // 设置玩家主手槽位为第4格（第五格）
+                player.getInventory().setHeldItemSlot(4);
                 viewerPackets.add(packetBuilder.buildPlayerGamemodeChangePacket(GameMode.SPECTATOR));
                 viewerPackets.add(packetBuilder.buildEntityCameraPacket(ARMORSTAND_ID));
                 
@@ -151,10 +171,7 @@ public class UserWardrobeManager {
                 viewerPackets.add(packetBuilder.buildPlayerScoreboardRemovePacket(player, npcName));
                 viewerPackets.add(packetBuilder.buildPlayerScoreboardCreatePacket(player, npcName));
                 viewerPackets.add(packetBuilder.buildPlayerScoreboardAddPlayersPacket(player, npcName));
-                AttributeInstance scaleAttribute = user.getPlayer().getAttribute(Attribute.SCALE);
-                if (scaleAttribute != null) {
-                    viewerPackets.add(packetBuilder.buildEntityAttributePacket(NPC_ID, Attribute.SCALE, scaleAttribute.getValue()));
-                }
+                // NPC体型将在动画播放后设置
 
                 // Location
                 viewerPackets.add(packetBuilder.buildEntityRotateHeadPacket(NPC_ID, npcLocation));
@@ -170,6 +187,7 @@ public class UserWardrobeManager {
 
                         viewerPackets.add(packetBuilder.buildEntityEquipmentSlotUpdatePacket(user.getUserBackpackManager().getFirstArmorStandId(), Map.of(EquipmentSlot.HEAD, user.getUserCosmeticItem(user.getCosmetic(CosmeticSlot.BACKPACK)))));
                         viewerPackets.add(packetBuilder.buildEntityMountPacket(NPC_ID, new int[]{user.getUserBackpackManager().getFirstArmorStandId()}));
+                        // 背包体型将在动画播放后设置
                     }
                 }
 
@@ -188,6 +206,7 @@ public class UserWardrobeManager {
                         // 在Folia环境中使用异步传送
                         user.getBalloonManager().getModelEntity().teleportAsync(balloonLocation);
                         user.getBalloonManager().setLocation(balloonLocation);
+                        // 气球体型将在动画播放后设置
                     }
                 }
 
@@ -209,6 +228,9 @@ public class UserWardrobeManager {
                 this.active = true;
                 update();
                 setWardrobeStatus(WardrobeStatus.RUNNING);
+                
+                // 在动画播放后设置所有体型
+                setAllScalesAfterAnimation();
             });
         };
 
@@ -233,6 +255,42 @@ public class UserWardrobeManager {
 
     }
 
+    /**
+     * 在动画播放后设置所有体型
+     */
+    private void setAllScalesAfterAnimation() {
+        Player player = user.getPlayer();
+        if (player == null) return;
+        
+        List<Player> viewer = Collections.singletonList(player);
+        
+        // 设置玩家体型为1
+        AttributeInstance scaleAttribute = player.getAttribute(Attribute.SCALE);
+        if (scaleAttribute != null) {
+            scaleAttribute.setBaseValue(1.0);
+        }
+        
+        // 设置NPC体型为1
+        HMCCPacketManager.sendEntityScalePacket(NPC_ID, 1.0, viewer);
+        
+        // 设置背包体型为1
+        if (user.hasCosmeticInSlot(CosmeticSlot.BACKPACK) && user.isBackpackSpawned()) {
+            HMCCPacketManager.sendEntityScalePacket(user.getUserBackpackManager().getFirstArmorStandId(), 1.0, viewer);
+        }
+        
+        // 设置气球体型为1
+        if (user.hasCosmeticInSlot(CosmeticSlot.BALLOON) && user.isBalloonSpawned()) {
+            // 在Folia环境中使用实体调度器处理实体操作
+            if (SchedulerUtil.isFolia() && user.getBalloonManager().getModelEntity() != null) {
+                SchedulerUtil.runTask(HMCCosmeticsPlugin.getInstance(), user.getBalloonManager().getModelEntity(), () -> {
+                    HMCCPacketManager.sendEntityScalePacket(user.getBalloonManager().getModelId(), 1.0, viewer);
+                });
+            } else {
+                HMCCPacketManager.sendEntityScalePacket(user.getBalloonManager().getModelId(), 1.0, viewer);
+            }
+        }
+    }
+
     public void end() {
         setWardrobeStatus(WardrobeStatus.STOPPING);
         Player player = user.getPlayer();
@@ -244,6 +302,12 @@ public class UserWardrobeManager {
         if (player == null) return;
         if (!Bukkit.getServer().getAllowFlight()) player.setAllowFlight(false);
         MessagesUtil.sendMessage(player, "closed-wardrobe");
+
+        // 在Folia环境中取消任务
+        if (SchedulerUtil.isFolia() && foliaTask != null) {
+            foliaTask.cancel();
+            foliaTask = null;
+        }
 
         Runnable run = () -> {
             this.active = false;
@@ -297,6 +361,15 @@ public class UserWardrobeManager {
                     return;
                 }
                 
+                // 恢复玩家原始主手槽位位置
+                player.getInventory().setHeldItemSlot(this.originalMainHandSlot);
+                
+                // 恢复玩家原始体型
+                AttributeInstance scaleAttribute = player.getAttribute(Attribute.SCALE);
+                if (scaleAttribute != null) {
+                    scaleAttribute.setBaseValue(this.originalScale);
+                }
+                
                 HashMap<EquipmentSlot, ItemStack> items = new HashMap<>();
                 for (EquipmentSlot slot : HMCCInventoryUtils.getPlayerArmorSlots()) {
                     ItemStack item = player.getInventory().getItem(slot);
@@ -323,12 +396,18 @@ public class UserWardrobeManager {
     public void update() {
         final AtomicInteger data = new AtomicInteger();
 
-        // 在Folia环境中使用实体调度器，非Folia环境使用全局调度器
+        // 在Folia环境中使用实体调度器，确保在正确的线程中访问实体状态
         if (SchedulerUtil.isFolia() && user.getPlayer() != null) {
-            SchedulerUtil.runTaskTimer(HMCCosmeticsPlugin.getInstance(), user.getPlayer(), () -> {
+            // 存储任务引用以便后续取消
+            this.foliaTask = SchedulerUtil.runTaskTimer(HMCCosmeticsPlugin.getInstance(), user.getPlayer(), () -> {
                 Player player = user.getPlayer();
                 if (!active || player == null) {
                     MessagesUtil.sendDebugMessages("WardrobeEnd[user=" + user.getUniqueId() + ",reason=Active is false]");
+                    // 在Folia环境中取消任务
+                    if (foliaTask != null) {
+                        foliaTask.cancel();
+                        foliaTask = null;
+                    }
                     return;
                 }
                 MessagesUtil.sendDebugMessages("WardrobeUpdate[user=" + user.getUniqueId() + ",status=" + getWardrobeStatus() + "]");
@@ -368,7 +447,14 @@ public class UserWardrobeManager {
                     //user.getBalloonManager().getModelEntity().teleport(npcLocation.add(Settings.getBalloonOffset()));
                     user.getBalloonManager().sendRemoveLeashPacket(outsideViewers);
                     if (user.getBalloonManager().getBalloonType() != UserBalloonManager.BalloonType.MODELENGINE) {
-                        HMCCPacketManager.sendEntityDestroyPacket(user.getBalloonManager().getModelId(), outsideViewers);
+                        // 在Folia环境中，使用实体调度器获取实体ID，避免线程安全问题
+                        if (SchedulerUtil.isFolia() && user.getBalloonManager().getModelEntity() != null) {
+                            SchedulerUtil.runTask(HMCCosmeticsPlugin.getInstance(), user.getBalloonManager().getModelEntity(), () -> {
+                                HMCCPacketManager.sendEntityDestroyPacket(user.getBalloonManager().getModelId(), outsideViewers);
+                            });
+                        } else {
+                            HMCCPacketManager.sendEntityDestroyPacket(user.getBalloonManager().getModelId(), outsideViewers);
+                        }
                     }
                     user.getBalloonManager().sendLeashPacket(NPC_ID);
                 }

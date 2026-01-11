@@ -43,6 +43,7 @@ public class CosmeticBackpackType extends Cosmetic implements CosmeticUpdateBeha
         if(entity == null) {
             return;
         }
+        if (user.isInWardrobe()) return;
 
         Location entityLocation = entity.getLocation();
         Location loc = entityLocation.clone().add(0, 2, 0);
@@ -91,6 +92,33 @@ public class CosmeticBackpackType extends Cosmetic implements CosmeticUpdateBeha
             List<Player> owner = List.of(user.getPlayer());
 
             ArrayList<Integer> particleCloud = backpackManager.getAreaEffectEntityId();
+            
+            // 检查玩家体型是否变化，如果变化则重新生成粒子云
+            double currentPlayerScale = 1.0;
+            AttributeInstance scaleAttribute = user.getPlayer().getAttribute(Attribute.SCALE);
+            if (scaleAttribute != null) {
+                currentPlayerScale = scaleAttribute.getValue();
+            }
+            
+            // 根据当前玩家scale计算应有的粒子云数量
+            int expectedParticleCount = (int) Math.max(1, getHeight() * currentPlayerScale);
+            
+            // 如果粒子云数量与预期不符，重新生成粒子云
+            if (particleCloud.size() != expectedParticleCount) {
+                // 先移除现有的粒子云
+                for (Integer entityId : particleCloud) {
+                    HMCCPacketManager.sendEntityDestroyPacket(entityId, owner);
+                }
+                particleCloud.clear();
+                
+                // 重新生成粒子云
+                for (int i = 0; i < expectedParticleCount; i++) {
+                    int entityId = me.lojosho.hibiscuscommons.util.ServerUtils.getNextEntityId();
+                    HMCCPacketManager.spawnCloudAndHandleEffect(entityId, entity.getLocation(), UUID.randomUUID(), owner);
+                    particleCloud.add(entityId);
+                }
+            }
+            
             for (int i = 0; i < particleCloud.size(); i++) {
                 if (i == 0) {
                     HMCCPacketManager.sendRidingPacket(entity.getEntityId(), particleCloud.get(i), owner);

@@ -19,6 +19,7 @@ import com.hibiscusmc.hmccosmetics.util.SchedulerUtil;
 import com.hibiscusmc.hmccosmetics.util.packets.HMCCPacketManager;
 import me.lojosho.hibiscuscommons.api.events.*;
 import me.lojosho.hibiscuscommons.nms.NMSHandlers;
+import me.earthme.luminol.api.entity.EntityTeleportAsyncEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -87,6 +88,11 @@ public class PlayerGameListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlayerTeleport(PlayerTeleportEvent event) {
+        // 仅在非Folia环境下处理此事件
+        if (SchedulerUtil.isFolia()) {
+            return;
+        }
+        
         CosmeticUser user = CosmeticUsers.getUser(event.getPlayer().getUniqueId());
 
         MessagesUtil.sendDebugMessages("Player Teleport Event");
@@ -114,6 +120,45 @@ public class PlayerGameListener implements Listener {
         }, 4);
 
         if (event.getCause().equals(PlayerTeleportEvent.TeleportCause.NETHER_PORTAL) || event.getCause().equals(PlayerTeleportEvent.TeleportCause.END_PORTAL)) return;
+    }
+    
+    // 在Folia环境下使用EntityTeleportAsyncEvent替代PlayerTeleportEvent
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onEntityTeleportAsync(EntityTeleportAsyncEvent event) {
+        // 仅在Folia环境下处理此事件
+        if (!SchedulerUtil.isFolia()) {
+            return;
+        }
+        
+        // 只处理玩家传送
+        if (!(event.getEntity() instanceof Player player)) {
+            return;
+        }
+        
+        CosmeticUser user = CosmeticUsers.getUser(player.getUniqueId());
+
+        MessagesUtil.sendDebugMessages("Entity Teleport Async Event");
+        if (user == null) {
+            MessagesUtil.sendDebugMessages("user is null");
+            return;
+        }
+
+        // 检查是否是衣柜触发的传送，如果是则跳过时装刷新
+        // 衣柜传送使用PlayerTeleportEvent.TeleportCause.PLUGIN，并且玩家在衣柜中
+        if (event.getTeleportCause().equals(PlayerTeleportEvent.TeleportCause.PLUGIN) && user.isInWardrobe()) {
+            MessagesUtil.sendDebugMessages("Wardrobe teleport detected, skipping cosmetic refresh");
+            return;
+        }
+
+        if (user.isInWardrobe()) {
+            user.leaveWardrobe(true);
+        }
+
+
+        // 设置刷新状态标记，表示玩家传送后需要刷新时装
+        user.setNeedsRefresh(true);
+
+        if (event.getTeleportCause().equals(PlayerTeleportEvent.TeleportCause.NETHER_PORTAL) || event.getTeleportCause().equals(PlayerTeleportEvent.TeleportCause.END_PORTAL)) return;
     }
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
@@ -221,6 +266,18 @@ public class PlayerGameListener implements Listener {
     public void onPlayerOffhandSwap(PlayerSwapHandItemsEvent event) {
         CosmeticUser user = CosmeticUsers.getUser(event.getPlayer().getUniqueId());
         if (user == null) return;
+        
+        // 检查玩家是否在衣柜中
+        if (user.getWardrobeManager() != null && user.getWardrobeManager().isActive()) {
+            // 取消副手切换事件
+            event.setCancelled(true);
+            
+            // 调整NPC俯仰角（每次切换副手增加15°）
+            adjustWardrobeNPCPitch(user, 15);
+            return;
+        }
+        
+        // 原有的副手切换处理逻辑
         // Really need to look into optimization of this
         SchedulerUtil.runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
             if (user.getEntity() == null) return; // Player has likely logged off
@@ -277,19 +334,19 @@ public class PlayerGameListener implements Listener {
                 // 向右切换（考虑循环）
                 if (previousSlot == 0 && newSlot == 8) {
                     // 从0到8是向左切换
-                    rotationAmount = -15;
+                    rotationAmount = -30;
                 } else {
                     // 正常向右切换
-                    rotationAmount = 15;
+                    rotationAmount = 30;
                 }
             } else if (newSlot < previousSlot) {
                 // 向左切换（考虑循环）
                 if (previousSlot == 8 && newSlot == 0) {
                     // 从8到0是向右切换
-                    rotationAmount = 15;
+                    rotationAmount = 30;
                 } else {
                     // 正常向左切换
-                    rotationAmount = -15;
+                    rotationAmount = -30;
                 }
             }
             
@@ -335,19 +392,60 @@ public class PlayerGameListener implements Listener {
         // 获取观看者
         List<Player> viewer = Collections.singletonList(player);
         
-        // 发送旋转数据包
+        // 发送旋转数据包（保持当前俯仰角）
         HMCCPacketManager.sendRotateHeadPacket(user.getWardrobeManager().getNPC_ID(), npcLocation, viewer);
         NMSHandlers.getHandler().getPacketBuilder()
-            .buildEntityRotatePacket(user.getWardrobeManager().getNPC_ID(), newYaw, 0, false)
+            .buildEntityRotatePacket(user.getWardrobeManager().getNPC_ID(), newYaw, (int) npcLocation.getPitch(), false)
             .sendPacket(viewer);
         
         // 播放音效
-        player.playSound(player.getLocation(), org.bukkit.Sound.BLOCK_BAMBOO_BREAK, org.bukkit.SoundCategory.UI, 0.5f, 1.0f);
+        player.playSound(player.getLocation(), org.bukkit.Sound.BLOCK_BAMBOO_BREAK, org.bukkit.SoundCategory.UI, 0.5f, 2.0f);
         
         // 如果有背包，也需要旋转
         if (user.hasCosmeticInSlot(CosmeticSlot.BACKPACK) && user.getUserBackpackManager() != null) {
             user.getUserBackpackManager().getEntityManager().setRotation(newYaw);
         }
+    }
+    
+    /**
+     * 调整衣柜NPC的俯仰角
+     * @param user 化妆品用户
+     * @param pitchAmount 俯仰角变化量
+     */
+    private void adjustWardrobeNPCPitch(CosmeticUser user, int pitchAmount) {
+        if (user.getWardrobeManager() == null || !user.getWardrobeManager().isActive()) return;
+        
+        Player player = user.getPlayer();
+        if (player == null) return;
+        
+        // 获取NPC当前位置
+        Location npcLocation = user.getWardrobeManager().getNpcLocation();
+        int currentPitch = (int) npcLocation.getPitch();
+        
+        // 计算新的俯仰角（-90°到90°循环，先抬头后低头）
+        int newPitch = currentPitch - pitchAmount; // 改为减号，实现先抬头后低头
+        
+        // 限制俯仰角范围在-90°到90°之间
+        if (newPitch > 90) {
+            newPitch = -90; // 从90°直接跳到-90°
+        } else if (newPitch < -90) {
+            newPitch = 90; // 从-90°直接跳到90°
+        }
+        
+        // 更新位置
+        npcLocation.setPitch(newPitch);
+        
+        // 获取观看者
+        List<Player> viewer = Collections.singletonList(player);
+        
+        // 发送俯仰角数据包
+        HMCCPacketManager.sendRotateHeadPacket(user.getWardrobeManager().getNPC_ID(), npcLocation, viewer);
+        NMSHandlers.getHandler().getPacketBuilder()
+            .buildEntityRotatePacket(user.getWardrobeManager().getNPC_ID(), (int) npcLocation.getYaw(), newPitch, false)
+            .sendPacket(viewer);
+        
+        // 播放音效
+        player.playSound(player.getLocation(), org.bukkit.Sound.BLOCK_BAMBOO_BREAK, org.bukkit.SoundCategory.UI, 0.5f, 2.0f);
     }
 
     @EventHandler(priority = EventPriority.LOW)
@@ -356,6 +454,10 @@ public class PlayerGameListener implements Listener {
         if (user == null) return;
 
         if (user.isInWardrobe()) user.leaveWardrobe(false);
+
+        // 玩家死亡时强制移除背包和气球，避免尸体处一直显示时装
+        user.despawnBackpack();
+        user.despawnBalloon();
 
         if (Settings.isUnapplyOnDeath() && !event.getEntity().hasPermission("hmccosmetics.unapplydeath.bypass")) {
             user.removeCosmetics();

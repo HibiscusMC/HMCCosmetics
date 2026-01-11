@@ -79,7 +79,19 @@ public class UserBackpackManager {
         if (user.getPlayer() != null) owner.add(user.getPlayer());
 
         if (cosmeticBackpackType.isFirstPersonCompadible()) {
-            for (int i = particleCloud.size(); i < cosmeticBackpackType.getHeight(); i++) {
+            // 根据玩家体型大小计算粒子云数量
+            double playerScale = 1.0;
+            if (user.getPlayer() != null) {
+                AttributeInstance scaleAttribute = user.getPlayer().getAttribute(Attribute.SCALE);
+                if (scaleAttribute != null) {
+                    playerScale = scaleAttribute.getValue();
+                }
+            }
+            
+            // 根据玩家scale调整粒子云数量，确保背包位置正确
+            int adjustedHeight = (int) Math.max(1, cosmeticBackpackType.getHeight() * playerScale);
+            
+            for (int i = particleCloud.size(); i < adjustedHeight; i++) {
                 int entityId = ServerUtils.getNextEntityId();
                 HMCCPacketManager.spawnCloudAndHandleEffect(entityId, user.getEntity().getLocation(), UUID.randomUUID(), HMCCPacketManager.getViewers(user.getEntity().getLocation()));
                 this.particleCloud.add(entityId);

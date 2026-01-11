@@ -21,7 +21,7 @@ allprojects {
         // Paper Repo
         maven("https://repo.papermc.io/repository/maven-public/")
         maven("https://oss.sonatype.org/content/repositories/snapshots")
-
+        maven("https://repo.menthamc.org/repository/maven-public/")
         // Jitpack
         maven("https://jitpack.io")
 
@@ -72,6 +72,7 @@ allprojects {
     }
 
     dependencies {
+        compileOnly("me.earthme.luminol:luminol-api:1.21.8-R0.1-SNAPSHOT")
         compileOnly(fileTree("${project.rootDir}/lib") { include("*.jar") })
         compileOnly("com.mojang:authlib:1.5.25")
         //compileOnly("org.spigotmc:spigot-api:1.18.2-R0.1-SNAPSHOT")

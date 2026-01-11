@@ -1,8 +1,10 @@
 package com.hibiscusmc.hmccosmetics.listener;
 
+import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
+import com.hibiscusmc.hmccosmetics.util.SchedulerUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -35,6 +37,21 @@ public class PlayerMovementListener implements Listener {
         final CosmeticUser user = CosmeticUsers.getUser(player);
         if(user == null) {
             return;
+        }
+        
+        // 检查玩家是否需要刷新时装（传送后）
+        if(user.needsRefresh()) {
+            // 如果玩家在衣柜中，则跳过刷新时装（防止衣柜传送导致的NPC预览时装传送到玩家附近）
+            if(user.isInWardrobe()) {
+                user.setNeedsRefresh(false);
+                return;
+            }
+            
+            // 玩家移动了，取消刷新状态并延迟刷新时装
+            user.setNeedsRefresh(false);
+            SchedulerUtil.runTaskLater(HMCCosmeticsPlugin.getInstance(), player, () -> {
+                user.refreshCosmetics();
+            }, 20);
         }
 
         if(!updateDirtyLocation(ev.getPlayer(), ev.getTo())) {

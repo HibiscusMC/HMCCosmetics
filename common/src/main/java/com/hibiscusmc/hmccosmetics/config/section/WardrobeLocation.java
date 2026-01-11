@@ -31,6 +31,7 @@ public class WardrobeLocation {
      * @return true if all locations are not null, else false
      */
     public boolean hasAllLocations() {
-        return npcLocation != null && viewerLocation != null && leaveLocation != null;
+        // leaveLocation可以为null，表示使用玩家进入衣柜前的位置
+        return npcLocation != null && viewerLocation != null;
     }
 }

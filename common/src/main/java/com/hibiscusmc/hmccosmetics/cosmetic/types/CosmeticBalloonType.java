@@ -13,6 +13,8 @@ import me.lojosho.shaded.configurate.ConfigurationNode;
 import me.lojosho.shaded.configurate.serialize.SerializationException;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -69,13 +71,38 @@ public class CosmeticBalloonType extends Cosmetic implements CosmeticUpdateBehav
         }
 
         Location newLocation = entity.getLocation();
-        newLocation = newLocation.clone().add(getBalloonOffset());
+        
+        // 获取玩家体型并应用到气球位置
+        final double playerScale; // 声明为final变量
+        if (user.getPlayer() != null) {
+            AttributeInstance scaleAttribute = user.getPlayer().getAttribute(Attribute.SCALE);
+            if (scaleAttribute != null) {
+                playerScale = scaleAttribute.getValue();
+            } else {
+                playerScale = 1.0;
+            }
+        } else {
+            playerScale = 1.0;
+        }
+        
+        // 根据玩家体型调整气球偏移量
+        Vector scaledOffset = getBalloonOffset().clone().multiply(playerScale);
+        newLocation = newLocation.clone().add(scaledOffset);
         if (Settings.isBalloonHeadForward()) newLocation.setPitch(0);
 
         if (!user.isHidden() && showLead) {
             List<Player> sendTo = userBalloonManager.getPufferfish().refreshViewers(newLocation);
             if (sendTo.isEmpty()) return;
             user.getBalloonManager().getPufferfish().spawnPufferfish(newLocation, sendTo);
+            // 发送缩放数据包
+            // 在Folia环境中使用主线程调度器处理实体操作
+            if (com.hibiscusmc.hmccosmetics.util.SchedulerUtil.isFolia()) {
+                com.hibiscusmc.hmccosmetics.util.SchedulerUtil.runTask(com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin.getInstance(), user.getPlayer(), () -> {
+                    HMCCPacketManager.sendEntityScalePacket(userBalloonManager.getModelId(), playerScale, sendTo);
+                });
+            } else {
+                HMCCPacketManager.sendEntityScalePacket(userBalloonManager.getModelId(), playerScale, sendTo);
+            }
         }
     }
 
@@ -93,7 +120,23 @@ public class CosmeticBalloonType extends Cosmetic implements CosmeticUpdateBehav
 
         Location newLocation = entity.getLocation();
         Location currentLocation = user.getBalloonManager().getLocation();
-        newLocation = newLocation.clone().add(getBalloonOffset());
+        
+        // 获取玩家体型并应用到气球位置
+        final double playerScale; // 声明为final变量
+        if (user.getPlayer() != null) {
+            AttributeInstance scaleAttribute = user.getPlayer().getAttribute(Attribute.SCALE);
+            if (scaleAttribute != null) {
+                playerScale = scaleAttribute.getValue();
+            } else {
+                playerScale = 1.0;
+            }
+        } else {
+            playerScale = 1.0;
+        }
+        
+        // 根据玩家体型调整气球偏移量
+        Vector scaledOffset = getBalloonOffset().clone().multiply(playerScale);
+        newLocation = newLocation.clone().add(scaledOffset);
         if (Settings.isBalloonHeadForward()) newLocation.setPitch(0);
 
         List<Player> viewer = HMCCPacketManager.getViewers(entity.getLocation());
@@ -102,6 +145,15 @@ public class CosmeticBalloonType extends Cosmetic implements CosmeticUpdateBehav
             // 在Folia环境中使用异步传送
             userBalloonManager.getModelEntity().teleportAsync(newLocation);
             HMCCPacketManager.sendTeleportPacket(userBalloonManager.getPufferfishBalloonId(), newLocation, false, viewer);
+            // 发送缩放数据包
+            // 在Folia环境中使用主线程调度器处理实体操作
+            if (com.hibiscusmc.hmccosmetics.util.SchedulerUtil.isFolia()) {
+                com.hibiscusmc.hmccosmetics.util.SchedulerUtil.runTask(com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin.getInstance(), user.getPlayer(), () -> {
+                    HMCCPacketManager.sendEntityScalePacket(userBalloonManager.getModelId(), playerScale, viewer);
+                });
+            } else {
+                HMCCPacketManager.sendEntityScalePacket(userBalloonManager.getModelId(), playerScale, viewer);
+            }
             return;
         }
 
@@ -113,9 +165,19 @@ public class CosmeticBalloonType extends Cosmetic implements CosmeticUpdateBehav
         MessagesUtil.sendDebugMessages("Ballon previous location is " + currentLocation);
         MessagesUtil.sendDebugMessages("Balloon location set to " + newLocation);
         MessagesUtil.sendDebugMessages("Balloon velocity set to " + velocity);
+        MessagesUtil.sendDebugMessages("Player scale: " + playerScale);
 
         HMCCPacketManager.sendTeleportPacket(userBalloonManager.getPufferfishBalloonId(), newLocation, false, viewer);
         HMCCPacketManager.sendLeashPacket(userBalloonManager.getPufferfishBalloonId(), entity.getEntityId(), viewer);
+        // 发送缩放数据包
+        // 在Folia环境中使用主线程调度器处理实体操作
+        if (com.hibiscusmc.hmccosmetics.util.SchedulerUtil.isFolia()) {
+            com.hibiscusmc.hmccosmetics.util.SchedulerUtil.runTask(com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin.getInstance(), user.getPlayer(), () -> {
+                HMCCPacketManager.sendEntityScalePacket(userBalloonManager.getModelId(), playerScale, viewer);
+            });
+        } else {
+            HMCCPacketManager.sendEntityScalePacket(userBalloonManager.getModelId(), playerScale, viewer);
+        }
     }
 
     public boolean isDyeablePart(String name) {

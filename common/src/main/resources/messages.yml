@@ -17,6 +17,7 @@ not-near-wardrobe: "%prefix% <red>You are not near the wardrobe!"
 set-wardrobe-location: "%prefix% <gradient:#6D9DC5:#45CDE9>Set new wardrobe location!"
 set-wardrobe-viewing: "%prefix% <gradient:#6D9DC5:#45CDE9>Set new wardrobe viewing location!"
 set-wardrobe-leaving: "%prefix% <gradient:#6D9DC5:#45CDE9>Set new wardrobe leaving location!"
+set-wardrobe-leaving-none: "%prefix% <gradient:#6D9DC5:#45CDE9>Set wardrobe leaving location to player's original position!"
 set-wardrobe-permission: "%prefix% <gradient:#6D9DC5:#45CDE9>Set new wardrobe permission!"
 set-wardrobe-distance: "%prefix% <gradient:#6D9DC5:#45CDE9>Set new wardrobe distance!"
 set-wardrobe-menu: "%prefix% <gradient:#6D9DC5:#45CDE9>Set new wardrobe menu!"
@@ -40,3 +41,5 @@ invalid-color: "%prefix% <red>Invalid Color!"
 
 debug-enabled: "%prefix% <gradient:#6D9DC5:#45CDE9>Enabled Debug Mode!"
 debug-disabled: "%prefix% <gradient:#6D9DC5:#45CDE9>Disabled Debug Mode!"
+
+invalid-scale-backpack: "%prefix% <red>你的体型不是0.2的倍数，无法装备背包时装！已为你自动移除！"

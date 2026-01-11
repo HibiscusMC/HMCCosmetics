@@ -392,8 +392,13 @@ public class CosmeticCommand implements CommandExecutor {
                 }
 
                 if (args[2].equalsIgnoreCase("leavelocation")) {
-                    WardrobeSettings.setLeaveLocation(wardrobe, player.getLocation());
-                    if (!silent) MessagesUtil.sendMessage(player, "set-wardrobe-leaving");
+                    if (args.length >= 4 && args[3].equalsIgnoreCase("-none")) {
+                        WardrobeSettings.setLeaveLocation(wardrobe, null);
+                        if (!silent) MessagesUtil.sendMessage(player, "set-wardrobe-leaving-none");
+                    } else {
+                        WardrobeSettings.setLeaveLocation(wardrobe, player.getLocation());
+                        if (!silent) MessagesUtil.sendMessage(player, "set-wardrobe-leaving");
+                    }
                     return true;
                 }
 
