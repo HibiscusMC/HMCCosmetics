@@ -263,6 +263,7 @@ public class Menu {
                 TextColor equippableColor = MiniMessage.miniMessage().deserialize(Settings.getEquipableCosmeticColor()).color();
                 TextColor equippedColor = MiniMessage.miniMessage().deserialize(Settings.getEquippedCosmeticColor()).color();
                 TextColor lockedColor = MiniMessage.miniMessage().deserialize(Settings.getLockedCosmeticColor()).color();
+
                 for (int i = 0; i < gui.getInventory().getSize(); i++) {
                     if (items.containsKey(i)) {
                         List<MenuItem> menuItems = items.get(i);
