@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "com.hibiscusmc"
-version = "2.8.3${getGitCommitHash()}"
+version = "2.8.3"
 
 allprojects {
     apply(plugin = "java")
