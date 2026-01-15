@@ -1,0 +1,91 @@
+when:
+  - event: push
+    branch: remapped
+
+clone:
+  git:
+    image: woodpeckerci/plugin-git
+    settings:
+      depth: 0
+      partial: false
+
+steps:
+  - name: build
+    image: eclipse-temurin:21
+    environment:
+      GRADLE_OPTS: "-Xmx4G -XX:MaxMetaspaceSize=512M"
+      GRADLE_USER_HOME: /workspace/.gradle
+      JAVA_TOOL_OPTIONS: "-Djava.io.tmpdir=/workspace/tmp"
+
+      REPO_USERNAME:
+        from_secret: REPO_USERNAME
+      REPO_PASSWORD:
+        from_secret: REPO_PASSWORD
+
+    commands:
+      - mkdir -p /workspace/tmp
+      - chmod +x ./gradlew
+      - ./gradlew build --no-daemon --stacktrace
+      - ./gradlew common:publishMavenPublicationToHibiscusMCRepositoryRepository --no-daemon --stacktrace
+
+  - name: prepare-upload
+    image: alpine:3.20
+    environment:
+      UPLOAD_URL:
+        from_secret: UPLOAD_URL
+      BASIC_USER: "hmccosmeticsremapped"
+      BASIC_PASS:
+        from_secret: UPLOAD_PASS
+    commands:
+      - apk add --no-cache git bash coreutils findutils sed perl curl ca-certificates
+      - |
+        set -eu
+
+        # get built jar (prefer HMCCosmeticsRemapped-*.jar, fallback to any jar)
+        JAR="$(ls -1 build/libs/HMCCosmeticsRemapped-*.jar 2>/dev/null | head -n1 || ls -1 build/libs/*.jar 2>/dev/null | grep -v javadoc | grep -v sources | head -n1 || true)"
+        if [ -z "$JAR" ]; then
+          echo "Error: could not find JAR"
+          ls -la build/libs || true
+          exit 1
+        fi
+        
+        LASTCOMMITHASH="$(printf '%s' "$CI_COMMIT_SHA" | cut -c1-7)"
+        VERSION="$(perl -ne 'if(/^\s*version\s*=\s*["'\'']([^"'\'']+)["'\'']/){print $1; exit}' build.gradle.kts 2>/dev/null || true)"
+        VERSION="$${VERSION:-unknown}"
+        
+        JAR_DIR="$(dirname "$JAR")"
+        JAR_BASE="$(basename "$JAR" .jar)"
+        JAR_WITH_HASH="$JAR_DIR/$JAR_BASE-$LASTCOMMITHASH.jar"
+        cp "$JAR" "$JAR_WITH_HASH"
+
+        # generate changelog
+        if git rev-parse "$CI_PREV_COMMIT_SHA" >/dev/null 2>&1; then
+          git log --no-merges --pretty=format:'- `%h` _%s_' \
+            "$CI_PREV_COMMIT_SHA..$CI_COMMIT_SHA" > changelog.txt
+        else
+          git log -1 --pretty=format:'%h - %s' "$CI_COMMIT_SHA" > changelog.txt
+        fi
+        
+        printf '\n' >> changelog.txt
+        
+        printf '\n\n'
+        echo "Prepared development build upload:"
+        echo 
+        echo "New version: $VERSION-$LASTCOMMITHASH"
+        echo "Built JAR: $JAR"
+        echo "JAR with hash: $JAR_WITH_HASH"
+        echo
+        echo "Changes:"
+        cat changelog.txt
+        echo
+        echo "Uploading to development builds server..."
+
+        # check secrets
+        : "$${UPLOAD_URL:?missing UPLOAD_URL secret}"
+        : "$${BASIC_PASS:?missing UPLOAD_PASS secret}"
+
+        curl -u "$BASIC_USER:$BASIC_PASS" \
+        -X POST "$UPLOAD_URL" \
+        -F "version=$VERSION-$LASTCOMMITHASH" \
+        -F "changelog=@changelog.txt;type=text/plain" \
+        -F "jar=@$JAR_WITH_HASH;type=application/java-archive"
