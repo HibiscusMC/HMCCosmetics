@@ -2,6 +2,7 @@ package com.hibiscusmc.hmccosmetics.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Octree<T> {
 
@@ -13,7 +14,7 @@ public class Octree<T> {
 
     public Octree(BoundingBox boundary) {
         this.boundary = boundary;
-        this.points = new ArrayList<>();
+        this.points = new CopyOnWriteArrayList<>();
         this.isDivided = false;
     }
 
