@@ -97,9 +97,12 @@ public class CosmeticBalloonType extends Cosmetic implements CosmeticUpdateBehav
             // 发送缩放数据包
             // 在Folia环境中使用主线程调度器处理实体操作
             if (com.hibiscusmc.hmccosmetics.util.SchedulerUtil.isFolia()) {
-                com.hibiscusmc.hmccosmetics.util.SchedulerUtil.runTask(com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin.getInstance(), user.getPlayer(), () -> {
-                    HMCCPacketManager.sendEntityScalePacket(userBalloonManager.getModelId(), playerScale, sendTo);
-                });
+                // 使用实体调度器确保在正确的线程上获取实体ID
+                if (userBalloonManager.getModelEntity() != null) {
+                    com.hibiscusmc.hmccosmetics.util.SchedulerUtil.runTask(com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin.getInstance(), userBalloonManager.getModelEntity(), () -> {
+                        HMCCPacketManager.sendEntityScalePacket(userBalloonManager.getModelId(), playerScale, sendTo);
+                    });
+                }
             } else {
                 HMCCPacketManager.sendEntityScalePacket(userBalloonManager.getModelId(), playerScale, sendTo);
             }
@@ -148,9 +151,12 @@ public class CosmeticBalloonType extends Cosmetic implements CosmeticUpdateBehav
             // 发送缩放数据包
             // 在Folia环境中使用主线程调度器处理实体操作
             if (com.hibiscusmc.hmccosmetics.util.SchedulerUtil.isFolia()) {
-                com.hibiscusmc.hmccosmetics.util.SchedulerUtil.runTask(com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin.getInstance(), user.getPlayer(), () -> {
-                    HMCCPacketManager.sendEntityScalePacket(userBalloonManager.getModelId(), playerScale, viewer);
-                });
+                // 使用实体调度器确保在正确的线程上获取实体ID
+                if (userBalloonManager.getModelEntity() != null) {
+                    com.hibiscusmc.hmccosmetics.util.SchedulerUtil.runTask(com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin.getInstance(), userBalloonManager.getModelEntity(), () -> {
+                        HMCCPacketManager.sendEntityScalePacket(userBalloonManager.getModelId(), playerScale, viewer);
+                    });
+                }
             } else {
                 HMCCPacketManager.sendEntityScalePacket(userBalloonManager.getModelId(), playerScale, viewer);
             }
@@ -172,9 +178,12 @@ public class CosmeticBalloonType extends Cosmetic implements CosmeticUpdateBehav
         // 发送缩放数据包
         // 在Folia环境中使用主线程调度器处理实体操作
         if (com.hibiscusmc.hmccosmetics.util.SchedulerUtil.isFolia()) {
-            com.hibiscusmc.hmccosmetics.util.SchedulerUtil.runTask(com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin.getInstance(), user.getPlayer(), () -> {
-                HMCCPacketManager.sendEntityScalePacket(userBalloonManager.getModelId(), playerScale, viewer);
-            });
+            // 使用实体调度器确保在正确的线程上获取实体ID
+            if (userBalloonManager.getModelEntity() != null) {
+                com.hibiscusmc.hmccosmetics.util.SchedulerUtil.runTask(com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin.getInstance(), userBalloonManager.getModelEntity(), () -> {
+                    HMCCPacketManager.sendEntityScalePacket(userBalloonManager.getModelId(), playerScale, viewer);
+                });
+            }
         } else {
             HMCCPacketManager.sendEntityScalePacket(userBalloonManager.getModelId(), playerScale, viewer);
         }

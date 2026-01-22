@@ -79,6 +79,11 @@ public class UserBackpackManager {
         if (user.getPlayer() != null) owner.add(user.getPlayer());
 
         if (cosmeticBackpackType.isFirstPersonCompadible()) {
+            // 确保 particleCloud 不为 null
+            if (particleCloud == null) {
+                particleCloud = new ArrayList<>();
+            }
+            
             // 根据玩家体型大小计算粒子云数量
             double playerScale = 1.0;
             if (user.getPlayer() != null) {
@@ -98,14 +103,37 @@ public class UserBackpackManager {
             }
             // Copied code from updating the backpack
             for (int i = 0; i < particleCloud.size(); i++) {
-                if (i == 0) HMCCPacketManager.sendRidingPacket(entity.getEntityId(), particleCloud.get(i), owner);
-                else HMCCPacketManager.sendRidingPacket(particleCloud.get(i - 1), particleCloud.get(i) , owner);
+                // 在Folia环境中，使用实体调度器确保在正确的线程上获取实体ID
+                if (com.hibiscusmc.hmccosmetics.util.SchedulerUtil.isFolia() && entity != null) {
+                    final int index = i;
+                    com.hibiscusmc.hmccosmetics.util.SchedulerUtil.runTask(com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin.getInstance(), entity, () -> {
+                        if (index == 0) HMCCPacketManager.sendRidingPacket(entity.getEntityId(), particleCloud.get(index), owner);
+                        else HMCCPacketManager.sendRidingPacket(particleCloud.get(index - 1), particleCloud.get(index), owner);
+                    });
+                } else {
+                    if (i == 0) HMCCPacketManager.sendRidingPacket(entity.getEntityId(), particleCloud.get(i), owner);
+                    else HMCCPacketManager.sendRidingPacket(particleCloud.get(i - 1), particleCloud.get(i), owner);
+                }
             }
-            HMCCPacketManager.sendRidingPacket(particleCloud.getLast(), user.getUserBackpackManager().getFirstArmorStandId(), owner);
+            // 在Folia环境中，使用实体调度器确保在正确的线程上获取实体ID
+            if (com.hibiscusmc.hmccosmetics.util.SchedulerUtil.isFolia() && entity != null) {
+                com.hibiscusmc.hmccosmetics.util.SchedulerUtil.runTask(com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin.getInstance(), entity, () -> {
+                    HMCCPacketManager.sendRidingPacket(particleCloud.getLast(), user.getUserBackpackManager().getFirstArmorStandId(), owner);
+                });
+            } else {
+                HMCCPacketManager.sendRidingPacket(particleCloud.getLast(), user.getUserBackpackManager().getFirstArmorStandId(), owner);
+            }
             if (!user.isHidden()) HMCCPacketManager.equipmentSlotUpdate(user.getUserBackpackManager().getFirstArmorStandId(), EquipmentSlot.HEAD, user.getUserCosmeticItem(cosmeticBackpackType, cosmeticBackpackType.getFirstPersonBackpack()), owner);
         }
         HMCCPacketManager.equipmentSlotUpdate(getFirstArmorStandId(), EquipmentSlot.HEAD, user.getUserCosmeticItem(cosmeticBackpackType), outsideViewers);
-        HMCCPacketManager.sendRidingPacket(entity.getEntityId(), passengerIDs, outsideViewers);
+        // 在Folia环境中，使用实体调度器确保在正确的线程上获取实体ID
+        if (com.hibiscusmc.hmccosmetics.util.SchedulerUtil.isFolia() && entity != null) {
+            com.hibiscusmc.hmccosmetics.util.SchedulerUtil.runTask(com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin.getInstance(), entity, () -> {
+                HMCCPacketManager.sendRidingPacket(entity.getEntityId(), passengerIDs, outsideViewers);
+            });
+        } else {
+            HMCCPacketManager.sendRidingPacket(entity.getEntityId(), passengerIDs, outsideViewers);
+        }
 
         MessagesUtil.sendDebugMessages("spawnBackpack Bukkit - Finish");
     }
@@ -116,7 +144,7 @@ public class UserBackpackManager {
             for (Integer entityId : particleCloud) {
                 HMCCPacketManager.sendEntityDestroyPacket(entityId, getEntityManager().getViewers());
             }
-            this.particleCloud = null;
+            this.particleCloud.clear();
         }
     }
 
@@ -139,6 +167,9 @@ public class UserBackpackManager {
     }
 
     public ArrayList<Integer> getAreaEffectEntityId() {
+        if (particleCloud == null) {
+            particleCloud = new ArrayList<>();
+        }
         return particleCloud;
     }
 

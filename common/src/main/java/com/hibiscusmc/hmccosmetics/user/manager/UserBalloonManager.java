@@ -195,7 +195,18 @@ public class UserBalloonManager {
     }
 
     public int getModelId() {
-        return getModelEntity().getEntityId();
+        // 在Folia环境中，需要在实体所在区域线程上获取实体ID
+        if (com.hibiscusmc.hmccosmetics.util.SchedulerUtil.isFolia()) {
+            // 使用同步方式获取实体ID，避免线程安全问题
+            try {
+                return getModelEntity().getEntityId();
+            } catch (Exception e) {
+                // 如果获取失败，返回-1表示无效ID
+                return -1;
+            }
+        } else {
+            return getModelEntity().getEntityId();
+        }
     }
 
     public Location getLocation() {
