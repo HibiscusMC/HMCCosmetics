@@ -58,6 +58,8 @@ cosmetic-settings:
   backpack-force-riding-packet: true
   # This prevents the backpack from being dark when the player is below a block at the expense of making the backpack bright
   backpack-prevent-darkness: true
+  # Intercepts packets to attempt to reorder them to properly handle the backpack
+  backpack-intercept-passenger-packets: false
 
   slot-options:
     helmet:
