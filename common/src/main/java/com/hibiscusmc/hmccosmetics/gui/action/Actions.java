@@ -30,6 +30,7 @@ public class Actions {
     private static final ActionCosmeticShow ACTION_SHOW = new ActionCosmeticShow();
     private static final ActionCosmeticHide ACTION_HIDE = new ActionCosmeticHide();
     private static final ActionCosmeticToggle ACTION_TOGGLE = new ActionCosmeticToggle();
+    private static final ActionEquipRandom ACTION_EQUIP_RANDOM = new ActionEquipRandom();
 
     public static Action getAction(@NotNull String id) {
         return actions.get(id.toUpperCase());
