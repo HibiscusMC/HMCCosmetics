@@ -103,27 +103,51 @@ public class UserBackpackManager {
             }
             // Copied code from updating the backpack
             for (int i = 0; i < particleCloud.size(); i++) {
+                final int currentIndex = i;
+                final int particleId = particleCloud.get(i); // 提前获取ID，避免异步访问时的索引问题
+                final int prevParticleId = (i > 0) ? particleCloud.get(i - 1) : -1; // -1 表示没有上一个粒子
+                
                 // 在Folia环境中，使用实体调度器确保在正确的线程上获取实体ID
                 if (com.hibiscusmc.hmccosmetics.util.SchedulerUtil.isFolia() && entity != null) {
-                    final int index = i;
                     com.hibiscusmc.hmccosmetics.util.SchedulerUtil.runTask(com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin.getInstance(), entity, () -> {
-                        if (index == 0) HMCCPacketManager.sendRidingPacket(entity.getEntityId(), particleCloud.get(index), owner);
-                        else HMCCPacketManager.sendRidingPacket(particleCloud.get(index - 1), particleCloud.get(index), owner);
+                        // 检查粒子ID是否有效
+                        if (particleId <= 0) return;
+                        
+                        if (currentIndex == 0) {
+                            HMCCPacketManager.sendRidingPacket(entity.getEntityId(), particleId, owner);
+                        } else {
+                            // 检查上一个粒子ID是否有效
+                            if (prevParticleId > 0) {
+                                HMCCPacketManager.sendRidingPacket(prevParticleId, particleId, owner);
+                            }
+                        }
                     });
                 } else {
-                    if (i == 0) HMCCPacketManager.sendRidingPacket(entity.getEntityId(), particleCloud.get(i), owner);
-                    else HMCCPacketManager.sendRidingPacket(particleCloud.get(i - 1), particleCloud.get(i), owner);
+                    if (i == 0) {
+                        HMCCPacketManager.sendRidingPacket(entity.getEntityId(), particleCloud.get(i), owner);
+                    } else {
+                        HMCCPacketManager.sendRidingPacket(particleCloud.get(i - 1), particleCloud.get(i), owner);
+                    }
                 }
             }
             // 在Folia环境中，使用实体调度器确保在正确的线程上获取实体ID
             if (com.hibiscusmc.hmccosmetics.util.SchedulerUtil.isFolia() && entity != null) {
-                com.hibiscusmc.hmccosmetics.util.SchedulerUtil.runTask(com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin.getInstance(), entity, () -> {
-                    HMCCPacketManager.sendRidingPacket(particleCloud.getLast(), user.getUserBackpackManager().getFirstArmorStandId(), owner);
-                });
+                // 检查particleCloud是否为空
+                if (!particleCloud.isEmpty()) {
+                    final int lastParticleId = particleCloud.getLast();
+                    com.hibiscusmc.hmccosmetics.util.SchedulerUtil.runTask(com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin.getInstance(), entity, () -> {
+                        // 检查粒子ID是否有效和UserBackpackManager是否为null
+                        if (lastParticleId > 0 && user.getUserBackpackManager() != null) {
+                            HMCCPacketManager.sendRidingPacket(lastParticleId, user.getUserBackpackManager().getFirstArmorStandId(), owner);
+                        }
+                    });
+                }
             } else {
-                HMCCPacketManager.sendRidingPacket(particleCloud.getLast(), user.getUserBackpackManager().getFirstArmorStandId(), owner);
+                if (!particleCloud.isEmpty() && user.getUserBackpackManager() != null) {
+                    HMCCPacketManager.sendRidingPacket(particleCloud.getLast(), user.getUserBackpackManager().getFirstArmorStandId(), owner);
+                }
             }
-            if (!user.isHidden()) HMCCPacketManager.equipmentSlotUpdate(user.getUserBackpackManager().getFirstArmorStandId(), EquipmentSlot.HEAD, user.getUserCosmeticItem(cosmeticBackpackType, cosmeticBackpackType.getFirstPersonBackpack()), owner);
+            if (!user.isHidden() && user.getUserBackpackManager() != null) HMCCPacketManager.equipmentSlotUpdate(user.getUserBackpackManager().getFirstArmorStandId(), EquipmentSlot.HEAD, user.getUserCosmeticItem(cosmeticBackpackType, cosmeticBackpackType.getFirstPersonBackpack()), owner);
         }
         HMCCPacketManager.equipmentSlotUpdate(getFirstArmorStandId(), EquipmentSlot.HEAD, user.getUserCosmeticItem(cosmeticBackpackType), outsideViewers);
         // 在Folia环境中，使用实体调度器确保在正确的线程上获取实体ID

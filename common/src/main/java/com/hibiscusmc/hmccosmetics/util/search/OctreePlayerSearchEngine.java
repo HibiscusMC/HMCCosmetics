@@ -3,7 +3,6 @@ package com.hibiscusmc.hmccosmetics.util.search;
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
 import com.hibiscusmc.hmccosmetics.util.Octree;
 import com.hibiscusmc.hmccosmetics.util.SchedulerUtil;
-import me.earthme.luminol.api.entity.EntityTeleportAsyncEvent;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -22,6 +21,10 @@ public class OctreePlayerSearchEngine extends PlayerSearchEngine {
 
     private final Map<UUID, Octree<Player>> worldOctrees = new HashMap<>();
     private final Map<UUID, Octree.Point3D> playerPositions = new HashMap<>();
+    
+    // 添加同步锁以防止并发修改异常
+    private final Object octreeLock = new Object();
+    private final Object positionLock = new Object();
 
     private final int WORLD_HALF_SIZE;
 
@@ -31,12 +34,14 @@ public class OctreePlayerSearchEngine extends PlayerSearchEngine {
     }
 
     private Octree<Player> getOrCreateOctree(World world) {
-        return worldOctrees.computeIfAbsent(world.getUID(), $ -> {
-            Octree.BoundingBox worldBoundary = new Octree.BoundingBox(
-                    new Octree.Point3D(0, 160, 0), WORLD_HALF_SIZE
-            );
-            return new Octree<>(worldBoundary);
-        });
+        synchronized (octreeLock) {
+            return worldOctrees.computeIfAbsent(world.getUID(), $ -> {
+                Octree.BoundingBox worldBoundary = new Octree.BoundingBox(
+                        new Octree.Point3D(0, 160, 0), WORLD_HALF_SIZE
+                );
+                return new Octree<>(worldBoundary);
+            });
+        }
     }
 
     private Octree.Point3D toPoint3D(Location location) {
@@ -47,19 +52,26 @@ public class OctreePlayerSearchEngine extends PlayerSearchEngine {
         Octree<Player> octree = getOrCreateOctree(player.getWorld());
         Octree.Point3D point = toPoint3D(player.getLocation());
 
-        if(octree.insert(point, player)) {
-            playerPositions.put(player.getUniqueId(), point);
-            return true;
+        synchronized (positionLock) {
+            if(octree.insert(point, player)) {
+                playerPositions.put(player.getUniqueId(), point);
+                return true;
+            }
+            return false;
         }
-        return false;
     }
 
     public boolean removePlayer(Player player) {
-        Octree<Player> octree = worldOctrees.get(player.getWorld().getUID());
+        Octree<Player> octree;
+        synchronized (octreeLock) {
+            octree = worldOctrees.get(player.getWorld().getUID());
+        }
         if (octree == null) return false;
 
-        Octree.Point3D point = playerPositions.remove(player.getUniqueId());
-        if (point != null) return octree.remove(point, player);
+        synchronized (positionLock) {
+            Octree.Point3D point = playerPositions.remove(player.getUniqueId());
+            if (point != null) return octree.remove(point, player);
+        }
 
         return false;
     }
@@ -71,7 +83,10 @@ public class OctreePlayerSearchEngine extends PlayerSearchEngine {
 
     @Override
     public List<Player> getPlayersInRange(Location location, double range) {
-        Octree<Player> octree = worldOctrees.get(location.getWorld().getUID());
+        Octree<Player> octree;
+        synchronized (octreeLock) {
+            octree = worldOctrees.get(location.getWorld().getUID());
+        }
         if (octree == null) return Collections.emptyList();
 
         Octree.Point3D point = toPoint3D(location);
@@ -85,8 +100,12 @@ public class OctreePlayerSearchEngine extends PlayerSearchEngine {
 
 
     public void clear() {
-        worldOctrees.clear();
-        playerPositions.clear();
+        synchronized (octreeLock) {
+            worldOctrees.clear();
+        }
+        synchronized (positionLock) {
+            playerPositions.clear();
+        }
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
@@ -101,22 +120,6 @@ public class OctreePlayerSearchEngine extends PlayerSearchEngine {
             return;
         }
         updatePlayerPosition(event.getPlayer());
-    }
-    
-    // 在Folia环境下使用EntityTeleportAsyncEvent替代PlayerTeleportEvent
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public void onEntityTeleportAsync(EntityTeleportAsyncEvent event) {
-        // 仅在Folia环境下处理此事件
-        if (!SchedulerUtil.isFolia()) {
-            return;
-        }
-        
-        // 只处理玩家传送
-        if (!(event.getEntity() instanceof Player player)) {
-            return;
-        }
-        
-        updatePlayerPosition(player);
     }
 
     @EventHandler(priority = EventPriority.NORMAL)

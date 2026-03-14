@@ -12,7 +12,6 @@ import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
-import me.earthme.luminol.api.entity.EntityTeleportAsyncEvent;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -75,45 +74,6 @@ public class WGListener implements Listener {
         CosmeticUser user = CosmeticUsers.getUser(event.getPlayer());
         if (user == null) return;
         Location location = event.getTo();
-        ApplicableRegionSet set = getRegions(location);
-        if (user.isHidden()) {
-            if (set.getRegions().isEmpty()) {
-                user.showCosmetics(CosmeticUser.HiddenReason.WORLDGUARD);
-            }
-        }
-        for (ProtectedRegion protectedRegion : set.getRegions()) {
-            if (protectedRegion.getFlags().containsKey(WGHook.getCosmeticEnableFlag())) {
-                if (protectedRegion.getFlags().get(WGHook.getCosmeticEnableFlag()).toString().equalsIgnoreCase("ALLOW")) {
-                    user.showCosmetics(CosmeticUser.HiddenReason.WORLDGUARD);
-                    return;
-                }
-                user.hideCosmetics(CosmeticUser.HiddenReason.WORLDGUARD);
-                return;
-            }
-            if (protectedRegion.getFlags().containsKey(WGHook.getCosmeticWardrobeFlag())) {
-                if (!WardrobeSettings.getWardrobeNames().contains(protectedRegion.getFlags().get(WGHook.getCosmeticWardrobeFlag()).toString())) return;
-                Wardrobe wardrobe = WardrobeSettings.getWardrobe(protectedRegion.getFlags().get(WGHook.getCosmeticWardrobeFlag()).toString());
-                user.enterWardrobe(wardrobe, true);
-            }
-        }
-    }
-    
-    // 在Folia环境下使用EntityTeleportAsyncEvent替代PlayerTeleportEvent
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onEntityTeleportAsync(EntityTeleportAsyncEvent event) {
-        // 仅在Folia环境下处理此事件
-        if (!SchedulerUtil.isFolia()) {
-            return;
-        }
-        
-        // 只处理玩家传送
-        if (!(event.getEntity() instanceof Player player)) {
-            return;
-        }
-        
-        CosmeticUser user = CosmeticUsers.getUser(player);
-        if (user == null) return;
-        Location location = event.getDestination();
         ApplicableRegionSet set = getRegions(location);
         if (user.isHidden()) {
             if (set.getRegions().isEmpty()) {

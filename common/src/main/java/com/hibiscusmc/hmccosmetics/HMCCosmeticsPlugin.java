@@ -135,12 +135,22 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
         if (HibiscusCommonsPlugin.isOnPaper()) {
             getServer().getPluginManager().registerEvents(new PaperPlayerGameListener(), this);
         }
+        
+        // 注册Lumilol API特有的监听器，用于Folia环境
+        if (com.hibiscusmc.hmccosmetics.util.SchedulerUtil.isFolia()) {
+            getServer().getPluginManager().registerEvents(new LumilolPlayerGameListener(), this);
+        }
         // Database
         new Database();
 
         // WorldGuard
         if (Bukkit.getPluginManager().getPlugin("WorldGuard") != null && Settings.isWorldGuardMoveCheck()) {
             getServer().getPluginManager().registerEvents(new WGListener(), this);
+            
+            // 在Folia环境下额外注册LumilolWGListener来处理异步传送事件
+            if (com.hibiscusmc.hmccosmetics.util.SchedulerUtil.isFolia()) {
+                getServer().getPluginManager().registerEvents(new com.hibiscusmc.hmccosmetics.hooks.worldguard.LumilolWGListener(), this);
+            }
         }
     }
 
@@ -149,6 +159,11 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
         // WorldGuard
         if (Bukkit.getPluginManager().getPlugin("WorldGuard") != null) {
             new WGHook();
+        }
+        
+        // GSit
+        if (Bukkit.getPluginManager().getPlugin("GSit") != null) {
+            new com.hibiscusmc.hmccosmetics.hooks.gsit.GSitHook();
         }
     }
 

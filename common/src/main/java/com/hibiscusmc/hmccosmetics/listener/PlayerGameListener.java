@@ -19,7 +19,6 @@ import com.hibiscusmc.hmccosmetics.util.SchedulerUtil;
 import com.hibiscusmc.hmccosmetics.util.packets.HMCCPacketManager;
 import me.lojosho.hibiscuscommons.api.events.*;
 import me.lojosho.hibiscuscommons.nms.NMSHandlers;
-import me.earthme.luminol.api.entity.EntityTeleportAsyncEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -120,45 +119,6 @@ public class PlayerGameListener implements Listener {
         }, 4);
 
         if (event.getCause().equals(PlayerTeleportEvent.TeleportCause.NETHER_PORTAL) || event.getCause().equals(PlayerTeleportEvent.TeleportCause.END_PORTAL)) return;
-    }
-    
-    // 在Folia环境下使用EntityTeleportAsyncEvent替代PlayerTeleportEvent
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onEntityTeleportAsync(EntityTeleportAsyncEvent event) {
-        // 仅在Folia环境下处理此事件
-        if (!SchedulerUtil.isFolia()) {
-            return;
-        }
-        
-        // 只处理玩家传送
-        if (!(event.getEntity() instanceof Player player)) {
-            return;
-        }
-        
-        CosmeticUser user = CosmeticUsers.getUser(player.getUniqueId());
-
-        MessagesUtil.sendDebugMessages("Entity Teleport Async Event");
-        if (user == null) {
-            MessagesUtil.sendDebugMessages("user is null");
-            return;
-        }
-
-        // 检查是否是衣柜触发的传送，如果是则跳过时装刷新
-        // 衣柜传送使用PlayerTeleportEvent.TeleportCause.PLUGIN，并且玩家在衣柜中
-        if (event.getTeleportCause().equals(PlayerTeleportEvent.TeleportCause.PLUGIN) && user.isInWardrobe()) {
-            MessagesUtil.sendDebugMessages("Wardrobe teleport detected, skipping cosmetic refresh");
-            return;
-        }
-
-        if (user.isInWardrobe()) {
-            user.leaveWardrobe(true);
-        }
-
-
-        // 设置刷新状态标记，表示玩家传送后需要刷新时装
-        user.setNeedsRefresh(true);
-
-        if (event.getTeleportCause().equals(PlayerTeleportEvent.TeleportCause.NETHER_PORTAL) || event.getTeleportCause().equals(PlayerTeleportEvent.TeleportCause.END_PORTAL)) return;
     }
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
