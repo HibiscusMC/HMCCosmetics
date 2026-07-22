@@ -65,6 +65,8 @@ public class Settings {
     private static final String COSMETIC_BALLOON_SWAY_PERIOD_PATH = "balloon-sway-period";
     private static final String COSMETIC_BALLOON_IDLE_YAW_ANGLE_PATH = "balloon-idle-yaw-angle";
     private static final String COSMETIC_BALLOON_IDLE_YAW_PERIOD_PATH = "balloon-idle-yaw-period";
+    private static final String COSMETIC_BALLOON_SAG_FACTOR_PATH = "balloon-sag-factor";
+    private static final String COSMETIC_BALLOON_MAX_SAG_PATH = "balloon-max-sag";
     private static final String COSMETIC_OFFHAND_PREVENT_SWAPPING = "offhand-prevent-swapping";
     private static final String MENU_SETTINGS_PATH = "menu-settings";
     private static final String MENU_CLICK_COOLDOWN_PATH = "click-cooldown";
@@ -165,6 +167,10 @@ public class Settings {
     private static double balloonIdleYawAngle;
     @Getter
     private static int balloonIdleYawPeriod;
+    @Getter
+    private static double balloonSagFactor;
+    @Getter
+    private static double balloonMaxSag;
     @Getter
     private static boolean backpackPreventDarkness;
     @Getter
@@ -299,6 +305,8 @@ public class Settings {
         balloonSwayPeriod = Math.max(1, cosmeticSettings.node(COSMETIC_BALLOON_SWAY_PERIOD_PATH).getInt(90));
         balloonIdleYawAngle = loadNonNegative(cosmeticSettings, COSMETIC_BALLOON_IDLE_YAW_ANGLE_PATH, 0.0);
         balloonIdleYawPeriod = Math.max(1, cosmeticSettings.node(COSMETIC_BALLOON_IDLE_YAW_PERIOD_PATH).getInt(160));
+        balloonSagFactor = loadNonNegative(cosmeticSettings, COSMETIC_BALLOON_SAG_FACTOR_PATH, 0.6);
+        balloonMaxSag = loadNonNegative(cosmeticSettings, COSMETIC_BALLOON_MAX_SAG_PATH, 0.4);
         backpackPreventDarkness = cosmeticSettings.node(BACKPACK_PREVENT_DARKNESS_PATH).getBoolean(true);
 
         ConfigurationNode menuSettings = source.node(MENU_SETTINGS_PATH);

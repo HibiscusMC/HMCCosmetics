@@ -148,6 +148,11 @@ cosmetic-settings:
   balloon-idle-yaw-angle: 0.0
   # ticks for one full idle yaw wander cycle.
   balloon-idle-yaw-period: 160
+  # blocks the balloon dips downward for each block it lags behind its owner while moving, like a rope
+  # being dragged. Eases back up as the owner stops. 0 disables the effect.
+  balloon-sag-factor: 0.6
+  # blocks, the maximum the balloon may dip. Caps the drop during sprints or teleport catch-up.
+  balloon-max-sag: 0.4
 
 menu-settings:
   click-cooldown:
