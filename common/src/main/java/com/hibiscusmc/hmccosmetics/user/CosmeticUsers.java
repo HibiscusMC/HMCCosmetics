@@ -8,6 +8,8 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -15,6 +17,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CosmeticUsers {
 
     private static final ConcurrentHashMap<UUID, CosmeticUser> COSMETIC_USERS = new ConcurrentHashMap<>();
+
+    // Users who currently have a balloon spawned. Balloons are opt-in and usually a minority, so the
+    // per-tick BalloonSmoothingTask iterates this instead of walking every user. Kept in sync by
+    // spawnBalloon/despawnBalloon, the only two places CosmeticUser assigns/clears its balloon manager.
+    private static final Set<CosmeticUser> BALLOON_USERS = ConcurrentHashMap.newKeySet();
 
     private static CosmeticUserProvider PROVIDER = CosmeticUserProvider.Default.INSTANCE;
 
@@ -110,5 +117,41 @@ public class CosmeticUsers {
     public static Set<CosmeticUser> values() {
         // fix this later; this is a temporary fix. It was originally a set, now it's a collection
         return Set.copyOf(COSMETIC_USERS.values());
+    }
+
+    /**
+     * A live, read-only view over the users. Unlike {@link #values()} this does not copy, so it is safe to
+     * call from per-tick code. The backing map is a {@link ConcurrentHashMap}, so the returned view is safe
+     * to iterate while users join and quit; it reflects those changes rather than snapshotting them.
+     * @return the CosmeticUsers currently registered. Never null, might be empty.
+     */
+    @NotNull
+    public static Collection<CosmeticUser> view() {
+        return Collections.unmodifiableCollection(COSMETIC_USERS.values());
+    }
+
+    /**
+     * Registers a user as having a spawned balloon. Called from {@link CosmeticUser#spawnBalloon}.
+     */
+    public static void addBalloonUser(@NotNull CosmeticUser user) {
+        BALLOON_USERS.add(user);
+    }
+
+    /**
+     * Unregisters a user's balloon. Called from {@link CosmeticUser#despawnBalloon}, which every
+     * teardown path (unequip, hide, quit/destroy, respawn) funnels through.
+     */
+    public static void removeBalloonUser(@NotNull CosmeticUser user) {
+        BALLOON_USERS.remove(user);
+    }
+
+    /**
+     * A live, read-only view over the users who currently have a balloon. Safe to iterate from
+     * per-tick code; backed by a {@link ConcurrentHashMap} key set, so it reflects joins/quits.
+     * @return the CosmeticUsers with a spawned balloon. Never null, might be empty.
+     */
+    @NotNull
+    public static Collection<CosmeticUser> balloonView() {
+        return Collections.unmodifiableCollection(BALLOON_USERS);
     }
 }

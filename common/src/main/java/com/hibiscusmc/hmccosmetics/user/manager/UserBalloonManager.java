@@ -13,6 +13,7 @@ import com.ticxo.modelengine.api.entity.data.BukkitEntityData;
 import com.ticxo.modelengine.api.model.ActiveModel;
 import com.ticxo.modelengine.api.model.ModeledEntity;
 import lombok.Getter;
+import lombok.Setter;
 import me.lojosho.hibiscuscommons.hooks.Hooks;
 import me.lojosho.hibiscuscommons.nms.NMSHandlers;
 import org.bukkit.Color;
@@ -22,6 +23,7 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,6 +33,9 @@ import java.util.logging.Level;
 
 public class UserBalloonManager {
 
+    /** Pose changes smaller than this are not worth a metadata broadcast. Degrees. */
+    private static final double TILT_EPSILON = 0.05;
+
     private final CosmeticUser user;
     @Getter
     private BalloonType balloonType;
@@ -39,8 +44,60 @@ public class UserBalloonManager {
     private UserBalloonPufferfish pufferfish;
     private final ArmorStand modelEntity;
 
+    // Smoothing state, updated by the balloon smoothing ticker. Degrees.
+    @Getter
+    private double tiltPitch = 0;
+    @Getter
+    private double tiltRoll = 0;
+    // Last pose actually broadcast. Tracked apart from the logical tilt above so the tilt lerp keeps
+    // converging normally while the metadata packet only goes out on a visible change.
+    private double sentTiltPitch = 0;
+    private double sentTiltRoll = 0;
+    // Un-bobbed follow-lerp position. The entity's rendered location is this plus the idle bob offset;
+    // lerping from the rendered location instead would feed the bob back into the follow-lerp.
+    @Getter
+    @Setter
+    private Location smoothedBase;
+    // Last position actually broadcast by the smoothing task. Lets the tail of a lerp - where the
+    // per-tick step shrinks below visibility - stop teleporting the entity before it fully settles.
+    @Getter
+    @Setter
+    private Location lastRendered;
+
+    /**
+     * Applies the movement and idle tilt.
+     * <p>
+     * Only ITEM balloons - a real armor stand wearing the cosmetic as a helmet - are actually posed.
+     * ModelEngine renders its bones from its own transform data and never reads the stand's head pose
+     * ({@code BukkitEntityData} exposes only yRot/yHeadRot/xHeadRot/yBodyRot), so posing a ME balloon is
+     * an entity metadata broadcast to every tracker for no visual change at all.
+     */
+    public void setTilt(double pitch, double roll) {
+        this.tiltPitch = pitch;
+        this.tiltRoll = roll;
+        if (balloonType != BalloonType.ITEM) return;
+        if (Math.abs(pitch - sentTiltPitch) < TILT_EPSILON && Math.abs(roll - sentTiltRoll) < TILT_EPSILON) return;
+
+        this.sentTiltPitch = pitch;
+        this.sentTiltRoll = roll;
+        modelEntity.setHeadPose(new EulerAngle(Math.toRadians(pitch), 0, Math.toRadians(roll)));
+    }
+
+    /**
+     * Places the balloon at {@code location} with no smoothing carry-over: the entity, the follow-lerp
+     * base and the tilt all snap to it. Use whenever the balloon has to appear somewhere instantly -
+     * spawn, world change, long-distance teleport - rather than lerping across the gap.
+     */
+    public void snapTo(@NotNull Location location) {
+        setLocation(location);
+        this.smoothedBase = location.clone();
+        this.lastRendered = location.clone();
+        setTilt(0, 0);
+    }
+
     public UserBalloonManager(CosmeticUser user, @NotNull Location location) {
         this.user = user;
+        this.smoothedBase = location.clone();
         this.pufferfish = new UserBalloonPufferfish(user.getUniqueId(), NMSHandlers.getHandler().getUtilHandler().getNextEntityId(location.getWorld()), UUID.randomUUID());
         this.modelEntity = location.getWorld().spawn(location, ArmorStand.class, (e) -> {
             e.setInvisible(true);

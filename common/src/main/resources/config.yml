@@ -1,7 +1,7 @@
 #
 # HMCCosmetics Configuration (Remapped)
 #
-config-version: 1
+config-version: 2
 
 default-menu: defaultmenu_hats
 debug-mode: false
@@ -95,9 +95,10 @@ cosmetic-settings:
   # setting this to lower than the server player view distance should fix the
   # bug where players see random backpacks. Put -1 to ignore and send packets to everyone.
   view-distance: 32
-  # If the plugin should set the pitch of balloons to always be 0, to prevent players looking up affecting the balloon.
+  # If the plugin should set the pitch of balloons to always be 0, so the balloon floats level instead of
+  # tilting with the player's head when they look up/down.
   # This only applies to models that have a "head" section to them. THIS DOES NOT IMPACT THE REST OF THE ENTITY.
-  balloon-head-unmoving: false
+  balloon-head-unmoving: true
   # Should, by default, the lead be spawned for the balloon
   balloon-lead-default: true
   # how the balloon should be positioned relative to the player
@@ -105,6 +106,48 @@ cosmetic-settings:
     x: 0.5
     y: 3
     z: 0.5
+  # ticks between balloon smoothing updates. 1 = every tick (smoothest), higher = less cpu cost.
+  # How closely the balloon follows is unaffected: the lerp factors below are corrected for this period.
+  # Default 2 (10 updates/sec) is smooth and roughly halves the per-tick teleport cost vs 1 - recommended
+  # for high player counts. 0 or -1 turns balloon smoothing off entirely (balloons then follow coarsely
+  # at the cosmetic tick-period instead).
+  balloon-lerp-period: 2
+  # 0-1, how quickly the balloon catches up to the player horizontally (X/Z) each smoothing update. Higher = snappier/tighter follow, lower = more trailing.
+  balloon-position-lerp-factor: 0.35
+  # 0-1, how quickly the balloon's height (Y) catches up. Lower than balloon-position-lerp-factor on purpose
+  # so jump spikes ease smoothly instead of snapping, while sustained climbs (stairs/ladders) still track.
+  balloon-vertical-lerp-factor: 0.15
+  # 0-1, how quickly the balloon's facing (yaw) turns to match its movement direction. Independent of
+  # the player's look direction — the balloon only turns when it's actually moving, not on mouse-look.
+  balloon-yaw-lerp-factor: 0.15
+  #
+  # The tilt and sway settings below only apply to item balloons. ModelEngine balloons are posed by
+  # ModelEngine itself and ignore them.
+  #
+  # 0-1, how quickly the balloon's lean/bank eases toward its target angle each smoothing update.
+  balloon-tilt-lerp-factor: 0.25
+  # degrees, maximum lean/bank angle the balloon can reach.
+  balloon-max-tilt-angle: 25.0
+  # scales horizontal movement speed into forward/back lean degrees.
+  balloon-tilt-forward-factor: 4.0
+  # scales turning speed (yaw change) into side-to-side bank degrees.
+  balloon-tilt-side-factor: 6.0
+  # degrees, amplitude of the gentle idle pendulum swing (pitch/roll). 0 disables the sway.
+  balloon-sway-angle: 0.0
+  # ticks for one full sway circle.
+  balloon-sway-period: 90
+  #
+  # The idle animations below never let a balloon settle, so every balloon on the server keeps costing a
+  # position update even while its owner stands still. They are off by default for that reason.
+  #
+  # blocks, how far the balloon gently drifts up/down while floating. 0 disables the bob.
+  balloon-bob-amplitude: 0.0
+  # ticks for one full up-down bob cycle.
+  balloon-bob-period: 70
+  # degrees, how far the balloon slowly wanders left/right in yaw while idle. 0 disables it.
+  balloon-idle-yaw-angle: 0.0
+  # ticks for one full idle yaw wander cycle.
+  balloon-idle-yaw-period: 160
 
 menu-settings:
   click-cooldown:

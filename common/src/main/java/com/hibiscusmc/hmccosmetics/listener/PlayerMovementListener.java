@@ -20,9 +20,10 @@ import java.util.UUID;
 
 @Slf4j
 public class PlayerMovementListener implements Listener {
+    // Balloons are absent on purpose - BalloonSmoothingTask drives them every tick, so dispatching move
+    // events at them only logged a "does not implement CosmeticMovementBehavior" debug line.
     private static final List<CosmeticSlot> MOVEMENT_COSMETICS = List.of(
-        CosmeticSlot.BACKPACK,
-        CosmeticSlot.BALLOON
+        CosmeticSlot.BACKPACK
     );
 
     // Player Id -> Small Location

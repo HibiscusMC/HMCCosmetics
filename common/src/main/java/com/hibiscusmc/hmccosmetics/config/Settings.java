@@ -49,8 +49,22 @@ public class Settings {
     private static final String COSMETIC_BACKPACK_FORCE_RIDING_PACKET_PATH = "backpack-force-riding-packet";
     private static final String COSMETIC_BACKPACK_INTERCEPT_PASSENGER_PACKET_PATH = "backpack-intercept-passenger-packets";
     private static final String COSMETIC_DESTROY_LOOSE_COSMETIC_PATH = "destroy-loose-cosmetics";
-    private static final String COSMETIC_BALLOON_HEAD_FORWARD_PATH = "balloon-head-forward";
+    private static final String COSMETIC_BALLOON_HEAD_FORWARD_PATH = "balloon-head-unmoving";
     private static final String COSMETIC_BALLOON_DEFAULT_SHOW_LEAD_PATH = "balloon-lead-default";
+    private static final String COSMETIC_BALLOON_LERP_PERIOD_PATH = "balloon-lerp-period";
+    private static final String COSMETIC_BALLOON_POSITION_LERP_FACTOR_PATH = "balloon-position-lerp-factor";
+    private static final String COSMETIC_BALLOON_VERTICAL_LERP_FACTOR_PATH = "balloon-vertical-lerp-factor";
+    private static final String COSMETIC_BALLOON_YAW_LERP_FACTOR_PATH = "balloon-yaw-lerp-factor";
+    private static final String COSMETIC_BALLOON_TILT_LERP_FACTOR_PATH = "balloon-tilt-lerp-factor";
+    private static final String COSMETIC_BALLOON_MAX_TILT_ANGLE_PATH = "balloon-max-tilt-angle";
+    private static final String COSMETIC_BALLOON_TILT_FORWARD_FACTOR_PATH = "balloon-tilt-forward-factor";
+    private static final String COSMETIC_BALLOON_TILT_SIDE_FACTOR_PATH = "balloon-tilt-side-factor";
+    private static final String COSMETIC_BALLOON_BOB_AMPLITUDE_PATH = "balloon-bob-amplitude";
+    private static final String COSMETIC_BALLOON_BOB_PERIOD_PATH = "balloon-bob-period";
+    private static final String COSMETIC_BALLOON_SWAY_ANGLE_PATH = "balloon-sway-angle";
+    private static final String COSMETIC_BALLOON_SWAY_PERIOD_PATH = "balloon-sway-period";
+    private static final String COSMETIC_BALLOON_IDLE_YAW_ANGLE_PATH = "balloon-idle-yaw-angle";
+    private static final String COSMETIC_BALLOON_IDLE_YAW_PERIOD_PATH = "balloon-idle-yaw-period";
     private static final String COSMETIC_OFFHAND_PREVENT_SWAPPING = "offhand-prevent-swapping";
     private static final String MENU_SETTINGS_PATH = "menu-settings";
     private static final String MENU_CLICK_COOLDOWN_PATH = "click-cooldown";
@@ -123,6 +137,34 @@ public class Settings {
     private static boolean balloonHeadForward;
     @Getter
     private static boolean balloonDefaultShowLead;
+    @Getter
+    private static int balloonLerpPeriod;
+    @Getter
+    private static double balloonPositionLerpFactor;
+    @Getter
+    private static double balloonVerticalLerpFactor;
+    @Getter
+    private static double balloonYawLerpFactor;
+    @Getter
+    private static double balloonTiltLerpFactor;
+    @Getter
+    private static double balloonMaxTiltAngle;
+    @Getter
+    private static double balloonTiltForwardFactor;
+    @Getter
+    private static double balloonTiltSideFactor;
+    @Getter
+    private static double balloonBobAmplitude;
+    @Getter
+    private static int balloonBobPeriod;
+    @Getter
+    private static double balloonSwayAngle;
+    @Getter
+    private static int balloonSwayPeriod;
+    @Getter
+    private static double balloonIdleYawAngle;
+    @Getter
+    private static int balloonIdleYawPeriod;
     @Getter
     private static boolean backpackPreventDarkness;
     @Getter
@@ -239,8 +281,24 @@ public class Settings {
         tickPeriod = cosmeticSettings.node(TICK_PERIOD_PATH).getInt(-1);
         engine = PlayerSearchManager.SearchEngine.valueOf(cosmeticSettings.node(PLAYER_SEARCH_IMPLEMENTATION).getString("BUKKIT").toUpperCase());
         viewDistance = cosmeticSettings.node(VIEW_DISTANCE_PATH).getInt(-3);
-        balloonHeadForward = cosmeticSettings.node(COSMETIC_BALLOON_HEAD_FORWARD_PATH).getBoolean(false);
+        balloonHeadForward = cosmeticSettings.node(COSMETIC_BALLOON_HEAD_FORWARD_PATH).getBoolean(true);
         balloonDefaultShowLead = cosmeticSettings.node(COSMETIC_BALLOON_DEFAULT_SHOW_LEAD_PATH).getBoolean(true);
+        // A period of 0 or less disables the balloon smoothing task entirely, matching the -1 sentinel
+        // that tick-period and view-distance already use.
+        balloonLerpPeriod = cosmeticSettings.node(COSMETIC_BALLOON_LERP_PERIOD_PATH).getInt(2);
+        balloonPositionLerpFactor = loadLerpFactor(cosmeticSettings, COSMETIC_BALLOON_POSITION_LERP_FACTOR_PATH, 0.35);
+        balloonVerticalLerpFactor = loadLerpFactor(cosmeticSettings, COSMETIC_BALLOON_VERTICAL_LERP_FACTOR_PATH, 0.15);
+        balloonYawLerpFactor = loadLerpFactor(cosmeticSettings, COSMETIC_BALLOON_YAW_LERP_FACTOR_PATH, 0.15);
+        balloonTiltLerpFactor = loadLerpFactor(cosmeticSettings, COSMETIC_BALLOON_TILT_LERP_FACTOR_PATH, 0.25);
+        balloonMaxTiltAngle = loadNonNegative(cosmeticSettings, COSMETIC_BALLOON_MAX_TILT_ANGLE_PATH, 25.0);
+        balloonTiltForwardFactor = loadFinite(cosmeticSettings, COSMETIC_BALLOON_TILT_FORWARD_FACTOR_PATH, 4.0);
+        balloonTiltSideFactor = loadFinite(cosmeticSettings, COSMETIC_BALLOON_TILT_SIDE_FACTOR_PATH, 6.0);
+        balloonBobAmplitude = loadNonNegative(cosmeticSettings, COSMETIC_BALLOON_BOB_AMPLITUDE_PATH, 0.0);
+        balloonBobPeriod = Math.max(1, cosmeticSettings.node(COSMETIC_BALLOON_BOB_PERIOD_PATH).getInt(70));
+        balloonSwayAngle = loadNonNegative(cosmeticSettings, COSMETIC_BALLOON_SWAY_ANGLE_PATH, 0.0);
+        balloonSwayPeriod = Math.max(1, cosmeticSettings.node(COSMETIC_BALLOON_SWAY_PERIOD_PATH).getInt(90));
+        balloonIdleYawAngle = loadNonNegative(cosmeticSettings, COSMETIC_BALLOON_IDLE_YAW_ANGLE_PATH, 0.0);
+        balloonIdleYawPeriod = Math.max(1, cosmeticSettings.node(COSMETIC_BALLOON_IDLE_YAW_PERIOD_PATH).getInt(160));
         backpackPreventDarkness = cosmeticSettings.node(BACKPACK_PREVENT_DARKNESS_PATH).getBoolean(true);
 
         ConfigurationNode menuSettings = source.node(MENU_SETTINGS_PATH);
@@ -303,6 +361,39 @@ public class Settings {
 
     public static Vector loadVector(final ConfigurationNode config) {
         return new Vector(config.node("x").getDouble(), config.node("y").getDouble(), config.node("z").getDouble());
+    }
+
+    /**
+     * Reads a lerp factor, clamped into [0, 1]. Non-finite values fall back to the default rather than
+     * being clamped: NaN survives every clamp and would propagate through the smoothing maths into
+     * Location#setX, making the balloon teleport throw on every tick.
+     */
+    private static double loadLerpFactor(final ConfigurationNode config, final String path, final double def) {
+        final double value = config.node(path).getDouble(def);
+        if (!Double.isFinite(value)) return warnAndDefault(path, value, def);
+        return Math.clamp(value, 0.0, 1.0);
+    }
+
+    /**
+     * Reads a double that has no meaning below zero. A negative max tilt angle in particular would invert
+     * the bounds handed to {@link Math#clamp} and pin every balloon at full lean.
+     */
+    private static double loadNonNegative(final ConfigurationNode config, final String path, final double def) {
+        final double value = config.node(path).getDouble(def);
+        if (!Double.isFinite(value) || value < 0) return warnAndDefault(path, value, def);
+        return value;
+    }
+
+    private static double loadFinite(final ConfigurationNode config, final String path, final double def) {
+        final double value = config.node(path).getDouble(def);
+        if (!Double.isFinite(value)) return warnAndDefault(path, value, def);
+        return value;
+    }
+
+    private static double warnAndDefault(final String path, final double value, final double def) {
+        HMCCosmeticsPlugin.getInstance().getLogger().warning(
+                "Invalid value for " + path + " (" + value + "), falling back to " + def);
+        return def;
     }
 
     public static SlotOptionConfig getSlotOption(EquipmentSlot slot) {

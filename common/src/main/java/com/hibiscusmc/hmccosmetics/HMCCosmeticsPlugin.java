@@ -26,6 +26,7 @@ import com.hibiscusmc.hmccosmetics.listener.*;
 import com.hibiscusmc.hmccosmetics.packets.CosmeticPacketInterface;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
+import com.hibiscusmc.hmccosmetics.user.manager.BalloonSmoothingTask;
 import com.hibiscusmc.hmccosmetics.util.search.PlayerSearchManager;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.TranslationUtil;
@@ -53,11 +54,16 @@ import java.nio.file.Path;
 
 public final class HMCCosmeticsPlugin extends HibiscusPlugin {
 
+    /** Bump whenever an existing config key changes meaning, and add the matching step to migrateConfig. */
+    private static final int CONFIG_VERSION = 2;
+
     private static HMCCosmeticsPlugin instance;
     private static YamlConfigurationLoader configLoader;
 
     @Getter
     private PlayerSearchManager playerSearchManager;
+    @Getter
+    private final BalloonSmoothingTask balloonSmoothingTask = new BalloonSmoothingTask();
 
     public HMCCosmeticsPlugin() {
         super(13873, 1879);
@@ -170,6 +176,8 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
     @Override
     public void onEnd() {
         // Plugin shutdown logic
+        balloonSmoothingTask.stop();
+        com.hibiscusmc.hmccosmetics.util.BalloonStressTest.stop();
         for (Player player : Bukkit.getOnlinePlayers()) {
             CosmeticUser user = CosmeticUsers.getUser(player);
             if (user == null) continue;
@@ -186,6 +194,7 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
 
     public static void setup() {
         getInstance().reloadConfig();
+        migrateConfig();
 
         // Configuration setup
         final File file = Path.of(getInstance().getDataFolder().getPath(), "config.yml").toFile();
@@ -271,6 +280,33 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
         getInstance().getLogger().info(WardrobeSettings.getWardrobes().size() + " Wardrobes Successfully Setup");
         getInstance().getLogger().info("Data storage is set to " + DatabaseSettings.getDatabaseType());
 
+        // Runs here rather than in onStart so /hmccosmetics reload picks up a changed balloon-lerp-period.
+        // start() cancels any previous task first, so calling it again is safe.
+        getInstance().getBalloonSmoothingTask().start(getInstance());
+
         Bukkit.getPluginManager().callEvent(new HMCCosmeticSetupEvent());
+    }
+
+    /**
+     * Brings an existing config.yml forward to {@link #CONFIG_VERSION}. The comment sync run on enable adds
+     * keys that are missing but never rewrites ones that are present, so a shipped default that changes
+     * meaning between versions has to be migrated here or upgraded servers silently keep the old behaviour.
+     */
+    private static void migrateConfig() {
+        final var config = getInstance().getConfig();
+        final int version = config.getInt("config-version", 0);
+        // 0 means the key is absent entirely, which Settings already reports as a broken config. Rewriting
+        // something we can't identify would do more harm than leaving it be.
+        if (version <= 0 || version >= CONFIG_VERSION) return;
+
+        if (version < 2) {
+            // balloon-head-unmoving flipped to true alongside the balloon smoothing rework: the smoothing
+            // task drives the balloon's own pitch, so mirroring the player's head pitch fights it.
+            config.set("cosmetic-settings.balloon-head-unmoving", true);
+        }
+
+        config.set("config-version", CONFIG_VERSION);
+        getInstance().saveConfig();
+        getInstance().getLogger().info("Migrated config.yml from config-version " + version + " to " + CONFIG_VERSION);
     }
 }

@@ -590,19 +590,24 @@ public class CosmeticUser implements CosmeticHolder {
 
         org.bukkit.entity.Entity entity = getEntity();
 
-        UserBalloonManager userBalloonManager1 = new UserBalloonManager(this, entity.getLocation());
-        userBalloonManager1.getModelEntity().teleport(entity.getLocation().add(cosmeticBalloonType.getBalloonOffset()));
+        // Spawn straight at the offset position. Spawning at the player's feet and teleporting up would
+        // leave the smoothing task's follow-lerp base at the feet, so every balloon would visibly climb
+        // into place over the first second after being equipped.
+        Location spawnLocation = entity.getLocation().add(cosmeticBalloonType.getBalloonOffset());
+        UserBalloonManager userBalloonManager1 = new UserBalloonManager(this, spawnLocation);
 
         userBalloonManager1.spawnModel(cosmeticBalloonType, getCosmeticColor(cosmeticBalloonType.getSlot()));
         userBalloonManager1.addPlayerToModel(this, cosmeticBalloonType, getCosmeticColor(cosmeticBalloonType.getSlot()));
 
         this.userBalloonManager = userBalloonManager1;
+        CosmeticUsers.addBalloonUser(this);
     }
 
     public void despawnBalloon() {
         if (this.userBalloonManager == null) return;
         this.userBalloonManager.remove();
         this.userBalloonManager = null;
+        CosmeticUsers.removeBalloonUser(this);
     }
 
     public void respawnBackpack() {
