@@ -163,8 +163,12 @@ public class BalloonSmoothingTask implements Runnable {
 
         // Display-only offsets, kept off `base` so the bob and the wander never feed back into the
         // follow-lerp and compound tick over tick.
+        // Rope drag: the balloon rides lower the further it is lagging behind its owner horizontally, and
+        // eases back up as that lag decays on stop. Display-only, kept off `base` like the bob so it never
+        // feeds back into the follow-lerp. Clamped so a sprint or teleport catch-up can't drag it into the floor.
+        double dip = Math.min(tuning.sagFactor * Math.sqrt(horizontalLagSq), tuning.maxSag);
         Location render = base.clone();
-        render.setY(render.getY() + bob);
+        render.setY(render.getY() + bob - dip);
         render.setYaw((float) renderYaw);
 
         // The head pose is applied in the armor stand's own frame, whose yaw is renderYaw (movement-driven),
@@ -229,6 +233,8 @@ public class BalloonSmoothingTask implements Runnable {
             int swayPeriod,
             double idleYawAngle,
             int idleYawPeriod,
+            double sagFactor,
+            double maxSag,
             boolean animated
     ) {
 
@@ -252,6 +258,8 @@ public class BalloonSmoothingTask implements Runnable {
                     Settings.getBalloonSwayPeriod(),
                     idleYawAngle,
                     Settings.getBalloonIdleYawPeriod(),
+                    Settings.getBalloonSagFactor(),
+                    Settings.getBalloonMaxSag(),
                     bobAmplitude != 0 || swayAngle != 0 || idleYawAngle != 0
             );
         }
