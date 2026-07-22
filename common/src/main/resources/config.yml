@@ -111,9 +111,9 @@ cosmetic-settings:
   # Default 2 (10 updates/sec) is smooth and roughly halves the per-tick teleport cost vs 1 - recommended
   # for high player counts. 0 or -1 turns balloon smoothing off entirely (balloons then follow coarsely
   # at the cosmetic tick-period instead).
-  balloon-lerp-period: 2
+  balloon-lerp-period: 1
   # 0-1, how quickly the balloon catches up to the player horizontally (X/Z) each smoothing update. Higher = snappier/tighter follow, lower = more trailing.
-  balloon-position-lerp-factor: 0.35
+  balloon-position-lerp-factor: 0.12
   # 0-1, how quickly the balloon's height (Y) catches up. Lower than balloon-position-lerp-factor on purpose
   # so jump spikes ease smoothly instead of snapping, while sustained climbs (stairs/ladders) still track.
   balloon-vertical-lerp-factor: 0.15
@@ -125,15 +125,15 @@ cosmetic-settings:
   # ModelEngine itself and ignore them.
   #
   # 0-1, how quickly the balloon's lean/bank eases toward its target angle each smoothing update.
-  balloon-tilt-lerp-factor: 0.25
+  balloon-tilt-lerp-factor: 1.0
   # degrees, maximum lean/bank angle the balloon can reach.
-  balloon-max-tilt-angle: 25.0
+  balloon-max-tilt-angle: 65.0
   # scales horizontal movement speed into forward/back lean degrees.
-  balloon-tilt-forward-factor: 4.0
+  balloon-tilt-forward-factor: 8.0
   # scales turning speed (yaw change) into side-to-side bank degrees.
-  balloon-tilt-side-factor: 6.0
+  balloon-tilt-side-factor: 12.0
   # degrees, amplitude of the gentle idle pendulum swing (pitch/roll). 0 disables the sway.
-  balloon-sway-angle: 0.0
+  balloon-sway-angle: 2.5
   # ticks for one full sway circle.
   balloon-sway-period: 90
   #
@@ -141,18 +141,18 @@ cosmetic-settings:
   # position update even while its owner stands still. They are off by default for that reason.
   #
   # blocks, how far the balloon gently drifts up/down while floating. 0 disables the bob.
-  balloon-bob-amplitude: 0.0
+  balloon-bob-amplitude: 0.08
   # ticks for one full up-down bob cycle.
   balloon-bob-period: 70
   # degrees, how far the balloon slowly wanders left/right in yaw while idle. 0 disables it.
-  balloon-idle-yaw-angle: 0.0
+  balloon-idle-yaw-angle: 4.0
   # ticks for one full idle yaw wander cycle.
   balloon-idle-yaw-period: 160
   # blocks the balloon dips downward for each block it lags behind its owner while moving, like a rope
   # being dragged. Eases back up as the owner stops. 0 disables the effect.
-  balloon-sag-factor: 0.6
+  balloon-sag-factor: 0.2
   # blocks, the maximum the balloon may dip. Caps the drop during sprints or teleport catch-up.
-  balloon-max-sag: 0.4
+  balloon-max-sag: 2.0
 
 menu-settings:
   click-cooldown:
