@@ -14,6 +14,7 @@ import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.EulerAngle;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
@@ -28,8 +29,11 @@ import java.util.List;
  * stands - the exact entity {@link com.hibiscusmc.hmccosmetics.user.manager.UserBalloonManager} uses -
  * each carrying the caller's equipped balloon cosmetic (ModelEngine model or item helmet), and drives
  * every one of them toward a wandering target on the same cadence as {@link BalloonSmoothingTask}
- * ({@code balloon-lerp-period}). The target keeps moving so all balloons are always lagging, i.e. the
- * worst case where every balloon teleports every update.
+ * ({@code balloon-lerp-period}). Each balloon is stepped through {@link BalloonSmoothingTask#step} - the
+ * exact production math (position lerp, idle bob/sway, rope-drag dip, movement yaw and tilt) - and pays
+ * the same teleport dedup and item-balloon head-pose tilt broadcast, so the measured cost is the real
+ * path rather than a divergent copy. The target keeps moving so all balloons are always lagging, i.e.
+ * the worst case where every balloon teleports every update.
  * <p>
  * This reproduces the dominant per-balloon cost - a real {@link ArmorStand#teleport} plus the vanilla
  * entity-tracker broadcast to every nearby viewer, and the ModelEngine render for a real model - at
@@ -45,11 +49,39 @@ public final class BalloonStressTest {
 
     private BalloonStressTest() {}
 
-    private static final List<ArmorStand> STANDS = new ArrayList<>();
+    private static final List<Balloon> BALLOONS = new ArrayList<>();
     private static BukkitTask task;
     private static Location anchor;
     private static long tick;
     private static boolean usedModelEngine;
+
+    // Dedup thresholds mirrored from BalloonSmoothingTask / UserBalloonManager so the benchmark skips the
+    // same sub-visible teleports and tilt packets production does.
+    private static final double RENDER_EPSILON_SQUARED = 0.001 * 0.001;
+    private static final double SETTLED_YAW = 0.05;
+    private static final double TILT_EPSILON = 0.05;
+
+    // Per-balloon smoothing state, mirroring what UserBalloonManager holds for a real balloon, so the
+    // benchmark can drive BalloonSmoothingTask.step() exactly like production: the follow-lerp base is
+    // tracked apart from the rendered (bob + dip) location so the display offsets never feed back into it,
+    // and the sent tilt is tracked apart from the logical tilt so the head-pose packet only goes out on a
+    // visible change.
+    private static final class Balloon {
+        final ArmorStand stand;
+        final double phase;
+        Location base;
+        Location lastRendered;
+        double tiltPitch;
+        double tiltRoll;
+        double sentTiltPitch;
+        double sentTiltRoll;
+
+        Balloon(ArmorStand stand, double phase, Location base) {
+            this.stand = stand;
+            this.phase = phase;
+            this.base = base;
+        }
+    }
 
     // Self-timing accumulators, reset each reporting window.
     private static double windowNanos;
@@ -61,7 +93,7 @@ public final class BalloonStressTest {
     }
 
     public static synchronized int count() {
-        return STANDS.size();
+        return BALLOONS.size();
     }
 
     /**
@@ -103,7 +135,10 @@ public final class BalloonStressTest {
                 e.getPersistentDataContainer().set(HMCCServerUtils.getCosmemeticMobKey(), PersistentDataType.BOOLEAN, true);
             });
             if (modelEngine) applyModel(stand, balloon.getModelName());
-            STANDS.add(stand);
+            // Golden-angle phase spread so the idle bob/sway of adjacent balloons is out of lockstep,
+            // the same de-synchronisation UserBalloonManager gets from the per-user UUID hash.
+            final double phase = 2.399963229728653 * i;
+            BALLOONS.add(new Balloon(stand, phase, spawn.clone()));
         }
 
         final int period = Math.max(1, Settings.getBalloonLerpPeriod());
@@ -129,7 +164,8 @@ public final class BalloonStressTest {
             task.cancel();
             task = null;
         }
-        for (ArmorStand stand : STANDS) {
+        for (Balloon b : BALLOONS) {
+            final ArmorStand stand = b.stand;
             if (stand == null || !stand.isValid()) continue;
             if (usedModelEngine) {
                 ModeledEntity me = ModelEngineAPI.getModeledEntity(stand);
@@ -137,7 +173,7 @@ public final class BalloonStressTest {
             }
             stand.remove();
         }
-        STANDS.clear();
+        BALLOONS.clear();
         anchor = null;
         reportTo = null;
         usedModelEngine = false;
@@ -151,20 +187,41 @@ public final class BalloonStressTest {
         final double t = tick * 0.02;
         final Location target = anchor.clone().add(Math.sin(t) * 8.0, Math.sin(t * 0.5) * 2.0, Math.cos(t) * 8.0);
 
-        final double posFactor = 1 - Math.pow(1 - 0.35, period);
-        final double vertFactor = 1 - Math.pow(1 - 0.15, period);
-        final double yawFactor = 1 - Math.pow(1 - 0.15, period);
+        // The exact tuning production resolves once per run - real lerp factors, dip, bob, sway, tilt.
+        final BalloonSmoothingTask.Tuning tuning = BalloonSmoothingTask.Tuning.snapshot(period);
 
         final long start = System.nanoTime();
-        for (ArmorStand stand : STANDS) {
-            if (!stand.isValid()) continue;
-            final Location cur = stand.getLocation();
-            final double dx = target.getX() - cur.getX();
-            final double dz = target.getZ() - cur.getZ();
-            final double desiredYaw = Math.toDegrees(Math.atan2(-dx, dz));
-            final Location render = MathUtil.lerpLocation(cur, target, posFactor, vertFactor);
-            render.setYaw((float) MathUtil.lerpAngle(cur.getYaw(), desiredYaw, yawFactor));
-            stand.teleport(render);
+        for (Balloon b : BALLOONS) {
+            if (!b.stand.isValid()) continue;
+
+            // The exact per-balloon computation production runs, from this balloon's own follow-lerp base.
+            final BalloonSmoothingTask.Step step = BalloonSmoothingTask.step(b.base, target, tick, b.phase, tuning);
+            b.base = step.base();
+
+            // Teleport dedup, mirroring BalloonSmoothingTask: skip a sub-visible step so the benchmark
+            // does not overcount teleports the real path would have elided.
+            final Location render = step.render();
+            if (b.lastRendered == null
+                    || b.lastRendered.getWorld() != render.getWorld()
+                    || b.lastRendered.distanceSquared(render) > RENDER_EPSILON_SQUARED
+                    || Math.abs(render.getYaw() - b.lastRendered.getYaw()) > SETTLED_YAW) {
+                b.stand.teleport(render);
+                b.lastRendered = render.clone();
+            }
+
+            // Movement tilt. An item balloon pays a head-pose metadata broadcast on a visible change - the
+            // real cost production incurs and the old benchmark ignored entirely. A ModelEngine balloon
+            // reads its own transform data and never the stand's head pose, so it is not posed (matching
+            // UserBalloonManager.setTilt), which is why this is gated on !usedModelEngine.
+            b.tiltPitch = MathUtil.lerp(b.tiltPitch, step.desiredPitch(), tuning.tiltFactor());
+            b.tiltRoll = MathUtil.lerp(b.tiltRoll, step.desiredRoll(), tuning.tiltFactor());
+            if (!usedModelEngine
+                    && (Math.abs(b.tiltPitch - b.sentTiltPitch) >= TILT_EPSILON
+                        || Math.abs(b.tiltRoll - b.sentTiltRoll) >= TILT_EPSILON)) {
+                b.sentTiltPitch = b.tiltPitch;
+                b.sentTiltRoll = b.tiltRoll;
+                b.stand.setHeadPose(new EulerAngle(Math.toRadians(b.tiltPitch), 0, Math.toRadians(b.tiltRoll)));
+            }
         }
         final long elapsed = System.nanoTime() - start;
 
@@ -176,7 +233,7 @@ public final class BalloonStressTest {
             final double avgMs = (windowNanos / windowSamples) / 1_000_000.0;
             final String line = String.format(
                     "[BalloonStressTest] %d balloons, period=%d: avg %.3f ms/update (%.2f%% of a 50ms tick budget)",
-                    STANDS.size(), period, avgMs, avgMs / 50.0 * 100.0);
+                    BALLOONS.size(), period, avgMs, avgMs / 50.0 * 100.0);
             Bukkit.getLogger().info(line);
             if (reportTo != null) reportTo.sendMessage(line);
             windowNanos = 0;

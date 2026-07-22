@@ -115,9 +115,8 @@ public class BalloonSmoothingTask implements Runnable {
         double dx = target.getX() - current.getX();
         double dy = target.getY() - current.getY();
         double dz = target.getZ() - current.getZ();
-        double horizontalLagSq = dx * dx + dz * dz;
 
-        if (horizontalLagSq + dy * dy > SNAP_DISTANCE_SQUARED) {
+        if (dx * dx + dz * dz + dy * dy > SNAP_DISTANCE_SQUARED) {
             // A long teleport would otherwise walk a real entity through a handful of intermediate
             // positions, force-loading chunks nobody is near, before the respawn in PlayerGameListener
             // catches up four ticks later.
@@ -125,68 +124,27 @@ public class BalloonSmoothingTask implements Runnable {
             return;
         }
 
+        // Per-user phase offset so nearby balloons don't animate in lockstep.
+        double phase = (user.getUniqueId().hashCode() & 0xFFFF) * TWO_PI / 0x10000;
+        Step step = step(current, target, tick, phase, tuning);
+
         double currentYaw = current.getYaw();
-        double desiredYaw = horizontalLagSq > MOVING_DISTANCE_SQUARED
-                ? Math.toDegrees(Math.atan2(-dx, dz))
-                : currentYaw;
-        double newYaw = MathUtil.lerpAngle(currentYaw, desiredYaw, tuning.yawFactor);
+        double newYaw = step.base().getYaw();
 
         // Nothing to send once the balloon has caught up and no oscillator is running.
         if (!tuning.animated
-                && horizontalLagSq + dy * dy < SETTLED_DISTANCE_SQUARED
+                && dx * dx + dz * dz + dy * dy < SETTLED_DISTANCE_SQUARED
                 && Math.abs(newYaw - currentYaw) < SETTLED_YAW
                 && Math.abs(balloonManager.getTiltPitch()) < SETTLED_TILT
                 && Math.abs(balloonManager.getTiltRoll()) < SETTLED_TILT) {
             return;
         }
 
-        Location base = MathUtil.lerpLocation(current, target, tuning.positionFactor, tuning.verticalFactor);
-        base.setYaw((float) newYaw);
-        balloonManager.setSmoothedBase(base);
+        balloonManager.setSmoothedBase(step.base());
 
-        // Idle life: per-user phase offset so nearby balloons don't animate in lockstep.
-        double phase = (user.getUniqueId().hashCode() & 0xFFFF) * TWO_PI / 0x10000;
-        double bob = tuning.bobAmplitude * Math.sin(TWO_PI * tick / tuning.bobPeriod + phase);
-        double swayTheta = TWO_PI * tick / tuning.swayPeriod + phase;
-        double swayPitch = tuning.swayAngle * Math.sin(swayTheta);
-        double swayRoll = tuning.swayAngle * Math.cos(swayTheta); // cos: circular pendulum swing, not a diagonal line
-
-        // The wander is an idle behaviour, and it also rotates the frame the follow lag is decomposed in
-        // below - left alone it would bleed forward lean into the roll channel at speed. Fade it out as
-        // soon as the balloon is actually travelling.
-        double idleYaw = tuning.idleYawAngle == 0 ? 0
-                : tuning.idleYawAngle
-                    * (1 - Math.min(1, horizontalLagSq / IDLE_YAW_FADE_DISTANCE_SQUARED))
-                    * Math.sin(TWO_PI * tick / tuning.idleYawPeriod + phase);
-
-        double renderYaw = newYaw + idleYaw;
-
-        // Display-only offsets, kept off `base` so the bob and the wander never feed back into the
-        // follow-lerp and compound tick over tick.
-        // Rope drag: the balloon rides lower the further it is lagging behind its owner horizontally, and
-        // eases back up as that lag decays on stop. Display-only, kept off `base` like the bob so it never
-        // feeds back into the follow-lerp. Clamped so a sprint or teleport catch-up can't drag it into the floor.
-        double dip = Math.min(tuning.sagFactor * Math.sqrt(horizontalLagSq), tuning.maxSag);
-        Location render = base.clone();
-        render.setY(render.getY() + bob - dip);
-        render.setYaw((float) renderYaw);
-
-        // The head pose is applied in the armor stand's own frame, whose yaw is renderYaw (movement-driven),
-        // not the player's. Decomposing the follow-lag in any other frame rotates the lean by the difference.
-        double yawRad = Math.toRadians(renderYaw);
-        double fwdX = -Math.sin(yawRad);
-        double fwdZ = Math.cos(yawRad);
-        // Right of forward in Minecraft's frame: at yaw 0 the balloon faces +Z (south), so right is -X (west).
-        double rightX = -fwdZ;
-        double rightZ = fwdX;
-
-        double forwardLag = dx * fwdX + dz * fwdZ;
-        double sideLag = dx * rightX + dz * rightZ;
-
-        double maxTilt = tuning.maxTilt;
-        // Sway is added after the clamp so the idle swing is never eaten by the movement-tilt cap.
-        double desiredPitch = Math.clamp(-forwardLag * tuning.tiltForwardFactor, -maxTilt, maxTilt) + swayPitch;
-        double desiredRoll = Math.clamp(-sideLag * tuning.tiltSideFactor, -maxTilt, maxTilt) + swayRoll;
+        Location render = step.render();
+        double desiredPitch = step.desiredPitch();
+        double desiredRoll = step.desiredRoll();
 
         // Only teleport the entity when the rendered position actually changed by a visible amount. The
         // tail of a lerp (and an idle balloon whose only motion is a settling tilt) otherwise pays a full
@@ -216,9 +174,77 @@ public class BalloonSmoothingTask implements Runnable {
     }
 
     /**
+     * The per-balloon smoothing computation, factored out so the synthetic {@link
+     * com.hibiscusmc.hmccosmetics.util.BalloonStressTest} benchmark exercises the exact same math -
+     * position lerp, idle bob/sway, rope-drag dip, movement yaw and tilt - as production, instead of a
+     * divergent copy that silently drifts. Pure: reads only its arguments, mutates nothing, and returns
+     * the new follow-lerp base (with movement yaw), the display location (base plus the display-only bob
+     * and dip and idle-yaw wander), and the target tilt the caller lerps toward.
+     */
+    public static Step step(Location current, Location target, long tick, double phase, Tuning tuning) {
+        double dx = target.getX() - current.getX();
+        double dz = target.getZ() - current.getZ();
+        double horizontalLagSq = dx * dx + dz * dz;
+
+        double currentYaw = current.getYaw();
+        double desiredYaw = horizontalLagSq > MOVING_DISTANCE_SQUARED
+                ? Math.toDegrees(Math.atan2(-dx, dz))
+                : currentYaw;
+        double newYaw = MathUtil.lerpAngle(currentYaw, desiredYaw, tuning.yawFactor);
+
+        Location base = MathUtil.lerpLocation(current, target, tuning.positionFactor, tuning.verticalFactor);
+        base.setYaw((float) newYaw);
+
+        // Idle life: bob and sway ride on the per-user phase so nearby balloons don't animate in lockstep.
+        double bob = tuning.bobAmplitude * Math.sin(TWO_PI * tick / tuning.bobPeriod + phase);
+        double swayTheta = TWO_PI * tick / tuning.swayPeriod + phase;
+        double swayPitch = tuning.swayAngle * Math.sin(swayTheta);
+        double swayRoll = tuning.swayAngle * Math.cos(swayTheta); // cos: circular pendulum swing, not a diagonal line
+
+        // The wander also rotates the frame the follow lag is decomposed in below - left alone it would
+        // bleed forward lean into the roll channel at speed. Fade it out as soon as the balloon travels.
+        double idleYaw = tuning.idleYawAngle == 0 ? 0
+                : tuning.idleYawAngle
+                    * (1 - Math.min(1, horizontalLagSq / IDLE_YAW_FADE_DISTANCE_SQUARED))
+                    * Math.sin(TWO_PI * tick / tuning.idleYawPeriod + phase);
+        double renderYaw = newYaw + idleYaw;
+
+        // Rope drag: rides lower the further it lags behind horizontally, eases back up as the lag decays.
+        // Display-only offsets, kept off `base` so the bob, dip and wander never feed back into the
+        // follow-lerp and compound tick over tick. Dip is clamped so a sprint or teleport catch-up can't
+        // drag it into the floor.
+        double dip = Math.min(tuning.sagFactor * Math.sqrt(horizontalLagSq), tuning.maxSag);
+        Location render = base.clone();
+        render.setY(render.getY() + bob - dip);
+        render.setYaw((float) renderYaw);
+
+        // The head pose is applied in the armor stand's own frame, whose yaw is renderYaw (movement-driven),
+        // not the player's. Decomposing the follow-lag in any other frame rotates the lean by the difference.
+        double yawRad = Math.toRadians(renderYaw);
+        double fwdX = -Math.sin(yawRad);
+        double fwdZ = Math.cos(yawRad);
+        // Right of forward in Minecraft's frame: at yaw 0 the balloon faces +Z (south), so right is -X (west).
+        double rightX = -fwdZ;
+        double rightZ = fwdX;
+
+        double forwardLag = dx * fwdX + dz * fwdZ;
+        double sideLag = dx * rightX + dz * rightZ;
+
+        double maxTilt = tuning.maxTilt;
+        // Sway is added after the clamp so the idle swing is never eaten by the movement-tilt cap.
+        double desiredPitch = Math.clamp(-forwardLag * tuning.tiltForwardFactor, -maxTilt, maxTilt) + swayPitch;
+        double desiredRoll = Math.clamp(-sideLag * tuning.tiltSideFactor, -maxTilt, maxTilt) + swayRoll;
+
+        return new Step(base, render, desiredPitch, desiredRoll);
+    }
+
+    /** Output of {@link #step}: new follow-lerp base, display location, and the target tilt to lerp toward. */
+    public record Step(Location base, Location render, double desiredPitch, double desiredRoll) {}
+
+    /**
      * The configuration this run is using, resolved once instead of per balloon.
      */
-    private record Tuning(
+    public record Tuning(
             boolean headForward,
             double positionFactor,
             double verticalFactor,
@@ -238,7 +264,7 @@ public class BalloonSmoothingTask implements Runnable {
             boolean animated
     ) {
 
-        static Tuning snapshot(int period) {
+        public static Tuning snapshot(int period) {
             double bobAmplitude = Settings.getBalloonBobAmplitude();
             double swayAngle = Settings.getBalloonSwayAngle();
             double idleYawAngle = Settings.getBalloonIdleYawAngle();
