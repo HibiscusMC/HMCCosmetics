@@ -7,6 +7,7 @@ import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import io.papermc.paper.event.entity.EntityEquipmentChangedEvent;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -33,6 +34,10 @@ public class PaperPlayerGameListener implements Listener {
         // Selecting another hotbar slot also fires this event for the main hand. Resyncing the
         // entire inventory in that case can overwrite client-side creative inventory changes.
         if (!armorChanged) return;
+
+        // Creative inventory actions are client-authoritative. Sending the server inventory back
+        // after an armor change can overwrite the item being created or moved by the client.
+        if (player.getGameMode() == GameMode.CREATIVE) return;
 
         Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), player::updateInventory, 2);
     }
