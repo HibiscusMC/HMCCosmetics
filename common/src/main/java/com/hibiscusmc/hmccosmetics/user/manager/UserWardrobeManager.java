@@ -190,8 +190,9 @@ public class UserWardrobeManager {
 
                     Location balloonLocation = npcLocation.clone().add(cosmetic.getBalloonOffset());
                     HMCCPacketManager.sendTeleportPacket(user.getBalloonManager().getPufferfishBalloonId(), balloonLocation, false, viewer);
-                    user.getBalloonManager().getModelEntity().teleport(balloonLocation);
-                    user.getBalloonManager().setLocation(balloonLocation);
+                    // snapTo, not setLocation: it also resets the smoothing base, so leaving the wardrobe
+                    // doesn't make the balloon lerp back in from wherever it was standing beforehand.
+                    user.getBalloonManager().snapTo(balloonLocation);
                 }
             }
 

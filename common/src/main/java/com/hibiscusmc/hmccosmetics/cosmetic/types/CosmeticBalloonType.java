@@ -2,11 +2,9 @@ package com.hibiscusmc.hmccosmetics.cosmetic.types;
 
 import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
-import com.hibiscusmc.hmccosmetics.cosmetic.behavior.CosmeticMovementBehavior;
 import com.hibiscusmc.hmccosmetics.cosmetic.behavior.CosmeticUpdateBehavior;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.manager.UserBalloonManager;
-import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.packets.HMCCPacketManager;
 import lombok.Getter;
 import me.lojosho.shaded.configurate.ConfigurationNode;
@@ -20,7 +18,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class CosmeticBalloonType extends Cosmetic implements CosmeticUpdateBehavior, CosmeticMovementBehavior {
+// Balloons deliberately do not implement CosmeticMovementBehavior: BalloonSmoothingTask owns their
+// position and runs far more often than move events fire, so a move handler has nothing left to do.
+public class CosmeticBalloonType extends Cosmetic implements CosmeticUpdateBehavior {
 
     @Getter
     private final String modelName;
@@ -72,48 +72,24 @@ public class CosmeticBalloonType extends Cosmetic implements CosmeticUpdateBehav
         newLocation = newLocation.clone().add(getBalloonOffset());
         if (Settings.isBalloonHeadForward()) newLocation.setPitch(0);
 
+        // Smoothing task is off (balloon-lerp-period <= 0): it is the only thing that moves the balloon
+        // AND its lead, so drive both from this low-frequency tick instead of leaving them frozen at spawn.
+        // Gated on <= 0 so it never fights the smoothing task while that is running.
+        if (Settings.getBalloonLerpPeriod() <= 0) {
+            userBalloonManager.snapTo(newLocation);
+            // snapTo only moves the model entity; the lead is anchored to the pufferfish, which the
+            // smoothing task would normally teleport. Move it here for existing viewers so the lead follows.
+            if (!userBalloonManager.getPufferfish().getViewers().isEmpty()) {
+                userBalloonManager.getPufferfish().teleport(newLocation);
+            }
+        }
+
         if (!user.isHidden() && showLead) {
             List<Player> sendTo = userBalloonManager.getPufferfish().refreshViewers(newLocation);
             if (sendTo.isEmpty()) return;
             user.getBalloonManager().getPufferfish().spawnPufferfish(newLocation, sendTo);
             HMCCPacketManager.sendLeashPacket(userBalloonManager.getPufferfishBalloonId(), entity.getEntityId(), sendTo);
         }
-    }
-
-    @Override
-    public void dispatchMove(@NotNull CosmeticUser user, @NotNull Location from, @NotNull Location to) {
-        Entity entity = Bukkit.getEntity(user.getUniqueId());
-        UserBalloonManager userBalloonManager = user.getBalloonManager();
-
-        if (entity == null || userBalloonManager == null) return;
-        if (user.isInWardrobe()) return;
-
-        if (!userBalloonManager.getModelEntity().isValid()) {
-            return;
-        }
-
-        Location newLocation = entity.getLocation();
-        Location currentLocation = user.getBalloonManager().getLocation();
-        newLocation = newLocation.clone().add(getBalloonOffset());
-        if (Settings.isBalloonHeadForward()) newLocation.setPitch(0);
-
-        List<Player> viewers = HMCCPacketManager.getViewers(entity.getLocation());
-
-        if (entity.getLocation().getWorld() != userBalloonManager.getLocation().getWorld()) {
-            userBalloonManager.getModelEntity().teleport(newLocation);
-            HMCCPacketManager.sendTeleportPacket(userBalloonManager.getPufferfishBalloonId(), newLocation, false, viewers);
-            return;
-        }
-
-        //Vector velocity = newLocation.toVector().subtract(currentLocation.toVector());
-        userBalloonManager.setLocation(newLocation);
-
-        MessagesUtil.sendDebugMessages("Balloon Cosmetic Update for " + user.getEntity().getName());
-        MessagesUtil.sendDebugMessages("Ballon previous location is " + currentLocation);
-        MessagesUtil.sendDebugMessages("Balloon location set to " + newLocation);
-
-        HMCCPacketManager.sendTeleportPacket(userBalloonManager.getPufferfishBalloonId(), newLocation, false, viewers);
-        HMCCPacketManager.sendLeashPacket(userBalloonManager.getPufferfishBalloonId(), entity.getEntityId(), viewers);
     }
 
     public boolean isDyeablePart(String name) {

@@ -10,12 +10,14 @@ import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
+import com.hibiscusmc.hmccosmetics.cosmetic.types.CosmeticBalloonType;
 import com.hibiscusmc.hmccosmetics.database.Database;
 import com.hibiscusmc.hmccosmetics.gui.Menu;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
 import com.hibiscusmc.hmccosmetics.gui.special.DyeMenuProvider;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
+import com.hibiscusmc.hmccosmetics.util.BalloonStressTest;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
 import com.hibiscusmc.hmccosmetics.util.HMCCServerUtils;
 import me.lojosho.hibiscuscommons.HibiscusCommonsPlugin;
@@ -570,6 +572,44 @@ public class CosmeticCommand implements CommandExecutor {
                 }
                 CosmeticUser user = CosmeticUsers.getUser(player);
                 user.clearHiddenReasons();
+                return true;
+            }
+
+            case "stresstest" -> {
+                if (!sender.hasPermission("hmccosmetics.cmd.stresstest") && !sender.isOp()) {
+                    if (!silent) MessagesUtil.sendMessage(sender, "no-permission");
+                    return true;
+                }
+                if (args.length >= 2 && args[1].equalsIgnoreCase("stop")) {
+                    BalloonStressTest.stop();
+                    sender.sendMessage("Balloon stress test stopped.");
+                    return true;
+                }
+                if (player == null) {
+                    sender.sendMessage("Run /hmccosmetics stresstest as a player (it spawns balloons at your location).");
+                    return true;
+                }
+                int count = 100;
+                if (args.length >= 2) {
+                    try {
+                        count = Math.max(1, Math.min(2000, Integer.parseInt(args[1])));
+                    } catch (NumberFormatException e) {
+                        sender.sendMessage("Usage: /hmccosmetics stresstest <count|stop>");
+                        return true;
+                    }
+                }
+                // Clone the balloon the caller has equipped so each stress entity renders the real
+                // model (ModelEngine or item), not a placeholder. Falls back to a visible helmet if none.
+                CosmeticUser stressUser = CosmeticUsers.getUser(player.getUniqueId());
+                CosmeticBalloonType balloon = stressUser != null
+                        && stressUser.getCosmetic(CosmeticSlot.BALLOON) instanceof CosmeticBalloonType b ? b : null;
+                ItemStack fallback = player.getInventory().getItemInMainHand();
+                if (fallback.getType().isAir()) fallback = new ItemStack(org.bukkit.Material.CARVED_PUMPKIN);
+                BalloonStressTest.start(HMCCosmeticsPlugin.getInstance(), player.getLocation(), count, balloon, fallback, sender);
+                sender.sendMessage("Spawned " + count + " stress balloons"
+                        + (balloon != null ? " of your equipped cosmetic" : " (no balloon equipped, using fallback item)")
+                        + " (period=" + Math.max(1, Settings.getBalloonLerpPeriod())
+                        + "). Timing prints every ~5s. Run /hmccosmetics stresstest stop to end.");
                 return true;
             }
         }
