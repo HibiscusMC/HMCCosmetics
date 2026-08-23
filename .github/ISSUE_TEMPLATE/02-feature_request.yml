@@ -1,7 +1,6 @@
 name: Feature Request
 description: Request a new feature for HMCCosmetics
 labels: [enhancement]
-assignees: ["LoJoSho"]
 body:
   - type: markdown
     attributes:
