@@ -1,7 +1,6 @@
 name: Bug Report
 description: Report an issue with HMCCosmetics
 labels: [bug]
-assignees: ["LoJoSho"]
 body:
   - type: markdown
     attributes:
