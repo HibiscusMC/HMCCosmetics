@@ -31,45 +31,41 @@ public class CosmeticCommandTabComplete implements TabCompleter {
         List<String> completions = new ArrayList<>();
         List<String> finalCompletions = new ArrayList<>();
 
-        if (args.length == 1) {
-            if (hasPermission(sender, "hmccosmetics.cmd.apply")) completions.add("apply");
-            if (hasPermission(sender, "hmccosmetics.cmd.unapply")) completions.add("unapply");
-            if (hasPermission(sender, "hmccosmetics.cmd.menu")) completions.add("menu");
-            if (hasPermission(sender, "hmccosmetics.cmd.reload")) completions.add("reload");
-            if (hasPermission(sender, "hmccosmetics.cmd.wardrobe")) completions.add("wardrobes");
-            if (hasPermission(sender, "hmccosmetics.cmd.dataclear")) completions.add("dataclear");
-            if (hasPermission(sender, "hmccosmetics.cmd.dye")) completions.add("dye");
-            if (hasPermission(sender, "hmccosmetics.cmd.setwardrobesetting")) completions.add("setwardrobesetting");
-            if (hasPermission(sender, "hmccosmetics.cmd.hide")) completions.add("hide");
-            if (hasPermission(sender, "hmccosmetics.cmd.show")) completions.add("show");
-            if (hasPermission(sender, "hmccosmetics.cmd.toggle")) completions.add("toggle");
-            if (hasPermission(sender, "hmccosmetics.cmd.debug")) completions.add("debug");
-            if (hasPermission(sender, "hmccosmetics.cmd.disableall")) completions.add("disableall");
-            if (hasPermission(sender, "hmccosmetics.cmd.hiddenreasons")) completions.add("hiddenreasons");
-            if (hasPermission(sender, "hmccosmetics.cmd.clearhiddenreasons")) completions.add("clearhiddenreasons");
+        // Null for console; user-specific filtering is skipped in that case
+        Player senderPlayer = sender instanceof Player ? (Player) sender : null;
+        CosmeticUser user = senderPlayer == null ? null : CosmeticUsers.getUser(senderPlayer.getUniqueId());
 
+        if (args.length == 1) {
+            completions.add("help");
+            for (CosmeticCommand.SubCommandInfo info : CosmeticCommand.SUBCOMMANDS) {
+                if (CosmeticCommand.hasPermission(sender, info.permission())) completions.add(info.name());
+            }
             StringUtil.copyPartialMatches(args[0], completions, finalCompletions);
         }
-
-        if (!(sender instanceof Player)) return completions;
-        CosmeticUser user = CosmeticUsers.getUser(((Player) sender).getUniqueId());
-        if (user == null) return completions; // User hasn't loaded in yet, can't do proper checks
 
         if (args.length == 2) {
             String subcommand = args[0].toLowerCase();
             switch (subcommand) {
                 case "apply" -> {
-                    completions.addAll(applyCommandComplete(user, args));
+                    for (Cosmetic cosmetic : Cosmetics.values()) {
+                        if (user != null && !user.canEquipCosmetic(cosmetic)) continue;
+                        completions.add(cosmetic.getId());
+                    }
                 }
                 case "unapply" -> {
-                    for (Cosmetic cosmetic : user.getCosmetics()) {
-                        completions.add(cosmetic.getSlot().toString().toUpperCase());
+                    if (user != null) {
+                        for (Cosmetic cosmetic : user.getCosmetics()) {
+                            completions.add(cosmetic.getSlot().toString().toUpperCase());
+                        }
+                    } else {
+                        completions.addAll(CosmeticSlot.values().keySet());
                     }
                     completions.add("ALL");
                 }
                 case "menu" -> {
                     for (Menu menu : Menus.getMenu()) {
-                        if (menu.canOpen(user.getPlayer())) completions.add(menu.getId());
+                        if (user != null && !menu.canOpen(user.getPlayer())) continue;
+                        completions.add(menu.getId());
                     }
                 }
                 case "dataclear", "hide", "show", "toggle", "hiddenreasons", "clearhiddenreasons" -> {
@@ -83,16 +79,15 @@ public class CosmeticCommandTabComplete implements TabCompleter {
                 }
                 case "wardrobes" -> {
                     for (Wardrobe wardrobe : WardrobeSettings.getWardrobes()) {
-                        if (wardrobe.hasPermission()) {
-                            if (user.getPlayer().hasPermission(wardrobe.getPermission())) completions.add(wardrobe.getId());
-                        } else {
-                            completions.add(wardrobe.getId());
-                        }
+                        if (user != null && wardrobe.hasPermission() && !user.getPlayer().hasPermission(wardrobe.getPermission())) continue;
+                        completions.add(wardrobe.getId());
                     }
                 }
                 case "dye" -> {
-                    for (CosmeticSlot slot : user.getDyeableSlots()) {
-                        completions.add(slot.toString());
+                    if (user != null) {
+                        for (CosmeticSlot slot : user.getDyeableSlots()) {
+                            completions.add(slot.toString());
+                        }
                     }
                 }
                 case "setwardrobesetting" -> {
@@ -103,6 +98,7 @@ public class CosmeticCommandTabComplete implements TabCompleter {
             }
             StringUtil.copyPartialMatches(args[1], completions, finalCompletions);
         }
+
         if (args.length == 3) {
             String subcommand = args[0].toLowerCase();
             switch (subcommand) {
@@ -144,31 +140,5 @@ public class CosmeticCommandTabComplete implements TabCompleter {
 
         Collections.sort(finalCompletions);
         return finalCompletions;
-    }
-
-    @NotNull
-    private static List<String> applyCommandComplete(CosmeticUser user, String @NotNull [] args) {
-        List<String> completitions = new ArrayList<>();
-
-        if (args.length == 2) {
-            for (Cosmetic cosmetic : Cosmetics.values()) {
-                if (!user.canEquipCosmetic(cosmetic)) continue;
-                completitions.add(cosmetic.getId());
-            }
-            //completitions.addAll(Cosmetics.keys());
-        } else {
-            if (args.length == 3) {
-                for (Player player : Bukkit.getOnlinePlayers()) {
-                    completitions.add(player.getName());
-                }
-            }
-        }
-        return completitions;
-    }
-
-    private boolean hasPermission(@NotNull CommandSender sender, String permission) {
-        if (sender.isOp()) return true;
-        if (sender.hasPermission(permission)) return true;
-        return false;
     }
 }

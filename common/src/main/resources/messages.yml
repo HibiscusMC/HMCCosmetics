@@ -25,6 +25,8 @@ wardrobe-not-setup: "%prefix% <red>This wardrobe does not have all required loca
 
 equip-cosmetic: "%prefix% <gradient:#6D9DC5:#45CDE9>You have equipped <cosmetic>!"
 unequip-cosmetic: "%prefix% <gradient:#6D9DC5:#45CDE9>You have unequipped <cosmetic>!"
+equip-cosmetic-other: "%prefix% <gradient:#6D9DC5:#45CDE9>Equipped <cosmetic> on <player>!"
+unequip-cosmetic-other: "%prefix% <gradient:#6D9DC5:#45CDE9>Unequipped <cosmetic> from <player>!"
 hide-cosmetic: "%prefix% <gradient:#6D9DC5:#45CDE9>Hidden cosmetics"
 show-cosmetic: "%prefix% <gradient:#6D9DC5:#45CDE9>Revealed cosmetics!"
 hidden-cosmetics: "%prefix% <red>Your cosmetics are hidden!"
@@ -37,6 +39,17 @@ invalid-player: "%prefix% <red>Invalid Player!"
 invalid-menu: "%prefix% <red>Invalid Menu!"
 invalid-cosmetic: "%prefix% <red>Invalid Cosmetic!"
 invalid-color: "%prefix% <red>Invalid Color!"
+invalid-args: "%prefix% <red>Invalid arguments!"
+player-only: "%prefix% <red>Only players can use this command!"
+unknown-command: "%prefix% <red>Unknown command!"
+
+help-header: "%prefix% <gradient:#6D9DC5:#45CDE9>Commands:"
+help-entry: "<#45CDE9><usage> <gray>- <white><description>"
+
+cleared-data: "%prefix% <gradient:#6D9DC5:#45CDE9>Cleared cosmetic data for <player>!"
+cleared-hidden-reasons: "%prefix% <gradient:#6D9DC5:#45CDE9>Cleared hidden reasons for <player>!"
+disabled-all: "%prefix% <gradient:#6D9DC5:#45CDE9>Disabled cosmetics for all players!"
+enabled-all: "%prefix% <gradient:#6D9DC5:#45CDE9>Enabled cosmetics for all players!"
 
 debug-enabled: "%prefix% <gradient:#6D9DC5:#45CDE9>Enabled Debug Mode!"
 debug-disabled: "%prefix% <gradient:#6D9DC5:#45CDE9>Disabled Debug Mode!"

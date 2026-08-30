@@ -53,6 +53,13 @@ public class MessagesUtil {
         sender.sendMessage(finalMessage);
     }
 
+    public static void sendMessage(CommandSender sender, String key, TagResolver placeholder) {
+        Component finalMessage = processString(sender instanceof Player ? (Player) sender : null, key, placeholder);
+        if (finalMessage == null) return;
+
+        sender.sendMessage(finalMessage);
+    }
+
     public static void sendMessage(Player player, String key, TagResolver placeholder) {
         Component finalMessage = processString(player, key, placeholder);
         if (finalMessage == null) return;
