@@ -101,10 +101,7 @@ cosmetic-settings:
   # Should, by default, the lead be spawned for the balloon
   balloon-lead-default: true
   # how the balloon should be positioned relative to the player
-  balloon-offset:
-    x: 0.5
-    y: 3
-    z: 0.5
+  balloon-offset: 0.5,3,0.5
 
 menu-settings:
   click-cooldown:

@@ -9,12 +9,12 @@ import lombok.Getter;
 import lombok.Setter;
 import me.lojosho.shaded.configurate.ConfigurationNode;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.util.NumberConversions;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 public class Settings {
 
@@ -302,7 +302,15 @@ public class Settings {
     }
 
     public static Vector loadVector(final ConfigurationNode config) {
-        return new Vector(config.node("x").getDouble(), config.node("y").getDouble(), config.node("z").getDouble());
+        return loadVector(config, 0.0);
+    }
+
+    public static Vector loadVector(final ConfigurationNode config, final double defaultValue) {
+        if (config.getString() != null) {
+            List<Double> coords = new ArrayList<>(Arrays.stream(config.getString().replace(" ", "").split(",", 3)).map(NumberConversions::toDouble).toList());
+            while (coords.size() < 3) coords.add(defaultValue);
+            return new Vector(coords.get(0), coords.get(1), coords.get(2));
+        } else return new Vector(config.node("x").getDouble(), config.node("y").getDouble(), config.node("z").getDouble());
     }
 
     public static SlotOptionConfig getSlotOption(EquipmentSlot slot) {
