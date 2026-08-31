@@ -488,7 +488,17 @@ public class CosmeticUser implements CosmeticHolder {
      * @param ignoreDistance If true, the player can enter the wardrobe from any distance. If false, the player must be within the distance set in the wardrobe (If wardrobe has a distance of 0 or lower, the player can enter from any distance).
      */
     public void enterWardrobe(@NotNull Wardrobe wardrobe, boolean ignoreDistance) {
-        if (wardrobe.hasPermission() && !getPlayer().hasPermission(wardrobe.getPermission())) {
+        enterWardrobe(wardrobe, ignoreDistance, false);
+    }
+
+    /**
+     * This method is used to enter a wardrobe. You can listen to the {@link PlayerWardrobeEnterEvent} to cancel the event or modify any data.
+     * @param wardrobe The wardrobe to enter. Use {@link WardrobeSettings#getWardrobe(String)} to get pre-existing wardrobe or use your own by {@link Wardrobe}.
+     * @param ignoreDistance If true, the player can enter the wardrobe from any distance. If false, the player must be within the distance set in the wardrobe (If wardrobe has a distance of 0 or lower, the player can enter from any distance).
+     * @param ignorePermission If true, the wardrobe's permission is not checked. Useful when another sender forces the player into the wardrobe.
+     */
+    public void enterWardrobe(@NotNull Wardrobe wardrobe, boolean ignoreDistance, boolean ignorePermission) {
+        if (!ignorePermission && wardrobe.hasPermission() && !getPlayer().hasPermission(wardrobe.getPermission())) {
             MessagesUtil.sendMessage(getPlayer(), "no-permission");
             return;
         }

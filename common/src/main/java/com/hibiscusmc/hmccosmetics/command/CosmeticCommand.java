@@ -152,7 +152,7 @@ public class CosmeticCommand implements CommandExecutor {
                     }
                 }
 
-                if (!user.canEquipCosmetic(cosmetic) && !console) {
+                if (sender == target && !user.canEquipCosmetic(cosmetic)) {
                     if (!silent) MessagesUtil.sendMessage(sender, "no-cosmetic-permission");
                     return true;
                 }
@@ -238,10 +238,11 @@ public class CosmeticCommand implements CommandExecutor {
                 CosmeticUser user = getUser(sender, target, silent);
                 if (user == null) return true;
 
+                boolean forced = sender != target;
                 if (user.isInWardrobe()) {
                     user.leaveWardrobe(false);
                 } else {
-                    user.enterWardrobe(wardrobe, false);
+                    user.enterWardrobe(wardrobe, forced, forced);
                 }
                 return true;
             }
@@ -269,7 +270,7 @@ public class CosmeticCommand implements CommandExecutor {
                     return true;
                 }
 
-                menu.openMenu(user);
+                menu.openMenu(user, sender != target);
                 return true;
             }
             case "dataclear" -> {
@@ -517,7 +518,7 @@ public class CosmeticCommand implements CommandExecutor {
                     if (!silent) MessagesUtil.sendMessage(sender, "no-permission");
                     return true;
                 }
-                Player target = resolveTarget(sender, args, 1, "hmccosmetics.cmd.hiddenreasons", silent);
+                Player target = resolveTarget(sender, args, 1, "hmccosmetics.cmd.hiddenreasons.other", silent);
                 if (target == null) return true;
 
                 CosmeticUser user = getUser(sender, target, silent);
@@ -531,7 +532,7 @@ public class CosmeticCommand implements CommandExecutor {
                     if (!silent) MessagesUtil.sendMessage(sender, "no-permission");
                     return true;
                 }
-                Player target = resolveTarget(sender, args, 1, "hmccosmetics.cmd.clearhiddenreasons", silent);
+                Player target = resolveTarget(sender, args, 1, "hmccosmetics.cmd.clearhiddenreasons.other", silent);
                 if (target == null) return true;
 
                 CosmeticUser user = getUser(sender, target, silent);
@@ -561,15 +562,25 @@ public class CosmeticCommand implements CommandExecutor {
     }
 
     /**
-     * Resolves the player a subcommand acts on. Uses the arg at the given index when the sender
-     * may target others, otherwise falls back to the sender. Sends invalid-player when unresolved.
+     * Resolves the player a subcommand acts on. When a player is named at the given index, targeting
+     * anyone but the sender requires the other-permission. Without an arg, falls back to the sender.
+     * Sends no-permission or invalid-player when unresolved.
      */
     @Nullable
     private static Player resolveTarget(@NotNull CommandSender sender, String @NotNull [] args, int index, String otherPermission, boolean silent) {
-        Player target = sender instanceof Player ? (Player) sender : null;
-        if (args.length > index && hasPermission(sender, otherPermission)) {
-            target = Bukkit.getPlayer(args[index]);
+        if (args.length > index) {
+            Player target = Bukkit.getPlayer(args[index]);
+            if (target == null) {
+                if (!silent) MessagesUtil.sendMessage(sender, "invalid-player");
+                return null;
+            }
+            if (target != sender && !hasPermission(sender, otherPermission)) {
+                if (!silent) MessagesUtil.sendMessage(sender, "no-permission");
+                return null;
+            }
+            return target;
         }
+        Player target = sender instanceof Player ? (Player) sender : null;
         if (target == null && !silent) MessagesUtil.sendMessage(sender, "invalid-player");
         return target;
     }

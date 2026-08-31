@@ -42,11 +42,11 @@ public class Wardrobe {
     }
 
     /**
-     * This checks if the wardrobe has a permission. If it's null, no permission is required and will return false. If it's not null, it will return true.
+     * This checks if the wardrobe has a permission. If it's null or blank, no permission is required and will return false. Otherwise, it will return true.
      * @return if the wardrobe has a permission
      */
     public boolean hasPermission() {
-        return permission != null;
+        return permission != null && !permission.isBlank();
     }
 
     /**

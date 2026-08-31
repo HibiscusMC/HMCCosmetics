@@ -149,7 +149,7 @@ public class Menu {
     }
 
     public void openMenu(@NotNull Player viewer, @NotNull CosmeticHolder cosmeticHolder, boolean ignorePermission) {
-        if (!ignorePermission && !permissionNode.isEmpty()) {
+        if (!ignorePermission && !permissionNode.isBlank()) {
             if (!viewer.hasPermission(permissionNode) && !viewer.isOp()) {
                 MessagesUtil.sendMessage(viewer, "no-permission");
                 return;
@@ -398,7 +398,7 @@ public class Menu {
     }
 
     public boolean canOpen(Player player) {
-        if (permissionNode.isEmpty()) return true;
+        if (permissionNode.isBlank()) return true;
         return player.isOp() || player.hasPermission(permissionNode);
     }
 

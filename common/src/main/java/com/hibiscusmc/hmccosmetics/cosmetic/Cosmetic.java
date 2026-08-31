@@ -98,7 +98,7 @@ public abstract class Cosmetic {
     }
 
     public boolean requiresPermission() {
-        return permission != null;
+        return permission != null && !permission.isBlank();
     }
 
     /**

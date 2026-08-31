@@ -272,6 +272,12 @@ bukkit {
         register("hmccosmetics.cmd.clearhiddenreasons") {
             default = BukkitPluginDescription.Permission.Default.OP
         }
+        register("hmccosmetics.cmd.hiddenreasons.other") {
+            default = BukkitPluginDescription.Permission.Default.OP
+        }
+        register("hmccosmetics.cmd.clearhiddenreasons.other") {
+            default = BukkitPluginDescription.Permission.Default.OP
+        }
     }
 }
 
