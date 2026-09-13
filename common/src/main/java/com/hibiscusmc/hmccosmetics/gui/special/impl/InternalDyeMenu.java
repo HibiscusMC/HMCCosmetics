@@ -12,7 +12,6 @@ import dev.triumphteam.gui.guis.GuiItem;
 import me.lojosho.hibiscuscommons.config.serializer.ItemSerializer;
 import me.lojosho.hibiscuscommons.hooks.Hooks;
 import me.lojosho.hibiscuscommons.nms.NMSHandlers;
-import me.lojosho.hibiscuscommons.util.ColorBuilder;
 import me.lojosho.hibiscuscommons.util.MessagesUtil;
 import me.lojosho.shaded.configurate.CommentedConfigurationNode;
 import me.lojosho.shaded.configurate.ConfigurateException;
@@ -84,12 +83,8 @@ public class InternalDyeMenu implements DyeMenu {
         for (int i = 0; i < (ROWS * 9) - 1; i++) {
             char character = formatString.charAt(i);
             switch (character) {
-                case '$' -> {
-                    PRIMARY_COLORS_SLOTS.add(i);
-                }
-                case '%' -> {
-                    SECONDARY_COLORS_SLOTS.add(i);
-                }
+                case '$' -> PRIMARY_COLORS_SLOTS.add(i);
+                case '%' -> SECONDARY_COLORS_SLOTS.add(i);
             }
         }
 
@@ -132,9 +127,7 @@ public class InternalDyeMenu implements DyeMenu {
 
         Gui gui = new ChestGuiBuilder().rows(ROWS).title(MiniMessage.miniMessage().deserialize(Hooks.processPlaceholders(viewer, Settings.getDyeMenuName()))).create();
         gui.setUpdating(true);
-        gui.setDefaultClickAction(event -> {
-            event.setCancelled(true);
-        });
+        gui.setDefaultClickAction(event -> event.setCancelled(true));
         gui.setDefaultTopClickAction(event -> {
             event.setCancelled(true);
             if (event.getSlot() == OUTPUT_SLOT) {
@@ -152,31 +145,24 @@ public class InternalDyeMenu implements DyeMenu {
         gui.setItem(OUTPUT_SLOT, new GuiItem(dyingItemStack));
 
         AtomicInteger ran = new AtomicInteger(0);
-        PRIMARY_COLORS_SLOTS.forEach(i -> {
-            ItemStack primaryColorItem = cosmetic.getItem();
-            if (PRIMARY_COLOR_ITEM != null) primaryColorItem = PRIMARY_COLOR_ITEM;
-
+        for (Integer i : PRIMARY_COLORS_SLOTS) {
             int pRan = ran.getAndAdd(1);
             if (pRan >= PRIMARY_COLORS.size()) {
                 MessagesUtil.sendDebugMessages("There are less primary colors than slots for primary colors!", Level.WARNING);
-                return;
+                continue;
             }
             PrimaryColor primaryColor = PRIMARY_COLORS.get(pRan);
 
-            primaryColorItem.setItemMeta(ColorBuilder.color(primaryColorItem.getItemMeta(), primaryColor.color));
-            primaryColorItem.editMeta(itemMeta -> {
-                itemMeta.displayName(MiniMessage.miniMessage().deserialize(primaryColor.name()).decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE));
-            });
+            ItemStack primaryColorItem = PRIMARY_COLOR_ITEM != null ? PRIMARY_COLOR_ITEM.clone() : cosmetic.getItem();
+            if (primaryColorItem == null) continue;
+            primaryColorItem = NMSHandlers.getHandler().getUtilHandler().setColor(primaryColorItem, primaryColor.color);
+            primaryColorItem.editMeta(itemMeta -> itemMeta.displayName(MiniMessage.miniMessage().deserialize(primaryColor.name()).decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE)));
             GuiItem guiItem = new GuiItem(primaryColorItem);
 
             guiItem.setAction(event -> {
                 event.setCancelled(true);
 
-                ItemStack cosmeticItem = cosmetic.getItem();
-                cosmeticItem.setItemMeta(ColorBuilder.color(cosmeticItem.getItemMeta(), primaryColor.color));
-                cosmeticItem.editMeta(itemMeta -> {
-                    //itemMeta.displayName(MiniMessage.miniMessage().deserialize("").decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE));
-                });
+                ItemStack cosmeticItem = NMSHandlers.getHandler().getUtilHandler().setColor(cosmetic.getItem(), primaryColor.color);
                 gui.updateItem(OUTPUT_SLOT, new GuiItem(cosmeticItem));
 
                 List<SecondaryColor> secondaryColors = primaryColor.secondaryColors();
@@ -189,16 +175,12 @@ public class InternalDyeMenu implements DyeMenu {
                     }
                     SecondaryColor secondaryColor = secondaryColors.get(sRan);
 
-                    ItemStack secondaryItem = cosmetic.getItem();
-                    if (SECONDARY_COLOR_ITEM != null) secondaryItem = SECONDARY_COLOR_ITEM;
-                    secondaryItem.setItemMeta(ColorBuilder.color(secondaryItem.getItemMeta(), secondaryColor.color));
-                    secondaryItem.editMeta(itemMeta -> {
-                        itemMeta.displayName(MiniMessage.miniMessage().deserialize(secondaryColor.name()).decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE));
-                    });
+                    ItemStack secondaryItem = SECONDARY_COLOR_ITEM != null ? SECONDARY_COLOR_ITEM.clone() : cosmetic.getItem();
+                    secondaryItem = NMSHandlers.getHandler().getUtilHandler().setColor(secondaryItem, secondaryColor.color);
+                    secondaryItem.editMeta(itemMeta -> itemMeta.displayName(MiniMessage.miniMessage().deserialize(secondaryColor.name()).decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE)));
                     GuiItem secondaryGuiItem = new GuiItem(secondaryItem);
                     secondaryGuiItem.setAction(secondaryEvent -> {
-                        ItemStack secondaryItemStack = dyingItemStack.clone();
-                        secondaryItemStack.setItemMeta(ColorBuilder.color(secondaryItemStack.getItemMeta(), secondaryColor.color));
+                        ItemStack secondaryItemStack = NMSHandlers.getHandler().getUtilHandler().setColor(dyingItemStack.clone(), secondaryColor.color);
                         gui.updateItem(OUTPUT_SLOT, new GuiItem(secondaryItemStack));
                     });
 
@@ -206,7 +188,7 @@ public class InternalDyeMenu implements DyeMenu {
                 });
             });
             gui.setItem(i, guiItem);
-        });
+        }
 
 
         gui.open(viewer);
