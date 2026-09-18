@@ -13,7 +13,6 @@ steps:
   - name: build
     image: eclipse-temurin:21
     environment:
-      GRADLE_OPTS: "-Xmx4G -XX:MaxMetaspaceSize=512M"
       GRADLE_USER_HOME: /workspace/.gradle
       JAVA_TOOL_OPTIONS: "-Djava.io.tmpdir=/workspace/tmp"
 

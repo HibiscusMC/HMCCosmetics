@@ -1,21 +1,46 @@
 plugins {
-    id("java")
-    id("maven-publish")
+    `java-library`
+    `maven-publish`
 }
 
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
-
     withJavadocJar()
     withSourcesJar()
 }
 
+dependencies {
+    compileOnly(fileTree("${rootDir}/lib") { include("*.jar") })
+    compileOnly(libs.paper.api)
+    compileOnly(libs.annotations)
+    compileOnly(libs.commons.io) // Shipped by the server, not by us
+    compileOnly(libs.hibiscuscommons)
+    compileOnly(libs.placeholderapi)
+    compileOnly(libs.modelengine)
+    compileOnly(libs.nexo)
+    compileOnly(libs.bundles.betterhud)
+    compileOnly(libs.bettercommand) // BetterHud's api signatures reference it
+    compileOnly(libs.worldguard) {
+        exclude(group = "org.bukkit")
+        exclude(group = "com.google.guava")
+        exclude(group = "com.google.code.gson")
+        exclude(group = "it.unimi.dsi")
+        exclude(group = "com.sk89q.jnbt")
+        exclude(group = "org.enginehub.lin-bus.format")
+    }
+
+    compileOnly(libs.lombok)
+    annotationProcessor(libs.lombok)
+    testCompileOnly(libs.lombok)
+    testAnnotationProcessor(libs.lombok)
+
+    implementation(libs.triumph.gui) { exclude("net.kyori") }
+}
+
 publishing {
-    val publishData = PublishData(project)
     publications {
         create<MavenPublication>("maven") {
             groupId = "${rootProject.group}"
-            artifactId = "${rootProject.name}"
+            artifactId = rootProject.name
             version = "${rootProject.version}"
 
             from(components["java"])
@@ -24,54 +49,23 @@ publishing {
 
     repositories {
         maven {
-            authentication {
-                credentials(PasswordCredentials::class) {
-                    username = System.getenv("REPO_USERNAME")
-                    password = System.getenv("REPO_PASSWORD")
-                }
-            }
-
             name = "HibiscusMCRepository"
-            url = uri(publishData.getRepository())
+            url = uri(hibiscusRepository())
+
+            credentials {
+                username = System.getenv("REPO_USERNAME")
+                password = System.getenv("REPO_PASSWORD")
+            }
         }
     }
 }
 
-class PublishData(private val project: Project) {
-    var type: Type = getReleaseType()
-    var hashLength: Int = 7
-
-    private fun getReleaseType(): Type {
-        val branch = getCheckedOutBranch()
-        return when {
-            branch.contentEquals("master") || branch.contentEquals("local") -> Type.RELEASE
-            branch.startsWith("dev") -> Type.DEV
-            else -> Type.SNAPSHOT
-        }
-    }
-
-    private fun getCheckedOutGitCommitHash(): String =
-        System.getenv("GITHUB_SHA")?.substring(0, hashLength) ?: "local"
-
-    private fun getCheckedOutBranch(): String =
-        System.getenv("GITHUB_REF")?.replace("refs/heads/", "") ?: "local"
-
-    fun getVersion(): String = getVersion(false)
-
-    fun getVersion(appendCommit: Boolean): String =
-        type.append(getVersionString(), appendCommit, getCheckedOutGitCommitHash())
-
-    private fun getVersionString(): String =
-        (rootProject.version as String).replace("-SNAPSHOT", "").replace("-DEV", "")
-
-    fun getRepository(): String = type.repo
-
-    enum class Type(private val append: String, val repo: String, private val addCommit: Boolean) {
-        RELEASE("", "https://repo.hibiscusmc.com/releases/", false),
-        DEV("-DEV", "https://repo.hibiscusmc.com/development/", true),
-        SNAPSHOT("-SNAPSHOT", "https://repo.hibiscusmc.com/snapshots/", true);
-
-        fun append(name: String, appendCommit: Boolean, commitHash: String): String =
-            name.plus(append).plus(if (appendCommit && addCommit) "-".plus(commitHash) else "")
+/** Target repository picked from the branch being built, defaulting to releases for local publishes */
+fun hibiscusRepository(): String {
+    val branch = System.getenv("GITHUB_REF")?.removePrefix("refs/heads/") ?: "local"
+    return when {
+        branch == "master" || branch == "local" -> "https://repo.hibiscusmc.com/releases/"
+        branch.startsWith("dev") -> "https://repo.hibiscusmc.com/development/"
+        else -> "https://repo.hibiscusmc.com/snapshots/"
     }
 }

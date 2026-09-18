@@ -1,0 +1,30 @@
+[versions]
+java = "21"
+paper = "1.21.4-R0.1-SNAPSHOT"
+lombok = "1.18.36"
+betterhud = "1.12"
+
+[libraries]
+paper-api = { module = "io.papermc.paper:paper-api", version.ref = "paper" }
+annotations = { module = "org.jetbrains:annotations", version = "24.1.0" }
+lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
+commons-io = { module = "commons-io:commons-io", version = "2.17.0" } # The version Minecraft 1.21.4 ships
+
+hibiscuscommons = { module = "me.lojosho:HibiscusCommons", version = "0.9.3" }
+triumph-gui = { module = "dev.triumphteam:triumph-gui", version = "3.2.0-SNAPSHOT" }
+
+betterhud-standard = { module = "io.github.toxicity188:BetterHud-standard-api", version.ref = "betterhud" }
+betterhud-bukkit = { module = "io.github.toxicity188:BetterHud-bukkit-api", version.ref = "betterhud" }
+bettercommand = { module = "io.github.toxicity188:BetterCommand", version = "1.3" }
+modelengine = { module = "com.ticxo.modelengine:ModelEngine", version = "R4.0.6" }
+nexo = { module = "com.nexomc:nexo", version = "1.24.0" }
+placeholderapi = { module = "me.clip:placeholderapi", version = "2.11.6" }
+worldguard = { module = "com.sk89q.worldguard:worldguard-bukkit", version = "7.0.12" }
+
+[bundles]
+betterhud = ["betterhud-standard", "betterhud-bukkit"]
+
+[plugins]
+shadow = { id = "com.gradleup.shadow", version = "9.6.1" }
+run-paper = { id = "xyz.jpenilla.run-paper", version = "3.1.0" }
+plugin-yml = { id = "de.eldoria.plugin-yml.bukkit", version = "0.9.0" }

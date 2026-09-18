@@ -1,136 +1,63 @@
-import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
+import net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default
+import net.minecrell.pluginyml.bukkit.BukkitPluginDescription.PluginLoadOrder
 
 plugins {
-    id("java")
-    id("com.gradleup.shadow") version "8.3.2"
-    id("xyz.jpenilla.run-paper") version "2.3.1"
-    id("net.minecrell.plugin-yml.bukkit") version "0.6.0"
+    `java-library`
+    alias(libs.plugins.shadow)
+    alias(libs.plugins.run.paper)
+    alias(libs.plugins.plugin.yml)
 }
 
 group = "com.hibiscusmc"
 version = "2.9.2"
 
+val javaVersion = JavaLanguageVersion.of(libs.versions.java.get())
+
 allprojects {
-    apply(plugin = "java")
     apply(plugin = "java-library")
 
-    repositories {
-        mavenCentral()
-        mavenLocal()
-
-        // Paper Repo
-        maven("https://repo.papermc.io/repository/maven-public/")
-        maven("https://oss.sonatype.org/content/repositories/snapshots")
-
-        // Jitpack
-        maven("https://jitpack.io")
-
-        // Geary
-        maven("https://repo.mineinabyss.com/releases/")
-        maven("https://repo.mineinabyss.com/snapshots/")
-
-        // PlaceholderAPI
-        maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
-
-        // Citizens & Denizen
-        maven("https://maven.citizensnpcs.co/repo")
-
-        // Worldguard
-        maven("https://maven.enginehub.org/repo/")
-
-        // Backup Oraxen repo
-        maven("https://repo.skyslycer.de/")
-
-        // MythicMobs
-        maven {
-            url = uri("https://mvn.lumine.io/repository/maven-public")
-            metadataSources {
-                artifact()
-            }
-        }
-
-        // md-5 Repo
-        maven("https://repo.md-5.net/content/groups/public/")
-
-        // MMOItems
-        maven("https://nexus.phoenixdevt.fr/repository/maven-public/")
-
-        // Eco-Suite/Auxilor Repo
-        maven("https://repo.auxilor.io/repository/maven-public/")
-
-        // Triumph GUI
-        maven("https://repo.triumphteam.dev/snapshots")
-
-        // Hibiscus Commons
-        maven("https://repo.hibiscusmc.com/releases")
-
-        // Nexo
-        maven("https://repo.nexomc.com/releases")
+    java {
+        toolchain.languageVersion = javaVersion
     }
 
-    dependencies {
-        compileOnly(fileTree("${project.rootDir}/lib") { include("*.jar") })
-        compileOnly("com.mojang:authlib:1.5.25")
-        compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
-        compileOnly("org.jetbrains:annotations:24.1.0")
-        compileOnly("me.clip:placeholderapi:2.11.6")
-        compileOnly("com.ticxo.modelengine:ModelEngine:R4.0.6")
-        compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.12") {
-            exclude(group = "org.bukkit")
-            exclude(group = "com.google.guava")
-            exclude(group = "com.google.code.gson")
-            exclude(group = "it.unimi.dsi")
-            exclude(group = "com.sk89q.jnbt")
-            exclude(group = "org.enginehub.lin-bus.format")
-        }
-        compileOnly("io.github.toxicity188:BetterHud-standard-api:1.12") //Standard api
-        compileOnly("io.github.toxicity188:BetterHud-bukkit-api:1.12") //Platform api
-        compileOnly("io.github.toxicity188:BetterCommand:1.3") //BetterCommand library
-        //compileOnly("it.unimi.dsi:fastutil:8.5.14")
-        compileOnly("org.projectlombok:lombok:1.18.34")
-        compileOnly("me.lojosho:HibiscusCommons:0.9.3")
-
-        annotationProcessor("org.projectlombok:lombok:1.18.36")
-        testCompileOnly("org.projectlombok:lombok:1.18.36")
-        testAnnotationProcessor("org.projectlombok:lombok:1.18.36")
-        compileOnly("com.nexomc:nexo:1.24.0")
-
-        implementation("dev.triumphteam:triumph-gui:3.2.0-SNAPSHOT") {
-            exclude("net.kyori") // Already have adventure API
-        }
+    tasks.withType<JavaCompile>().configureEach {
+        options.encoding = Charsets.UTF_8.name()
     }
 
-    tasks {
-        javadoc {
-            // javadoc spec has these added.
-            (options as StandardJavadocDocletOptions)
-                .tags("apiNote:a:API:", "implSpec:a:Implementation Requirements", "implNote:a:Implementation Note:")
-            // The codebase isn't fully javadoc'd; silence doclint's "no comment" (and other) noise.
-            (options as StandardJavadocDocletOptions).addStringOption("Xdoclint:none", "-quiet")
+    tasks.withType<ProcessResources>().configureEach {
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
+        filteringCharset = Charsets.UTF_8.name()
+    }
+
+    tasks.withType<Javadoc>().configureEach {
+        options.encoding = Charsets.UTF_8.name()
+        with(options as StandardJavadocDocletOptions) {
+            tags("apiNote:a:API:", "implSpec:a:Implementation Requirements", "implNote:a:Implementation Note:")
+            // The codebase isn't fully javadoc'd, so silence doclint's "no comment" noise
+            addStringOption("Xdoclint:none", "-quiet")
         }
     }
 }
 
 dependencies {
-    implementation(project(path = ":common"))
+    implementation(project(":common"))
+}
+
+// Own task rather than a shadowJar doLast, which a build cache hit would skip while leaving run/plugins stale
+val copyToTestServer = tasks.register<Copy>("copyToTestServer") {
+    from(tasks.shadowJar)
+    into(layout.projectDirectory.dir("run/plugins"))
+    rename { "HMCCosmeticsRemapped.jar" }
+
+    doLast {
+        println("If you use the plugin, consider buying it for: ")
+        println("The custom resource pack, Oraxen + ItemAdder configurations, and Discord support!")
+        println("Polymart: https://polymart.org/resource/1879")
+        println("Spigot: https://www.spigotmc.org/resources/100107/")
+    }
 }
 
 tasks {
-
-    compileJava {
-        options.encoding = Charsets.UTF_8.name()
-        options.release.set(21)
-    }
-
-    javadoc {
-        options.encoding = Charsets.UTF_8.name()
-    }
-
-    processResources {
-        duplicatesStrategy = DuplicatesStrategy.INCLUDE
-        filteringCharset = Charsets.UTF_8.name()
-    }
-
     runServer {
         minecraftVersion("1.21.11")
 
@@ -145,38 +72,26 @@ tasks {
 
     shadowJar {
         mergeServiceFiles()
-
         relocate("dev.triumphteam.gui", "com.hibiscusmc.hmccosmetics.shaded.gui")
-        relocate("com.owen1212055.particlehelper", "com.hibiscusmc.hmccosmetics.shaded.particlehelper")
-        archiveFileName.set("HMCCosmeticsRemapped-${project.version}.jar")
-
-        dependencies {
-            exclude(dependency("org.yaml:snakeyaml"))
-        }
-
-        doLast {
-            archiveFile.get().asFile.copyTo(layout.projectDirectory.file("run/plugins/HMCCosmeticsRemapped.jar").asFile, true)
-            println("If you use the plugin, consider buying it for: ")
-            println("The custom resource pack, Oraxen + ItemAdder configurations, and Discord support!")
-            println("Polymart: https://polymart.org/resource/1879")
-            println("Spigot: https://www.spigotmc.org/resources/100107/")
-        }
+        archiveFileName = "HMCCosmeticsRemapped-${project.version}.jar"
     }
 
     build {
-        dependsOn(shadowJar)
+        dependsOn(copyToTestServer)
     }
 }
 
-
 bukkit {
-    load = BukkitPluginDescription.PluginLoadOrder.POSTWORLD
     main = "com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin"
-    apiVersion = "1.20"
-    authors = listOf("LoJoSho")
-    depend = listOf("HibiscusCommons")
-    softDepend = listOf("Nexo", "BetterHud", "ModelEngine", "Oraxen", "ItemsAdder", "Geary", "HMCColor", "WorldGuard", "MythicMobs", "PlaceholderAPI", "SuperVanish", "PremiumVanish", "LibsDisguises", "Denizen", "MMOItems", "Eco")
     version = "${project.version}"
+    apiVersion = "1.20"
+    load = PluginLoadOrder.POSTWORLD
+    authors = listOf("LoJoSho", "boy0000")
+    depend = listOf("HibiscusCommons")
+    softDepend = listOf(
+        "Nexo", "BetterHud", "ModelEngine", "Oraxen", "ItemsAdder", "Geary", "HMCColor", "WorldGuard",
+        "MythicMobs", "PlaceholderAPI", "SuperVanish", "PremiumVanish", "LibsDisguises", "Denizen", "MMOItems", "Eco"
+    )
 
     commands {
         register("hmccosmetics") {
@@ -184,126 +99,21 @@ bukkit {
             aliases = listOf("cosmetic", "cosmetics")
         }
     }
+
     permissions {
-        register("hmccosmetics.cmd.default") {
-            default = BukkitPluginDescription.Permission.Default.TRUE
-        }
-        register("hmccosmetics.cmd.apply") {
-            default = BukkitPluginDescription.Permission.Default.TRUE
-        }
-        register("hmccosmetics.cmd.unapply") {
-            default = BukkitPluginDescription.Permission.Default.TRUE
-        }
-        register("hmccosmetics.cmd.dye") {
-            default = BukkitPluginDescription.Permission.Default.TRUE
-        }
-        register("hmccosmetics.cmd.wardrobe") {
-            default = BukkitPluginDescription.Permission.Default.TRUE
-        }
-        register("hmccosmetics.cmd.menu") {
-            default = BukkitPluginDescription.Permission.Default.TRUE
-        }
-        register("hmccosmetics.emote.shiftrun") {
-            default = BukkitPluginDescription.Permission.Default.TRUE
-        }
-        register("hmccosmetics.cmd.emote") {
-            default = BukkitPluginDescription.Permission.Default.TRUE
-        }
-        register("hmccosmetics.cmd.playemote") {
-            default = BukkitPluginDescription.Permission.Default.OP
-        }
-        register("hmccosmetics.cmd.playemote.other") {
-            default = BukkitPluginDescription.Permission.Default.OP
-        }
-        register("hmccosmetics.cmd.emote.other") {
-            default = BukkitPluginDescription.Permission.Default.OP
-        }
-        register("hmccosmetics.cmd.setwardrobesetting") {
-            default = BukkitPluginDescription.Permission.Default.OP
-        }
-        register("hmccosmetics.cmd.dataclear") {
-            default = BukkitPluginDescription.Permission.Default.OP
-        }
-        register("hmccosmetics.cmd.reload") {
-            default = BukkitPluginDescription.Permission.Default.OP
-        }
-        register("hmccosmetics.cmd.apply.other") {
-            default = BukkitPluginDescription.Permission.Default.OP
-        }
-        register("hmccosmetics.cmd.unapply.other") {
-            default = BukkitPluginDescription.Permission.Default.OP
-        }
-        register("hmccosmetics.cmd.hide") {
-            default = BukkitPluginDescription.Permission.Default.OP
-        }
-        register("hmccosmetics.cmd.show") {
-            default = BukkitPluginDescription.Permission.Default.OP
-        }
-        register("hmccosmetics.cmd.toggle") {
-            default = BukkitPluginDescription.Permission.Default.OP
-        }
-        register("hmccosmetics.cmd.hide.other") {
-            default = BukkitPluginDescription.Permission.Default.OP
-        }
-        register("hmccosmetics.cmd.show.other") {
-            default = BukkitPluginDescription.Permission.Default.OP
-        }
-        register("hmccosmetics.cmd.toggle.other") {
-            default = BukkitPluginDescription.Permission.Default.OP
-        }
-        register("hmccosmetics.cmd.wardrobe.other") {
-            default = BukkitPluginDescription.Permission.Default.OP
-        }
-        register("hmccosmetics.cmd.menu.other") {
-            default = BukkitPluginDescription.Permission.Default.OP
-        }
-        register("hmccosmetics.cmd.debug") {
-            default = BukkitPluginDescription.Permission.Default.OP
-        }
-        register("hmccosmetics.unapplydeath.bypass") {
-            default = BukkitPluginDescription.Permission.Default.OP
-        }
-        register("hmccosmetics.cmd.disableall") {
-            default = BukkitPluginDescription.Permission.Default.OP
-        }
-        register("hmccosmetics.cmd.hiddenreasons") {
-            default = BukkitPluginDescription.Permission.Default.OP
-        }
-        register("hmccosmetics.cmd.clearhiddenreasons") {
-            default = BukkitPluginDescription.Permission.Default.OP
-        }
-        register("hmccosmetics.cmd.hiddenreasons.other") {
-            default = BukkitPluginDescription.Permission.Default.OP
-        }
-        register("hmccosmetics.cmd.clearhiddenreasons.other") {
-            default = BukkitPluginDescription.Permission.Default.OP
-        }
+        val everyone = listOf(
+            "cmd.default", "cmd.apply", "cmd.unapply", "cmd.dye", "cmd.wardrobe", "cmd.menu",
+            "emote.shiftrun", "cmd.emote"
+        )
+        val operators = listOf(
+            "cmd.playemote", "cmd.playemote.other", "cmd.emote.other", "cmd.setwardrobesetting", "cmd.dataclear",
+            "cmd.reload", "cmd.apply.other", "cmd.unapply.other", "cmd.hide", "cmd.show", "cmd.toggle",
+            "cmd.hide.other", "cmd.show.other", "cmd.toggle.other", "cmd.wardrobe.other", "cmd.menu.other",
+            "cmd.debug", "unapplydeath.bypass", "cmd.disableall", "cmd.hiddenreasons", "cmd.clearhiddenreasons",
+            "cmd.hiddenreasons.other", "cmd.clearhiddenreasons.other"
+        )
+
+        for (node in everyone) register("hmccosmetics.$node") { default = Default.TRUE }
+        for (node in operators) register("hmccosmetics.$node") { default = Default.OP }
     }
-}
-
-java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
-
-    withJavadocJar()
-    withSourcesJar()
-}
-
-fun getGitCommitHash(): String {
-    var includeHash = true
-    val includeHashVariable = System.getenv("HMCC_INCLUDE_HASH")
-
-    if (!includeHashVariable.isNullOrEmpty()) includeHash = includeHashVariable.toBoolean()
-
-    if (includeHash) {
-        return try {
-            val process = ProcessBuilder("git", "rev-parse", "--short", "HEAD")
-                .redirectErrorStream(true)
-                .start()
-
-            process.inputStream.bufferedReader().use { "-" + it.readLine().trim() }
-        } catch (e: Exception) {
-            "-unknown" // Fallback if Git is not available or an error occurs
-        }
-    }
-    return ""
 }
