@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "com.hibiscusmc"
-version = "2.9.2"
+version = "2.9.3"
 
 val javaVersion = JavaLanguageVersion.of(libs.versions.java.get())
 
@@ -84,7 +84,8 @@ tasks {
 bukkit {
     main = "com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin"
     version = "${project.version}"
-    apiVersion = "1.20"
+    apiVersion = "1.21"
+    foliaSupported = true
     load = PluginLoadOrder.POSTWORLD
     authors = listOf("LoJoSho", "boy0000")
     depend = listOf("HibiscusCommons")

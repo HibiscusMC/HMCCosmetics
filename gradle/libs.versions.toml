@@ -1,6 +1,6 @@
 [versions]
 java = "21"
-paper = "1.21.4-R0.1-SNAPSHOT"
+paper = "1.21.11-R0.1-SNAPSHOT"
 lombok = "1.18.36"
 betterhud = "1.12"
 

@@ -30,10 +30,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
+import com.hibiscusmc.hmccosmetics.util.SchedulerUtil;
+import com.hibiscusmc.hmccosmetics.util.SchedulerUtil.TaskHandle;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 
 public class UserWardrobeManager {
@@ -126,7 +128,7 @@ public class UserWardrobeManager {
 
         MessagesUtil.sendMessage(player, "opened-wardrobe");
 
-        Runnable run = () -> {
+        Runnable setupAtDestination = () -> {
             if (!player.isOnline()) {
                 end();
                 return;
@@ -141,7 +143,6 @@ public class UserWardrobeManager {
             viewerPackets.add(packetBuilder.buildEntityRotateHeadPacket(ARMORSTAND_ID, viewingLocation));
 
             // Player
-            player.teleport(viewingLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
             player.setInvisible(true);
             viewerPackets.add(packetBuilder.buildPlayerGamemodeChangePacket(GameMode.SPECTATOR));
             viewerPackets.add(packetBuilder.buildEntityCameraPacket(ARMORSTAND_ID));
@@ -190,7 +191,6 @@ public class UserWardrobeManager {
 
                     Location balloonLocation = npcLocation.clone().add(cosmetic.getBalloonOffset());
                     HMCCPacketManager.sendTeleportPacket(user.getBalloonManager().getPufferfishBalloonId(), balloonLocation, false, viewer);
-                    user.getBalloonManager().getModelEntity().teleport(balloonLocation);
                     user.getBalloonManager().setLocation(balloonLocation);
                 }
             }
@@ -215,6 +215,12 @@ public class UserWardrobeManager {
             setWardrobeStatus(WardrobeStatus.RUNNING);
         };
 
+        Runnable run = () -> player.teleportAsync(viewingLocation, PlayerTeleportEvent.TeleportCause.PLUGIN)
+            .thenAccept(success -> {
+                if (success) SchedulerUtil.run(player, setupAtDestination);
+                else SchedulerUtil.run(player, this::end);
+            });
+
 
         if (WardrobeSettings.isEnabledTransition()) {
             MessagesUtil.sendTitle(
@@ -224,7 +230,7 @@ public class UserWardrobeManager {
                     WardrobeSettings.getTransitionStay(),
                     WardrobeSettings.getTransitionFadeOut()
             );
-            Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), run, WardrobeSettings.getTransitionDelay());
+            SchedulerUtil.runLater(Objects.requireNonNull(user.getPlayer()), run, WardrobeSettings.getTransitionDelay());
         } else {
             run.run();
         }
@@ -235,11 +241,8 @@ public class UserWardrobeManager {
         setWardrobeStatus(WardrobeStatus.STOPPING);
         Player player = user.getPlayer();
 
-        List<Player> viewer = Collections.singletonList(player);
-        List<Player> outsideViewers = HMCCPacketManager.getViewers(viewingLocation);
-        outsideViewers.remove(player);
-
         if (player == null) return;
+        List<Player> viewer = Collections.singletonList(player);
         if (!Bukkit.getServer().getAllowFlight()) player.setAllowFlight(false);
         MessagesUtil.sendMessage(player, "closed-wardrobe");
 
@@ -279,36 +282,21 @@ public class UserWardrobeManager {
             }
             user.showPlayer();
 
-            if (user.hasCosmeticInSlot(CosmeticSlot.BACKPACK)) {
-                user.respawnBackpack();
-                //PacketManager.ridingMountPacket(player.getEntityId(), VIEWER.getBackpackEntity().getEntityId(), viewer);
-            }
+            Location target = Objects.requireNonNullElseGet(exitLocation, () -> player.getWorld().getSpawnLocation());
+            player.teleportAsync(target, PlayerTeleportEvent.TeleportCause.PLUGIN).thenAccept(success -> {
+                if (!success) return;
+                SchedulerUtil.run(player, () -> {
+                    if (user.hasCosmeticInSlot(CosmeticSlot.BACKPACK)) user.respawnBackpack();
 
-            if (user.hasCosmeticInSlot(CosmeticSlot.BALLOON)) {
-                //user.respawnBalloon();
-                //PacketManager.sendLeashPacket(VIEWER.getBalloonEntity().getPufferfishBalloonId(), player.getEntityId(), viewer);
-            }
-
-            player.teleport(Objects.requireNonNullElseGet(exitLocation, () -> player.getWorld().getSpawnLocation()), PlayerTeleportEvent.TeleportCause.PLUGIN);
-
-            HashMap<EquipmentSlot, ItemStack> items = new HashMap<>();
-            for (EquipmentSlot slot : HMCCInventoryUtils.getPlayerArmorSlots()) {
-                ItemStack item = player.getInventory().getItem(slot);
-                items.put(slot, item);
-            }
-            /*
-            if (WardrobeSettings.isEquipPumpkin()) {
-                items.put(EquipmentSlot.HEAD, player.getInventory().getHelmet());
-            }
-             */
-            packetBuilder.buildEntityEquipmentSlotUpdatePacket(player.getEntityId(), items).sendPacket(viewer);
-
-            if (WardrobeSettings.isEnabledBossbar()) {
-                //Audience target = BukkitAudiences.create(HMCCosmeticsPlugin.getInstance()).player(player);
-                player.hideBossBar(bossBar);
-            }
-
-            user.updateCosmetic();
+                    HashMap<EquipmentSlot, ItemStack> items = new HashMap<>();
+                    for (EquipmentSlot slot : HMCCInventoryUtils.getPlayerArmorSlots()) {
+                        items.put(slot, player.getInventory().getItem(slot));
+                    }
+                    packetBuilder.buildEntityEquipmentSlotUpdatePacket(player.getEntityId(), items).sendPacket(viewer);
+                    if (WardrobeSettings.isEnabledBossbar()) player.hideBossBar(bossBar);
+                    user.updateCosmetic();
+                });
+            });
         };
         run.run();
     }
@@ -316,13 +304,13 @@ public class UserWardrobeManager {
     private void update() {
         final AtomicInteger data = new AtomicInteger();
 
-        BukkitRunnable runnable = new BukkitRunnable() {
-            @Override
-            public void run() {
+        AtomicReference<TaskHandle> updateTask = new AtomicReference<>();
+        Runnable runnable = () -> {
                 Player player = user.getPlayer();
                 if (!active || player == null) {
                     MessagesUtil.sendDebugMessages("WardrobeEnd[user=" + user.getUniqueId() + ",reason=Active is false]");
-                    this.cancel();
+                    TaskHandle task = updateTask.get();
+                    if (task != null) task.cancel();
                     return;
                 }
                 MessagesUtil.sendDebugMessages("WardrobeUpdate[user=" + user.getUniqueId() + ",status=" + getWardrobeStatus() + "]");
@@ -370,10 +358,10 @@ public class UserWardrobeManager {
                 } else {
                     HMCCPacketManager.equipmentSlotUpdate(user.getPlayer(), true, viewer); // Optifine dumbassery
                 }
-            }
         };
 
-        runnable.runTaskTimer(HMCCosmeticsPlugin.getInstance(), 0, 2);
+        Player player = user.getPlayer();
+        if (player != null) updateTask.set(SchedulerUtil.runTimer(player, runnable, 1, 2));
     }
 
     public enum WardrobeStatus {

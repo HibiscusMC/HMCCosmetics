@@ -11,6 +11,7 @@ import com.hibiscusmc.hmccosmetics.gui.special.DyeMenuProvider;
 import com.hibiscusmc.hmccosmetics.gui.type.Type;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
+import com.hibiscusmc.hmccosmetics.util.SchedulerUtil;
 import me.lojosho.hibiscuscommons.config.serializer.ItemSerializer;
 import me.lojosho.hibiscuscommons.hooks.Hooks;
 import me.lojosho.shaded.configurate.ConfigurationNode;
@@ -127,7 +128,7 @@ public class TypeCosmetic extends Type {
         Runnable run = () -> cosmeticHolder.updateCosmetic(cosmetic.getSlot());
         if (cosmetic instanceof CosmeticArmorType) {
             if (((CosmeticArmorType) cosmetic).getEquipSlot().equals(EquipmentSlot.OFF_HAND)) {
-                Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), run, 1);
+                SchedulerUtil.runLater(viewer, run, 1);
             }
         }
         run.run();

@@ -11,6 +11,7 @@ import com.hibiscusmc.hmccosmetics.gui.Menus;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
 import com.hibiscusmc.hmccosmetics.util.MessagesUtil;
+import com.hibiscusmc.hmccosmetics.util.SchedulerUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -27,11 +28,7 @@ public class PlayerConnectionListener implements Listener {
     public void onPlayerJoin(@NotNull PlayerJoinEvent event) {
         if (DatabaseSettings.isEnabledDelay()) {
             MessagesUtil.sendDebugMessages("Delay Enabled with " + DatabaseSettings.getDelayLength() + " ticks");
-            Bukkit.getScheduler().runTaskLater(
-                HMCCosmeticsPlugin.getInstance(),
-                () -> this.loadUserData(event.getPlayer()),
-                DatabaseSettings.getDelayLength()
-            );
+            SchedulerUtil.runLater(event.getPlayer(), () -> this.loadUserData(event.getPlayer()), DatabaseSettings.getDelayLength());
         } else {
             this.loadUserData(event.getPlayer());
         }
@@ -46,7 +43,7 @@ public class PlayerConnectionListener implements Listener {
         if (preLoadEvent.isCancelled()) return;
 
         Database.get(playerId).thenAccept(userData -> {
-            Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> {
+            SchedulerUtil.run(player, () -> {
                 CosmeticUser cosmeticUser = CosmeticUsers.getProvider()
                     .createCosmeticUser(playerId)
                     .initialize(userData);
@@ -59,7 +56,7 @@ public class PlayerConnectionListener implements Listener {
                 Bukkit.getPluginManager().callEvent(playerLoadEvent);
 
                 // And finally, launch an update for the cosmetics they have.
-                Bukkit.getScheduler().runTaskLater(HMCCosmeticsPlugin.getInstance(), () -> {
+                SchedulerUtil.runLater(player, () -> {
                     if (cosmeticUser.getPlayer() == null) return;
                     cosmeticUser.updateCosmetic();
                 }, 4);
