@@ -18,7 +18,6 @@ import me.lojosho.shaded.configurate.ConfigurateException;
 import me.lojosho.shaded.configurate.ConfigurationNode;
 import me.lojosho.shaded.configurate.serialize.SerializationException;
 import me.lojosho.shaded.configurate.yaml.YamlConfigurationLoader;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Color;
@@ -225,9 +224,7 @@ public class InternalDyeMenu implements DyeMenu {
      */
     private static PrimaryColor parsePrimaryColor(ConfigurationNode node) {
         // Get primary color name (with MiniMessage formatting)
-        String nameWithFormatting = node.node("name").getString("");
-        Component nameComponent = MiniMessage.miniMessage().deserialize(nameWithFormatting);
-        String plainName = extractPlainText(nameComponent);
+        String name = node.node("name").getString("");
 
         // Get primary color hex value
         String colorHex = node.node("color").getString("#FFFFFF");
@@ -250,7 +247,7 @@ public class InternalDyeMenu implements DyeMenu {
             }
         }
 
-        return new PrimaryColor(plainName, primaryColor, secondaryColors);
+        return new PrimaryColor(name, primaryColor, secondaryColors);
     }
 
     /**
@@ -258,26 +255,14 @@ public class InternalDyeMenu implements DyeMenu {
      */
     private static SecondaryColor parseSecondaryColor(ConfigurationNode node) {
         // Get secondary color name (with MiniMessage formatting)
-        String nameWithFormatting = node.node("name").getString("");
-        Component nameComponent = MiniMessage.miniMessage().deserialize(nameWithFormatting);
-        String plainName = extractPlainText(nameComponent);
+        String name = node.node("name").getString("");
 
         // Get secondary color hex value
         String colorHex = node.node("color").getString("#FFFFFF");
         Color secondaryColor = HMCCServerUtils.hex2Rgb(colorHex);
 
-        return new SecondaryColor(plainName, secondaryColor);
+        return new SecondaryColor(name, secondaryColor);
     }
-
-    /**
-     * Extracts plain text from a Component (removes MiniMessage formatting)
-     */
-    private static String extractPlainText(Component component) {
-        // Use PlainTextComponentSerializer to extract plain text
-        return net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText()
-                .serialize(component);
-    }
-
 
     public record PrimaryColor(String name, Color color, List<SecondaryColor> secondaryColors) {}
 
