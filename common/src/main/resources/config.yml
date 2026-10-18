@@ -5,6 +5,8 @@ config-version: 1
 
 default-menu: defaultmenu_hats
 debug-mode: false
+# Notifies operators and players with hmccosmetics.notifyupdate on join when a newer version is available
+notify-updates: true
 database-settings:
   # SQLite (Default), MYSQL, NONE
   type: sqlite

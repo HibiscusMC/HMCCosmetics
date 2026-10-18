@@ -29,6 +29,7 @@ public class Settings {
     private static final String DYE_MENU_INPUT_SLOT = "input-slot";
     private static final String DYE_MENU_OUTPUT_SLOT = "output-slot";
     private static final String DEBUG_ENABLE_PETH = "debug-mode";
+    private static final String NOTIFY_UPDATES_PATH = "notify-updates";
     private static final String TICK_PERIOD_PATH = "tick-period";
     private static final String UNAPPLY_DEATH_PATH = "unapply-on-death";
     private static final String FORCE_PERMISSION_JOIN_PATH = "force-permission-join";
@@ -92,6 +93,8 @@ public class Settings {
     private static int configVersion;
     @Getter
     private static boolean debugMode;
+    @Getter
+    private static boolean notifyUpdates;
     @Getter
     private static boolean unapplyOnDeath;
     @Getter
@@ -187,6 +190,7 @@ public class Settings {
     public static void load(ConfigurationNode source) {
 
         debugMode = source.node(DEBUG_ENABLE_PETH).getBoolean(false);
+        notifyUpdates = source.node(NOTIFY_UPDATES_PATH).getBoolean(true);
         defaultMenu = source.node(DEFAULT_MENU).getString();
         configVersion = source.node(CONFIG_VERSION).getInt(0);
         if (configVersion == 0) {

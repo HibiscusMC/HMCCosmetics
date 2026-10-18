@@ -5,6 +5,7 @@ import com.hibiscusmc.hmccosmetics.api.events.PlayerLoadEvent;
 import com.hibiscusmc.hmccosmetics.api.events.PlayerPreLoadEvent;
 import com.hibiscusmc.hmccosmetics.api.events.PlayerPreUnloadEvent;
 import com.hibiscusmc.hmccosmetics.api.events.PlayerUnloadEvent;
+import com.hibiscusmc.hmccosmetics.config.Settings;
 import com.hibiscusmc.hmccosmetics.config.section.DatabaseSettings;
 import com.hibiscusmc.hmccosmetics.database.Database;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
@@ -96,13 +97,16 @@ public class PlayerConnectionListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void notifyAdminUpdate(final PlayerJoinEvent event) {
+        if (!Settings.isNotifyUpdates()) return;
         if (event.getPlayer().isOp() || event.getPlayer().hasPermission("hmccosmetics.notifyupdate")) {
-            if (!HMCCosmeticsPlugin.getInstance().getLatestVersion().equalsIgnoreCase(HMCCosmeticsPlugin.getInstance().getDescription().getVersion()) && HMCCosmeticsPlugin.getInstance().getLatestVersion().isEmpty())
+            final String currentVersion = HMCCosmeticsPlugin.getInstance().getDescription().getVersion();
+            final String latestVersion = HMCCosmeticsPlugin.getInstance().getLatestVersion();
+            if (!latestVersion.isEmpty() && !latestVersion.equalsIgnoreCase(currentVersion))
                 MessagesUtil.sendMessageNoKey(
                     event.getPlayer(),
                     "<br>" +
                         "<GRAY>There is a new version of <light_purple><Bold>HMCCosmetics<reset><gray> available!<br>" +
-                        "<GRAY>Current version: <red>" + HMCCosmeticsPlugin.getInstance().getDescription().getVersion() + " <GRAY>| Latest version: <light_purple>" + HMCCosmeticsPlugin.getInstance().getLatestVersion() + "<br>" +
+                        "<GRAY>Current version: <red>" + currentVersion + " <GRAY>| Latest version: <light_purple>" + latestVersion + "<br>" +
                         "<GRAY>Download it on <gold><click:OPEN_URL:'https://www.spigotmc.org/resources/100107/'>Spigot<reset> <gray>or <gold><click:OPEN_URL:'https://polymart.org/resource/1879'>Polymart<reset><gray>!" +
                         "<br>"
                 );
