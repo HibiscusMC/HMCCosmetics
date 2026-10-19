@@ -84,7 +84,8 @@ tasks {
 bukkit {
     main = "com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin"
     version = "${project.version}"
-    apiVersion = "1.20"
+    apiVersion = "1.21"
+    foliaSupported = true
     load = PluginLoadOrder.POSTWORLD
     authors = listOf("LoJoSho", "boy0000")
     depend = listOf("HibiscusCommons")

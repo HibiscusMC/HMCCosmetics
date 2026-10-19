@@ -16,6 +16,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.stream.Stream;
 
@@ -24,7 +25,7 @@ public class Menus {
     private static final List<String> FILES_TO_IGNORE = List.of("internal_dye_menu.yml");
 
     private static final HashMap<String, Menu> MENUS = new HashMap<>();
-    private static final HashMap<UUID, Long> COOLDOWNS = new HashMap<>();
+    private static final Map<UUID, Long> COOLDOWNS = new ConcurrentHashMap<>();
 
     public static void addMenu(@NotNull Menu menu) {
         MENUS.put(menu.getId().toUpperCase(), menu);
