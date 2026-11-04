@@ -65,8 +65,7 @@ public class TypeCosmetic extends Type {
             return;
         }
 
-        boolean isUnEquippingCosmetic = false;
-        if (cosmeticHolder.getCosmetic(cosmetic.getSlot()) == cosmetic) isUnEquippingCosmetic = true;
+        boolean isUnEquippingCosmetic = cosmeticHolder.hasCosmeticInSlot(cosmetic);
 
         String dyeClick = Settings.getCosmeticDyeClickType();
         String requiredClick;
