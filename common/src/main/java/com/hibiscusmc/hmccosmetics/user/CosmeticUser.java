@@ -576,7 +576,7 @@ public class CosmeticUser implements CosmeticHolder {
     }
 
     public void spawnBackpack(CosmeticBackpackType cosmeticBackpackType) {
-        if (this.userBackpackManager != null) return;
+        if (this.userBackpackManager != null || getEntity() == null) return;
         this.userBackpackManager = new UserBackpackManager(this);
         userBackpackManager.spawnBackpack(cosmeticBackpackType);
     }
@@ -599,6 +599,7 @@ public class CosmeticUser implements CosmeticHolder {
         if (this.userBalloonManager != null) return;
 
         org.bukkit.entity.Entity entity = getEntity();
+        if (entity == null) return;
 
         UserBalloonManager userBalloonManager1 = new UserBalloonManager(this, entity.getLocation());
         userBalloonManager1.getModelEntity().teleport(entity.getLocation().add(cosmeticBalloonType.getBalloonOffset()));
@@ -616,7 +617,7 @@ public class CosmeticUser implements CosmeticHolder {
     }
 
     public void respawnBackpack() {
-        if (!hasCosmeticInSlot(CosmeticSlot.BACKPACK)) return;
+        if (!hasCosmeticInSlot(CosmeticSlot.BACKPACK) || getEntity() == null) return;
         final Cosmetic cosmetic = getCosmetic(CosmeticSlot.BACKPACK);
         despawnBackpack();
         if (!hiddenReason.isEmpty()) return;
@@ -625,7 +626,7 @@ public class CosmeticUser implements CosmeticHolder {
     }
 
     public void respawnBalloon() {
-        if (!hasCosmeticInSlot(CosmeticSlot.BALLOON)) return;
+        if (!hasCosmeticInSlot(CosmeticSlot.BALLOON) || getEntity() == null) return;
         final Cosmetic cosmetic = getCosmetic(CosmeticSlot.BALLOON);
         despawnBalloon();
         if (!hiddenReason.isEmpty()) return;
