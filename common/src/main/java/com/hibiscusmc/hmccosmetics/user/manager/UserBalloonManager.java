@@ -27,6 +27,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 
 public class UserBalloonManager {
@@ -38,9 +40,13 @@ public class UserBalloonManager {
     @Getter
     private UserBalloonPufferfish pufferfish;
     private final ArmorStand modelEntity;
+    private volatile Location lastLocation;
+    private final AtomicReference<Location> pendingLocation = new AtomicReference<>();
+    private final AtomicBoolean teleportInFlight = new AtomicBoolean();
 
     public UserBalloonManager(CosmeticUser user, @NotNull Location location) {
         this.user = user;
+        this.lastLocation = location.clone();
         this.pufferfish = new UserBalloonPufferfish(user.getUniqueId(), NMSHandlers.getHandler().getUtilHandler().getNextEntityId(location.getWorld()), UUID.randomUUID());
         this.modelEntity = location.getWorld().spawn(location, ArmorStand.class, (e) -> {
             e.setInvisible(true);
@@ -179,11 +185,26 @@ public class UserBalloonManager {
     }
 
     public Location getLocation() {
-        return this.getModelEntity().getLocation();
+        return lastLocation.clone();
     }
 
     public void setLocation(Location location) {
-        this.getModelEntity().teleport(location);
+        pendingLocation.set(location.clone());
+        drainTeleportQueue();
+    }
+
+    private void drainTeleportQueue() {
+        if (!teleportInFlight.compareAndSet(false, true)) return;
+        Location target = pendingLocation.getAndSet(null);
+        if (target == null) {
+            teleportInFlight.set(false);
+            return;
+        }
+        modelEntity.teleportAsync(target).whenComplete((success, error) -> {
+            if (error == null && Boolean.TRUE.equals(success)) lastLocation = target;
+            teleportInFlight.set(false);
+            if (pendingLocation.get() != null) drainTeleportQueue();
+        });
     }
 
     public Vector getVelocity() {

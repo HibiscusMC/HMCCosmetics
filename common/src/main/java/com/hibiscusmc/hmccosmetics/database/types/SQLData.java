@@ -1,6 +1,7 @@
 package com.hibiscusmc.hmccosmetics.database.types;
 
 import com.hibiscusmc.hmccosmetics.HMCCosmeticsPlugin;
+import com.hibiscusmc.hmccosmetics.util.SchedulerUtil;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.CosmeticSlot;
 import com.hibiscusmc.hmccosmetics.database.UserData;
@@ -14,11 +15,18 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public abstract class SQLData extends Data {
+    private final ExecutorService databaseExecutor = Executors.newSingleThreadExecutor(runnable -> {
+        Thread thread = new Thread(runnable, "HMCCosmetics-Database");
+        thread.setDaemon(true);
+        return thread;
+    });
     @Override
     @SuppressWarnings({"resource"}) // Duplicate is from deprecated InternalData
-    public CompletableFuture<UserData> get(UUID uniqueId) {
+    public synchronized CompletableFuture<UserData> get(UUID uniqueId) {
         return CompletableFuture.supplyAsync(() -> {
             UserData data = new UserData(uniqueId);
 
@@ -35,27 +43,33 @@ public abstract class SQLData extends Data {
                 e.printStackTrace();
             }
             return data;
-        });
+        }, databaseExecutor);
     }
 
     @Override
     @SuppressWarnings("resource")
-    public void save(CosmeticUser user) {
+    public synchronized void save(CosmeticUser user) {
+        UUID uniqueId = user.getUniqueId();
+        String serialized = serializeData(user);
         Runnable run = () -> {
             try (PreparedStatement preparedSt = preparedStatement("REPLACE INTO COSMETICDATABASE(UUID,COSMETICS) VALUES(?,?);")) {
-                preparedSt.setString(1, user.getUniqueId().toString());
-                preparedSt.setString(2, serializeData(user));
+                preparedSt.setString(1, uniqueId.toString());
+                preparedSt.setString(2, serialized);
                 preparedSt.executeUpdate();
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
         };
         if (!HMCCosmeticsPlugin.getInstance().isDisabled()) {
-            Bukkit.getScheduler().runTaskAsynchronously(HMCCosmeticsPlugin.getInstance(), run);
+            executeAsync(run);
         } else {
             run.run();
         }
     }
 
     public abstract PreparedStatement preparedStatement(String query);
+
+    protected final void executeAsync(Runnable task) {
+        databaseExecutor.execute(task);
+    }
 }

@@ -100,7 +100,7 @@ public class CosmeticBalloonType extends Cosmetic implements CosmeticUpdateBehav
         List<Player> viewers = HMCCPacketManager.getViewers(entity.getLocation());
 
         if (entity.getLocation().getWorld() != userBalloonManager.getLocation().getWorld()) {
-            userBalloonManager.getModelEntity().teleport(newLocation);
+            userBalloonManager.setLocation(newLocation);
             HMCCPacketManager.sendTeleportPacket(userBalloonManager.getPufferfishBalloonId(), newLocation, false, viewers);
             return;
         }

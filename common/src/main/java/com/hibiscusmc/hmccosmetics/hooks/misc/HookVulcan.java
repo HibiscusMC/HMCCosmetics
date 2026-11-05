@@ -8,13 +8,13 @@ import me.lojosho.hibiscuscommons.hooks.Hook;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.UUID;
 
 public class HookVulcan extends Hook {
 
-    private final List<UUID> EXEMPT = new ArrayList<>();
+    private final Set<UUID> EXEMPT = ConcurrentHashMap.newKeySet();
 
     public HookVulcan() {
         super("Vulcan");
