@@ -148,7 +148,7 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
             } else {
                 DyeMenuProvider.setDyeMenuProvider(new InternalDyeMenu());
             }
-            // Reload method called in setup, do not need to call it here as all we do is set the provider.
+            DyeMenuProvider.reload();
         } catch (IllegalStateException e) {
             getLogger().warning("Unable to set a dye menu. There is likely another plugin registering another dye menu.");
         }
