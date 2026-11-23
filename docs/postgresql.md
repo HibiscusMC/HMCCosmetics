@@ -31,8 +31,8 @@ The PostgreSQL driver and HikariCP are part of the plugin jar; nothing is downlo
   another server saved since. After a discarded save nothing more is written for that player until they join again.
 - With this storage, a cosmetic change is saved one tick after it happens, so another server sees it without
   waiting for the player to quit. The other storages are unchanged.
-- `/cosmetic dataclear <player>` deletes the row. A server that still holds the old state cannot bring it back;
-  the player's next join starts from the empty state.
+- `/cosmetic dataclear <player>` empties the row and raises its version. A server that still holds the old state
+  cannot bring it back; the player's next join starts from the empty state.
 
 ## Migrating from MySQL or SQLite
 

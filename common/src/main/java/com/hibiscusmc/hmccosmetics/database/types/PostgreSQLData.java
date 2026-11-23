@@ -62,6 +62,7 @@ public class PostgreSQLData extends Data {
     private ExecutorService executor;
     private Logger logger;
     private long retryDelayMs = RETRY_DELAY_MS;
+    private boolean tableReady; // executor thread only
 
     // Only used on the executor thread.
     private final Map<UUID, Row> known = new HashMap<>();
@@ -89,7 +90,6 @@ public class PostgreSQLData extends Data {
         this.pool = dataSource;
         this.logger = logger;
         this.executor = Executors.newSingleThreadExecutor(runnable -> new Thread(runnable, "HMCCosmetics-PostgreSQL"));
-        executor.execute(this::createTable);
     }
 
     /** Returns when everything queued so far has run; used by the tests. */
@@ -101,19 +101,14 @@ public class PostgreSQLData extends Data {
         this.retryDelayMs = retryDelayMs;
     }
 
-    private void createTable() {
-        try {
-            withRetry(connection -> {
-                try (Statement statement = connection.createStatement()) {
-                    statement.execute("CREATE TABLE IF NOT EXISTS COSMETICDATABASE (UUID varchar(36) PRIMARY KEY, COSMETICS text, VERSION bigint NOT NULL DEFAULT 1)");
-                    // A table copied from another storage has no version column; its rows start at version 1.
-                    statement.execute("ALTER TABLE COSMETICDATABASE ADD COLUMN IF NOT EXISTS VERSION bigint NOT NULL DEFAULT 1");
-                }
-                return null;
-            });
-        } catch (SQLException e) {
-            logger.log(Level.SEVERE, "Could not create the PostgreSQL table; loading and saving will fail until it exists.", e);
+    /** Creates the table on first use, so a database that was down at start is picked up when it comes back. */
+    private void createTable(Connection connection) throws SQLException {
+        try (Statement statement = connection.createStatement()) {
+            statement.execute("CREATE TABLE IF NOT EXISTS COSMETICDATABASE (UUID varchar(36) PRIMARY KEY, COSMETICS text, VERSION bigint NOT NULL DEFAULT 1)");
+            // A table copied from another storage has no version column; its rows start at version 1.
+            statement.execute("ALTER TABLE COSMETICDATABASE ADD COLUMN IF NOT EXISTS VERSION bigint NOT NULL DEFAULT 1");
         }
+        tableReady = true;
     }
 
     @Override
@@ -162,15 +157,15 @@ public class PostgreSQLData extends Data {
     public void clear(UUID uniqueId) {
         executor.execute(() -> {
             try {
-                withRetry(connection -> {
-                    try (PreparedStatement statement = connection.prepareStatement("DELETE FROM COSMETICDATABASE WHERE UUID = ?")) {
+                // The row is emptied, not deleted, so its version keeps growing: a server that loaded an older
+                // version can never match the version of a row created after the clear.
+                known.put(uniqueId, withRetry(connection -> {
+                    try (PreparedStatement statement = connection.prepareStatement("UPDATE COSMETICDATABASE SET COSMETICS = '', VERSION = VERSION + 1 WHERE UUID = ?")) {
                         statement.setString(1, uniqueId.toString());
                         statement.executeUpdate();
                     }
-                    return null;
-                });
-                // The row is gone, and whatever this server held is no longer a reason to discard a later save.
-                known.put(uniqueId, Row.NONE);
+                    return read(connection, uniqueId);
+                }));
                 stale.remove(uniqueId);
             } catch (SQLException e) {
                 logger.log(Level.SEVERE, "Could not clear cosmetics of " + uniqueId, e);
@@ -260,6 +255,7 @@ public class PostgreSQLData extends Data {
     private <T> T withRetry(SqlTask<T> task) throws SQLException {
         for (int attempt = 1; ; attempt++) {
             try (Connection connection = pool.getConnection()) {
+                if (!tableReady) createTable(connection);
                 return task.run(connection);
             } catch (SQLException e) {
                 if (attempt == ATTEMPTS) throw e;

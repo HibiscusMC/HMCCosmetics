@@ -44,6 +44,7 @@ class PostgreSQLDataTest {
     @AfterEach
     void shutdownServers() {
         servers.forEach(PostgreSQLData::shutdown);
+        if (direct != null) direct.close();
     }
 
     private void join(PostgreSQLData server) {
@@ -55,8 +56,15 @@ class PostgreSQLDataTest {
         server.awaitIdle();
     }
 
+    private HikariDataSource direct;
+
+    private Connection direct() throws SQLException {
+        if (direct == null) direct = new HikariDataSource(cfg());
+        return direct.getConnection();
+    }
+
     private String stored() throws SQLException {
-        try (Connection c = new HikariDataSource(cfg()).getConnection(); Statement st = c.createStatement();
+        try (Connection c = direct(); Statement st = c.createStatement();
              ResultSet rs = st.executeQuery("SELECT COSMETICS FROM COSMETICDATABASE WHERE UUID = '" + player + "'")) {
             return rs.next() ? rs.getString(1) : null;
         }
@@ -70,7 +78,7 @@ class PostgreSQLDataTest {
     }
 
     private void update(String sql) throws SQLException {
-        try (Connection c = new HikariDataSource(cfg()).getConnection(); Statement st = c.createStatement()) {
+        try (Connection c = direct(); Statement st = c.createStatement()) {
             st.execute(sql);
         }
     }
@@ -141,7 +149,7 @@ class PostgreSQLDataTest {
     }
 
     @Test
-    void aServerThatLoadedBeforeADataClearCannotRecreateTheRow() throws Exception {
+    void aServerThatLoadedBeforeADataClearCannotBringTheOldStateBack() throws Exception {
         PostgreSQLData a = server();
         PostgreSQLData b = server();
         join(a);
@@ -150,7 +158,20 @@ class PostgreSQLDataTest {
         a.clear(player);
         a.awaitIdle();
         save(b, "HELMET=late");
-        assertNull(stored());
+        assertEquals("", stored());
+    }
+
+    @Test
+    void aStaleServerCannotMatchTheVersionOfARowRecreatedAfterAClear() throws Exception {
+        PostgreSQLData a = server();
+        PostgreSQLData b = server();
+        join(a);
+        save(a, "HELMET=hat");
+        join(b); // B holds the version of the first row
+        a.clear(player);
+        save(a, "BACKPACK=new"); // the player's next change on A
+        save(b, "HELMET=late");
+        assertEquals("BACKPACK=new", stored());
     }
 
     @Test
