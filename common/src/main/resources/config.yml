@@ -8,7 +8,7 @@ debug-mode: false
 # Notifies operators and players with hmccosmetics.notifyupdate on join when a newer version is available
 notify-updates: true
 database-settings:
-  # SQLite (Default), MYSQL, NONE
+  # SQLite (Default), MYSQL, POSTGRESQL, NONE
   type: sqlite
   mysql:
     database: "database"
@@ -16,6 +16,13 @@ database-settings:
     port: 3306
     host: "localhost"
     user: "username"
+  postgresql:
+    host: "localhost"
+    port: 5432
+    database: "database"
+    user: "username"
+    # Leave empty to read the HMCCOSMETICS_POSTGRESQL_PASSWORD environment variable instead.
+    password: ""
   delay:
     # This is for if other plugins need to handle certain aspects of a player first.
     enabled: false

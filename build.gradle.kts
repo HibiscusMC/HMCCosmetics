@@ -73,6 +73,7 @@ tasks {
     shadowJar {
         mergeServiceFiles()
         relocate("dev.triumphteam.gui", "com.hibiscusmc.hmccosmetics.shaded.gui")
+        relocate("com.zaxxer.hikari", "com.hibiscusmc.hmccosmetics.shaded.hikari")
         archiveFileName = "HMCCosmeticsRemapped-${project.version}.jar"
     }
 
