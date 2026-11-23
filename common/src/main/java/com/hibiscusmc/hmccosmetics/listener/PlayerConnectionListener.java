@@ -48,6 +48,7 @@ public class PlayerConnectionListener implements Listener {
 
         Database.get(playerId).thenAccept(userData -> {
             Bukkit.getScheduler().runTask(HMCCosmeticsPlugin.getInstance(), () -> {
+                if (!player.isOnline()) return; // Left while the data was loading
                 CosmeticUser cosmeticUser = CosmeticUsers.getProvider()
                     .createCosmeticUser(playerId)
                     .initialize(userData);

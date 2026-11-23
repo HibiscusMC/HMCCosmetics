@@ -26,6 +26,9 @@ public abstract class Data {
 
     public abstract void clear(UUID uniqueId);
 
+    /** Waits for pending writes and releases resources. Nothing to do unless the storage keeps its own. */
+    public void shutdown() {}
+
     // BACKPACK=colorfulbackpack&RRGGBB,HELMET=niftyhat,BALLOON=colorfulballoon,CHESTPLATE=niftychestplate
     @NotNull
     public final String serializeData(@NotNull CosmeticUser user) {

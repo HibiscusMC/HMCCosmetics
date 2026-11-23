@@ -10,6 +10,7 @@ import com.hibiscusmc.hmccosmetics.config.WardrobeSettings;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetic;
 import com.hibiscusmc.hmccosmetics.cosmetic.Cosmetics;
 import com.hibiscusmc.hmccosmetics.database.Database;
+import com.hibiscusmc.hmccosmetics.database.types.PostgreSQLData;
 import com.hibiscusmc.hmccosmetics.gui.Menu;
 import com.hibiscusmc.hmccosmetics.gui.Menus;
 import com.hibiscusmc.hmccosmetics.gui.special.DyeMenuProvider;
@@ -140,6 +141,10 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
         }
         // Database
         new Database();
+        // Servers sharing a storage need a change saved right away, not only on quit.
+        if (Database.getData() instanceof PostgreSQLData) {
+            getServer().getPluginManager().registerEvents(new CosmeticSaveListener(), this);
+        }
 
         // HMCColor
         try {
@@ -178,6 +183,7 @@ public final class HMCCosmeticsPlugin extends HibiscusPlugin {
             }
             Database.save(user);
         }
+        Database.shutdown();
     }
 
     public static HMCCosmeticsPlugin getInstance() {

@@ -4,6 +4,7 @@ import com.hibiscusmc.hmccosmetics.config.section.DatabaseSettings;
 import com.hibiscusmc.hmccosmetics.database.types.Data;
 import com.hibiscusmc.hmccosmetics.database.types.MySQLData;
 import com.hibiscusmc.hmccosmetics.database.types.NoneData;
+import com.hibiscusmc.hmccosmetics.database.types.PostgreSQLData;
 import com.hibiscusmc.hmccosmetics.database.types.SQLiteData;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUser;
 import com.hibiscusmc.hmccosmetics.user.CosmeticUsers;
@@ -21,6 +22,7 @@ public class Database {
     private static Data data;
     private static final MySQLData MYSQL_DATA = new MySQLData();
     private static final SQLiteData SQLITE_DATA = new SQLiteData();
+    private static final PostgreSQLData POSTGRESQL_DATA = new PostgreSQLData();
     private static final NoneData NONE_DATA = new NoneData();
 
     public Database() {
@@ -29,6 +31,9 @@ public class Database {
         switch (databaseType.toLowerCase()) {
             case "mysql":
                 data = MYSQL_DATA;
+                break;
+            case "postgresql", "postgres":
+                data = POSTGRESQL_DATA;
                 break;
             case "sqlite":
                 // already the default
@@ -59,6 +64,11 @@ public class Database {
 
     public static CompletableFuture<UserData> get(UUID uniqueId) {
         return data.get(uniqueId);
+    }
+
+    /** Waits for the pending writes and releases the storage's resources. Call once on plugin shutdown, after the final saves. */
+    public static void shutdown() {
+        data.shutdown();
     }
 
     public static void clearData(UUID uniqueId) {

@@ -28,12 +28,27 @@ dependencies {
         exclude(group = "org.enginehub.lin-bus.format")
     }
 
+    implementation(libs.hikari) // PostgreSQL pool
+    implementation(libs.postgresql)
+
     compileOnly(libs.lombok)
     annotationProcessor(libs.lombok)
     testCompileOnly(libs.lombok)
     testAnnotationProcessor(libs.lombok)
 
+    testImplementation(libs.junit)
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testImplementation(libs.h2) // PostgreSQL compatibility mode, so the tests need no server
+    // compileOnly dependencies are not on the test classpath
+    testImplementation(libs.paper.api)
+    testImplementation(libs.hibiscuscommons)
+    testImplementation(libs.commons.io)
+
     implementation(libs.triumph.gui) { exclude("net.kyori") }
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 publishing {
