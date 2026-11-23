@@ -1,10 +1,12 @@
 [versions]
+junit = "5.11.4"
 java = "21"
 paper = "1.21.4-R0.1-SNAPSHOT"
 lombok = "1.18.36"
 betterhud = "1.12"
 
 [libraries]
+junit = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
 paper-api = { module = "io.papermc.paper:paper-api", version.ref = "paper" }
 annotations = { module = "org.jetbrains:annotations", version = "24.1.0" }
 lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }

@@ -683,10 +683,10 @@ public class CosmeticUser implements CosmeticHolder {
             if (WardrobeSettings.isTryCosmeticsInWardrobe() && userWardrobeManager.getWardrobeStatus().equals(UserWardrobeManager.WardrobeStatus.RUNNING)) return true;
         }
         final Player player = getPlayer();
-        if (player != null) return player.hasPermission(cosmetic.getPermission());
+        if (player != null) return cosmetic.isPermittedFor(player);
         // This sucks, but basically if we can find a player, use that. If not, try to find the entity. If it can't find the entity, just return false.
         final Entity entity = getEntity();
-        if (entity != null) return entity.hasPermission(cosmetic.getPermission());
+        if (entity != null) return cosmetic.isPermittedFor(entity);
         return false;
     }
 

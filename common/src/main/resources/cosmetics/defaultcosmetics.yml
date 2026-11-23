@@ -1,3 +1,6 @@
+# Optional per cosmetic: "category-permission" is a second permission that is required together with "permission",
+# so one node can unlock a whole group of cosmetics (e.g. category-permission: "hmccosmetics.category.hats").
+# A cosmetic with only a category-permission needs just that node.
 beanie:
   slot: HELMET
   permission: "hmccosmetics.beanie"

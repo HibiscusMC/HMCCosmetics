@@ -13,6 +13,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.permissions.Permissible;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -45,6 +46,9 @@ public abstract class Cosmetic {
     /** Permission to use the cosmetic. */
     private String permission;
 
+    /** Optional permission shared by a category of cosmetics; required in addition to {@link #permission} when both are set, and enough on its own when {@link #permission} is unset. */
+    private String categoryPermission;
+
     /** The display {@link ItemStack} of the cosmetic. */
     @Getter(AccessLevel.NONE) @Setter(AccessLevel.NONE)
     private ItemStack item;
@@ -70,6 +74,7 @@ public abstract class Cosmetic {
         } else {
             this.permission = null;
         }
+        this.categoryPermission = config.node("category-permission").getString();
 
         if (!config.node("item").virtual()) {
             this.material = config.node("item", "material").getString();
@@ -98,7 +103,16 @@ public abstract class Cosmetic {
     }
 
     public boolean requiresPermission() {
-        return permission != null && !permission.isBlank();
+        return CosmeticPermissions.isSet(permission) || CosmeticPermissions.isSet(categoryPermission);
+    }
+
+    /**
+     * Checks the cosmetic's permission and its category permission; every one that is set must be held.
+     * @param permissible who wants to use the cosmetic
+     * @return true if all the permissions the cosmetic requires are held
+     */
+    public boolean isPermittedFor(@NotNull Permissible permissible) {
+        return CosmeticPermissions.holdsAll(permissible, permission, categoryPermission);
     }
 
     /**

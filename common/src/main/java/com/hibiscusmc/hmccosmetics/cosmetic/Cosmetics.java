@@ -146,9 +146,11 @@ public class Cosmetics {
     public static void refreshPermissions() {
         final HMCCosmeticsPlugin instance = HMCCosmeticsPlugin.getInstance();
         for (Cosmetic cosmetic : Cosmetics.values()) {
-            if (cosmetic.getPermission() == null) continue;
-            if (instance.getServer().getPluginManager().getPermission(cosmetic.getPermission()) != null) continue;
-            instance.getServer().getPluginManager().addPermission(new Permission(cosmetic.getPermission()));
+            for (String node : new String[]{cosmetic.getPermission(), cosmetic.getCategoryPermission()}) {
+                if (node == null || node.isBlank()) continue;
+                if (instance.getServer().getPluginManager().getPermission(node) != null) continue;
+                instance.getServer().getPluginManager().addPermission(new Permission(node));
+            }
         }
     }
 }

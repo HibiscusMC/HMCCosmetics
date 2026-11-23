@@ -33,7 +33,18 @@ dependencies {
     testCompileOnly(libs.lombok)
     testAnnotationProcessor(libs.lombok)
 
+    testImplementation(libs.junit)
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    // compileOnly dependencies are not on the test classpath
+    testImplementation(libs.paper.api)
+    testImplementation(libs.hibiscuscommons)
+    testImplementation(libs.commons.io)
+
     implementation(libs.triumph.gui) { exclude("net.kyori") }
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 publishing {
